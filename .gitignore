@@ -1,0 +1,10 @@
+
+data_extractor/data/training_data_vae.json
+data_extractor/data/data_surrounding_methods.json
+data_extractor/data/no_vocab_constraint_min_3.json
+data_extractor/data/training_data_ast.json
+data_extractor/data/training_data_vae2.json
+data_extractor/data/vldb_data.2.tar.gz
+data_extractor/data/vocab_constraint_1k-1000.json
+data_extractor/data/vocab_constraint_1k.json
+data_extractor/data/vocab_constraint_1k_min_3.json
