@@ -1,0 +1,24 @@
+{
+    "latent_size": 32,
+    "batch_size": 64,
+    "num_epochs": 100,
+    "learning_rate": 0.001,
+    "beta": 0.1,
+    "alpha1": 1.0,
+    "alpha2": 1.0,
+    "drop_rate": 1.0,
+    "print_step": 100,
+    "max_ast_depth": 8,
+    "max_fp_depth": 8,
+    "max_keywords": 10,
+    "checkpoint_step": 1,
+    "trunct_num_batch": null,
+    "encoder": {
+        "units": 128,
+        "num_layers": 1
+    },
+    "decoder": {
+        "units": 128,
+        "num_layers": 1
+    }
+}

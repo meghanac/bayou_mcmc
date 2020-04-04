@@ -1,0 +1,190 @@
+Process id is 27384
+GPU device is 6
+Amount of data used is 4221504
+	
+0/1319220 (epoch 1) loss: 31.549, gen loss: 17.307, ret loss: 6.878, fp loss: 7.355, KL loss: 0.089. 
+100/1319220 (epoch 1) loss: 26.630, gen loss: 14.761, ret loss: 4.843, fp loss: 5.878, KL loss: 11.490. 
+200/1319220 (epoch 1) loss: 22.744, gen loss: 13.129, ret loss: 3.757, fp loss: 4.892, KL loss: 9.670. 
+300/1319220 (epoch 1) loss: 21.243, gen loss: 12.378, ret loss: 3.385, fp loss: 4.595, KL loss: 8.853. 
+400/1319220 (epoch 1) loss: 20.362, gen loss: 11.942, ret loss: 3.189, fp loss: 4.405, KL loss: 8.262. 
+500/1319220 (epoch 1) loss: 19.827, gen loss: 11.702, ret loss: 3.079, fp loss: 4.257, KL loss: 7.884. 
+600/1319220 (epoch 1) loss: 19.325, gen loss: 11.447, ret loss: 3.011, fp loss: 4.106, KL loss: 7.611. 
+700/1319220 (epoch 1) loss: 18.923, gen loss: 11.239, ret loss: 2.940, fp loss: 4.002, KL loss: 7.422. 
+800/1319220 (epoch 1) loss: 18.668, gen loss: 11.125, ret loss: 2.887, fp loss: 3.930, KL loss: 7.259. 
+Process id is 27513
+GPU device is 6
+Amount of data used is 4221504
+	
+0/1319220 (epoch 1) loss: 31.638, gen loss: 17.344, ret loss: 6.951, fp loss: 7.333, KL loss: 0.107. 
+100000/1319220 (epoch 1) loss: 7.346, gen loss: 2.982, ret loss: 0.540, fp loss: 1.520, KL loss: 23.046. 
+Process id is 28944
+GPU device is 6
+Amount of data used is 4221504
+	
+0/1319220 (epoch 1) loss: 31.750, gen loss: 17.413, ret loss: 6.968, fp loss: 7.359, KL loss: 0.101. 
+100/1319220 (epoch 1) loss: 26.814, gen loss: 15.002, ret loss: 4.874, fp loss: 5.762, KL loss: 11.761. 
+200/1319220 (epoch 1) loss: 22.860, gen loss: 13.252, ret loss: 3.775, fp loss: 4.848, KL loss: 9.858. 
+300/1319220 (epoch 1) loss: 21.342, gen loss: 12.452, ret loss: 3.400, fp loss: 4.613, KL loss: 8.762. 
+400/1319220 (epoch 1) loss: 20.462, gen loss: 11.994, ret loss: 3.203, fp loss: 4.450, KL loss: 8.151. 
+500/1319220 (epoch 1) loss: 19.902, gen loss: 11.735, ret loss: 3.093, fp loss: 4.285, KL loss: 7.886. 
+600/1319220 (epoch 1) loss: 19.375, gen loss: 11.466, ret loss: 3.022, fp loss: 4.123, KL loss: 7.649. 
+700/1319220 (epoch 1) loss: 18.935, gen loss: 11.228, ret loss: 2.950, fp loss: 4.005, KL loss: 7.512. 
+800/1319220 (epoch 1) loss: 18.651, gen loss: 11.094, ret loss: 2.895, fp loss: 3.923, KL loss: 7.380. 
+900/1319220 (epoch 1) loss: 18.356, gen loss: 10.934, ret loss: 2.859, fp loss: 3.833, KL loss: 7.303. 
+Process id is 28994
+GPU device is 6
+Amount of data used is 4221504
+	
+0/1319220 (epoch 1) loss: 31.631, gen loss: 17.342, ret loss: 6.947, fp loss: 7.334, KL loss: 0.069. 
+100/1319220 (epoch 1) loss: 26.245, gen loss: 14.632, ret loss: 4.668, fp loss: 5.680, KL loss: 12.647. 
+200/1319220 (epoch 1) loss: 22.639, gen loss: 13.113, ret loss: 3.665, fp loss: 4.815, KL loss: 10.456. 
+300/1319220 (epoch 1) loss: 21.225, gen loss: 12.387, ret loss: 3.332, fp loss: 4.552, KL loss: 9.536. 
+400/1319220 (epoch 1) loss: 20.361, gen loss: 11.960, ret loss: 3.151, fp loss: 4.352, KL loss: 8.978. 
+500/1319220 (epoch 1) loss: 19.814, gen loss: 11.721, ret loss: 3.052, fp loss: 4.176, KL loss: 8.644. 
+600/1319220 (epoch 1) loss: 19.303, gen loss: 11.471, ret loss: 2.986, fp loss: 4.019, KL loss: 8.270. 
+700/1319220 (epoch 1) loss: 18.888, gen loss: 11.255, ret loss: 2.920, fp loss: 3.911, KL loss: 8.012. 
+800/1319220 (epoch 1) loss: 18.622, gen loss: 11.141, ret loss: 2.868, fp loss: 3.835, KL loss: 7.787. 
+900/1319220 (epoch 1) loss: 18.350, gen loss: 11.000, ret loss: 2.838, fp loss: 3.749, KL loss: 7.636. 
+1000/1319220 (epoch 1) loss: 18.117, gen loss: 10.854, ret loss: 2.810, fp loss: 3.702, KL loss: 7.503. 
+1100/1319220 (epoch 1) loss: 17.920, gen loss: 10.747, ret loss: 2.778, fp loss: 3.654, KL loss: 7.406. 
+1200/1319220 (epoch 1) loss: 17.744, gen loss: 10.662, ret loss: 2.752, fp loss: 3.595, KL loss: 7.351. 
+1300/1319220 (epoch 1) loss: 17.648, gen loss: 10.605, ret loss: 2.728, fp loss: 3.584, KL loss: 7.305. 
+1400/1319220 (epoch 1) loss: 17.468, gen loss: 10.497, ret loss: 2.704, fp loss: 3.539, KL loss: 7.290. 
+1500/1319220 (epoch 1) loss: 17.321, gen loss: 10.408, ret loss: 2.671, fp loss: 3.510, KL loss: 7.316. 
+1600/1319220 (epoch 1) loss: 17.163, gen loss: 10.313, ret loss: 2.631, fp loss: 3.481, KL loss: 7.380. 
+1700/1319220 (epoch 1) loss: 17.027, gen loss: 10.230, ret loss: 2.595, fp loss: 3.457, KL loss: 7.453. 
+1800/1319220 (epoch 1) loss: 16.871, gen loss: 10.138, ret loss: 2.557, fp loss: 3.423, KL loss: 7.535. 
+1900/1319220 (epoch 1) loss: 16.759, gen loss: 10.068, ret loss: 2.518, fp loss: 3.409, KL loss: 7.641. 
+2000/1319220 (epoch 1) loss: 16.647, gen loss: 9.992, ret loss: 2.479, fp loss: 3.399, KL loss: 7.764. 
+2100/1319220 (epoch 1) loss: 16.533, gen loss: 9.928, ret loss: 2.437, fp loss: 3.379, KL loss: 7.896. 
+2200/1319220 (epoch 1) loss: 16.389, gen loss: 9.833, ret loss: 2.401, fp loss: 3.351, KL loss: 8.038. 
+Process id is 49214
+GPU device is 6
+Amount of data used is 4221504
+	
+Process id is 49268
+GPU device is 6
+Amount of data used is 4221504
+	
+0/1319220 (epoch 1) loss: 31.622, gen loss: 17.284, ret loss: 6.921, fp loss: 7.406, KL loss: 0.104. 
+Process id is 94174
+GPU device is 6
+Amount of data used is 992
+	
+0/1240 (epoch 1) loss: 30.613, gen loss: 19.738, ret loss: 4.982, fp loss: 5.862, KL loss: 0.309. 
+Model checkpoint: save/model1.ckpt. Average for epoch , loss: 32.127
+Model checkpoint: save/model2.ckpt. Average for epoch , loss: 24.246
+Model checkpoint: save/model3.ckpt. Average for epoch , loss: 22.747
+Model checkpoint: save/model4.ckpt. Average for epoch , loss: 22.145
+Model checkpoint: save/model5.ckpt. Average for epoch , loss: 21.458
+Model checkpoint: save/model6.ckpt. Average for epoch , loss: 20.972
+Model checkpoint: save/model7.ckpt. Average for epoch , loss: 20.490
+Model checkpoint: save/model8.ckpt. Average for epoch , loss: 20.139
+Model checkpoint: save/model9.ckpt. Average for epoch , loss: 19.733
+Model checkpoint: save/model10.ckpt. Average for epoch , loss: 19.194
+Model checkpoint: save/model11.ckpt. Average for epoch , loss: 18.820
+Process id is 94198
+GPU device is 6
+Amount of data used is 992
+	
+0/6200 (epoch 1) loss: 30.603, gen loss: 19.720, ret loss: 4.938, fp loss: 5.910, KL loss: 0.344. 
+Model checkpoint: save/model1.ckpt. Average for epoch , loss: 31.746
+Model checkpoint: save/model2.ckpt. Average for epoch , loss: 24.503
+Model checkpoint: save/model3.ckpt. Average for epoch , loss: 23.173
+Model checkpoint: save/model4.ckpt. Average for epoch , loss: 22.308
+Model checkpoint: save/model5.ckpt. Average for epoch , loss: 21.662
+Model checkpoint: save/model6.ckpt. Average for epoch , loss: 21.040
+Model checkpoint: save/model7.ckpt. Average for epoch , loss: 20.628
+Model checkpoint: save/model8.ckpt. Average for epoch , loss: 20.133
+Model checkpoint: save/model9.ckpt. Average for epoch , loss: 19.747
+Model checkpoint: save/model10.ckpt. Average for epoch , loss: 19.255
+Model checkpoint: save/model11.ckpt. Average for epoch , loss: 18.784
+Model checkpoint: save/model12.ckpt. Average for epoch , loss: 18.340
+Model checkpoint: save/model13.ckpt. Average for epoch , loss: 17.857
+Model checkpoint: save/model14.ckpt. Average for epoch , loss: 17.388
+Model checkpoint: save/model15.ckpt. Average for epoch , loss: 17.018
+Model checkpoint: save/model16.ckpt. Average for epoch , loss: 16.835
+Model checkpoint: save/model17.ckpt. Average for epoch , loss: 16.342
+Model checkpoint: save/model18.ckpt. Average for epoch , loss: 15.985
+Model checkpoint: save/model19.ckpt. Average for epoch , loss: 15.643
+Model checkpoint: save/model20.ckpt. Average for epoch , loss: 15.353
+Model checkpoint: save/model21.ckpt. Average for epoch , loss: 14.978
+Model checkpoint: save/model22.ckpt. Average for epoch , loss: 14.667
+Model checkpoint: save/model23.ckpt. Average for epoch , loss: 14.347
+Model checkpoint: save/model24.ckpt. Average for epoch , loss: 14.044
+Model checkpoint: save/model25.ckpt. Average for epoch , loss: 13.751
+Model checkpoint: save/model26.ckpt. Average for epoch , loss: 13.428
+Model checkpoint: save/model27.ckpt. Average for epoch , loss: 13.232
+Model checkpoint: save/model28.ckpt. Average for epoch , loss: 12.985
+Model checkpoint: save/model29.ckpt. Average for epoch , loss: 12.676
+Model checkpoint: save/model30.ckpt. Average for epoch , loss: 12.459
+Model checkpoint: save/model31.ckpt. Average for epoch , loss: 12.246
+Model checkpoint: save/model32.ckpt. Average for epoch , loss: 11.910
+Model checkpoint: save/model33.ckpt. Average for epoch , loss: 11.640
+Model checkpoint: save/model34.ckpt. Average for epoch , loss: 11.419
+Model checkpoint: save/model35.ckpt. Average for epoch , loss: 11.293
+Model checkpoint: save/model36.ckpt. Average for epoch , loss: 11.076
+Model checkpoint: save/model37.ckpt. Average for epoch , loss: 10.802
+Model checkpoint: save/model38.ckpt. Average for epoch , loss: 10.566
+Model checkpoint: save/model39.ckpt. Average for epoch , loss: 10.483
+Model checkpoint: save/model40.ckpt. Average for epoch , loss: 10.254
+Model checkpoint: save/model41.ckpt. Average for epoch , loss: 10.222
+Model checkpoint: save/model42.ckpt. Average for epoch , loss: 9.987
+Model checkpoint: save/model43.ckpt. Average for epoch , loss: 9.790
+Model checkpoint: save/model44.ckpt. Average for epoch , loss: 9.720
+Model checkpoint: save/model45.ckpt. Average for epoch , loss: 9.482
+Model checkpoint: save/model46.ckpt. Average for epoch , loss: 9.345
+Model checkpoint: save/model47.ckpt. Average for epoch , loss: 9.263
+Model checkpoint: save/model48.ckpt. Average for epoch , loss: 9.087
+Model checkpoint: save/model49.ckpt. Average for epoch , loss: 9.013
+Model checkpoint: save/model50.ckpt. Average for epoch , loss: 8.829
+Model checkpoint: save/model51.ckpt. Average for epoch , loss: 8.819
+Model checkpoint: save/model52.ckpt. Average for epoch , loss: 8.632
+Model checkpoint: save/model53.ckpt. Average for epoch , loss: 8.521
+Model checkpoint: save/model54.ckpt. Average for epoch , loss: 8.385
+Model checkpoint: save/model55.ckpt. Average for epoch , loss: 8.269
+Model checkpoint: save/model56.ckpt. Average for epoch , loss: 8.140
+Model checkpoint: save/model57.ckpt. Average for epoch , loss: 8.090
+Model checkpoint: save/model58.ckpt. Average for epoch , loss: 7.950
+Model checkpoint: save/model59.ckpt. Average for epoch , loss: 7.855
+Model checkpoint: save/model60.ckpt. Average for epoch , loss: 7.839
+Model checkpoint: save/model61.ckpt. Average for epoch , loss: 7.715
+Model checkpoint: save/model62.ckpt. Average for epoch , loss: 7.720
+Model checkpoint: save/model63.ckpt. Average for epoch , loss: 7.407
+Model checkpoint: save/model64.ckpt. Average for epoch , loss: 7.445
+Model checkpoint: save/model65.ckpt. Average for epoch , loss: 7.469
+Model checkpoint: save/model66.ckpt. Average for epoch , loss: 7.341
+Model checkpoint: save/model67.ckpt. Average for epoch , loss: 7.152
+Model checkpoint: save/model68.ckpt. Average for epoch , loss: 7.063
+Model checkpoint: save/model69.ckpt. Average for epoch , loss: 7.030
+Model checkpoint: save/model70.ckpt. Average for epoch , loss: 6.998
+Model checkpoint: save/model71.ckpt. Average for epoch , loss: 6.912
+Model checkpoint: save/model72.ckpt. Average for epoch , loss: 6.826
+Model checkpoint: save/model73.ckpt. Average for epoch , loss: 6.749
+Model checkpoint: save/model74.ckpt. Average for epoch , loss: 6.750
+Model checkpoint: save/model75.ckpt. Average for epoch , loss: 6.597
+Model checkpoint: save/model76.ckpt. Average for epoch , loss: 6.625
+Model checkpoint: save/model77.ckpt. Average for epoch , loss: 6.488
+Model checkpoint: save/model78.ckpt. Average for epoch , loss: 6.496
+Model checkpoint: save/model79.ckpt. Average for epoch , loss: 6.449
+Model checkpoint: save/model80.ckpt. Average for epoch , loss: 6.306
+Model checkpoint: save/model81.ckpt. Average for epoch , loss: 6.265
+Model checkpoint: save/model82.ckpt. Average for epoch , loss: 6.298
+Model checkpoint: save/model83.ckpt. Average for epoch , loss: 6.151
+Model checkpoint: save/model84.ckpt. Average for epoch , loss: 6.187
+Model checkpoint: save/model85.ckpt. Average for epoch , loss: 6.143
+Model checkpoint: save/model86.ckpt. Average for epoch , loss: 6.082
+Model checkpoint: save/model87.ckpt. Average for epoch , loss: 6.073
+Model checkpoint: save/model88.ckpt. Average for epoch , loss: 6.078
+Model checkpoint: save/model89.ckpt. Average for epoch , loss: 5.968
+Model checkpoint: save/model90.ckpt. Average for epoch , loss: 5.885
+Model checkpoint: save/model91.ckpt. Average for epoch , loss: 5.948
+Model checkpoint: save/model92.ckpt. Average for epoch , loss: 5.934
+Model checkpoint: save/model93.ckpt. Average for epoch , loss: 5.742
+Model checkpoint: save/model94.ckpt. Average for epoch , loss: 5.683
+Model checkpoint: save/model95.ckpt. Average for epoch , loss: 5.621
+Model checkpoint: save/model96.ckpt. Average for epoch , loss: 5.591
+Model checkpoint: save/model97.ckpt. Average for epoch , loss: 5.620
+Model checkpoint: save/model98.ckpt. Average for epoch , loss: 5.510
+Model checkpoint: save/model99.ckpt. Average for epoch , loss: 5.535
+Model checkpoint: save/model100.ckpt. Average for epoch , loss: 5.603

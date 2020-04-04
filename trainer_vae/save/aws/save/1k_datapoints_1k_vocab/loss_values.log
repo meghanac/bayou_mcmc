@@ -1,0 +1,37 @@
+Process id is 89239
+GPU device is 6
+Amount of data used is 6854656
+	
+0/10710400 (epoch 1) loss: 64.205, gen loss: 46.275, ret loss: 6.921, fp loss: 11.003, KL loss: 0.062. 
+100/10710400 (epoch 1) loss: 32.939, gen loss: 22.981, ret loss: 3.345, fp loss: 5.369, KL loss: 12.442. 
+200/10710400 (epoch 1) loss: 29.089, gen loss: 20.240, ret loss: 3.088, fp loss: 4.938, KL loss: 8.228. 
+300/10710400 (epoch 1) loss: 27.427, gen loss: 19.087, ret loss: 2.928, fp loss: 4.726, KL loss: 6.862. 
+400/10710400 (epoch 1) loss: 26.335, gen loss: 18.413, ret loss: 2.714, fp loss: 4.555, KL loss: 6.540. 
+Process id is 98559
+GPU device is 6
+Amount of data used is 6854656
+	
+0/10710400 (epoch 1) loss: 64.167, gen loss: 46.279, ret loss: 6.912, fp loss: 10.967, KL loss: 0.099. 
+100/10710400 (epoch 1) loss: 32.978, gen loss: 22.942, ret loss: 3.375, fp loss: 5.374, KL loss: 12.865. 
+Process id is 72654
+GPU device is 6
+Amount of data used is 6854656
+	
+0/10710400 (epoch 1) loss: 64.276, gen loss: 46.267, ret loss: 6.930, fp loss: 11.074, KL loss: 0.051. 
+100/10710400 (epoch 1) loss: 33.184, gen loss: 23.139, ret loss: 3.423, fp loss: 5.445, KL loss: 11.767. 
+200/10710400 (epoch 1) loss: 29.143, gen loss: 20.260, ret loss: 3.123, fp loss: 4.975, KL loss: 7.852. 
+300/10710400 (epoch 1) loss: 27.465, gen loss: 19.072, ret loss: 2.997, fp loss: 4.747, KL loss: 6.490. 
+400/10710400 (epoch 1) loss: 26.419, gen loss: 18.378, ret loss: 2.854, fp loss: 4.581, KL loss: 6.058. 
+Process id is 24745
+GPU device is 6
+Amount of data used is 992
+	
+0/310 (epoch 1) loss: 30.543, gen loss: 19.595, ret loss: 4.915, fp loss: 6.007, KL loss: 0.264. 
+Model checkpoint: save/model1.ckpt. Average for epoch , loss: 31.513
+100/310 (epoch 2) loss: 25.302, gen loss: 17.069, ret loss: 2.753, fp loss: 4.409, KL loss: 10.712. 
+Model checkpoint: save/model2.ckpt. Average for epoch , loss: 24.425
+Model checkpoint: save/model3.ckpt. Average for epoch , loss: 23.135
+200/310 (epoch 4) loss: 21.628, gen loss: 14.786, ret loss: 2.340, fp loss: 3.607, KL loss: 8.950. 
+Model checkpoint: save/model4.ckpt. Average for epoch , loss: 22.300
+300/310 (epoch 5) loss: 21.950, gen loss: 15.173, ret loss: 2.065, fp loss: 3.721, KL loss: 9.901. 
+Model checkpoint: save/model5.ckpt. Average for epoch , loss: 21.616

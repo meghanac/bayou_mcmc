@@ -1,0 +1,15 @@
+// Program AST
+digraph {
+	1.0 [label=1.0]
+	0 [label=DSubTree]
+	1 [label=DLoop]
+	0 -> 1 [label="sibling / 1" constraint=true direction=LR]
+	2 [label="java.util.Iterator.hasNext()"]
+	1 -> 2 [label="child / 2" constraint=true direction=LR]
+	3 [label=DStop]
+	2 -> 3 [label="child / 3" constraint=true direction=LR]
+	4 [label=DStop]
+	2 -> 4 [label="sibling / 4" constraint=true direction=LR]
+	5 [label=DStop]
+	1 -> 5 [label="sibling / 5" constraint=true direction=LR]
+}
