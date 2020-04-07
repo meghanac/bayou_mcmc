@@ -202,13 +202,16 @@ class MCMCProgram:
         self.add = 0
         self.delete = 0
         self.swap = 0
+        self.swap_subtree = 0
         self.rejected = 0
         self.add_accepted = 0
         self.delete_accepted = 0
         self.swap_accepted = 0
+        self.swap_subtree_accepted = 0
         self.add_invalid = 0
         self.delete_invalid = 0
         self.swap_invalid = 0
+        self.swap_subtree_invalid = 0
         # self.prev_state = self.curr_state.copy()
 
         with tf.name_scope("ast_inference"):
@@ -246,7 +249,7 @@ class MCMCProgram:
         node = np.zeros([1, 1], dtype=np.int32)
         edge = np.zeros([1, 1], dtype=np.bool)
         fp = np.zeros([1, 1], dtype=np.int32)
-        for i in range(parent_pos+1):
+        for i in range(parent_pos + 1):
             node[0][0] = nodes[i]
             edge[0][0] = edges[i]
             feed = {self.model.edges.name: node, self.model.nodes.name: edge,
@@ -402,16 +405,53 @@ class MCMCProgram:
 
         return curr_node
 
+    def get_nodes_position(self, node):
+        if node is None:
+            print("WARNING: node fed into self.get_nodes_position is None")
+            return node
+        stack = []
+        curr_node = self.curr_prog
+
+        counter = 0
+
+        while curr_node is not None:
+            if curr_node == node:
+                return counter
+
+            counter += 1
+
+            if counter > self.max_depth + 1:
+                raise ValueError("WARNING: Caught in infinite loop")
+            if curr_node.child is not None:
+                if curr_node.sibling is not None:
+                    stack.append(curr_node.sibling)
+                curr_node = curr_node.child
+            elif curr_node.sibling is not None:
+                curr_node = curr_node.sibling
+            else:
+                if len(stack) > 0:
+                    curr_node = stack.pop()
+                else:
+                    raise ValueError('DFS failed to find given node: ' + node.api_name)
+
+        return -1
+
     def check_if_stop(self, node):
         if node.api_name == 'DStop':
             node.remove_edge(CHILD_EDGE)
             node.remove_edge(SIBLING_EDGE)
 
     def get_non_branched_random_pos(self, given_list=None):
+        selectable_node_exists_in_program = None
+        branched_parents = {self.vocab2node['DBranch'], self.vocab2node['DLoop'], self.vocab2node['DExcept']}
+        unselectable_nodes = {self.vocab2node['DSubTree'], self.vocab2node['DStop'], self.vocab2node['__delim__']}
         while True:
             if given_list is None:
-                rand_node_pos = random.randint(1,
-                                               self.curr_prog.length - 1)  # exclude DSubTree node, randint is [a,b] inclusive
+                if self.curr_prog.length > 1:
+                    rand_node_pos = random.randint(1,
+                                                   self.curr_prog.length - 1)  # exclude DSubTree node, randint is [a,b] inclusive
+                else:
+                    return None, None
             elif len(given_list) == 0:
                 return None, None
             else:
@@ -419,8 +459,19 @@ class MCMCProgram:
 
             node = self.get_node_in_position(rand_node_pos)
 
-            # if node.api_name not in {'DBranch', 'DStop', 'DLoop', 'DExcept'}:
-            return node, rand_node_pos
+            if (node.parent.api_num not in branched_parents) and (node.api_num not in unselectable_nodes):
+                return node, rand_node_pos
+
+            if selectable_node_exists_in_program is None:
+                nodes, _ = self.get_node_names_and_edges()
+                if given_list is not None:
+                    nodes = [nodes[i] for i in given_list]
+                valid_nodes = [i if i not in unselectable_nodes else 0 for i in nodes]
+                valid_nodes = [i if]
+                if sum(valid_nodes) == 0:
+                    return None, None
+                else:
+                    selectable_node_exists_in_program = True
 
     def get_non_stop_random_pos(self):
         while True:
@@ -452,10 +503,6 @@ class MCMCProgram:
             new_node_parent.remove_node(SIBLING_EDGE)
             new_node = self.createAndAddNode(new_node_api, new_node_parent, SIBLING_EDGE)
             new_node.add_node(old_sibling_node, SIBLING_EDGE)
-
-        # # remove any children for Stop nodes
-        # self.check_if_stop(new_node_parent)
-        # self.check_if_stop(new_node)
 
         self.calculate_probability()
 
@@ -516,23 +563,50 @@ class MCMCProgram:
 
         return node1, node2
 
-    def swap_subtrees(self, node1, node2):
-        node1_parent = node1.parent
-        node2_parent = node2.parent
-        node1_edge = node1.parent_edge
-        node2_edge = node2.parent_edge
-
-        if not (node1_parent == node2 or node2_parent == node1):
-            # remove from parents
-            node1_parent.remove_node(node1_edge)
-            node2_parent.remove_node(node2_edge)
-
-            # and nodes back to swapped parents
-            node1_parent.add_node(node2, node1_edge)
-            node2_parent.add_node(node1, node2_edge)
-
-        else:
-           print("Can't swap subtrees of child-parent nodes")
+    # def random_swap_subtrees(self):
+    #     # get 2 distinct node positions
+    #     node1, rand_node1_pos = self.get_non_branched_random_pos()
+    #
+    #     # fail safe
+    #     if node1 is None:
+    #         return None, None
+    #
+    #     # remove subtree from program to ensure the second subtree is not within or doesn't contain the first subtree
+    #     node1_parent = node1.parent
+    #     node1_parent_edge = node1.parent_edge
+    #     node1_parent.remove_node(node1_parent_edge)
+    #
+    #     # get another random subtree if possible
+    #     node2, node2_pos = self.get_non_branched_random_pos()
+    #
+    #     if node2 is None:
+    #         return None, None
+    #
+    #     # swap nodes
+    #     self.swap_subtrees(node1, node2)
+    #
+    #     self.calculate_probability()
+    #
+    #     return node1, node2
+    #
+    # def swap_subtrees(self, node1, node2):
+    #     node1_parent = node1.parent
+    #     node2_parent = node2.parent
+    #     node1_edge = node1.parent_edge
+    #     node2_edge = node2.parent_edge
+    #
+    #     if not (node1_parent == node2 or node2_parent == node1):
+    #         # remove from parents
+    #         node1_parent.remove_node(node1_edge)
+    #         node2_parent.remove_node(node2_edge)
+    #
+    #         # and nodes back to swapped parents
+    #         node1_parent.add_node(node2, node1_edge)
+    #         node2_parent.add_node(node1, node2_edge)
+    #
+    #     else:
+    #
+    #        print("Can't swap subtrees of child-parent nodes")
 
     def swap_nodes(self, node1, node2):
         node1_parent = node1.parent
@@ -650,6 +724,77 @@ class MCMCProgram:
 
         return len(constraints) == 0
 
+    def add_random_branch(self):
+        branch_type = random.choice(['DBranch', 'DLoop', 'DExcept'])
+
+        parent, _ = self.get_non_branched_random_pos()
+
+        if parent is None:
+            return None
+
+        if parent.child is not None:
+            print("WARNING: there's a bug in get_non_branched_random_pos because parent node has child")
+            return None
+
+        # remove parent's current sibling node if there
+        parent_sibling = parent.sibling
+        parent.remove_node(SIBLING_EDGE)
+
+        if branch_type == 'DBranch':
+            # Create a DBranch node
+            dbranch = self.createAndAddNode('DBranch', parent, SIBLING_EDGE)
+            dbranch_pos = self.get_nodes_position(dbranch)
+            assert dbranch_pos > 0, "Error: DBranch position couldn't be found"
+
+            # Add parent's old sibling node to DBranch with sibling edge
+            dbranch.add_node(parent_sibling, SIBLING_EDGE)
+
+            # If adding DBranch to end of tree, do not add DStop node to last sibling of branch
+            add_stop_node_to_end_branch = not (dbranch_pos == (self.curr_prog.length - 1))
+
+            # Create condition as DBranch child
+            condition = self.createAndAddNode(self.node2vocab[self.get_ast_idx(dbranch_pos)], dbranch, CHILD_EDGE)
+            cond_pos = self.get_nodes_position(condition)
+            assert cond_pos > 0, "Error: Condition node position couldn't be found"
+
+            # Add then api as child to condition node
+            then_node = self.createAndAddNode(self.node2vocab[self.get_ast_idx(cond_pos)], condition, CHILD_EDGE)
+            self.createAndAddNode('DStop', then_node, SIBLING_EDGE)
+
+            # Add else api as sibling to condition node
+            else_node = self.createAndAddNode(self.node2vocab[self.get_ast_idx(cond_pos)], condition, SIBLING_EDGE)
+            if add_stop_node_to_end_branch:
+                self.createAndAddNode('DStop', else_node, SIBLING_EDGE)
+
+            return dbranch
+
+        elif branch_type == 'DLoop':
+            # Create a DLoop node
+            dloop = self.createAndAddNode('DLoop', parent, SIBLING_EDGE)
+            dloop_pos = self.get_nodes_position(dloop)
+            assert dloop_pos > 0, "Error: DLoop position couldn't be found"
+
+            # Add parent's old sibling node to DBranch with sibling edge
+            dloop.add_node(parent_sibling, SIBLING_EDGE)
+
+            # If adding DLoop to end of tree, do not add DStop node to last sibling of branch
+            add_stop_node_to_end_branch = not (dloop_pos == (self.curr_prog.length - 1))
+
+            # Create condition as DLoop child
+            condition = self.createAndAddNode(self.node2vocab[self.get_ast_idx(dloop_pos)], dloop, CHILD_EDGE)
+            cond_pos = self.get_nodes_position(condition)
+            assert cond_pos > 0, "Error: Condition node position couldn't be found"
+
+            # Add body api as child to condition node
+            body = self.createAndAddNode(self.node2vocab[self.get_ast_idx(cond_pos)], condition, CHILD_EDGE)
+            if add_stop_node_to_end_branch:
+                self.createAndAddNode('DStop', body, SIBLING_EDGE)
+
+            return dloop
+        else:
+            # Create a DExcept node
+            dexcept = self.createAndAddNode('DExcept', parent, )
+
     def validate_and_update_program(self):
         if self.check_validity():
             self.valid += 1
@@ -679,7 +824,7 @@ class MCMCProgram:
         # print("nodes:", nodes)
         # print("edges:", edges)
         move = random.choice(['add', 'delete', 'swap'])
-        # print("move:", move)
+        print("move:", move)
 
         if move == 'add':
             self.add += 1
@@ -720,6 +865,16 @@ class MCMCProgram:
                 self.curr_log_prob = self.prev_log_prob
                 return False
             self.swap_accepted += 1
+        # elif move == 'swap_subtree':
+        #     self.swap_subtree += 1
+        #     node1, node2 = self.random_swap_subtrees()
+        #     if node1 is None or node2 is None:
+        #         return False
+        #     if not self.validate_and_update_program():
+        #         self.swap_subtrees(node1, node2)
+        #         self.curr_log_prob = self.prev_log_prob
+        #         return False
+        #     self.swap_subtree_accepted += 1
         else:
             raise ValueError('move not defined')  # TODO: remove once tested
             return False

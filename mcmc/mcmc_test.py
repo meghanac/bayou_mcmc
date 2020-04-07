@@ -17,7 +17,7 @@ CLOSE = 'java.io.InputStream.close()'
 STOP = 'DStop'
 
 # SAVED MODEL
-SAVED_MODEL_PATH = '/Users/meghanachilukuri/Documents/GitHub/grammar_vae-older_branch/trainer_vae/save/aws/save/'
+SAVED_MODEL_PATH = '/Users/meghanachilukuri/Documents/GitHub/bayou_mcmc/trainer_vae/save/aws/save/'
 
 
 class MCMCProgramTest(unittest.TestCase):
@@ -140,11 +140,11 @@ class MCMCProgramTest(unittest.TestCase):
         test_prog.prog.add_constraint(STR_APP)
         self.assertFalse(test_prog.prog.check_validity())
 
-    @mock.patch.object(MCMCProgram, 'get_random_api')
+    @mock.patch.object(MCMCProgram, 'get_ast_idx')
     @mock.patch.object(random, 'randint')
-    def test_add_and_undo_random_node(self, mock_randint, mock_get_random_api):
+    def test_add_and_undo_random_node(self, mock_randint, mock_get_ast_idx):
         test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
-        mock_get_random_api.return_value = CLOSE
+        mock_get_ast_idx.return_value = test_prog.vocab2node[CLOSE]
         mock_randint.return_value = 5
 
         test_prog.prog.max_depth = 11
@@ -295,6 +295,42 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertListEqual(test_prog.edges, expected_edges, "Edges must be equal to expected nodes in program.")
         self.assertEqual(test_prog.prog.curr_prog.length, 8)
 
+    # def test_swap_subtrees(self):
+    #     test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
+    #     node1 = test_prog.prog.get_node_in_position(2)
+    #     node2 = test_prog.prog.get_node_in_position(6)
+    #     self.assertEqual(node1.api_name, READ_LINE)
+    #     self.assertEqual(node2.api_name, STR_BUF)
+    #
+    #     test_prog.prog.swap_subtrees(node1, node2)
+    #     test_prog.update_nodes_and_edges()
+    #     swapped_expected_nodes = [START, STR_APP, STR_BUF, STR_BUF, STR_APP, READ_LINE, STR_BUF, READ_LINE]
+    #     swapped_expected_edges = [True, True, False, False, False, True, False]
+    #     self.assertListEqual(test_prog.nodes, swapped_expected_nodes,
+    #                          "Nodes must be equal to expected nodes in program.")
+    #     self.assertListEqual(test_prog.edges, swapped_expected_edges, "Edges must be equal to expected nodes in program.")
+    #     self.assertEqual(test_prog.prog.curr_prog.length, 8)
+    #
+    #     # test swapping nodes again to get original tree back
+    #     test_prog.prog.swap_subtrees(node1, node2)
+    #     test_prog.update_nodes_and_edges()
+    #     self.assertListEqual(test_prog.nodes, expected_nodes, "Nodes must be equal to expected nodes in program.")
+    #     self.assertListEqual(test_prog.edges, expected_edges, "Edges must be equal to expected nodes in program.")
+    #     self.assertEqual(test_prog.prog.curr_prog.length, 8)
+    #
+    #     # test switching a parent and child node- should fail
+    #     node2 = test_prog.prog.get_node_in_position(3)
+    #     test_prog.prog.swap_subtrees(node1, node2)
+    #     test_prog.update_nodes_and_edges()
+    #     self.assertListEqual(test_prog.nodes, expected_nodes,
+    #                          "Nodes must be equal to expected nodes in program.")
+    #     self.assertListEqual(test_prog.edges, expected_edges, "Edges must be equal to expected nodes in program.")
+    #     self.assertEqual(test_prog.prog.curr_prog.length, 8)
+    #
+    #     # test switching grandparent and grandchild nodes
+    #     node1 = test_prog.prog.get_node_in_position(1)
+    #     node2 = test_prog.prog.get_node_in_position(3)
+
     @mock.patch.object(random, 'randint')
     def test_check_validity(self, mock_randint):
         test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
@@ -313,11 +349,11 @@ class MCMCProgramTest(unittest.TestCase):
         test_prog.update_nodes_and_edges()
         self.assertFalse(test_prog.prog.check_validity())
 
-    @mock.patch.object(MCMCProgram, 'get_random_api')
+    @mock.patch.object(MCMCProgram, 'get_ast_idx')
     @mock.patch.object(random, 'randint')
-    def test_add_and_swap_node(self, mock_randint, mock_get_random_api):
+    def test_add_and_swap_node(self, mock_randint, mock_get_ast_idx):
         test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
-        mock_get_random_api.return_value = CLOSE
+        mock_get_ast_idx.return_value = test_prog.vocab2node[CLOSE]
         mock_randint.return_value = 5
 
         test_prog.prog.max_depth = 11
@@ -368,7 +404,7 @@ class MCMCProgramTest(unittest.TestCase):
             print("\n", i)
             # print(i)
             test_prog.prog.mcmc()
-            # test_prog.update_nodes_and_edges(verbose=True)
+            test_prog.update_nodes_and_edges(verbose=True)
         #
         test_prog.print_summary_logs()
 
@@ -520,6 +556,8 @@ class MCMCProgramWrapper:
         print("Total accepted delete transforms:", self.prog.delete_accepted)
         print("Total attempted swap transforms:", self.prog.swap)
         print("Total accepted swap transforms:", self.prog.swap_accepted)
+        print("Total attempted swap transforms:", self.prog.swap_subtree)
+        print("Total accepted swap transforms:", self.prog.swap_subtree_accepted)
 
 
 
