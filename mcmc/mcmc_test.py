@@ -51,30 +51,30 @@ class MCMCProgramTest(unittest.TestCase):
     def create_dbranch(self, test_prog, parent):
         # expected nodes = [DBRANCH, STR_BUF, STR_APP, STOP, READ_LINE, STOP]
         # expected edges = [CHILD_EDGE, CHILD_EDGE, SIBLING_EDGE, SIBLING_EDGE, SIBLING_EDGE]
-        dbranch = test_prog.prog.createAndAddNode(DBRANCH, parent, SIBLING_EDGE)
-        cond = test_prog.prog.createAndAddNode(STR_BUF, dbranch, CHILD_EDGE)
-        then = test_prog.prog.createAndAddNode(STR_APP, cond, CHILD_EDGE)
-        test_prog.prog.createAndAddNode(STOP, then, SIBLING_EDGE)
-        else_node = test_prog.prog.createAndAddNode(READ_LINE, cond, SIBLING_EDGE)
-        test_prog.prog.createAndAddNode(STOP, else_node, SIBLING_EDGE)
+        dbranch = test_prog.prog.create_and_add_node(DBRANCH, parent, SIBLING_EDGE)
+        cond = test_prog.prog.create_and_add_node(STR_BUF, dbranch, CHILD_EDGE)
+        then = test_prog.prog.create_and_add_node(STR_APP, cond, CHILD_EDGE)
+        test_prog.prog.create_and_add_node(STOP, then, SIBLING_EDGE)
+        else_node = test_prog.prog.create_and_add_node(READ_LINE, cond, SIBLING_EDGE)
+        test_prog.prog.create_and_add_node(STOP, else_node, SIBLING_EDGE)
         return test_prog, dbranch
 
     def create_dloop(self, test_prog, parent):
         # expected nodes = [DLOOP, READ_LINE, CLOSE, STOP]
         # expected edges = [CHILD_EDGE, CHILD_EDGE, SIBLING_EDGE]
-        dloop = test_prog.prog.createAndAddNode(DLOOP, parent, SIBLING_EDGE)
-        cond = test_prog.prog.createAndAddNode(READ_LINE, dloop, CHILD_EDGE)
-        body = test_prog.prog.createAndAddNode(CLOSE, cond, CHILD_EDGE)
-        test_prog.prog.createAndAddNode(STOP, body, SIBLING_EDGE)
+        dloop = test_prog.prog.create_and_add_node(DLOOP, parent, SIBLING_EDGE)
+        cond = test_prog.prog.create_and_add_node(READ_LINE, dloop, CHILD_EDGE)
+        body = test_prog.prog.create_and_add_node(CLOSE, cond, CHILD_EDGE)
+        test_prog.prog.create_and_add_node(STOP, body, SIBLING_EDGE)
         return test_prog, dloop
 
     def create_dexcept(self, test_prog, parent):
         # expected nodes = [DEXCEPT, STR_BUF, CLOSE, STOP]
         # expected edges = [CHILD_EDGE, CHILD_EDGE, SIBLING_EDGE]
-        dexcept = test_prog.prog.createAndAddNode(DEXCEPT, parent, SIBLING_EDGE)
-        catch = test_prog.prog.createAndAddNode(STR_BUF, dexcept, CHILD_EDGE)
-        try_node = test_prog.prog.createAndAddNode(CLOSE, catch, CHILD_EDGE)
-        test_prog.prog.createAndAddNode(STOP, try_node, SIBLING_EDGE)
+        dexcept = test_prog.prog.create_and_add_node(DEXCEPT, parent, SIBLING_EDGE)
+        catch = test_prog.prog.create_and_add_node(STR_BUF, dexcept, CHILD_EDGE)
+        try_node = test_prog.prog.create_and_add_node(CLOSE, catch, CHILD_EDGE)
+        test_prog.prog.create_and_add_node(STOP, try_node, SIBLING_EDGE)
         return test_prog, dexcept
 
     def create_all_dtypes_program(self):
@@ -445,10 +445,10 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertListEqual(test_prog.edges, new_expected_edges, "Edges must be equal to expected nodes in program.")
         self.assertEqual(test_prog.prog.curr_prog.length, 9)
 
-    def test_get_non_branched_random_pos(self):
+    def test_get_valid_random_node(self):
         pass
 
-    @mock.patch.object(MCMCProgram, 'get_non_branched_random_pos')
+    @mock.patch.object(MCMCProgram, 'get_valid_random_node')
     @mock.patch.object(MCMCProgram, 'get_ast_idx')
     @mock.patch.object(random, 'choice')
     def test_add_dnode_node(self, mock_randint, mock_get_ast_idx, mock_get_pos):
@@ -475,7 +475,7 @@ class MCMCProgramWrapper:
     def __init__(self, save_dir):
         self.prog = MCMCProgram(save_dir)
         self.constraints = [STR_BUF, 'abc']
-        self.prog.create_program(self.constraints)
+        self.prog.init_program(self.constraints)
         self.vocab2node = self.prog.vocab2node
         self.node2vocab = self.prog.node2vocab
         self.nodes = [START, STR_BUF]
@@ -513,10 +513,10 @@ class MCMCProgramWrapper:
 
         parent = curr_node
 
-        self.createAndAddNode(api_name, parent, edge)
+        self.create_and_add_node(api_name, parent, edge)
 
-    def createAndAddNode(self, api_name, parent, edge):
-        self.prog.createAndAddNode(api_name, parent, edge)
+    def create_and_add_node(self, api_name, parent, edge):
+        self.prog.create_and_add_node(api_name, parent, edge)
 
         self.update_nodes_and_edges()
 

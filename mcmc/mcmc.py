@@ -27,92 +27,84 @@ class Node:
     Class for a single node in a program. Each node represents a single API.
     A program is one or more Nodes, each connected to each other by Sibling or Child Edges.
     There may be at most one sibling and one child node.
-    DSubtree is used as the start node of the tree and may only have 1 sibling node representing the first API in the program.
+    DSubtree is used as the start node of the tree and may only have 1 sibling node representing the first API in
+    the program.
     Only DBranch, DLoop and DExcept and their child nodes may have child edges/nodes.
     DStop nodes may not have a sibling or a child node.
     """
+
     def __init__(self, id, api_name, api_num, parent, parent_edge):
         """
         :param id: [DEPRECATED] (int) unique id for Node object
         :param api_name: (string) name of the api
         :param api_num: (int) number assigned to api in vocab dictionary. Must be > 0.
         :param parent: (Node) parent node
-        :param parent_edge: (bool) represents the edge between this node and parent node
+        :param parent_edge: (bool - SIBLING_EDGE or CHILD_EDGE) represents the edge between this node and parent node
         """
         self.api_name = api_name
         self.api_num = api_num
-        self.child = None
-        self.sibling = None
-        self.valid = True
-        self.parent = parent
+        self.child = None  # pointer to child node
+        self.sibling = None  # pointer to sibling node
+        self.parent = parent  # pointer to parent node
         self.id = id
-        self.length = 1
+        self.length = 1  # Number of nodes in subtree starting at this node (i.e., how many nodes stem out of this node)
         self.parent_edge = parent_edge
 
     def update_length(self, length, add_or_sub):
+        """
+        Updates length of this node and recursively updates all node above it so that length of head of the program
+        (DSubtree) accounts for all nodes in program
+        :param length: (int) length to be added to or subtracted from this node
+        :param add_or_sub: (string - ust be either 'add' or 'subtract') flag whether to add length or subtract length
+        :return:
+        """
+        # Add length
         if add_or_sub == 'add':
             self.length += length
+        # Subtract length
         else:
             self.length -= length
+        # Recursively update parent nodes' length
         if self.parent is not None:
             self.parent.update_length(length, add_or_sub)
 
     def add_node(self, node, edge):
+        """
+        :param node: (Node) node to be added to self. Can be None (i.e., nothing will be added)
+        :param edge: (bool- SIBLING_EDGE or CHILD_EDGE) whether node will be self's child or sibling node
+        :return:
+        """
         if node is not None:
             if edge == SIBLING_EDGE:
+                # Remove existing sibling node if there is one
                 if self.sibling is not None:
-                    # print("add node: sibling edge not none")
                     self.remove_node(SIBLING_EDGE)
+                # Update self
                 self.update_length(node.length, 'add')
                 self.sibling = node
+                # Update node
                 node.parent = self
                 node.parent_edge = edge
+
             elif edge == CHILD_EDGE:
+                # Remove existing child node is there is o e
                 if self.child is not None:
                     self.remove_node(CHILD_EDGE)
+                # Update self
                 self.update_length(node.length, 'add')
                 self.child = node
+                # Update node
                 node.parent = self
                 node.parent_edge = edge
             else:
                 raise ValueError('edge must be SIBLING_EDGE or CHILD_EDGE')
-        else:
-            # print("node is None. Was not added to tree.")
-            pass
-
-    # def remove_node(self, edge):  # NOTE: DO NOT USE IT CREATES HARD TO FIND BUGS ALSO DOESN"T
-    #                               # LOGICALLY MAKE SENSE TO HAVE 2 TYPES OF REMOVES
-    #     if edge == SIBLING_EDGE:
-    #         if self.sibling is not None:
-    #             old_sibling = self.sibling
-    #             old_sibling.parent = None
-    #             old_sibling.parent_edge = None
-    #             self.update_length(old_sibling.length, 'sub')
-    #
-    #             # If old sibling has sibling node, add that sibling node to self to end up removing only 1 node
-    #             new_sibling = old_sibling.sibling
-    #             self.sibling = new_sibling
-    #             if new_sibling is not None:
-    #                 new_sibling.parent = self
-    #                 new_sibling.parent_edge = edge
-    #                 self.update_length(new_sibling.length, 'add')
-    #         else:
-    #             print("Tried to remove sibling edge but it is not there.")
-    #
-    #     elif edge == CHILD_EDGE:
-    #         if self.child is not None:
-    #             child = self.child
-    #             self.child = None
-    #             child.parent = None
-    #             child.parent_edge = None
-    #             self.update_length(child.length, 'sub')
-    #         else:
-    #             print("Tried to remove child edge but it is not there.")
-    #
-    #     else:
-    #         raise ValueError('edge must but a sibling or child edge')
 
     def remove_node(self, edge):
+        """
+        Removes node specified by edge. Removes the entire subtree that stems from the node to be removed.
+        :param edge: (bool - SIBLING_EDGE or CHILD_EDGE)
+        :return:
+        """
         if edge == SIBLING_EDGE:
             if self.sibling is not None:
                 old_sibling = self.sibling
@@ -132,13 +124,11 @@ class Node:
         else:
             raise ValueError('edge must but a sibling or child edge')
 
-    # def skip_dsubtree_header(self):
-    #     assert self.api_name == 'DSubTree'
-    #     self = self.sibling
-    #     assert self.val != 'DSubTree'
-    #     return self
-
     def copy(self):
+        """
+        Deep copy self including entire subtree. Recursively copies sibling and child nodes.
+        :return: (Node) deep copy of self
+        """
         new_node = Node(self.id, self.api_name, self.api_num, self.parent, self.parent_edge)
         if self.sibling is not None:
             new_sibling_node = self.sibling.copy()
@@ -148,53 +138,36 @@ class Node:
             new_node.add_node(new_child_node, CHILD_EDGE)
         return new_node
 
-    def depth_first_search(self):
-
-        buffer = []
-        stack = []
-        dfs_id = None
-        parent_id = 0
-        if self is not None:
-            stack.append((self, parent_id, SIBLING_EDGE))
-            dfs_id = 0
-
-        while (len(stack) > 0):
-
-            item_triple = stack.pop()
-            item = item_triple[0]
-            parent_id = item_triple[1]
-            edge_type = item_triple[2]
-
-            buffer.append((item.val, parent_id, edge_type))
-
-            if item.sibling is not None:
-                stack.append((item.sibling, dfs_id, SIBLING_EDGE))
-
-            if item.child is not None:
-                stack.append((item.child, dfs_id, CHILD_EDGE))
-
-            dfs_id += 1
-
-        return buffer
-
 
 class MCMCProgram:
+    """
+
+    """
     def __init__(self, save_dir):
+        """
+        Initialize program
+        :param save_dir: (string) path to directory in which saved model checkpoints are in
+        """
         # Initialize model
         config_file = os.path.join(save_dir, 'config.json')
         with open(config_file) as f:
             self.config = config = read_config(json.load(f), infer=True)
 
+        # Initialize model configurations
         self.max_depth = self.config.max_ast_depth
-
         self.config.max_ast_depth = 1
         self.config.max_fp_depth = 1
         self.config.batch_size = 1
 
+        # Restore ML model
         self.model = Model(self.config)
         self.sess = tf.Session()
         self.restore(save_dir)
+        with tf.name_scope("ast_inference"):
+            ast_logits = self.model.decoder.ast_logits[:, 0, :]
+            self.ast_ln_probs = tf.nn.log_softmax(ast_logits)
 
+        # Initialize variables about program
         self.constraints = []
         self.constraint_nodes = []  # has node numbers of constraints
         self.vocab2node = self.config.vocab.api_dict
@@ -208,36 +181,27 @@ class MCMCProgram:
         self.encoder_mean = None
         self.encoder_covar = None
 
-        # logging
+        # Logging  # TODO: change to Logger
         self.accepted = 0
         self.valid = 0
         self.invalid = 0
         self.add = 0
         self.delete = 0
         self.swap = 0
-        self.swap_subtree = 0
         self.rejected = 0
         self.add_accepted = 0
         self.delete_accepted = 0
         self.swap_accepted = 0
-        self.swap_subtree_accepted = 0
         self.add_invalid = 0
         self.delete_invalid = 0
         self.swap_invalid = 0
-        self.swap_subtree_invalid = 0
-        # self.prev_state = self.curr_state.copy()
-
-        with tf.name_scope("ast_inference"):
-            ast_logits = self.model.decoder.ast_logits[:, 0, :]
-            self.ast_ln_probs = tf.nn.log_softmax(ast_logits)
-            # self.ast_idx = tf.multinomial(ast_logits, 1)
-            # self.ast_top_k_values, self.ast_top_k_indices = tf.nn.top_k(self.ast_ln_probs,
-            #                                                             k=self.config.batch_size)
-            # print(self.ast_ln_probs.shape)
-            # print(self.ast_idx.shape)
-            # print(self.config.vocab.api_dict_size)
 
     def restore(self, save):
+        """
+        Restores TF model
+        :param save: (string) path to directory in which model checkpoints are stored
+        :return:
+        """
         # restore the saved model
         vars_ = get_var_list('all_vars')
         old_saver = tf.compat.v1.train.Saver(vars_)
@@ -245,106 +209,56 @@ class MCMCProgram:
         old_saver.restore(self.sess, ckpt.model_checkpoint_path)
         return
 
-    def get_next_ast_state_and_prob(self, ast_node, ast_edge, ast_state):
-        feed = {self.model.nodes.name: np.array(ast_node, dtype=np.int32),
-                self.model.edges.name: np.array(ast_edge, dtype=np.bool)}
-        for i in range(self.config.decoder.num_layers):
-            feed[self.model.initial_state[i].name] = np.array(ast_state[i])
+    def add_constraint(self, constraint):
+        """
+        Updates list of constraints that this program must meet.
+        :param constraint: (string) name of api that must appear in the program in order for it to be valid.
+        :return:
+        """
+        try:
+            node_num = self.vocab2node[constraint]
+            self.constraint_nodes.append(node_num)
+            self.constraints.append(constraint)
+        except KeyError:
+            print("Constraint ", constraint, " is not in vocabulary. Will be skipped.")
 
-        [ast_state, ast_ln_prob] = self.sess.run(
-            [self.model.decoder.ast_tree.state, self.ast_ln_probs], feed)
+    def init_program(self, constraints):
+        """
+        Creates initial program that satisfies all given constraints.
+        :param constraints: (list of strings (api names)) list of apis that must appear in the program for
+        it to be valid
+        :return:
+        """
+        # Add given constraints if valid
+        for i in constraints:
+            self.add_constraint(i)
 
-        return ast_state, ast_ln_prob
-
-    def get_ast_idx(self, parent_pos):
-        void_ret_type = self.config.vocab.ret_dict["void"]
-        nodes, edges = self.get_vector_representation()
-        node = np.zeros([1, 1], dtype=np.int32)
-        edge = np.zeros([1, 1], dtype=np.bool)
-        fp = np.zeros([1, 1], dtype=np.int32)
-        for i in range(parent_pos + 1):
-            node[0][0] = nodes[i]
-            edge[0][0] = edges[i]
-            feed = {self.model.edges.name: node, self.model.nodes.name: edge,
-                    self.model.return_type: [void_ret_type],
-                    self.model.formal_params: fp}
-            if i < parent_pos:
-                self.sess.run(self.model.decoder.ast_logits, feed)
-            else:
-                ast_idx = tf.multinomial(self.model.decoder.ast_logits[0], 1)
-                ast_idx = self.sess.run(ast_idx, feed)
-                return ast_idx[0][0]
-
-    def random_walk_latent_space(self):
-        samples = tf.random.normal([self.config.batch_size, self.config.latent_size], mean=0., stddev=1.,
-                                   dtype=tf.float32)
-        latent_state = self.encoder_mean + tf.sqrt(self.encoder_covar) * samples
-        self.latent_state = self.sess.run(latent_state, {})
-
-    def update_latent_state(self):
-        void_ret_type = self.config.vocab.ret_dict["void"]
-        nodes, edges = self.get_vector_representation()
-        node = np.zeros([1, 1], dtype=np.int32)
-        edge = np.zeros([1, 1], dtype=np.bool)
-        fp = np.zeros([1, 1], dtype=np.int32)
-        state = None
-        for i in range(self.curr_prog.length):
-            node[0][0] = nodes[i]
-            edge[0][0] = edges[i]
-            feed = {self.model.edges.name: node, self.model.nodes.name: edge,
-                    self.model.return_type: [void_ret_type],
-                    self.model.formal_params: fp}
-            if i < self.curr_prog.length - 1:
-                state = self.sess.run(self.model.latent_state, feed)
-            else:  # for last node, save encoder mean and variance as well
-                [state, self.encoder_mean, self.encoder_covar] = self.sess.run(
-                    [self.model.latent_state, self.model.encoder.output_mean, self.model.encoder.output_covar], feed)
-                self.latent_state = state
-        return state
-
-    def get_initial_decoder_state(self):
-        # latent_state = np.random.normal(loc=0., scale=1.,
-        #                  size=(self.config.batch_size, self.config.latent_size))
-        initial_state = self.sess.run(self.model.initial_state,
-                                      feed_dict={self.model.latent_state: self.latent_state})
-        # print("init shape", np.array(initial_state).shape)
-        initial_state = np.transpose(np.array(initial_state), [1, 0, 2])  # batch-first
-        self.initial_state = initial_state
-        return initial_state
-
-    def init_program(self):
         # Initialize tree
-        head = self.createAndAddNode('DSubTree', None, SIBLING_EDGE)
+        head = self.create_and_add_node('DSubTree', None, SIBLING_EDGE)
         self.curr_prog = head
-        # self.prev_prog = head.copy()
 
         # Add constraint nodes to tree
         last_node = head
         for i in self.constraints:
-            node = self.createAndAddNode(i, last_node, SIBLING_EDGE)
+            node = self.create_and_add_node(i, last_node, SIBLING_EDGE)
             last_node = node
 
-        # Add stop node
-        # self.createAndAddNode('DStop', last_node, SIBLING_EDGE)
-
-        # curr_node = self.curr_prog
-        # while curr_node is not None:
-        #     curr_node = curr_node.sibling
-
+        # Initialize model states
         self.update_latent_state()
         self.get_initial_decoder_state()
-        # print("latent state:", self.latent_state)
-        # print("encoder mean:", self.encoder_mean)
-        # print("encoder covar:", self.encoder_covar)
-        # print("decoder init state:", self.get_initial_decoder_state())
-        # self.random_walk_latent_space()
 
         # Update probabilities of tree
         self.calculate_probability()
         self.prev_log_prob = self.curr_log_prob
 
-    def createAndAddNode(self, api_name, parent, edge):
-        # Create node
+    def create_and_add_node(self, api_name, parent, edge):
+        """
+        Create a new node and add it to the program
+        :param api_name: (string) api name of node to be created
+        :param parent: (Node) parent of node to be created
+        :param edge: (bool- SIBLING_EDGE or CHILD_EDGE) relation of node to be created to parent node
+        :return: (Node) node that has been created
+        """
         try:
             api_num = self.vocab2node[api_name]
             node = Node(self.node_id_counter, api_name, api_num, parent, edge)
@@ -358,49 +272,38 @@ class MCMCProgram:
 
             return node
 
-        except KeyError:
+        except KeyError:  # api does not exist in vocabulary and hence node cannot be made
             print(api_name, " is not in vocabulary. Node was not added.")
             return None
 
-    def add_constraint(self, constraint):
-        try:
-            node_num = self.vocab2node[constraint]
-            self.constraint_nodes.append(node_num)
-            self.constraints.append(constraint)
-        except KeyError:
-            print("Constraint ", constraint, " is not in vocabulary. Will be skipped.")
-
-    def create_program(self, constraints):
-        for i in constraints:
-            self.add_constraint(i)
-
-        # Create initial tree
-        self.init_program()
-
-    # def update_latent_space(self):
-    #     samples = tf.random.normal([self.config.batch_size, self.config.latent_size], mean=0., stddev=1., dtype=tf.float32)
-    #     self.latent_state = self.model.encoder.output_mean + tf.sqrt(self.model.encoder.output_covar) * samples
-
-    def get_random_api(self):
-        while True:
-            api = self.node2vocab[random.randint(1, self.model.config.vocab.api_dict_size - 1)]
-            if api not in {'DBranch', 'DLoop', 'DExcept', 'DStop'}:
-                return api
+    # def get_random_api(self):
+    #     """
+    #     :return: (string) random API from vocab that is not D-node
+    #     """
+    #     while True:
+    #         api = self.node2vocab[random.randint(1, self.model.config.vocab.api_dict_size - 1)]  # exclude 0
+    #         if api not in {'DBranch', 'DLoop', 'DExcept', 'DStop', 'DSubtree'}:
+    #             return api
 
     def get_node_in_position(self, pos_num):
-        # print("prog length:", self.curr_prog.length, "pos num:", pos_num)
-        assert pos_num < self.curr_prog.length
+        """
+        Get Node object for node in given position. Position number is determined by DFS, with child edges taking
+        precedence over sibling edges.
+        :param pos_num: (int) position number of node required
+        :return: (Node) required node
+        """
+        assert pos_num < self.curr_prog.length, "Position number must be less than total length of program"
 
         num_explored = 0
         stack = []
         curr_node = self.curr_prog
 
-        counter = 0
-
         while num_explored != pos_num and curr_node is not None:
-            counter += 1
-            if counter > self.max_depth + 1:
+            # Fail safe
+            if num_explored > self.max_depth + 1:
                 raise ValueError("WARNING: Caught in infinite loop")
+
+            # Update curr_node
             if curr_node.child is not None:
                 if curr_node.sibling is not None:
                     stack.append(curr_node.sibling)
@@ -419,14 +322,21 @@ class MCMCProgram:
         return curr_node
 
     def get_nodes_position(self, node):
+        """
+        Given a node, return it's position number determined by DFS, with child taking precedence over sibling.
+        :param node: (Node) node whose position is to be determined
+        :return: (int) position number of given node
+        """
+        # Fail safe
         if node is None:
             print("WARNING: node fed into self.get_nodes_position is None")
             return node
+
         stack = []
         curr_node = self.curr_prog
-
         counter = 0
 
+        # DFS
         while curr_node is not None:
             if curr_node == node:
                 return counter
@@ -449,34 +359,32 @@ class MCMCProgram:
 
         return -1
 
-    def check_if_stop(self, node):
-        if node.api_name == 'DStop':
-            node.remove_edge(CHILD_EDGE)
-            node.remove_edge(SIBLING_EDGE)
-
-    # def get_non_branched_random_pos(self, given_list=None):
-    #     if given_list is None:
-    #         rand_node_pos = random.randint(1,
-    #                                        self.curr_prog.length - 1)  # exclude DSubTree node, randint is [a,b] inclusive
-    #     elif len(given_list) == 0:
-    #         return None, None
-    #     else:
-    #         rand_node_pos = random.choice(given_list)
-    #
-    #     node = self.get_node_in_position(rand_node_pos)
-    #
-    #     # if node.api_name not in {'DBranch', 'DStop', 'DLoop', 'DExcept'}:
-    #     return node, rand_node_pos
-
-    def get_non_branched_random_pos(self, given_list=None):
+    def get_valid_random_node(self, given_list=None):
+        """
+        Returns a valid node in the program or in the given list of positions of nodes that can be chosen.
+        Valid node is one that is not a 'DSubtree' or 'DStop' nodes. Additionally, it must be one that can have a
+        sibling node. Nodes that cannot have a sibling node are the condition/catch nodes that occur right after a DLoop
+        or DExcept node.
+        :param given_list: (list of ints) list of positions (ints) that represent nodes in the program that can
+        be selected
+        :return: (Node) the randomly selected node, (int) position of the randomly selected node
+        """
+        # Boolean flag that checks whether a valid node exists in the program or given list. Is computed at the end of
+        # the first iteration
         selectable_node_exists_in_program = None
-        branches = {self.vocab2node['DBranch'], self.vocab2node['DLoop'], self.vocab2node['DExcept']}
+
+        # Parent nodes whose children are invalid
+        unselectable_parent_dnodes = {self.vocab2node['DLoop'], self.vocab2node['DExcept']}  # TODO: make sure I can actually remove DBranch node
+
+        # Unselectable nodes
         unselectable_nodes = {self.vocab2node['DSubTree'], self.vocab2node['DStop'], self.vocab2node['__delim__']}
-        while True:
+
+        while True:  # while a valid node exists in the program
+            # If no list of nodes is specified, choose a random one from the program
             if given_list is None:
                 if self.curr_prog.length > 1:
-                    rand_node_pos = random.randint(1,
-                                                   self.curr_prog.length - 1)  # exclude DSubTree node, randint is [a,b] inclusive
+                    # exclude DSubTree node, randint is [a,b] inclusive
+                    rand_node_pos = random.randint(1, self.curr_prog.length - 1)
                 else:
                     return None, None
             elif len(given_list) == 0:
@@ -486,9 +394,11 @@ class MCMCProgram:
 
             node = self.get_node_in_position(rand_node_pos)
 
-            if (node.parent.api_num not in branches) and (node.api_num not in unselectable_nodes):
+            # Check validity of selected node
+            if (node.parent.api_num not in unselectable_parent_dnodes) and (node.api_num not in unselectable_nodes):
                 return node, rand_node_pos
 
+            # If node is invalid, check if valid node exists in program or given list
             if selectable_node_exists_in_program is None:
                 nodes, _ = self.get_node_names_and_edges()
                 if given_list is not None:
@@ -497,7 +407,7 @@ class MCMCProgram:
                     if i == 0:
                         nodes[i] = 0
                     else:
-                        if not (nodes[i] not in unselectable_nodes and nodes[i-1] not in branches):
+                        if not (nodes[i] not in unselectable_nodes and nodes[i - 1] not in unselectable_parent_dnodes):
                             nodes[i] = 0
                 if sum(nodes) == 0:
                     return None, None
@@ -505,34 +415,59 @@ class MCMCProgram:
                     selectable_node_exists_in_program = True
 
     def get_non_stop_random_pos(self):
-        while True:
-            rand_node_pos = random.randint(1,
-                                           self.curr_prog.length - 1)  # exclude DSubTree node, randint is [a,b] inclusive
+        """
+        Returns a node and its position of a random node in the current program that is not a DStop node.
+        :return: (Node) selected node, (int) selected node's position
+        """
+        while True:  # This shouldn't cause problems because at the very least the program must contain constraint apis
+            # exclude DSubTree node, randint is [a,b] inclusive
+            rand_node_pos = random.randint(1, self.curr_prog.length - 1)
             node = self.get_node_in_position(rand_node_pos)
 
             if node.api_name != 'DStop':
                 return node, rand_node_pos
 
+    # def get_deletable_node(self):
+    #     while True:
+    #         # exclude DSubTree node, randint is [a,b] inclusive
+    #         rand_node_pos = random.randint(1,
+    #                                        self.curr_prog.length - 1)
+    #         node = self.get_node_in_position(rand_node_pos)
+    #
+    #         if node.api_name != 'DStop':
+    #             return node, rand_node_pos
+
     def add_random_node(self):
-        # if tree not at max AST depth
+        """
+        Adds a node to a random position in the current program.
+        Node is chosen probabilistically based on all the nodes that come before it (DFS).
+        :return:
+        """
+        # if tree not at max AST depth, can add a node
         if self.curr_prog.length >= self.max_depth:
             return None
 
+        # Get a random position in the tree to be the parent of the new node to be added
         rand_node_pos = random.randint(1,
                                        self.curr_prog.length - 1)  # exclude DSubTree node, randint is [a,b] inclusive
-        # new_node_api = self.get_random_api()
         new_node_parent = self.get_node_in_position(rand_node_pos)
 
-        # print("ast_idx:", self.get_ast_idx(rand_node_pos))
+        # Probabilistically choose the node that should appear after selected random parent
         new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos)]
 
-        # NOTE: what to do if I pick a DBranch or DLoop or DExcept?
+        if new_node_api == 'DBranch':
+            return self.grow_dbranch(new_node_parent)
+        elif new_node_api == 'DLoop':
+            return self.grow_dloop(new_node_parent)
+        elif new_node_api == 'DExcept':
+            return self.grow_dexcept(new_node_parent)
+
         if new_node_parent.sibling is None:
-            new_node = self.createAndAddNode(new_node_api, new_node_parent, SIBLING_EDGE)
+            new_node = self.create_and_add_node(new_node_api, new_node_parent, SIBLING_EDGE)
         else:
             old_sibling_node = new_node_parent.sibling
             new_node_parent.remove_node(SIBLING_EDGE)
-            new_node = self.createAndAddNode(new_node_api, new_node_parent, SIBLING_EDGE)
+            new_node = self.create_and_add_node(new_node_api, new_node_parent, SIBLING_EDGE)
             new_node.add_node(old_sibling_node, SIBLING_EDGE)
 
         self.calculate_probability()
@@ -579,10 +514,10 @@ class MCMCProgram:
 
     def random_swap(self):
         # get 2 distinct node positions
-        node1, rand_node1_pos = self.get_non_branched_random_pos()
+        node1, rand_node1_pos = self.get_valid_random_node()
         other_nodes = list(range(1, self.curr_prog.length))
         other_nodes.remove(rand_node1_pos)
-        node2, node2_pos = self.get_non_branched_random_pos(given_list=other_nodes)
+        node2, node2_pos = self.get_valid_random_node(given_list=other_nodes)
 
         if node1 is None or node2 is None:
             return None, None
@@ -727,96 +662,113 @@ class MCMCProgram:
 
         return len(constraints) == 0
 
+    def grow_dbranch(self, parent):
+        # remove parent's current sibling node if there
+        parent_sibling = parent.sibling
+        parent.remove_node(SIBLING_EDGE)
+
+        # Create a DBranch node
+        dbranch = self.create_and_add_node('DBranch', parent, SIBLING_EDGE)
+        dbranch_pos = self.get_nodes_position(dbranch)
+        assert dbranch_pos > 0, "Error: DBranch position couldn't be found"
+
+        # Add parent's old sibling node to DBranch with sibling edge
+        dbranch.add_node(parent_sibling, SIBLING_EDGE)
+
+        # If adding DBranch to end of tree, do not add DStop node to last sibling of branch
+        add_stop_node_to_end_branch = not (dbranch_pos == (self.curr_prog.length - 1))
+
+        # Create condition as DBranch child
+        condition = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dbranch_pos)], dbranch, CHILD_EDGE)
+        cond_pos = self.get_nodes_position(condition)
+        assert cond_pos > 0, "Error: Condition node position couldn't be found"
+
+        # Add then api as child to condition node
+        then_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos)], condition, CHILD_EDGE)
+        self.create_and_add_node('DStop', then_node, SIBLING_EDGE)
+
+        # Add else api as sibling to condition node
+        else_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos)], condition, SIBLING_EDGE)
+        if add_stop_node_to_end_branch:
+            self.create_and_add_node('DStop', else_node, SIBLING_EDGE)
+
+        return dbranch
+
+    def grow_dloop(self, parent):
+        # remove parent's current sibling node if there
+        parent_sibling = parent.sibling
+        parent.remove_node(SIBLING_EDGE)
+
+        # Create a DLoop node
+        dloop = self.create_and_add_node('DLoop', parent, SIBLING_EDGE)
+        dloop_pos = self.get_nodes_position(dloop)
+        assert dloop_pos > 0, "Error: DLoop position couldn't be found"
+
+        # Add parent's old sibling node to DLoop with sibling edge
+        dloop.add_node(parent_sibling, SIBLING_EDGE)
+
+        # If adding DLoop to end of tree, do not add DStop node to last sibling of branch
+        add_stop_node_to_end_branch = not (dloop_pos == (self.curr_prog.length - 1))
+
+        # Create condition as DLoop child
+        condition = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dloop_pos)], dloop, CHILD_EDGE)
+        cond_pos = self.get_nodes_position(condition)
+        assert cond_pos > 0, "Error: Condition node position couldn't be found"
+
+        # Add body api as child to condition node
+        body = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos)], condition, CHILD_EDGE)
+        if add_stop_node_to_end_branch:
+            self.create_and_add_node('DStop', body, SIBLING_EDGE)
+
+        return dloop
+
+    def grow_dexcept(self, parent):
+        # remove parent's current sibling node if there
+        parent_sibling = parent.sibling
+        parent.remove_node(SIBLING_EDGE)
+
+        # Create a DExcept node
+        dexcept = self.create_and_add_node('DExcept', parent, SIBLING_EDGE)
+        dexcept_pos = self.get_nodes_position(dexcept)
+        assert dexcept_pos > 0, "Error: DExcept position couldn't be found"
+
+        # Add parent's old silibng node to DExcept with sibling edge
+        dexcept.add_node(parent_sibling, SIBLING_EDGE)
+
+        # If adding DLoop to end of tree, do not add DStop node to last sibling of branch
+        add_stop_node_to_end_branch = not (dexcept_pos == (self.curr_prog.length - 1))
+
+        # Create catch as DExcept child
+        catch = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dexcept_pos)], dexcept, CHILD_EDGE)
+        catch_pos = self.get_nodes_position(catch)
+        assert catch_pos > 0, "Error: Catch node position couldn't be found"
+
+        # Add try api as child to catch node
+        try_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(catch_pos)], catch, CHILD_EDGE)
+        if add_stop_node_to_end_branch:
+            self.create_and_add_node('DStop', try_node, SIBLING_EDGE)
+
+        return dexcept
+
     def add_random_dnode(self):
         dnode_type = random.choice(['DBranch', 'DLoop', 'DExcept'])
 
-        parent, _ = self.get_non_branched_random_pos()
+        parent, _ = self.get_valid_random_node()
 
         if parent is None:
             return None
 
         if parent.child is not None:
-            print("WARNING: there's a bug in get_non_branched_random_pos because parent node has child")
+            print("WARNING: there's a bug in get_valid_random_node because parent node has child")
             return None
 
-        # remove parent's current sibling node if there
-        parent_sibling = parent.sibling
-        parent.remove_node(SIBLING_EDGE)
-
         if dnode_type == 'DBranch':
-            # Create a DBranch node
-            dbranch = self.createAndAddNode('DBranch', parent, SIBLING_EDGE)
-            dbranch_pos = self.get_nodes_position(dbranch)
-            assert dbranch_pos > 0, "Error: DBranch position couldn't be found"
-
-            # Add parent's old sibling node to DBranch with sibling edge
-            dbranch.add_node(parent_sibling, SIBLING_EDGE)
-
-            # If adding DBranch to end of tree, do not add DStop node to last sibling of branch
-            add_stop_node_to_end_branch = not (dbranch_pos == (self.curr_prog.length - 1))
-
-            # Create condition as DBranch child
-            condition = self.createAndAddNode(self.node2vocab[self.get_ast_idx(dbranch_pos)], dbranch, CHILD_EDGE)
-            cond_pos = self.get_nodes_position(condition)
-            assert cond_pos > 0, "Error: Condition node position couldn't be found"
-
-            # Add then api as child to condition node
-            then_node = self.createAndAddNode(self.node2vocab[self.get_ast_idx(cond_pos)], condition, CHILD_EDGE)
-            self.createAndAddNode('DStop', then_node, SIBLING_EDGE)
-
-            # Add else api as sibling to condition node
-            else_node = self.createAndAddNode(self.node2vocab[self.get_ast_idx(cond_pos)], condition, SIBLING_EDGE)
-            if add_stop_node_to_end_branch:
-                self.createAndAddNode('DStop', else_node, SIBLING_EDGE)
-
-            return dbranch
+            return self.grow_dbranch(parent)
 
         elif dnode_type == 'DLoop':
-            # Create a DLoop node
-            dloop = self.createAndAddNode('DLoop', parent, SIBLING_EDGE)
-            dloop_pos = self.get_nodes_position(dloop)
-            assert dloop_pos > 0, "Error: DLoop position couldn't be found"
-
-            # Add parent's old sibling node to DLoop with sibling edge
-            dloop.add_node(parent_sibling, SIBLING_EDGE)
-
-            # If adding DLoop to end of tree, do not add DStop node to last sibling of branch
-            add_stop_node_to_end_branch = not (dloop_pos == (self.curr_prog.length - 1))
-
-            # Create condition as DLoop child
-            condition = self.createAndAddNode(self.node2vocab[self.get_ast_idx(dloop_pos)], dloop, CHILD_EDGE)
-            cond_pos = self.get_nodes_position(condition)
-            assert cond_pos > 0, "Error: Condition node position couldn't be found"
-
-            # Add body api as child to condition node
-            body = self.createAndAddNode(self.node2vocab[self.get_ast_idx(cond_pos)], condition, CHILD_EDGE)
-            if add_stop_node_to_end_branch:
-                self.createAndAddNode('DStop', body, SIBLING_EDGE)
-
-            return dloop
+            return self.grow_dloop(parent)
         else:
-            # Create a DExcept node
-            dexcept = self.createAndAddNode('DExcept', parent, SIBLING_EDGE)
-            dexcept_pos = self.get_nodes_position(dexcept)
-            assert dexcept_pos > 0, "Error: DExcept position couldn't be found"
-
-            # Add parent's old silibng node to DExcept with sibling edge
-            dexcept.add_node(parent_sibling, SIBLING_EDGE)
-
-            # If adding DLoop to end of tree, do not add DStop node to last sibling of branch
-            add_stop_node_to_end_branch = not (dexcept_pos == (self.curr_prog.length - 1))
-
-            # Create catch as DExcept child
-            catch = self.createAndAddNode(self.node2vocab[self.get_ast_idx(dexcept_pos)], dexcept, CHILD_EDGE)
-            catch_pos = self.get_nodes_position(catch)
-            assert catch_pos > 0, "Error: Catch node position couldn't be found"
-
-            # Add try api as child to catch node
-            try_node = self.createAndAddNode(self.node2vocab[self.get_ast_idx(catch_pos)], catch, CHILD_EDGE)
-            if add_stop_node_to_end_branch:
-                self.createAndAddNode('DStop', try_node, SIBLING_EDGE)
-
-            return dexcept
+            return self.grow_dexcept(parent)
 
     def undo_add_random_dnode(self, dnode):
         dnode_sibling = dnode.sibling
@@ -945,6 +897,73 @@ class MCMCProgram:
         nodes, edges = self.get_vector_representation()
         nodes = [self.node2vocab[node] for node in nodes]
         return nodes, edges
+
+    def get_next_ast_state_and_prob(self, ast_node, ast_edge, ast_state):
+        feed = {self.model.nodes.name: np.array(ast_node, dtype=np.int32),
+                self.model.edges.name: np.array(ast_edge, dtype=np.bool)}
+        for i in range(self.config.decoder.num_layers):
+            feed[self.model.initial_state[i].name] = np.array(ast_state[i])
+
+        [ast_state, ast_ln_prob] = self.sess.run(
+            [self.model.decoder.ast_tree.state, self.ast_ln_probs], feed)
+
+        return ast_state, ast_ln_prob
+
+    def get_ast_idx(self, parent_pos):
+        void_ret_type = self.config.vocab.ret_dict["void"]
+        nodes, edges = self.get_vector_representation()
+        node = np.zeros([1, 1], dtype=np.int32)
+        edge = np.zeros([1, 1], dtype=np.bool)
+        fp = np.zeros([1, 1], dtype=np.int32)
+        for i in range(parent_pos + 1):
+            node[0][0] = nodes[i]
+            edge[0][0] = edges[i]
+            feed = {self.model.edges.name: node, self.model.nodes.name: edge,
+                    self.model.return_type: [void_ret_type],
+                    self.model.formal_params: fp}
+            if i < parent_pos:
+                self.sess.run(self.model.decoder.ast_logits, feed)
+            else:
+                ast_idx = tf.multinomial(self.model.decoder.ast_logits[0], 1)
+                ast_idx = self.sess.run(ast_idx, feed)
+                return ast_idx[0][0]
+
+    def random_walk_latent_space(self):
+        samples = tf.random.normal([self.config.batch_size, self.config.latent_size], mean=0., stddev=1.,
+                                   dtype=tf.float32)
+        latent_state = self.encoder_mean + tf.sqrt(self.encoder_covar) * samples
+        self.latent_state = self.sess.run(latent_state, {})
+
+    def update_latent_state(self):
+        void_ret_type = self.config.vocab.ret_dict["void"]
+        nodes, edges = self.get_vector_representation()
+        node = np.zeros([1, 1], dtype=np.int32)
+        edge = np.zeros([1, 1], dtype=np.bool)
+        fp = np.zeros([1, 1], dtype=np.int32)
+        state = None
+        for i in range(self.curr_prog.length):
+            node[0][0] = nodes[i]
+            edge[0][0] = edges[i]
+            feed = {self.model.edges.name: node, self.model.nodes.name: edge,
+                    self.model.return_type: [void_ret_type],
+                    self.model.formal_params: fp}
+            if i < self.curr_prog.length - 1:
+                state = self.sess.run(self.model.latent_state, feed)
+            else:  # for last node, save encoder mean and variance as well
+                [state, self.encoder_mean, self.encoder_covar] = self.sess.run(
+                    [self.model.latent_state, self.model.encoder.output_mean, self.model.encoder.output_covar], feed)
+                self.latent_state = state
+        return state
+
+    def get_initial_decoder_state(self):
+        # latent_state = np.random.normal(loc=0., scale=1.,
+        #                  size=(self.config.batch_size, self.config.latent_size))
+        initial_state = self.sess.run(self.model.initial_state,
+                                      feed_dict={self.model.latent_state: self.latent_state})
+        # print("init shape", np.array(initial_state).shape)
+        initial_state = np.transpose(np.array(initial_state), [1, 0, 2])  # batch-first
+        self.initial_state = initial_state
+        return initial_state
 
     def calculate_probability(self):
         nodes, edges = self.get_vector_representation()
