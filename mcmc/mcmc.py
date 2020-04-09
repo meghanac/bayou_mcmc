@@ -427,15 +427,15 @@ class MCMCProgram:
             if node.api_name != 'DStop':
                 return node, rand_node_pos
 
-    # def get_deletable_node(self):
-    #     while True:
-    #         # exclude DSubTree node, randint is [a,b] inclusive
-    #         rand_node_pos = random.randint(1,
-    #                                        self.curr_prog.length - 1)
-    #         node = self.get_node_in_position(rand_node_pos)
-    #
-    #         if node.api_name != 'DStop':
-    #             return node, rand_node_pos
+    def get_deletable_node(self):
+        while True:
+            # exclude DSubTree node, randint is [a,b] inclusive
+            rand_node_pos = random.randint(1,
+                                           self.curr_prog.length - 1)
+            node = self.get_node_in_position(rand_node_pos)
+
+            if node.api_name != 'DStop' and node.parent_edge != CHILD_EDGE:
+                return node, rand_node_pos
 
     def add_random_node(self):
         """
@@ -455,6 +455,7 @@ class MCMCProgram:
         # Probabilistically choose the node that should appear after selected random parent
         new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos)]
 
+        # If a dnode is chosen, grow it out
         if new_node_api == 'DBranch':
             return self.grow_dbranch(new_node_parent)
         elif new_node_api == 'DLoop':
@@ -462,6 +463,7 @@ class MCMCProgram:
         elif new_node_api == 'DExcept':
             return self.grow_dexcept(new_node_parent)
 
+        # Add node to parent
         if new_node_parent.sibling is None:
             new_node = self.create_and_add_node(new_node_api, new_node_parent, SIBLING_EDGE)
         else:
@@ -470,11 +472,17 @@ class MCMCProgram:
             new_node = self.create_and_add_node(new_node_api, new_node_parent, SIBLING_EDGE)
             new_node.add_node(old_sibling_node, SIBLING_EDGE)
 
+        # Calculate probability of new program
         self.calculate_probability()
 
         return new_node
 
     def undo_add_random_node(self, added_node):
+        """
+        Undoes add_random_node() and returns current program to state it was in before the given node was added.
+        :param added_node: (Node) the node that was added in add_random_node() that is to be removed.
+        :return:
+        """
         if added_node.sibling is None:
             added_node.parent.remove_node(SIBLING_EDGE)
         else:
@@ -486,6 +494,10 @@ class MCMCProgram:
         self.curr_log_prob = self.prev_log_prob
 
     def delete_random_node(self):
+        """
+        Deletes a random node that is not a dnode.
+        :return:
+        """
         node, _ = self.get_non_stop_random_pos()
         parent_node = node.parent
         parent_edge = node.parent_edge
