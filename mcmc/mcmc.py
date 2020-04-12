@@ -444,7 +444,8 @@ class MCMCProgram:
 
             # If node is invalid, check if valid node exists in program or given list
             if selectable_node_exists_in_program is None:
-                nodes, _ = self.get_node_names_and_edges()
+                print("-----------------HERE-----------")
+                nodes, _ = self.get_vector_representation()
                 if given_list is not None:
                     nodes = [nodes[i] for i in given_list]
                 for i in range(len(nodes)):
@@ -504,6 +505,7 @@ class MCMCProgram:
 
         # Probabilistically choose the node that should appear after selected random parent
         new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos)]
+
 
         # If a dnode is chosen, grow it out
         if new_node_api == 'DBranch':
@@ -917,10 +919,6 @@ class MCMCProgram:
         Randomly chooses a transformation and transforms the current program if it is accepted.
         :return: (bool) whether current tree was transformed or not
         """
-        # print("-------------------")
-        nodes, edges = self.get_node_names_and_edges()
-        # print("nodes:", nodes)
-        # print("edges:", edges)
         move = random.choice(['add', 'delete', 'swap'])
         print("move:", move)
 
@@ -928,44 +926,30 @@ class MCMCProgram:
             self.add += 1
             added_node = self.add_random_node()
             if added_node is None:
-                # add logging that tree is at max capacity
-                print("added_node is None")
                 return False
-            print("added node:", added_node.api_name)
-            # print("added node parent:", added_node.parent.api_name)
-            print("add node valid: ", self.validate_and_update_program())
             if not self.validate_and_update_program():
-                # print("undo add random node")
                 self.undo_add_random_node(added_node)
                 return False
             self.add_accepted += 1
         elif move == 'delete':
             self.delete += 1
             node, parent_node, parent_edge = self.delete_random_node()
-            # print("deleted node is None:", node is None)
             if not self.validate_and_update_program():
-                # print("undo delete random node:", node.api_name)
                 self.undo_delete_random_node(node, parent_node, parent_edge)
                 return False
-            # print("deleted node:", node.api_name)
             self.delete_accepted += 1
         elif move == 'swap':
             self.swap += 1
             node1, node2 = self.random_swap()
-            # print("node 1:", node1 is None, "node 2:", node2 is None)
             if node1 is None or node2 is None:
-                # print("node1 or node2 is None")
                 return False
-            # print("swap node1:", node1.api_name, "swap node2:", node2.api_name)
             if not self.validate_and_update_program():
-                # print("undo swap nodes")
                 self.swap_nodes(node1, node2)
                 self.curr_log_prob = self.prev_log_prob
                 return False
             self.swap_accepted += 1
         else:
             raise ValueError('move not defined')  # TODO: remove once tested
-            # return False
 
         print("move was successful")
         return True
@@ -991,6 +975,13 @@ class MCMCProgram:
         return ast_state, ast_ln_prob
 
     def get_ast_idx(self, parent_pos):
+        # return self.get_ast_idx_all_vocab(parent_pos)
+
+        # return self.get_ast_idx_top_k(parent_pos)
+
+        return self.get_ast_idx_random_top_k(parent_pos)
+
+    def get_ast_idx_all_vocab(self, parent_pos):
         """
         Returns api number (based on vocabulary). Probabilistically selected based on parent node.
         :param parent_pos: (int) position of parent node in current program (by DFS)
@@ -1016,6 +1007,77 @@ class MCMCProgram:
                 ast_idx = tf.multinomial(self.model.decoder.ast_logits[0], 1)
                 ast_idx = self.sess.run(ast_idx, feed)
                 return ast_idx[0][0]
+
+    def get_ast_idx_top_k(self, parent_pos, top_k=10):
+        """
+                Returns api number (based on vocabulary). Probabilistically selected from top k based on parent node.
+                :param parent_pos: (int) position of parent node in current program (by DFS)
+                :return: (int) number of api in vocabulary
+                """
+        void_ret_type = self.config.vocab.ret_dict["void"]
+        nodes, edges = self.get_vector_representation()
+        node = np.zeros([1, 1], dtype=np.int32)
+        edge = np.zeros([1, 1], dtype=np.bool)
+        fp = np.zeros([1, 1], dtype=np.int32)
+
+        # Pass in all nodes that appear before and including the parent through the decoder to get normalized logits
+        for i in range(parent_pos + 1):
+            node[0][0] = nodes[i]
+            edge[0][0] = edges[i]
+            feed = {self.model.edges.name: node, self.model.nodes.name: edge,
+                    self.model.return_type: [void_ret_type],
+                    self.model.formal_params: fp}
+            if i < parent_pos:
+                self.sess.run(self.model.decoder.ast_logits, feed)
+            else:
+                # get topk logits
+                # index twice into logits because logits.shape = [1, 1, vocab_size])
+
+                # # ---- CODE FOR DEBUGGING ------
+                # logits = self.model.decoder.ast_logits[0]
+                # vals, idxs = tf.math.top_k(logits, k=top_k)
+                # chosen_idx, vals, idxs, logits = self.sess.run([tf.multinomial(vals, 1)[0][0], vals[0], idxs[0], logits], feed)
+                # names = [self.node2vocab[i] for i in idxs]
+                # print(sorted(logits[0], reverse=True))
+                # print(chosen_idx)
+                # print(self.node2vocab[idxs[chosen_idx]])
+                # print(idxs)
+                # print(names)
+                # print(vals)
+
+                vals, idxs = tf.math.top_k(self.model.decoder.ast_logits[0], k=top_k)
+                chosen_idx = self.sess.run(idxs[0][tf.multinomial(vals, 1)[0][0]], feed)
+
+                return chosen_idx
+
+    def get_ast_idx_random_top_k(self, parent_pos, top_k=10):
+        """
+                Returns api number (based on vocabulary). Uniform randomly selected from top k based on parent node.
+                :param parent_pos: (int) position of parent node in current program (by DFS)
+                :return: (int) number of api in vocabulary
+                """
+        void_ret_type = self.config.vocab.ret_dict["void"]
+        nodes, edges = self.get_vector_representation()
+        node = np.zeros([1, 1], dtype=np.int32)
+        edge = np.zeros([1, 1], dtype=np.bool)
+        fp = np.zeros([1, 1], dtype=np.int32)
+
+        # Pass in all nodes that appear before and including the parent through the decoder to get normalized logits
+        for i in range(parent_pos + 1):
+            node[0][0] = nodes[i]
+            edge[0][0] = edges[i]
+            feed = {self.model.edges.name: node, self.model.nodes.name: edge,
+                    self.model.return_type: [void_ret_type],
+                    self.model.formal_params: fp}
+            if i < parent_pos:
+                self.sess.run(self.model.decoder.ast_logits, feed)
+            else:
+                rand_idx = random.randint(0, top_k-1)  # Note: randint is a,b inclusive
+                _, idxs = tf.math.top_k(self.model.decoder.ast_logits[0], k=top_k)
+                chosen_idx = self.sess.run(idxs[0][rand_idx], feed)
+
+                return chosen_idx
+
 
     def random_walk_latent_space(self):
         """
@@ -1103,6 +1165,6 @@ class MCMCProgram:
         if self.transform_tree():
             # If successful, update encoder's latent state
             self.update_latent_state()
-
+        # self.transform_tree()
         self.random_walk_latent_space()
         self.get_initial_decoder_state()

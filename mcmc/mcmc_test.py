@@ -18,21 +18,28 @@ STOP = 'DStop'
 DBRANCH = 'DBranch'
 DLOOP = 'DLoop'
 DEXCEPT = 'DExcept'
+STR_LEN = 'java.lang.String.length()'
 
 # SAVED MODEL
 SAVED_MODEL_PATH = '/Users/meghanachilukuri/Documents/GitHub/bayou_mcmc/trainer_vae/save/aws/save/'
 
 
 class MCMCProgramTest(unittest.TestCase):
-    def create_base_program(self):
-        test_prog = MCMCProgramWrapper(SAVED_MODEL_PATH)
+    def create_base_program(self, constraints):
+        test_prog = MCMCProgramWrapper(SAVED_MODEL_PATH, constraints)
         test_prog.update_nodes_and_edges()
-        expected_nodes = [START, STR_BUF]
-        expected_edges = [False]
+        expected_nodes = [START]
+        expected_edges = []
+        for i in test_prog.constraints:
+            expected_nodes.append(i)
+            expected_edges.append(False)
         return test_prog, expected_nodes, expected_edges
 
+    def create_str_buf_base_program(self):
+        return self.create_base_program([STR_BUF, 'abc'])
+
     def create_eight_node_program(self):
-        test_prog, expected_nodes, expected_edges = self.create_base_program()
+        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
         test_prog.add_to_first_available_node(STR_BUF, SIBLING_EDGE)
         test_prog.add_to_first_available_node(STR_APP, CHILD_EDGE)
         test_prog.add_to_first_available_node(READ_LINE, CHILD_EDGE)
@@ -78,7 +85,7 @@ class MCMCProgramTest(unittest.TestCase):
         return test_prog, dexcept
 
     def create_all_dtypes_program(self):
-        test_prog, expected_nodes, expected_edges = self.create_base_program()
+        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
         dbranch_parent = test_prog.prog.get_node_in_position(1)
         test_prog, dbranch = self.create_dbranch(test_prog, dbranch_parent)
         test_prog, dloop = self.create_dloop(test_prog, dbranch)
@@ -95,7 +102,7 @@ class MCMCProgramTest(unittest.TestCase):
 
     def test_init(self):
         # Test basic program
-        test_prog, expected_nodes, expected_edges = self.create_base_program()
+        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
 
         self.assertListEqual(test_prog.nodes, expected_nodes, "Nodes must be equal to expected nodes in program.")
         self.assertListEqual(test_prog.edges, expected_edges, "Edges must be equal to expected nodes in program.")
@@ -115,7 +122,7 @@ class MCMCProgramTest(unittest.TestCase):
         print(test_prog.prog.curr_log_prob)
 
     def test_create_and_add_node(self):
-        test_prog, expected_nodes, expected_edges = self.create_base_program()
+        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
 
         # Test adding sibling node
         test_prog.add_to_first_available_node(STR_BUF, SIBLING_EDGE)
@@ -419,9 +426,13 @@ class MCMCProgramTest(unittest.TestCase):
         pass
 
     def test_mcmc(self):
-        test_prog, expected_nodes, expected_edges = self.create_base_program()
+        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_LEN, 'slkfje'])
 
-        for i in range(100):
+        test_prog.prog.max_depth = 15
+
+        num_iter = 50
+
+        for i in range(num_iter):
             print("\n", i)
             # print(i)
             test_prog.prog.mcmc()
@@ -433,24 +444,40 @@ class MCMCProgramTest(unittest.TestCase):
         test_prog, expected_nodes, expected_edges = self.create_all_dtypes_program()
         self.assertTrue(test_prog.prog.check_validity())
 
+    @mock.patch.object(random, 'choice')
+    def test_dev(self, mock_rand_choice):
+        mock_rand_choice.return_value = 'add'
+
+        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_LEN, 'slkfje'])
+
+        test_prog.prog.max_depth = 15
+
+        num_iter = 1
+
+        for i in range(num_iter):
+            print("\n", i)
+            # print(i)
+            test_prog.prog.mcmc()
+            test_prog.update_nodes_and_edges(verbose=True)
+        #
+        test_prog.print_summary_logs()
 
 
 class MCMCProgramWrapper:
-    def __init__(self, save_dir):
+    def __init__(self, save_dir, constraints):
+        # init MCMCProgram
         self.prog = MCMCProgram(save_dir)
-        self.constraints = [STR_BUF, 'abc']
-        self.prog.init_program(self.constraints)
+        self.prog.init_program(constraints)
+
+        self.constraints = self.prog.constraints
         self.vocab2node = self.prog.vocab2node
         self.node2vocab = self.prog.node2vocab
-        self.nodes = [START, STR_BUF]
-        self.edges = [False]
-        self.parents = [None, START]
 
-    # def add_stop_nodes(self):
-    #     curr_node = self.prog.curr_prog
-    #     stack = []
-    #     while curr_node is not None:
-    #         if curr_node
+        # init nodes, edges and parents
+        self.nodes = []
+        self.edges = []
+        self.parents = []
+        self.update_nodes_and_edges()
 
     def add_to_first_available_node(self, api_name, edge):
         curr_node = self.prog.curr_prog

@@ -311,6 +311,9 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
 
             counter += 1
 
+            if counter % 100000 == 0:
+                print("Copied " + str(counter) + " asts to json file")
+
         if num_programs is not None and counter == num_programs:
             break
 
@@ -403,7 +406,7 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
         analysis_f.write("\n")
 
 
-copy_json_data_limit_vocab("data_surrounding_methods.json", "no_vocab_constraint_min_3.json", 100000, min_length=3, is_test_data=False)
+copy_json_data_limit_vocab("data_surrounding_methods.json", "all_training_data.json", 200000, is_test_data=False)
 
 # copy_json_data_limit_vocab("data_surrounding_methods.json", "no_vocab_constraint_min_3.json", 100000, num_programs=10000,
 #                            is_test_data=False, min_length=3)

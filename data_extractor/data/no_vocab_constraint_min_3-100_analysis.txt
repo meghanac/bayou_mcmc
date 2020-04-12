@@ -1,0 +1,2211 @@
+Old data filename: data_surrounding_methods.json
+New data filename: no_vocab_constraint_min_3-100.json
+Vocabulary size limit: 100000
+Actual vocabulary size: 465
+Number of programs in new dataset: 100
+Minimum program length: 3
+
+Program Length Frequency (In Order of Most-Least Frequent) (Excludes 'DBranch', 'DLoop' and 'DExcept'):
+	 program length of 3: 42 (42.0%)
+	 program length of 4: 22 (22.0%)
+	 program length of 5: 18 (18.0%)
+	 program length of 7: 8 (8.0%)
+	 program length of 6: 7 (7.000000000000001%)
+	 program length of 9: 2 (2.0%)
+	 program length of 8: 1 (1.0%)
+
+Vocabulary Occurrence (Includes Multiple Occurrences in Single Program):
+	1) DBranch: 32
+	2) java.lang.String.length(): 16
+	3) DLoop: 12
+	4) java.lang.StringBuilder.append(java.lang.String): 12
+	5) java.lang.Throwable.printStackTrace(): 11
+	6) DExcept: 10
+	7) java.lang.StringBuffer.append(java.lang.String): 10
+	8) java.io.File.File(java.lang.String): 10
+	9) java.lang.String.equals(java.lang.Object): 10
+	10) java.lang.StringBuilder.toString(): 9
+	11) java.util.ArrayList<Tau_E>.ArrayList(): 9
+	12) java.lang.Integer.parseInt(java.lang.String): 7
+	13) java.lang.String.substring(int): 7
+	14) java.util.ArrayList<java.lang.String>.ArrayList<String>(): 7
+	15) java.util.List<java.lang.String>.add(java.lang.String): 6
+	16) java.awt.Dimension.Dimension(int,int): 5
+	17) java.lang.String.format(java.lang.String,java.lang.Object[]): 5
+	18) java.lang.StringBuffer.append(java.lang.Object): 5
+	19) java.lang.String.indexOf(int): 5
+	20) java.lang.StringBuilder.StringBuilder(java.lang.String): 5
+	21) java.lang.StringBuilder.append(java.lang.Object): 5
+	22) java.lang.String.startsWith(java.lang.String): 5
+	23) java.lang.StringBuffer.StringBuffer(): 4
+	24) java.lang.StringBuffer.toString(): 4
+	25) java.io.File.File(java.io.File,java.lang.String): 4
+	26) java.sql.ResultSet.getString(java.lang.String): 4
+	27) java.lang.String.contains(java.lang.CharSequence): 4
+	28) java.lang.String.String(char[],int,int): 4
+	29) java.io.FileInputStream.FileInputStream(java.io.File): 4
+	30) java.lang.String.valueOf(int): 4
+	31) java.lang.System.nanoTime(): 3
+	32) java.lang.Thread.sleep(long): 3
+	33) java.lang.StringBuilder.StringBuilder(): 3
+	34) java.util.HashSet<Tau_E>.HashSet(): 3
+	35) java.lang.Integer.valueOf(java.lang.String): 3
+	36) java.lang.String.substring(int,int): 3
+	37) java.util.List<java.lang.String>.size(): 3
+	38) java.util.Arrays.asList(T[]): 3
+	39) java.sql.ResultSet.next(): 3
+	40) java.lang.System.arraycopy(java.lang.Object,int,java.lang.Object,int,int): 3
+	41) java.lang.Class<Tau_T>.getSimpleName(): 3
+	42) java.lang.Class<Tau_T>.getName(): 3
+	43) java.lang.Long.toString(long): 3
+	44) java.lang.System.exit(int): 3
+	45) java.lang.Thread.Thread(java.lang.Runnable): 3
+	46) java.lang.Thread.start(): 3
+	47) java.io.File.getParentFile(): 3
+	48) java.lang.String.split(java.lang.String): 3
+	49) java.lang.System.currentTimeMillis(): 3
+	50) java.util.Properties.getProperty(java.lang.String): 2
+	51) java.lang.String.charAt(int): 2
+	52) java.util.Collections.sort(java.util.List): 2
+	53) java.lang.StringBuilder.StringBuilder(int): 2
+	54) java.lang.StringBuffer.append(char): 2
+	55) java.io.Writer.write(char[]): 2
+	56) java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream): 2
+	57) javax.swing.JComponent.setPreferredSize(java.awt.Dimension): 2
+	58) java.lang.String.getBytes(): 2
+	59) java.lang.System.getenv(java.lang.String): 2
+	60) java.lang.System.setProperty(java.lang.String,java.lang.String): 2
+	61) java.security.Signature.update(byte[]): 2
+	62) java.io.File.toURI(): 2
+	63) java.io.File.File(java.lang.String,java.lang.String): 2
+	64) java.util.List<java.lang.String>.toArray(T[]): 2
+	65) java.sql.ResultSet.getDate(java.lang.String): 2
+	66) java.net.URL.URL(java.lang.String): 2
+	67) java.util.Date.toString(): 2
+	68) javax.swing.JLabel.JLabel(): 2
+	69) javax.swing.JTextField.JTextField(java.lang.String): 2
+	70) java.io.OutputStream.write(int): 2
+	71) java.lang.String.valueOf(char[]): 2
+	72) java.lang.System.getProperty(java.lang.String): 2
+	73) $NOT$java.lang.String.startsWith(java.lang.String): 2
+	74) java.util.Set<java.lang.String>.add(java.lang.String): 2
+	75) $NOT$java.lang.String.equals(java.lang.Object): 2
+	76) java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>(): 2
+	77) java.io.BufferedReader.readLine(): 2
+	78) javax.swing.JPanel.JPanel(): 2
+	79) javax.swing.JComponent.setOpaque(boolean): 2
+	80) java.util.HashSet<java.lang.String>.HashSet<String>(): 2
+	81) java.io.FileOutputStream.FileOutputStream(java.io.File): 2
+	82) java.util.Collections.emptyList(): 2
+	83) java.io.File.exists(): 2
+	84) java.io.ObjectInputStream.defaultReadObject(): 1
+	85) java.io.ObjectInputStream.readInt(): 1
+	86) java.util.Vector<java.lang.Object>.Vector<Object>(int): 1
+	87) java.io.ObjectInputStream.readObject(): 1
+	88) java.nio.ByteBuffer.allocateDirect(int): 1
+	89) java.nio.ByteBuffer.order(java.nio.ByteOrder): 1
+	90) java.nio.ByteBuffer.putDouble(double): 1
+	91) java.nio.Buffer.flip(): 1
+	92) java.util.LinkedList<java.awt.Point>.LinkedList<Point>(): 1
+	93) java.awt.Point.Point(int,int): 1
+	94) java.util.LinkedList<java.awt.Point>.add(java.awt.Point): 1
+	95) java.util.LinkedList<java.awt.Point>.size(): 1
+	96) java.lang.Character.toUpperCase(char): 1
+	97) java.lang.Class<Tau_T>.getResourceAsStream(java.lang.String): 1
+	98) java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>(): 1
+	99) java.util.ArrayList<javax.xml.transform.Source>.add(javax.xml.transform.Source): 1
+	100) java.io.File.deleteOnExit(): 1
+	101) java.util.zip.ZipFile.openFile(java.lang.String,java.io.File): 1
+	102) java.io.File.getPath(): 1
+	103) java.util.zip.ZipFile.checkZipFile(): 1
+	104) java.lang.StringBuilder.length(): 1
+	105) java.lang.StringBuilder.setLength(int): 1
+	106) java.security.AccessController.contextsForThread(): 1
+	107) java.util.List<java.security.AccessControlContext>.isEmpty(): 1
+	108) java.util.List<java.security.AccessControlContext>.size(): 1
+	109) java.util.List<java.security.AccessControlContext>.get(int): 1
+	110) java.security.SecureRandom.SecureRandom(): 1
+	111) java.util.Random.nextInt(int): 1
+	112) java.lang.StringBuilder.append(char): 1
+	113) java.io.FileWriter.FileWriter(java.io.File): 1
+	114) java.io.BufferedWriter.BufferedWriter(java.io.Writer): 1
+	115) java.io.BufferedWriter.newLine(): 1
+	116) java.io.BufferedWriter.close(): 1
+	117) java.lang.Class<T>.isAssignableFrom(java.lang.Class): 1
+	118) java.util.Set<T>.add(Tau_T): 1
+	119) java.io.DataInputStream.DataInputStream(java.io.InputStream): 1
+	120) java.io.FilterInputStream.close(): 1
+	121) java.util.ArrayList<java.lang.Integer>.ArrayList<Integer>(): 1
+	122) java.util.List<java.lang.Integer>.add(java.lang.Integer): 1
+	123) java.awt.Container.addPropertyChangeListener(java.beans.PropertyChangeListener): 1
+	124) java.io.ByteArrayInputStream.ByteArrayInputStream(byte[]): 1
+	125) java.security.Signature.getInstance(java.lang.String,java.security.Provider): 1
+	126) java.security.Signature.initSign(java.security.PrivateKey): 1
+	127) java.security.Signature.sign(): 1
+	128) java.security.Signature.initVerify(java.security.PublicKey): 1
+	129) java.security.Signature.verify(byte[]): 1
+	130) javax.swing.UIManager.put(java.lang.Object,java.lang.Object): 1
+	131) javax.swing.UIManager.getSystemLookAndFeelClassName(): 1
+	132) javax.swing.UIManager.setLookAndFeel(java.lang.String): 1
+	133) javax.swing.SwingUtilities.updateComponentTreeUI(java.awt.Component): 1
+	134) java.util.List<java.security.cert.CertStore>.iterator(): 1
+	135) java.util.Iterator<java.security.cert.CertStore>.hasNext(): 1
+	136) java.util.ArrayList<java.security.cert.CertStore>.ArrayList<CertStore>(java.util.Collection): 1
+	137) java.util.ArrayList<java.security.cert.CertStore>.ArrayList<CertStore>(): 1
+	138) java.util.ArrayList<java.io.File>.ArrayList<File>(int): 1
+	139) java.util.List<java.io.File>.add(java.io.File): 1
+	140) java.util.ArrayList<java.lang.String>.ArrayList<String>(java.util.Collection): 1
+	141) java.util.List<java.lang.String>.remove(java.lang.Object): 1
+	142) java.sql.ResultSet.getLong(java.lang.String): 1
+	143) java.util.ArrayList.get(int): 1
+	144) java.util.ArrayList.size(): 1
+	145) java.io.OutputStream.write(byte[],int,int): 1
+	146) java.io.OutputStream.close(): 1
+	147) java.lang.Long.valueOf(long): 1
+	148) java.util.concurrent.ScheduledThreadPoolExecutor.ScheduledThreadPoolExecutor(int): 1
+	149) java.util.concurrent.ThreadPoolExecutor.setThreadFactory(java.util.concurrent.ThreadFactory): 1
+	150) java.util.concurrent.ThreadPoolExecutor.getThreadFactory(): 1
+	151) java.sql.Statement.executeQuery(java.lang.String): 1
+	152) java.sql.ResultSet.getInt(java.lang.String): 1
+	153) java.util.zip.ZipEntry.getName(): 1
+	154) java.io.ByteArrayOutputStream.ByteArrayOutputStream(): 1
+	155) java.io.FilterInputStream.read(byte[]): 1
+	156) java.io.ByteArrayOutputStream.write(byte[],int,int): 1
+	157) java.io.ByteArrayOutputStream.toByteArray(): 1
+	158) java.io.OutputStream.write(byte[]): 1
+	159) java.awt.Component.getX(): 1
+	160) java.awt.Component.getY(): 1
+	161) java.awt.Component.getParent(): 1
+	162) javax.swing.SwingUtilities.convertRectangleToAncestor(java.awt.Component,java.awt.Rectangle,java.awt.Component): 1
+	163) java.lang.Boolean.parseBoolean(java.lang.String): 1
+	164) javax.xml.stream.XMLStreamWriter.getPrefix(java.lang.String): 1
+	165) javax.xml.stream.XMLStreamWriter.getNamespaceContext(): 1
+	166) javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String): 1
+	167) javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String): 1
+	168) java.util.Collection<V>.addAll(java.util.Collection): 1
+	169) java.util.Collection<V>.size(): 1
+	170) java.util.Collection<V>.clear(): 1
+	171) java.lang.Long.Long(long): 1
+	172) java.util.TreeSet<java.lang.String>.TreeSet<String>(): 1
+	173) java.lang.Long.intValue(): 1
+	174) $NOT$java.lang.String.matches(java.lang.String): 1
+	175) java.io.FileReader.FileReader(java.io.File): 1
+	176) java.io.BufferedReader.BufferedReader(java.io.Reader): 1
+	177) java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String): 1
+	178) java.util.concurrent.locks.ReentrantLock.lock(): 1
+	179) java.util.concurrent.locks.ReentrantLock.unlock(): 1
+	180) java.util.concurrent.ThreadPoolExecutor.runStateLessThan(int,int): 1
+	181) java.util.concurrent.ThreadPoolExecutor.runStateAtLeast(int,int): 1
+	182) java.util.concurrent.atomic.AtomicInteger.AtomicInteger(int): 1
+	183) java.lang.Thread.join(): 1
+	184) javax.swing.JComponent.setMinimumSize(java.awt.Dimension): 1
+	185) java.io.BufferedOutputStream.BufferedOutputStream(java.io.OutputStream): 1
+	186) java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream): 1
+	187) java.io.ObjectOutputStream.writeObject(java.lang.Object): 1
+	188) java.io.ObjectOutputStream.close(): 1
+	189) java.util.LinkedList<Tau_E>.LinkedList(): 1
+	190) java.util.HashSet<Tau_E>.HashSet(java.util.Collection): 1
+	191) $NOT$java.util.logging.Logger.internalIsLoggable(java.util.logging.Level): 1
+	192) java.util.logging.Logger.setResourceBundle(java.util.logging.LogRecord): 1
+	193) java.util.logging.Logger.log(java.util.logging.LogRecord): 1
+	194) java.util.logging.Logger.getLogger(java.lang.String): 1
+	195) java.net.URI.URI(java.lang.String): 1
+	196) java.util.List<>.size(): 1
+	197) java.lang.StringBuilder.append(long): 1
+	198) java.lang.StringBuilder.append(int): 1
+	199) java.awt.Shape.getBounds2D(): 1
+	200) javax.swing.text.View.modelToView(int,javax.swing.text.Position.Bias,int,javax.swing.text.Position.Bias,java.awt.Shape): 1
+	201) java.awt.Graphics.getClip(): 1
+	202) java.awt.Graphics2D.clip(java.awt.Shape): 1
+	203) java.awt.Graphics.setClip(java.awt.Shape): 1
+	204) java.lang.Thread.setDaemon(boolean): 1
+	205) java.io.FileOutputStream.close(): 1
+	206) java.io.FileInputStream.close(): 1
+	207) java.io.File.renameTo(java.io.File): 1
+	208) java.io.File.length(): 1
+	209) java.lang.String.lastIndexOf(java.lang.String): 1
+	210) java.util.List<java.lang.Class>.remove(java.lang.Object): 1
+	211) java.util.List<java.lang.Class>.isEmpty(): 1
+	212) java.lang.Class<>.isAssignableFrom(java.lang.Class): 1
+	213) java.lang.Class<Tau_T>.isAssignableFrom(java.lang.Class): 1
+	214) java.lang.Character.isJavaIdentifierStart(char): 1
+	215) java.lang.StringBuffer.setLength(int): 1
+	216) javax.swing.JTree.setCellRenderer(javax.swing.tree.TreeCellRenderer): 1
+	217) javax.swing.JTree.setRootVisible(boolean): 1
+	218) javax.swing.JTree.setRowHeight(int): 1
+	219) java.awt.Component.addMouseListener(java.awt.event.MouseListener): 1
+	220) java.awt.Font.Font(java.lang.String,int,int): 1
+	221) javax.swing.JComponent.setFont(java.awt.Font): 1
+	222) java.lang.Class<T>.getDeclaringClass0(): 1
+	223) java.lang.ClassLoader.getClassLoader(java.lang.Class): 1
+	224) java.lang.Class<>.checkPackageAccess(java.lang.ClassLoader,boolean): 1
+	225) $NOT$java.io.File.getAbsoluteFile(): 1
+	226) java.util.List<java.lang.String>.isEmpty(): 1
+	227) java.util.List<java.lang.String>.get(int): 1
+	228) java.util.List<java.lang.String>.set(int,java.lang.String): 1
+	229) java.util.regex.Pattern.compile(java.lang.String): 1
+	230) java.util.regex.Pattern.matcher(java.lang.CharSequence): 1
+	231) java.util.regex.Matcher.find(): 1
+	232) javax.swing.JComponent.getFontMetrics(java.awt.Font): 1
+	233) java.awt.FontMetrics.getHeight(): 1
+	234) java.awt.event.MouseEvent.getY(): 1
+	235) java.lang.StringBuffer.append(int): 1
+	236) java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream): 1
+	237) java.lang.Thread.currentThread(): 1
+	238) java.lang.Math.addExact(long,long): 1
+	239) java.awt.Component.getWidth(): 1
+	240) java.awt.Component.getHeight(): 1
+	241) java.awt.Container.add(java.awt.Component): 1
+	242) java.lang.String.trim(): 1
+	243) java.security.Security.getProvider(java.lang.String): 1
+	244) java.security.KeyStore.getInstance(java.lang.String,java.security.Provider): 1
+	245) java.lang.Math.random(): 1
+	246) java.lang.Math.round(double): 1
+	247) java.util.Calendar.getInstance(): 1
+	248) java.awt.image.BufferedImage.BufferedImage(int,int,int): 1
+	249) java.awt.image.BufferedImage.createGraphics(): 1
+	250) java.awt.Graphics2D.setPaint(java.awt.Paint): 1
+	251) java.awt.Graphics.fillRect(int,int,int,int): 1
+	252) java.awt.Graphics.dispose(): 1
+	253) javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File): 1
+	254) java.lang.Class<T>.getMethods(): 1
+	255) java.lang.reflect.Method.getReturnType(): 1
+	256) java.lang.reflect.Method.getAnnotation(java.lang.Class): 1
+	257) java.util.List<com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder>.add(com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder): 1
+	258) java.lang.String.isEmpty(): 1
+	259) java.nio.ByteBuffer.wrap(byte[]): 1
+	260) java.math.BigDecimal.BigDecimal(int): 1
+	261) java.lang.Double.Double(double): 1
+	262) java.lang.Float.Float(float): 1
+	263) java.math.BigInteger.BigInteger(java.lang.String): 1
+	264) java.util.ArrayList<java.lang.String>.add(java.lang.String): 1
+	265) java.io.StringWriter.StringWriter(): 1
+	266) java.io.PrintWriter.PrintWriter(java.io.Writer): 1
+	267) java.lang.Throwable.printStackTrace(java.io.PrintWriter): 1
+	268) java.io.StringWriter.toString(): 1
+	269) java.awt.Point.Point(): 1
+	270) javax.swing.JComponent.getWidth(): 1
+	271) javax.swing.JComponent.getHeight(): 1
+	272) javax.swing.SwingUtilities.convertPointToScreen(java.awt.Point,java.awt.Component): 1
+	273) java.util.Iterator<byte[]>.next(): 1
+	274) java.util.Iterator<byte[]>.hasNext(): 1
+	275) java.util.List<T>.addAll(java.util.Collection): 1
+	276) java.util.List<T>.isEmpty(): 1
+
+API Cofrequency- Top 10
+	1) DBranch: Found in 20 distinct programs (20.0%)
+			java.lang.String.equals(java.lang.Object): 3
+			java.lang.String.substring(int): 3
+			java.lang.String.indexOf(int): 3
+			java.lang.String.startsWith(java.lang.String): 3
+			java.io.FileInputStream.FileInputStream(java.io.File): 2
+			java.lang.StringBuilder.toString(): 2
+			java.lang.String.split(java.lang.String): 2
+			java.lang.StringBuilder.StringBuilder(java.lang.String): 2
+			java.io.File.File(java.lang.String): 2
+			java.util.List<java.security.AccessControlContext>.get(int): 1
+
+	2) java.lang.String.length(): Found in 9 distinct programs (9.0%)
+			java.lang.Integer.parseInt(java.lang.String): 2
+			java.lang.String.substring(int): 2
+			java.util.Properties.getProperty(java.lang.String): 1
+			java.lang.String.charAt(int): 1
+			java.lang.Character.toUpperCase(char): 1
+			java.lang.String.format(java.lang.String,java.lang.Object[]): 1
+			java.lang.String.substring(int,int): 1
+			java.util.ArrayList.size(): 1
+			java.lang.String.String(char[],int,int): 1
+			java.util.ArrayList.get(int): 1
+
+	3) java.lang.StringBuilder.toString(): Found in 8 distinct programs (8.0%)
+			java.lang.StringBuilder.append(java.lang.String): 4
+			java.lang.StringBuilder.StringBuilder(java.lang.String): 4
+			java.lang.StringBuilder.append(java.lang.Object): 4
+			java.lang.StringBuilder.StringBuilder(): 3
+			DBranch: 2
+			java.lang.StringBuilder.append(char): 1
+			java.security.SecureRandom.SecureRandom(): 1
+			java.util.Random.nextInt(int): 1
+			java.lang.String.split(java.lang.String): 1
+			java.lang.String.equals(java.lang.Object): 1
+
+	4) DLoop: Found in 7 distinct programs (7.000000000000001%)
+			java.sql.ResultSet.getString(java.lang.String): 2
+			java.sql.ResultSet.next(): 2
+			java.util.LinkedList<java.awt.Point>.LinkedList<Point>(): 1
+			java.awt.Point.Point(int,int): 1
+			java.util.LinkedList<java.awt.Point>.size(): 1
+			java.util.LinkedList<java.awt.Point>.add(java.awt.Point): 1
+			DBranch: 1
+			java.util.ArrayList<java.security.cert.CertStore>.ArrayList<CertStore>(): 1
+			java.util.Iterator<java.security.cert.CertStore>.hasNext(): 1
+			java.util.List<java.security.cert.CertStore>.iterator(): 1
+
+	5) DExcept: Found in 7 distinct programs (7.000000000000001%)
+			java.lang.Throwable.printStackTrace(): 4
+			java.lang.Thread.Thread(java.lang.Runnable): 2
+			java.lang.Thread.start(): 2
+			java.sql.Statement.executeQuery(java.lang.String): 1
+			java.sql.ResultSet.getString(java.lang.String): 1
+			java.sql.ResultSet.getInt(java.lang.String): 1
+			java.sql.ResultSet.next(): 1
+			DLoop: 1
+			java.lang.Thread.join(): 1
+			java.util.concurrent.atomic.AtomicInteger.AtomicInteger(int): 1
+
+	6) java.lang.String.substring(int): Found in 7 distinct programs (7.000000000000001%)
+			java.lang.String.indexOf(int): 5
+			DBranch: 3
+			java.lang.String.startsWith(java.lang.String): 3
+			java.lang.String.length(): 2
+			java.lang.String.charAt(int): 1
+			java.lang.Character.toUpperCase(char): 1
+			java.io.BufferedReader.BufferedReader(java.io.Reader): 1
+			java.lang.String.substring(int,int): 1
+			java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String): 1
+			java.io.FileReader.FileReader(java.io.File): 1
+
+	7) java.io.File.File(java.lang.String): Found in 6 distinct programs (6.0%)
+			java.io.File.File(java.io.File,java.lang.String): 2
+			DBranch: 2
+			java.util.ArrayList<java.io.File>.ArrayList<File>(int): 1
+			java.util.List<java.lang.String>.size(): 1
+			java.io.File.File(java.lang.String,java.lang.String): 1
+			java.util.List<java.io.File>.add(java.io.File): 1
+			java.io.File.toURI(): 1
+			java.lang.System.exit(int): 1
+			java.lang.System.getProperty(java.lang.String): 1
+			java.lang.String.startsWith(java.lang.String): 1
+
+	8) java.util.ArrayList<java.lang.String>.ArrayList<String>(): Found in 5 distinct programs (5.0%)
+			java.util.List<java.lang.String>.add(java.lang.String): 4
+			java.util.Collections.sort(java.util.List): 1
+			java.lang.Class<Tau_T>.getSimpleName(): 1
+			java.util.Collections.emptyList(): 1
+			java.util.List<>.size(): 1
+			DExcept: 1
+			java.util.List<java.lang.String>.toArray(T[]): 1
+			java.util.ArrayList<java.lang.String>.add(java.lang.String): 1
+			java.lang.String.format(java.lang.String,java.lang.Object[]): 1
+
+	9) java.lang.StringBuilder.append(java.lang.String): Found in 5 distinct programs (5.0%)
+			java.lang.StringBuilder.toString(): 4
+			java.lang.StringBuilder.StringBuilder(java.lang.String): 3
+			java.lang.StringBuilder.length(): 1
+			java.lang.StringBuilder.StringBuilder(int): 1
+			java.lang.StringBuilder.setLength(int): 1
+			java.lang.StringBuilder.StringBuilder(): 1
+			java.lang.StringBuilder.append(long): 1
+			java.lang.StringBuilder.append(int): 1
+			java.lang.StringBuilder.append(java.lang.Object): 1
+			DBranch: 1
+
+	10) java.lang.Throwable.printStackTrace(): Found in 5 distinct programs (5.0%)
+			DExcept: 4
+			java.lang.Thread.Thread(java.lang.Runnable): 2
+			java.lang.Thread.start(): 2
+			java.io.ByteArrayInputStream.ByteArrayInputStream(byte[]): 1
+			java.lang.String.getBytes(): 1
+			java.sql.Statement.executeQuery(java.lang.String): 1
+			java.sql.ResultSet.getString(java.lang.String): 1
+			java.sql.ResultSet.getInt(java.lang.String): 1
+			java.sql.ResultSet.next(): 1
+			DLoop: 1
+
+	11) java.lang.String.indexOf(int): Found in 5 distinct programs (5.0%)
+			java.lang.String.substring(int): 5
+			DBranch: 3
+			java.lang.String.startsWith(java.lang.String): 3
+			java.io.BufferedReader.BufferedReader(java.io.Reader): 1
+			java.lang.String.substring(int,int): 1
+			java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String): 1
+			java.io.FileReader.FileReader(java.io.File): 1
+			java.io.BufferedReader.readLine(): 1
+			java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>(): 1
+			java.lang.String.length(): 1
+
+	12) java.util.List<java.lang.String>.add(java.lang.String): Found in 4 distinct programs (4.0%)
+			java.util.ArrayList<java.lang.String>.ArrayList<String>(): 4
+			java.util.Collections.sort(java.util.List): 1
+			java.lang.Class<Tau_T>.getSimpleName(): 1
+			java.util.Collections.emptyList(): 1
+			java.util.List<>.size(): 1
+			DExcept: 1
+			java.util.List<java.lang.String>.toArray(T[]): 1
+
+	13) java.lang.StringBuffer.StringBuffer(): Found in 4 distinct programs (4.0%)
+			java.lang.StringBuffer.toString(): 4
+			java.lang.StringBuffer.append(java.lang.String): 4
+			java.lang.StringBuffer.append(java.lang.Object): 2
+			java.lang.StringBuffer.append(char): 1
+			DBranch: 1
+			java.lang.StringBuffer.append(int): 1
+
+	14) java.lang.StringBuffer.append(java.lang.String): Found in 4 distinct programs (4.0%)
+			java.lang.StringBuffer.StringBuffer(): 4
+			java.lang.StringBuffer.toString(): 4
+			java.lang.StringBuffer.append(java.lang.Object): 2
+			java.lang.StringBuffer.append(char): 1
+			DBranch: 1
+			java.lang.StringBuffer.append(int): 1
+
+	15) java.lang.StringBuffer.toString(): Found in 4 distinct programs (4.0%)
+			java.lang.StringBuffer.StringBuffer(): 4
+			java.lang.StringBuffer.append(java.lang.String): 4
+			java.lang.StringBuffer.append(java.lang.Object): 2
+			java.lang.StringBuffer.append(char): 1
+			DBranch: 1
+			java.lang.StringBuffer.append(int): 1
+
+	16) java.awt.Dimension.Dimension(int,int): Found in 4 distinct programs (4.0%)
+			javax.swing.JComponent.setPreferredSize(java.awt.Dimension): 2
+			java.awt.Container.addPropertyChangeListener(java.beans.PropertyChangeListener): 1
+			javax.swing.UIManager.put(java.lang.Object,java.lang.Object): 1
+			javax.swing.UIManager.getSystemLookAndFeelClassName(): 1
+			javax.swing.SwingUtilities.updateComponentTreeUI(java.awt.Component): 1
+			javax.swing.UIManager.setLookAndFeel(java.lang.String): 1
+			javax.swing.JComponent.setOpaque(boolean): 1
+			javax.swing.JPanel.JPanel(): 1
+			javax.swing.JComponent.setMinimumSize(java.awt.Dimension): 1
+			java.util.HashSet<java.lang.String>.HashSet<String>(): 1
+
+	17) java.lang.String.equals(java.lang.Object): Found in 4 distinct programs (4.0%)
+			DBranch: 3
+			$NOT$java.lang.String.matches(java.lang.String): 1
+			$NOT$java.lang.String.equals(java.lang.Object): 1
+			java.lang.StringBuilder.toString(): 1
+			java.lang.String.split(java.lang.String): 1
+			java.lang.StringBuilder.StringBuilder(java.lang.String): 1
+			java.lang.StringBuilder.append(java.lang.Object): 1
+			java.lang.String.substring(int): 1
+			java.lang.String.startsWith(java.lang.String): 1
+			java.lang.String.indexOf(int): 1
+
+	18) java.lang.StringBuilder.StringBuilder(java.lang.String): Found in 4 distinct programs (4.0%)
+			java.lang.StringBuilder.toString(): 4
+			java.lang.StringBuilder.append(java.lang.String): 3
+			DBranch: 2
+			java.lang.StringBuilder.append(java.lang.Object): 2
+			java.lang.String.split(java.lang.String): 1
+			java.lang.String.equals(java.lang.Object): 1
+			java.lang.StringBuilder.append(long): 1
+			java.lang.StringBuilder.append(int): 1
+
+	19) java.lang.StringBuilder.append(java.lang.Object): Found in 4 distinct programs (4.0%)
+			java.lang.StringBuilder.toString(): 4
+			java.lang.StringBuilder.StringBuilder(java.lang.String): 2
+			DBranch: 1
+			java.lang.String.split(java.lang.String): 1
+			java.lang.String.equals(java.lang.Object): 1
+			java.lang.StringBuilder.append(java.lang.String): 1
+			java.lang.StringBuilder.append(long): 1
+			java.lang.StringBuilder.append(int): 1
+			java.lang.StringBuilder.StringBuilder(int): 1
+			java.lang.StringBuilder.StringBuilder(): 1
+
+	20) java.lang.String.startsWith(java.lang.String): Found in 4 distinct programs (4.0%)
+			DBranch: 3
+			java.lang.String.substring(int): 3
+			java.lang.String.indexOf(int): 3
+			java.io.File.File(java.lang.String): 1
+			java.lang.String.equals(java.lang.Object): 1
+			java.lang.String.split(java.lang.String): 1
+			java.lang.String.contains(java.lang.CharSequence): 1
+
+	21) java.lang.Integer.parseInt(java.lang.String): Found in 3 distinct programs (3.0%)
+			java.lang.String.length(): 2
+			java.util.Properties.getProperty(java.lang.String): 1
+			java.lang.String.valueOf(char[]): 1
+			java.lang.String.valueOf(int): 1
+			DExcept: 1
+			java.lang.Throwable.printStackTrace(): 1
+
+	22) java.lang.StringBuilder.StringBuilder(): Found in 3 distinct programs (3.0%)
+			java.lang.StringBuilder.toString(): 3
+			java.lang.StringBuilder.append(char): 1
+			java.security.SecureRandom.SecureRandom(): 1
+			java.util.Random.nextInt(int): 1
+			java.lang.StringBuilder.append(java.lang.String): 1
+			java.util.Iterator<byte[]>.hasNext(): 1
+			java.util.Iterator<byte[]>.next(): 1
+			java.lang.StringBuilder.append(java.lang.Object): 1
+			DLoop: 1
+
+	23) java.io.File.File(java.io.File,java.lang.String): Found in 3 distinct programs (3.0%)
+			java.io.File.File(java.lang.String,java.lang.String): 2
+			java.io.File.toURI(): 2
+			java.io.File.File(java.lang.String): 2
+			java.util.ArrayList<java.io.File>.ArrayList<File>(int): 1
+			java.util.List<java.lang.String>.size(): 1
+			java.util.List<java.io.File>.add(java.io.File): 1
+			java.io.File.exists(): 1
+			$NOT$java.io.File.getAbsoluteFile(): 1
+			java.io.File.getParentFile(): 1
+			DLoop: 1
+
+	24) java.io.FileInputStream.FileInputStream(java.io.File): Found in 3 distinct programs (3.0%)
+			DBranch: 2
+			java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream): 1
+			java.util.zip.ZipEntry.getName(): 1
+			java.io.ByteArrayOutputStream.toByteArray(): 1
+			java.io.ByteArrayOutputStream.write(byte[],int,int): 1
+			java.io.ByteArrayOutputStream.ByteArrayOutputStream(): 1
+			java.io.FilterInputStream.read(byte[]): 1
+			java.io.FileOutputStream.close(): 1
+			java.io.FileInputStream.close(): 1
+			java.io.File.renameTo(java.io.File): 1
+
+	25) java.util.ArrayList<Tau_E>.ArrayList(): Found in 3 distinct programs (3.0%)
+			java.lang.Long.intValue(): 1
+			java.util.Set<java.lang.String>.add(java.lang.String): 1
+			java.util.TreeSet<java.lang.String>.TreeSet<String>(): 1
+			java.lang.Long.Long(long): 1
+			DBranch: 1
+			java.lang.Class<T>.getMethods(): 1
+			java.util.List<com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder>.add(com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder): 1
+			java.lang.reflect.Method.getAnnotation(java.lang.Class): 1
+			java.lang.reflect.Method.getReturnType(): 1
+			java.util.List<T>.addAll(java.util.Collection): 1
+
+	26) java.lang.Thread.Thread(java.lang.Runnable): Found in 3 distinct programs (3.0%)
+			java.lang.Thread.start(): 3
+			java.lang.Throwable.printStackTrace(): 2
+			DExcept: 2
+			java.lang.Thread.join(): 1
+			java.util.concurrent.atomic.AtomicInteger.AtomicInteger(int): 1
+			java.lang.Thread.setDaemon(boolean): 1
+
+	27) java.lang.Thread.start(): Found in 3 distinct programs (3.0%)
+			java.lang.Thread.Thread(java.lang.Runnable): 3
+			java.lang.Throwable.printStackTrace(): 2
+			DExcept: 2
+			java.lang.Thread.join(): 1
+			java.util.concurrent.atomic.AtomicInteger.AtomicInteger(int): 1
+			java.lang.Thread.setDaemon(boolean): 1
+
+	28) java.lang.StringBuilder.StringBuilder(int): Found in 2 distinct programs (2.0%)
+			java.lang.StringBuilder.length(): 1
+			java.lang.StringBuilder.setLength(int): 1
+			java.lang.StringBuilder.append(java.lang.String): 1
+			java.lang.StringBuilder.append(java.lang.Object): 1
+			java.lang.StringBuilder.toString(): 1
+
+	29) java.lang.StringBuffer.append(char): Found in 2 distinct programs (2.0%)
+			java.lang.StringBuffer.StringBuffer(): 1
+			java.lang.StringBuffer.toString(): 1
+			java.lang.StringBuffer.append(java.lang.String): 1
+			java.lang.Character.isJavaIdentifierStart(char): 1
+			DBranch: 1
+			java.lang.StringBuffer.setLength(int): 1
+
+	30) java.lang.Thread.sleep(long): Found in 2 distinct programs (2.0%)
+			java.lang.System.nanoTime(): 1
+			java.lang.System.setProperty(java.lang.String,java.lang.String): 1
+			java.lang.System.getProperty(java.lang.String): 1
+
+	31) java.util.HashSet<Tau_E>.HashSet(): Found in 2 distinct programs (2.0%)
+			java.lang.Class<T>.isAssignableFrom(java.lang.Class): 1
+			java.util.Set<T>.add(Tau_T): 1
+			DBranch: 1
+			java.util.LinkedList<Tau_E>.LinkedList(): 1
+			java.util.HashSet<Tau_E>.HashSet(java.util.Collection): 1
+
+	32) java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream): Found in 2 distinct programs (2.0%)
+			java.io.FilterInputStream.close(): 1
+			java.io.DataInputStream.DataInputStream(java.io.InputStream): 1
+			DBranch: 1
+			java.util.zip.ZipEntry.getName(): 1
+			java.io.ByteArrayOutputStream.toByteArray(): 1
+			java.io.FileInputStream.FileInputStream(java.io.File): 1
+			java.io.ByteArrayOutputStream.write(byte[],int,int): 1
+			java.io.ByteArrayOutputStream.ByteArrayOutputStream(): 1
+			java.io.FilterInputStream.read(byte[]): 1
+
+	33) javax.swing.JComponent.setPreferredSize(java.awt.Dimension): Found in 2 distinct programs (2.0%)
+			java.awt.Dimension.Dimension(int,int): 2
+			java.awt.Container.addPropertyChangeListener(java.beans.PropertyChangeListener): 1
+			javax.swing.JComponent.setMinimumSize(java.awt.Dimension): 1
+			java.util.HashSet<java.lang.String>.HashSet<String>(): 1
+
+	34) java.lang.String.substring(int,int): Found in 2 distinct programs (2.0%)
+			java.lang.String.format(java.lang.String,java.lang.Object[]): 1
+			java.lang.String.length(): 1
+			java.lang.String.substring(int): 1
+			java.lang.String.indexOf(int): 1
+			java.io.BufferedReader.BufferedReader(java.io.Reader): 1
+			java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String): 1
+			java.io.FileReader.FileReader(java.io.File): 1
+			java.io.BufferedReader.readLine(): 1
+			java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>(): 1
+
+	35) java.lang.String.format(java.lang.String,java.lang.Object[]): Found in 2 distinct programs (2.0%)
+			java.lang.String.substring(int,int): 1
+			java.lang.String.length(): 1
+			java.util.ArrayList<java.lang.String>.ArrayList<String>(): 1
+			java.util.ArrayList<java.lang.String>.add(java.lang.String): 1
+
+	36) java.lang.String.getBytes(): Found in 2 distinct programs (2.0%)
+			java.io.ByteArrayInputStream.ByteArrayInputStream(byte[]): 1
+			java.lang.Throwable.printStackTrace(): 1
+			java.math.BigDecimal.BigDecimal(int): 1
+			java.lang.Double.Double(double): 1
+			java.lang.System.currentTimeMillis(): 1
+			java.lang.Float.Float(float): 1
+			java.nio.ByteBuffer.wrap(byte[]): 1
+			java.math.BigInteger.BigInteger(java.lang.String): 1
+
+	37) java.lang.StringBuffer.append(java.lang.Object): Found in 2 distinct programs (2.0%)
+			java.lang.StringBuffer.StringBuffer(): 2
+			java.lang.StringBuffer.toString(): 2
+			java.lang.StringBuffer.append(java.lang.String): 2
+
+	38) java.lang.System.setProperty(java.lang.String,java.lang.String): Found in 2 distinct programs (2.0%)
+			java.lang.System.getenv(java.lang.String): 1
+			DBranch: 1
+			java.lang.Thread.sleep(long): 1
+			java.lang.System.getProperty(java.lang.String): 1
+
+	39) java.util.List<java.lang.String>.size(): Found in 2 distinct programs (2.0%)
+			java.util.ArrayList<java.io.File>.ArrayList<File>(int): 1
+			java.io.File.File(java.io.File,java.lang.String): 1
+			java.io.File.File(java.lang.String,java.lang.String): 1
+			java.util.List<java.io.File>.add(java.io.File): 1
+			java.io.File.toURI(): 1
+			java.io.File.File(java.lang.String): 1
+			java.util.List<java.lang.String>.isEmpty(): 1
+			DBranch: 1
+			java.util.List<java.lang.String>.get(int): 1
+			java.util.List<java.lang.String>.set(int,java.lang.String): 1
+
+	40) java.io.File.toURI(): Found in 2 distinct programs (2.0%)
+			java.io.File.File(java.io.File,java.lang.String): 2
+			java.io.File.File(java.lang.String,java.lang.String): 2
+			java.util.ArrayList<java.io.File>.ArrayList<File>(int): 1
+			java.util.List<java.lang.String>.size(): 1
+			java.util.List<java.io.File>.add(java.io.File): 1
+			java.io.File.File(java.lang.String): 1
+
+	41) java.io.File.File(java.lang.String,java.lang.String): Found in 2 distinct programs (2.0%)
+			java.io.File.File(java.io.File,java.lang.String): 2
+			java.io.File.toURI(): 2
+			java.util.ArrayList<java.io.File>.ArrayList<File>(int): 1
+			java.util.List<java.lang.String>.size(): 1
+			java.util.List<java.io.File>.add(java.io.File): 1
+			java.io.File.File(java.lang.String): 1
+
+	42) java.util.List<java.lang.String>.toArray(T[]): Found in 2 distinct programs (2.0%)
+			java.util.Arrays.asList(T[]): 1
+			java.util.List<java.lang.String>.remove(java.lang.Object): 1
+			java.util.ArrayList<java.lang.String>.ArrayList<String>(java.util.Collection): 1
+			java.util.ArrayList<java.lang.String>.ArrayList<String>(): 1
+			java.util.List<java.lang.String>.add(java.lang.String): 1
+
+	43) java.sql.ResultSet.getString(java.lang.String): Found in 2 distinct programs (2.0%)
+			java.sql.ResultSet.next(): 2
+			DLoop: 2
+			java.sql.ResultSet.getLong(java.lang.String): 1
+			java.sql.ResultSet.getDate(java.lang.String): 1
+			java.lang.Throwable.printStackTrace(): 1
+			DExcept: 1
+			java.sql.Statement.executeQuery(java.lang.String): 1
+			java.sql.ResultSet.getInt(java.lang.String): 1
+
+	44) java.sql.ResultSet.next(): Found in 2 distinct programs (2.0%)
+			java.sql.ResultSet.getString(java.lang.String): 2
+			DLoop: 2
+			java.sql.ResultSet.getLong(java.lang.String): 1
+			java.sql.ResultSet.getDate(java.lang.String): 1
+			java.lang.Throwable.printStackTrace(): 1
+			DExcept: 1
+			java.sql.Statement.executeQuery(java.lang.String): 1
+			java.sql.ResultSet.getInt(java.lang.String): 1
+
+	45) java.lang.String.contains(java.lang.CharSequence): Found in 2 distinct programs (2.0%)
+			java.util.Date.toString(): 1
+			java.net.URL.URL(java.lang.String): 1
+			DBranch: 1
+			java.lang.String.substring(int): 1
+			java.lang.String.indexOf(int): 1
+			java.lang.String.startsWith(java.lang.String): 1
+
+	46) java.lang.Class<Tau_T>.getSimpleName(): Found in 2 distinct programs (2.0%)
+			java.lang.Class<Tau_T>.getName(): 1
+			java.util.ArrayList<java.lang.String>.ArrayList<String>(): 1
+			java.util.List<java.lang.String>.add(java.lang.String): 1
+
+	47) java.lang.Class<Tau_T>.getName(): Found in 2 distinct programs (2.0%)
+			java.lang.Class<Tau_T>.getSimpleName(): 1
+			DExcept: 1
+			java.util.logging.Logger.getLogger(java.lang.String): 1
+			java.net.URI.URI(java.lang.String): 1
+
+	48) java.lang.Long.toString(long): Found in 2 distinct programs (2.0%)
+			java.io.OutputStream.write(int): 1
+			java.io.OutputStream.write(byte[]): 1
+			DBranch: 1
+			java.lang.Math.random(): 1
+			java.util.Calendar.getInstance(): 1
+			java.lang.Math.round(double): 1
+			java.io.File.File(java.lang.String): 1
+
+	49) java.lang.System.getProperty(java.lang.String): Found in 2 distinct programs (2.0%)
+			java.lang.System.exit(int): 1
+			java.io.File.File(java.lang.String): 1
+			java.lang.System.setProperty(java.lang.String,java.lang.String): 1
+			java.lang.Thread.sleep(long): 1
+
+	50) java.lang.System.exit(int): Found in 2 distinct programs (2.0%)
+			java.lang.System.getProperty(java.lang.String): 1
+			java.io.File.File(java.lang.String): 1
+			DExcept: 1
+			java.lang.Thread.currentThread(): 1
+			java.lang.Math.addExact(long,long): 1
+
+	51) $NOT$java.lang.String.startsWith(java.lang.String): Found in 2 distinct programs (2.0%)
+			java.lang.Boolean.parseBoolean(java.lang.String): 1
+			java.lang.String.length(): 1
+			java.lang.String.equals(java.lang.Object): 1
+			java.lang.String.isEmpty(): 1
+
+	52) java.io.File.getParentFile(): Found in 2 distinct programs (2.0%)
+			java.io.ObjectOutputStream.writeObject(java.lang.Object): 1
+			java.io.ObjectOutputStream.close(): 1
+			java.io.BufferedOutputStream.BufferedOutputStream(java.io.OutputStream): 1
+			java.io.FileOutputStream.FileOutputStream(java.io.File): 1
+			java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream): 1
+			java.io.File.exists(): 1
+			$NOT$java.io.File.getAbsoluteFile(): 1
+			java.io.File.File(java.io.File,java.lang.String): 1
+			DLoop: 1
+			java.io.File.File(java.lang.String): 1
+
+	53) java.io.FileOutputStream.FileOutputStream(java.io.File): Found in 2 distinct programs (2.0%)
+			java.io.ObjectOutputStream.writeObject(java.lang.Object): 1
+			java.io.ObjectOutputStream.close(): 1
+			java.io.File.getParentFile(): 1
+			java.io.BufferedOutputStream.BufferedOutputStream(java.io.OutputStream): 1
+			java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream): 1
+			DBranch: 1
+			java.io.FileInputStream.FileInputStream(java.io.File): 1
+			java.io.FileOutputStream.close(): 1
+			java.io.FileInputStream.close(): 1
+			java.io.File.renameTo(java.io.File): 1
+
+	54) java.lang.String.split(java.lang.String): Found in 2 distinct programs (2.0%)
+			DBranch: 2
+			java.lang.StringBuilder.toString(): 1
+			java.lang.String.equals(java.lang.Object): 1
+			java.lang.StringBuilder.StringBuilder(java.lang.String): 1
+			java.lang.StringBuilder.append(java.lang.Object): 1
+			java.lang.String.substring(int): 1
+			java.lang.String.startsWith(java.lang.String): 1
+			java.lang.String.indexOf(int): 1
+
+	55) java.io.ObjectInputStream.defaultReadObject(): Found in 1 distinct programs (1.0%)
+			java.io.ObjectInputStream.readObject(): 1
+			java.util.Vector<java.lang.Object>.Vector<Object>(int): 1
+			java.io.ObjectInputStream.readInt(): 1
+
+	56) java.io.ObjectInputStream.readInt(): Found in 1 distinct programs (1.0%)
+			java.io.ObjectInputStream.defaultReadObject(): 1
+			java.io.ObjectInputStream.readObject(): 1
+			java.util.Vector<java.lang.Object>.Vector<Object>(int): 1
+
+	57) java.util.Vector<java.lang.Object>.Vector<Object>(int): Found in 1 distinct programs (1.0%)
+			java.io.ObjectInputStream.defaultReadObject(): 1
+			java.io.ObjectInputStream.readObject(): 1
+			java.io.ObjectInputStream.readInt(): 1
+
+	58) java.io.ObjectInputStream.readObject(): Found in 1 distinct programs (1.0%)
+			java.io.ObjectInputStream.defaultReadObject(): 1
+			java.util.Vector<java.lang.Object>.Vector<Object>(int): 1
+			java.io.ObjectInputStream.readInt(): 1
+
+	59) java.nio.ByteBuffer.allocateDirect(int): Found in 1 distinct programs (1.0%)
+			java.nio.ByteBuffer.order(java.nio.ByteOrder): 1
+			java.nio.Buffer.flip(): 1
+			java.nio.ByteBuffer.putDouble(double): 1
+
+	60) java.nio.ByteBuffer.order(java.nio.ByteOrder): Found in 1 distinct programs (1.0%)
+			java.nio.ByteBuffer.allocateDirect(int): 1
+			java.nio.Buffer.flip(): 1
+			java.nio.ByteBuffer.putDouble(double): 1
+
+	61) java.nio.ByteBuffer.putDouble(double): Found in 1 distinct programs (1.0%)
+			java.nio.ByteBuffer.allocateDirect(int): 1
+			java.nio.ByteBuffer.order(java.nio.ByteOrder): 1
+			java.nio.Buffer.flip(): 1
+
+	62) java.nio.Buffer.flip(): Found in 1 distinct programs (1.0%)
+			java.nio.ByteBuffer.allocateDirect(int): 1
+			java.nio.ByteBuffer.order(java.nio.ByteOrder): 1
+			java.nio.ByteBuffer.putDouble(double): 1
+
+	63) java.util.LinkedList<java.awt.Point>.LinkedList<Point>(): Found in 1 distinct programs (1.0%)
+			java.awt.Point.Point(int,int): 1
+			java.util.LinkedList<java.awt.Point>.size(): 1
+			java.util.LinkedList<java.awt.Point>.add(java.awt.Point): 1
+			DLoop: 1
+
+	64) java.awt.Point.Point(int,int): Found in 1 distinct programs (1.0%)
+			java.util.LinkedList<java.awt.Point>.LinkedList<Point>(): 1
+			java.util.LinkedList<java.awt.Point>.size(): 1
+			java.util.LinkedList<java.awt.Point>.add(java.awt.Point): 1
+			DLoop: 1
+
+	65) java.util.LinkedList<java.awt.Point>.add(java.awt.Point): Found in 1 distinct programs (1.0%)
+			java.util.LinkedList<java.awt.Point>.LinkedList<Point>(): 1
+			java.awt.Point.Point(int,int): 1
+			java.util.LinkedList<java.awt.Point>.size(): 1
+			DLoop: 1
+
+	66) java.util.LinkedList<java.awt.Point>.size(): Found in 1 distinct programs (1.0%)
+			java.util.LinkedList<java.awt.Point>.LinkedList<Point>(): 1
+			java.awt.Point.Point(int,int): 1
+			java.util.LinkedList<java.awt.Point>.add(java.awt.Point): 1
+			DLoop: 1
+
+	67) java.util.Properties.getProperty(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.lang.Integer.parseInt(java.lang.String): 1
+			java.lang.String.length(): 1
+
+	68) java.lang.String.charAt(int): Found in 1 distinct programs (1.0%)
+			java.lang.String.substring(int): 1
+			java.lang.Character.toUpperCase(char): 1
+			java.lang.String.length(): 1
+
+	69) java.lang.Character.toUpperCase(char): Found in 1 distinct programs (1.0%)
+			java.lang.String.charAt(int): 1
+			java.lang.String.substring(int): 1
+			java.lang.String.length(): 1
+
+	70) java.util.Collections.sort(java.util.List): Found in 1 distinct programs (1.0%)
+			java.util.ArrayList<java.lang.String>.ArrayList<String>(): 1
+			java.util.List<java.lang.String>.add(java.lang.String): 1
+
+	71) java.lang.Class<Tau_T>.getResourceAsStream(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.util.ArrayList<javax.xml.transform.Source>.add(javax.xml.transform.Source): 1
+			java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>(): 1
+
+	72) java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>(): Found in 1 distinct programs (1.0%)
+			java.util.ArrayList<javax.xml.transform.Source>.add(javax.xml.transform.Source): 1
+			java.lang.Class<Tau_T>.getResourceAsStream(java.lang.String): 1
+
+	73) java.util.ArrayList<javax.xml.transform.Source>.add(javax.xml.transform.Source): Found in 1 distinct programs (1.0%)
+			java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>(): 1
+			java.lang.Class<Tau_T>.getResourceAsStream(java.lang.String): 1
+
+	74) java.io.File.deleteOnExit(): Found in 1 distinct programs (1.0%)
+			java.util.zip.ZipFile.checkZipFile(): 1
+			java.io.File.getPath(): 1
+			java.util.zip.ZipFile.openFile(java.lang.String,java.io.File): 1
+
+	75) java.util.zip.ZipFile.openFile(java.lang.String,java.io.File): Found in 1 distinct programs (1.0%)
+			java.util.zip.ZipFile.checkZipFile(): 1
+			java.io.File.deleteOnExit(): 1
+			java.io.File.getPath(): 1
+
+	76) java.io.File.getPath(): Found in 1 distinct programs (1.0%)
+			java.util.zip.ZipFile.checkZipFile(): 1
+			java.io.File.deleteOnExit(): 1
+			java.util.zip.ZipFile.openFile(java.lang.String,java.io.File): 1
+
+	77) java.util.zip.ZipFile.checkZipFile(): Found in 1 distinct programs (1.0%)
+			java.io.File.deleteOnExit(): 1
+			java.io.File.getPath(): 1
+			java.util.zip.ZipFile.openFile(java.lang.String,java.io.File): 1
+
+	78) java.lang.StringBuilder.length(): Found in 1 distinct programs (1.0%)
+			java.lang.StringBuilder.StringBuilder(int): 1
+			java.lang.StringBuilder.setLength(int): 1
+			java.lang.StringBuilder.append(java.lang.String): 1
+
+	79) java.lang.StringBuilder.setLength(int): Found in 1 distinct programs (1.0%)
+			java.lang.StringBuilder.length(): 1
+			java.lang.StringBuilder.StringBuilder(int): 1
+			java.lang.StringBuilder.append(java.lang.String): 1
+
+	80) java.lang.System.nanoTime(): Found in 1 distinct programs (1.0%)
+			java.lang.Thread.sleep(long): 1
+
+	81) java.security.AccessController.contextsForThread(): Found in 1 distinct programs (1.0%)
+			java.util.List<java.security.AccessControlContext>.get(int): 1
+			java.util.List<java.security.AccessControlContext>.isEmpty(): 1
+			DBranch: 1
+			java.util.List<java.security.AccessControlContext>.size(): 1
+
+	82) java.util.List<java.security.AccessControlContext>.isEmpty(): Found in 1 distinct programs (1.0%)
+			java.util.List<java.security.AccessControlContext>.get(int): 1
+			DBranch: 1
+			java.security.AccessController.contextsForThread(): 1
+			java.util.List<java.security.AccessControlContext>.size(): 1
+
+	83) java.util.List<java.security.AccessControlContext>.size(): Found in 1 distinct programs (1.0%)
+			java.util.List<java.security.AccessControlContext>.get(int): 1
+			java.util.List<java.security.AccessControlContext>.isEmpty(): 1
+			DBranch: 1
+			java.security.AccessController.contextsForThread(): 1
+
+	84) java.util.List<java.security.AccessControlContext>.get(int): Found in 1 distinct programs (1.0%)
+			java.util.List<java.security.AccessControlContext>.isEmpty(): 1
+			DBranch: 1
+			java.security.AccessController.contextsForThread(): 1
+			java.util.List<java.security.AccessControlContext>.size(): 1
+
+	85) java.security.SecureRandom.SecureRandom(): Found in 1 distinct programs (1.0%)
+			java.lang.StringBuilder.StringBuilder(): 1
+			java.lang.StringBuilder.append(char): 1
+			java.lang.StringBuilder.toString(): 1
+			java.util.Random.nextInt(int): 1
+
+	86) java.util.Random.nextInt(int): Found in 1 distinct programs (1.0%)
+			java.lang.StringBuilder.StringBuilder(): 1
+			java.lang.StringBuilder.append(char): 1
+			java.security.SecureRandom.SecureRandom(): 1
+			java.lang.StringBuilder.toString(): 1
+
+	87) java.lang.StringBuilder.append(char): Found in 1 distinct programs (1.0%)
+			java.lang.StringBuilder.StringBuilder(): 1
+			java.security.SecureRandom.SecureRandom(): 1
+			java.lang.StringBuilder.toString(): 1
+			java.util.Random.nextInt(int): 1
+
+	88) java.io.FileWriter.FileWriter(java.io.File): Found in 1 distinct programs (1.0%)
+			java.io.BufferedWriter.newLine(): 1
+			java.io.BufferedWriter.BufferedWriter(java.io.Writer): 1
+			java.io.Writer.write(char[]): 1
+			java.io.BufferedWriter.close(): 1
+
+	89) java.io.BufferedWriter.BufferedWriter(java.io.Writer): Found in 1 distinct programs (1.0%)
+			java.io.BufferedWriter.newLine(): 1
+			java.io.Writer.write(char[]): 1
+			java.io.BufferedWriter.close(): 1
+			java.io.FileWriter.FileWriter(java.io.File): 1
+
+	90) java.io.Writer.write(char[]): Found in 1 distinct programs (1.0%)
+			java.io.BufferedWriter.newLine(): 1
+			java.io.BufferedWriter.BufferedWriter(java.io.Writer): 1
+			java.io.BufferedWriter.close(): 1
+			java.io.FileWriter.FileWriter(java.io.File): 1
+
+	91) java.io.BufferedWriter.newLine(): Found in 1 distinct programs (1.0%)
+			java.io.BufferedWriter.BufferedWriter(java.io.Writer): 1
+			java.io.Writer.write(char[]): 1
+			java.io.BufferedWriter.close(): 1
+			java.io.FileWriter.FileWriter(java.io.File): 1
+
+	92) java.io.BufferedWriter.close(): Found in 1 distinct programs (1.0%)
+			java.io.BufferedWriter.newLine(): 1
+			java.io.BufferedWriter.BufferedWriter(java.io.Writer): 1
+			java.io.Writer.write(char[]): 1
+			java.io.FileWriter.FileWriter(java.io.File): 1
+
+	93) java.lang.Class<T>.isAssignableFrom(java.lang.Class): Found in 1 distinct programs (1.0%)
+			java.util.Set<T>.add(Tau_T): 1
+			DBranch: 1
+			java.util.HashSet<Tau_E>.HashSet(): 1
+
+	94) java.util.Set<T>.add(Tau_T): Found in 1 distinct programs (1.0%)
+			java.lang.Class<T>.isAssignableFrom(java.lang.Class): 1
+			DBranch: 1
+			java.util.HashSet<Tau_E>.HashSet(): 1
+
+	95) java.io.DataInputStream.DataInputStream(java.io.InputStream): Found in 1 distinct programs (1.0%)
+			java.io.FilterInputStream.close(): 1
+			java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream): 1
+
+	96) java.io.FilterInputStream.close(): Found in 1 distinct programs (1.0%)
+			java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream): 1
+			java.io.DataInputStream.DataInputStream(java.io.InputStream): 1
+
+	97) java.util.ArrayList<java.lang.Integer>.ArrayList<Integer>(): Found in 1 distinct programs (1.0%)
+			java.util.List<java.lang.Integer>.add(java.lang.Integer): 1
+			java.lang.Integer.valueOf(java.lang.String): 1
+
+	98) java.lang.Integer.valueOf(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.util.List<java.lang.Integer>.add(java.lang.Integer): 1
+			java.util.ArrayList<java.lang.Integer>.ArrayList<Integer>(): 1
+
+	99) java.util.List<java.lang.Integer>.add(java.lang.Integer): Found in 1 distinct programs (1.0%)
+			java.util.ArrayList<java.lang.Integer>.ArrayList<Integer>(): 1
+			java.lang.Integer.valueOf(java.lang.String): 1
+
+	100) java.awt.Container.addPropertyChangeListener(java.beans.PropertyChangeListener): Found in 1 distinct programs (1.0%)
+			javax.swing.JComponent.setPreferredSize(java.awt.Dimension): 1
+			java.awt.Dimension.Dimension(int,int): 1
+
+	101) java.io.ByteArrayInputStream.ByteArrayInputStream(byte[]): Found in 1 distinct programs (1.0%)
+			java.lang.String.getBytes(): 1
+			java.lang.Throwable.printStackTrace(): 1
+
+	102) java.lang.System.getenv(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.lang.System.setProperty(java.lang.String,java.lang.String): 1
+			DBranch: 1
+
+	103) java.security.Signature.getInstance(java.lang.String,java.security.Provider): Found in 1 distinct programs (1.0%)
+			java.security.Signature.verify(byte[]): 1
+			java.security.Signature.initVerify(java.security.PublicKey): 1
+			java.security.Signature.initSign(java.security.PrivateKey): 1
+			java.security.Signature.sign(): 1
+			java.security.Signature.update(byte[]): 1
+
+	104) java.security.Signature.initSign(java.security.PrivateKey): Found in 1 distinct programs (1.0%)
+			java.security.Signature.verify(byte[]): 1
+			java.security.Signature.initVerify(java.security.PublicKey): 1
+			java.security.Signature.sign(): 1
+			java.security.Signature.getInstance(java.lang.String,java.security.Provider): 1
+			java.security.Signature.update(byte[]): 1
+
+	105) java.security.Signature.update(byte[]): Found in 1 distinct programs (1.0%)
+			java.security.Signature.verify(byte[]): 1
+			java.security.Signature.initVerify(java.security.PublicKey): 1
+			java.security.Signature.initSign(java.security.PrivateKey): 1
+			java.security.Signature.sign(): 1
+			java.security.Signature.getInstance(java.lang.String,java.security.Provider): 1
+
+	106) java.security.Signature.sign(): Found in 1 distinct programs (1.0%)
+			java.security.Signature.verify(byte[]): 1
+			java.security.Signature.initVerify(java.security.PublicKey): 1
+			java.security.Signature.initSign(java.security.PrivateKey): 1
+			java.security.Signature.getInstance(java.lang.String,java.security.Provider): 1
+			java.security.Signature.update(byte[]): 1
+
+	107) java.security.Signature.initVerify(java.security.PublicKey): Found in 1 distinct programs (1.0%)
+			java.security.Signature.verify(byte[]): 1
+			java.security.Signature.initSign(java.security.PrivateKey): 1
+			java.security.Signature.sign(): 1
+			java.security.Signature.getInstance(java.lang.String,java.security.Provider): 1
+			java.security.Signature.update(byte[]): 1
+
+	108) java.security.Signature.verify(byte[]): Found in 1 distinct programs (1.0%)
+			java.security.Signature.initVerify(java.security.PublicKey): 1
+			java.security.Signature.initSign(java.security.PrivateKey): 1
+			java.security.Signature.sign(): 1
+			java.security.Signature.getInstance(java.lang.String,java.security.Provider): 1
+			java.security.Signature.update(byte[]): 1
+
+	109) javax.swing.UIManager.put(java.lang.Object,java.lang.Object): Found in 1 distinct programs (1.0%)
+			java.awt.Dimension.Dimension(int,int): 1
+			javax.swing.UIManager.getSystemLookAndFeelClassName(): 1
+			javax.swing.SwingUtilities.updateComponentTreeUI(java.awt.Component): 1
+			javax.swing.UIManager.setLookAndFeel(java.lang.String): 1
+
+	110) javax.swing.UIManager.getSystemLookAndFeelClassName(): Found in 1 distinct programs (1.0%)
+			javax.swing.UIManager.put(java.lang.Object,java.lang.Object): 1
+			java.awt.Dimension.Dimension(int,int): 1
+			javax.swing.SwingUtilities.updateComponentTreeUI(java.awt.Component): 1
+			javax.swing.UIManager.setLookAndFeel(java.lang.String): 1
+
+	111) javax.swing.UIManager.setLookAndFeel(java.lang.String): Found in 1 distinct programs (1.0%)
+			javax.swing.UIManager.put(java.lang.Object,java.lang.Object): 1
+			java.awt.Dimension.Dimension(int,int): 1
+			javax.swing.UIManager.getSystemLookAndFeelClassName(): 1
+			javax.swing.SwingUtilities.updateComponentTreeUI(java.awt.Component): 1
+
+	112) javax.swing.SwingUtilities.updateComponentTreeUI(java.awt.Component): Found in 1 distinct programs (1.0%)
+			javax.swing.UIManager.put(java.lang.Object,java.lang.Object): 1
+			java.awt.Dimension.Dimension(int,int): 1
+			javax.swing.UIManager.getSystemLookAndFeelClassName(): 1
+			javax.swing.UIManager.setLookAndFeel(java.lang.String): 1
+
+	113) java.util.List<java.security.cert.CertStore>.iterator(): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.util.ArrayList<java.security.cert.CertStore>.ArrayList<CertStore>(): 1
+			java.util.Iterator<java.security.cert.CertStore>.hasNext(): 1
+			DLoop: 1
+			java.util.ArrayList<java.security.cert.CertStore>.ArrayList<CertStore>(java.util.Collection): 1
+
+	114) java.util.Iterator<java.security.cert.CertStore>.hasNext(): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.util.ArrayList<java.security.cert.CertStore>.ArrayList<CertStore>(): 1
+			DLoop: 1
+			java.util.List<java.security.cert.CertStore>.iterator(): 1
+			java.util.ArrayList<java.security.cert.CertStore>.ArrayList<CertStore>(java.util.Collection): 1
+
+	115) java.util.ArrayList<java.security.cert.CertStore>.ArrayList<CertStore>(java.util.Collection): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.util.ArrayList<java.security.cert.CertStore>.ArrayList<CertStore>(): 1
+			java.util.Iterator<java.security.cert.CertStore>.hasNext(): 1
+			DLoop: 1
+			java.util.List<java.security.cert.CertStore>.iterator(): 1
+
+	116) java.util.ArrayList<java.security.cert.CertStore>.ArrayList<CertStore>(): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.util.Iterator<java.security.cert.CertStore>.hasNext(): 1
+			DLoop: 1
+			java.util.List<java.security.cert.CertStore>.iterator(): 1
+			java.util.ArrayList<java.security.cert.CertStore>.ArrayList<CertStore>(java.util.Collection): 1
+
+	117) java.util.ArrayList<java.io.File>.ArrayList<File>(int): Found in 1 distinct programs (1.0%)
+			java.util.List<java.lang.String>.size(): 1
+			java.io.File.File(java.io.File,java.lang.String): 1
+			java.io.File.File(java.lang.String,java.lang.String): 1
+			java.util.List<java.io.File>.add(java.io.File): 1
+			java.io.File.toURI(): 1
+			java.io.File.File(java.lang.String): 1
+
+	118) java.util.List<java.io.File>.add(java.io.File): Found in 1 distinct programs (1.0%)
+			java.util.ArrayList<java.io.File>.ArrayList<File>(int): 1
+			java.util.List<java.lang.String>.size(): 1
+			java.io.File.File(java.io.File,java.lang.String): 1
+			java.io.File.File(java.lang.String,java.lang.String): 1
+			java.io.File.toURI(): 1
+			java.io.File.File(java.lang.String): 1
+
+	119) java.util.Arrays.asList(T[]): Found in 1 distinct programs (1.0%)
+			java.util.List<java.lang.String>.toArray(T[]): 1
+			java.util.List<java.lang.String>.remove(java.lang.Object): 1
+			java.util.ArrayList<java.lang.String>.ArrayList<String>(java.util.Collection): 1
+
+	120) java.util.ArrayList<java.lang.String>.ArrayList<String>(java.util.Collection): Found in 1 distinct programs (1.0%)
+			java.util.Arrays.asList(T[]): 1
+			java.util.List<java.lang.String>.toArray(T[]): 1
+			java.util.List<java.lang.String>.remove(java.lang.Object): 1
+
+	121) java.util.List<java.lang.String>.remove(java.lang.Object): Found in 1 distinct programs (1.0%)
+			java.util.Arrays.asList(T[]): 1
+			java.util.List<java.lang.String>.toArray(T[]): 1
+			java.util.ArrayList<java.lang.String>.ArrayList<String>(java.util.Collection): 1
+
+	122) java.sql.ResultSet.getLong(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.sql.ResultSet.getDate(java.lang.String): 1
+			java.sql.ResultSet.getString(java.lang.String): 1
+			java.sql.ResultSet.next(): 1
+			DLoop: 1
+
+	123) java.sql.ResultSet.getDate(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.sql.ResultSet.getLong(java.lang.String): 1
+			java.sql.ResultSet.getString(java.lang.String): 1
+			java.sql.ResultSet.next(): 1
+			DLoop: 1
+
+	124) java.net.URL.URL(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.util.Date.toString(): 1
+			java.lang.String.contains(java.lang.CharSequence): 1
+			DBranch: 1
+
+	125) java.util.Date.toString(): Found in 1 distinct programs (1.0%)
+			java.lang.String.contains(java.lang.CharSequence): 1
+			java.net.URL.URL(java.lang.String): 1
+			DBranch: 1
+
+	126) javax.swing.JLabel.JLabel(): Found in 1 distinct programs (1.0%)
+			javax.swing.JTextField.JTextField(java.lang.String): 1
+
+	127) javax.swing.JTextField.JTextField(java.lang.String): Found in 1 distinct programs (1.0%)
+			javax.swing.JLabel.JLabel(): 1
+
+	128) java.lang.String.String(char[],int,int): Found in 1 distinct programs (1.0%)
+			java.util.ArrayList.size(): 1
+			java.util.ArrayList.get(int): 1
+			java.lang.System.arraycopy(java.lang.Object,int,java.lang.Object,int,int): 1
+			DLoop: 1
+			java.lang.String.length(): 1
+
+	129) java.util.ArrayList.get(int): Found in 1 distinct programs (1.0%)
+			java.util.ArrayList.size(): 1
+			java.lang.String.String(char[],int,int): 1
+			java.lang.System.arraycopy(java.lang.Object,int,java.lang.Object,int,int): 1
+			DLoop: 1
+			java.lang.String.length(): 1
+
+	130) java.util.ArrayList.size(): Found in 1 distinct programs (1.0%)
+			java.lang.String.String(char[],int,int): 1
+			java.util.ArrayList.get(int): 1
+			java.lang.System.arraycopy(java.lang.Object,int,java.lang.Object,int,int): 1
+			DLoop: 1
+			java.lang.String.length(): 1
+
+	131) java.lang.System.arraycopy(java.lang.Object,int,java.lang.Object,int,int): Found in 1 distinct programs (1.0%)
+			java.util.ArrayList.size(): 1
+			java.lang.String.String(char[],int,int): 1
+			java.util.ArrayList.get(int): 1
+			DLoop: 1
+			java.lang.String.length(): 1
+
+	132) java.io.OutputStream.write(byte[],int,int): Found in 1 distinct programs (1.0%)
+			java.io.OutputStream.close(): 1
+			java.lang.Long.valueOf(long): 1
+
+	133) java.io.OutputStream.close(): Found in 1 distinct programs (1.0%)
+			java.lang.Long.valueOf(long): 1
+			java.io.OutputStream.write(byte[],int,int): 1
+
+	134) java.lang.Long.valueOf(long): Found in 1 distinct programs (1.0%)
+			java.io.OutputStream.close(): 1
+			java.io.OutputStream.write(byte[],int,int): 1
+
+	135) java.util.concurrent.ScheduledThreadPoolExecutor.ScheduledThreadPoolExecutor(int): Found in 1 distinct programs (1.0%)
+			java.util.concurrent.ThreadPoolExecutor.setThreadFactory(java.util.concurrent.ThreadFactory): 1
+			java.util.concurrent.ThreadPoolExecutor.getThreadFactory(): 1
+
+	136) java.util.concurrent.ThreadPoolExecutor.setThreadFactory(java.util.concurrent.ThreadFactory): Found in 1 distinct programs (1.0%)
+			java.util.concurrent.ScheduledThreadPoolExecutor.ScheduledThreadPoolExecutor(int): 1
+			java.util.concurrent.ThreadPoolExecutor.getThreadFactory(): 1
+
+	137) java.util.concurrent.ThreadPoolExecutor.getThreadFactory(): Found in 1 distinct programs (1.0%)
+			java.util.concurrent.ScheduledThreadPoolExecutor.ScheduledThreadPoolExecutor(int): 1
+			java.util.concurrent.ThreadPoolExecutor.setThreadFactory(java.util.concurrent.ThreadFactory): 1
+
+	138) java.sql.Statement.executeQuery(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.lang.Throwable.printStackTrace(): 1
+			DExcept: 1
+			java.sql.ResultSet.getString(java.lang.String): 1
+			java.sql.ResultSet.getInt(java.lang.String): 1
+			java.sql.ResultSet.next(): 1
+			DLoop: 1
+
+	139) java.sql.ResultSet.getInt(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.lang.Throwable.printStackTrace(): 1
+			DExcept: 1
+			java.sql.Statement.executeQuery(java.lang.String): 1
+			java.sql.ResultSet.getString(java.lang.String): 1
+			java.sql.ResultSet.next(): 1
+			DLoop: 1
+
+	140) java.util.zip.ZipEntry.getName(): Found in 1 distinct programs (1.0%)
+			java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream): 1
+			DBranch: 1
+			java.io.ByteArrayOutputStream.toByteArray(): 1
+			java.io.FileInputStream.FileInputStream(java.io.File): 1
+			java.io.ByteArrayOutputStream.write(byte[],int,int): 1
+			java.io.ByteArrayOutputStream.ByteArrayOutputStream(): 1
+			java.io.FilterInputStream.read(byte[]): 1
+
+	141) java.io.ByteArrayOutputStream.ByteArrayOutputStream(): Found in 1 distinct programs (1.0%)
+			java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream): 1
+			DBranch: 1
+			java.util.zip.ZipEntry.getName(): 1
+			java.io.ByteArrayOutputStream.toByteArray(): 1
+			java.io.FileInputStream.FileInputStream(java.io.File): 1
+			java.io.ByteArrayOutputStream.write(byte[],int,int): 1
+			java.io.FilterInputStream.read(byte[]): 1
+
+	142) java.io.FilterInputStream.read(byte[]): Found in 1 distinct programs (1.0%)
+			java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream): 1
+			DBranch: 1
+			java.util.zip.ZipEntry.getName(): 1
+			java.io.ByteArrayOutputStream.toByteArray(): 1
+			java.io.FileInputStream.FileInputStream(java.io.File): 1
+			java.io.ByteArrayOutputStream.write(byte[],int,int): 1
+			java.io.ByteArrayOutputStream.ByteArrayOutputStream(): 1
+
+	143) java.io.ByteArrayOutputStream.write(byte[],int,int): Found in 1 distinct programs (1.0%)
+			java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream): 1
+			DBranch: 1
+			java.util.zip.ZipEntry.getName(): 1
+			java.io.ByteArrayOutputStream.toByteArray(): 1
+			java.io.FileInputStream.FileInputStream(java.io.File): 1
+			java.io.ByteArrayOutputStream.ByteArrayOutputStream(): 1
+			java.io.FilterInputStream.read(byte[]): 1
+
+	144) java.io.ByteArrayOutputStream.toByteArray(): Found in 1 distinct programs (1.0%)
+			java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream): 1
+			DBranch: 1
+			java.util.zip.ZipEntry.getName(): 1
+			java.io.FileInputStream.FileInputStream(java.io.File): 1
+			java.io.ByteArrayOutputStream.write(byte[],int,int): 1
+			java.io.ByteArrayOutputStream.ByteArrayOutputStream(): 1
+			java.io.FilterInputStream.read(byte[]): 1
+
+	145) java.io.OutputStream.write(int): Found in 1 distinct programs (1.0%)
+			java.lang.Long.toString(long): 1
+			java.io.OutputStream.write(byte[]): 1
+
+	146) java.io.OutputStream.write(byte[]): Found in 1 distinct programs (1.0%)
+			java.lang.Long.toString(long): 1
+			java.io.OutputStream.write(int): 1
+
+	147) java.awt.Component.getX(): Found in 1 distinct programs (1.0%)
+			java.awt.Component.getY(): 1
+			javax.swing.SwingUtilities.convertRectangleToAncestor(java.awt.Component,java.awt.Rectangle,java.awt.Component): 1
+			java.awt.Component.getParent(): 1
+
+	148) java.awt.Component.getY(): Found in 1 distinct programs (1.0%)
+			javax.swing.SwingUtilities.convertRectangleToAncestor(java.awt.Component,java.awt.Rectangle,java.awt.Component): 1
+			java.awt.Component.getX(): 1
+			java.awt.Component.getParent(): 1
+
+	149) java.awt.Component.getParent(): Found in 1 distinct programs (1.0%)
+			java.awt.Component.getY(): 1
+			javax.swing.SwingUtilities.convertRectangleToAncestor(java.awt.Component,java.awt.Rectangle,java.awt.Component): 1
+			java.awt.Component.getX(): 1
+
+	150) javax.swing.SwingUtilities.convertRectangleToAncestor(java.awt.Component,java.awt.Rectangle,java.awt.Component): Found in 1 distinct programs (1.0%)
+			java.awt.Component.getY(): 1
+			java.awt.Component.getX(): 1
+			java.awt.Component.getParent(): 1
+
+	151) java.lang.String.valueOf(char[]): Found in 1 distinct programs (1.0%)
+			java.lang.String.valueOf(int): 1
+			java.lang.Integer.parseInt(java.lang.String): 1
+
+	152) java.lang.String.valueOf(int): Found in 1 distinct programs (1.0%)
+			java.lang.String.valueOf(char[]): 1
+			java.lang.Integer.parseInt(java.lang.String): 1
+
+	153) java.lang.Boolean.parseBoolean(java.lang.String): Found in 1 distinct programs (1.0%)
+			$NOT$java.lang.String.startsWith(java.lang.String): 1
+			java.lang.String.length(): 1
+
+	154) javax.xml.stream.XMLStreamWriter.getPrefix(java.lang.String): Found in 1 distinct programs (1.0%)
+			javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String): 1
+			javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String): 1
+			javax.xml.stream.XMLStreamWriter.getNamespaceContext(): 1
+			java.lang.String.length(): 1
+
+	155) javax.xml.stream.XMLStreamWriter.getNamespaceContext(): Found in 1 distinct programs (1.0%)
+			javax.xml.stream.XMLStreamWriter.getPrefix(java.lang.String): 1
+			javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String): 1
+			javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String): 1
+			java.lang.String.length(): 1
+
+	156) javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String): Found in 1 distinct programs (1.0%)
+			javax.xml.stream.XMLStreamWriter.getPrefix(java.lang.String): 1
+			javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String): 1
+			javax.xml.stream.XMLStreamWriter.getNamespaceContext(): 1
+			java.lang.String.length(): 1
+
+	157) javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String): Found in 1 distinct programs (1.0%)
+			javax.xml.stream.XMLStreamWriter.getPrefix(java.lang.String): 1
+			javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String): 1
+			javax.xml.stream.XMLStreamWriter.getNamespaceContext(): 1
+			java.lang.String.length(): 1
+
+	158) java.util.Collection<V>.addAll(java.util.Collection): Found in 1 distinct programs (1.0%)
+			java.util.Collection<V>.clear(): 1
+			java.util.Collection<V>.size(): 1
+
+	159) java.util.Collection<V>.size(): Found in 1 distinct programs (1.0%)
+			java.util.Collection<V>.clear(): 1
+			java.util.Collection<V>.addAll(java.util.Collection): 1
+
+	160) java.util.Collection<V>.clear(): Found in 1 distinct programs (1.0%)
+			java.util.Collection<V>.size(): 1
+			java.util.Collection<V>.addAll(java.util.Collection): 1
+
+	161) java.lang.Long.Long(long): Found in 1 distinct programs (1.0%)
+			java.lang.Long.intValue(): 1
+			java.util.Set<java.lang.String>.add(java.lang.String): 1
+			java.util.TreeSet<java.lang.String>.TreeSet<String>(): 1
+			java.util.ArrayList<Tau_E>.ArrayList(): 1
+
+	162) java.util.TreeSet<java.lang.String>.TreeSet<String>(): Found in 1 distinct programs (1.0%)
+			java.lang.Long.intValue(): 1
+			java.util.Set<java.lang.String>.add(java.lang.String): 1
+			java.lang.Long.Long(long): 1
+			java.util.ArrayList<Tau_E>.ArrayList(): 1
+
+	163) java.util.Set<java.lang.String>.add(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.lang.Long.intValue(): 1
+			java.util.TreeSet<java.lang.String>.TreeSet<String>(): 1
+			java.lang.Long.Long(long): 1
+			java.util.ArrayList<Tau_E>.ArrayList(): 1
+
+	164) java.lang.Long.intValue(): Found in 1 distinct programs (1.0%)
+			java.util.Set<java.lang.String>.add(java.lang.String): 1
+			java.util.TreeSet<java.lang.String>.TreeSet<String>(): 1
+			java.lang.Long.Long(long): 1
+			java.util.ArrayList<Tau_E>.ArrayList(): 1
+
+	165) $NOT$java.lang.String.equals(java.lang.Object): Found in 1 distinct programs (1.0%)
+			java.lang.String.equals(java.lang.Object): 1
+			$NOT$java.lang.String.matches(java.lang.String): 1
+			DBranch: 1
+
+	166) $NOT$java.lang.String.matches(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.lang.String.equals(java.lang.Object): 1
+			DBranch: 1
+			$NOT$java.lang.String.equals(java.lang.Object): 1
+
+	167) java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>(): Found in 1 distinct programs (1.0%)
+			java.lang.String.substring(int): 1
+			java.lang.String.indexOf(int): 1
+			java.io.BufferedReader.BufferedReader(java.io.Reader): 1
+			java.lang.String.substring(int,int): 1
+			java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String): 1
+			java.io.FileReader.FileReader(java.io.File): 1
+			java.io.BufferedReader.readLine(): 1
+
+	168) java.io.FileReader.FileReader(java.io.File): Found in 1 distinct programs (1.0%)
+			java.lang.String.substring(int): 1
+			java.lang.String.indexOf(int): 1
+			java.io.BufferedReader.BufferedReader(java.io.Reader): 1
+			java.lang.String.substring(int,int): 1
+			java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String): 1
+			java.io.BufferedReader.readLine(): 1
+			java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>(): 1
+
+	169) java.io.BufferedReader.BufferedReader(java.io.Reader): Found in 1 distinct programs (1.0%)
+			java.lang.String.substring(int): 1
+			java.lang.String.indexOf(int): 1
+			java.lang.String.substring(int,int): 1
+			java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String): 1
+			java.io.FileReader.FileReader(java.io.File): 1
+			java.io.BufferedReader.readLine(): 1
+			java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>(): 1
+
+	170) java.io.BufferedReader.readLine(): Found in 1 distinct programs (1.0%)
+			java.lang.String.substring(int): 1
+			java.lang.String.indexOf(int): 1
+			java.io.BufferedReader.BufferedReader(java.io.Reader): 1
+			java.lang.String.substring(int,int): 1
+			java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String): 1
+			java.io.FileReader.FileReader(java.io.File): 1
+			java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>(): 1
+
+	171) java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String): Found in 1 distinct programs (1.0%)
+			java.lang.String.substring(int): 1
+			java.lang.String.indexOf(int): 1
+			java.io.BufferedReader.BufferedReader(java.io.Reader): 1
+			java.lang.String.substring(int,int): 1
+			java.io.FileReader.FileReader(java.io.File): 1
+			java.io.BufferedReader.readLine(): 1
+			java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>(): 1
+
+	172) javax.swing.JPanel.JPanel(): Found in 1 distinct programs (1.0%)
+			java.awt.Dimension.Dimension(int,int): 1
+			javax.swing.JComponent.setOpaque(boolean): 1
+
+	173) javax.swing.JComponent.setOpaque(boolean): Found in 1 distinct programs (1.0%)
+			java.awt.Dimension.Dimension(int,int): 1
+			javax.swing.JPanel.JPanel(): 1
+
+	174) java.util.concurrent.locks.ReentrantLock.lock(): Found in 1 distinct programs (1.0%)
+			java.util.concurrent.ThreadPoolExecutor.runStateAtLeast(int,int): 1
+			DBranch: 1
+			java.util.concurrent.ThreadPoolExecutor.runStateLessThan(int,int): 1
+			java.util.concurrent.locks.ReentrantLock.unlock(): 1
+
+	175) java.util.concurrent.locks.ReentrantLock.unlock(): Found in 1 distinct programs (1.0%)
+			java.util.concurrent.ThreadPoolExecutor.runStateAtLeast(int,int): 1
+			DBranch: 1
+			java.util.concurrent.ThreadPoolExecutor.runStateLessThan(int,int): 1
+			java.util.concurrent.locks.ReentrantLock.lock(): 1
+
+	176) java.util.concurrent.ThreadPoolExecutor.runStateLessThan(int,int): Found in 1 distinct programs (1.0%)
+			java.util.concurrent.ThreadPoolExecutor.runStateAtLeast(int,int): 1
+			DBranch: 1
+			java.util.concurrent.locks.ReentrantLock.lock(): 1
+			java.util.concurrent.locks.ReentrantLock.unlock(): 1
+
+	177) java.util.concurrent.ThreadPoolExecutor.runStateAtLeast(int,int): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.util.concurrent.ThreadPoolExecutor.runStateLessThan(int,int): 1
+			java.util.concurrent.locks.ReentrantLock.lock(): 1
+			java.util.concurrent.locks.ReentrantLock.unlock(): 1
+
+	178) java.util.concurrent.atomic.AtomicInteger.AtomicInteger(int): Found in 1 distinct programs (1.0%)
+			java.lang.Thread.join(): 1
+			java.lang.Thread.Thread(java.lang.Runnable): 1
+			java.lang.Throwable.printStackTrace(): 1
+			DExcept: 1
+			java.lang.Thread.start(): 1
+
+	179) java.lang.Thread.join(): Found in 1 distinct programs (1.0%)
+			java.lang.Thread.Thread(java.lang.Runnable): 1
+			java.lang.Throwable.printStackTrace(): 1
+			DExcept: 1
+			java.lang.Thread.start(): 1
+			java.util.concurrent.atomic.AtomicInteger.AtomicInteger(int): 1
+
+	180) javax.swing.JComponent.setMinimumSize(java.awt.Dimension): Found in 1 distinct programs (1.0%)
+			java.util.HashSet<java.lang.String>.HashSet<String>(): 1
+			javax.swing.JComponent.setPreferredSize(java.awt.Dimension): 1
+			java.awt.Dimension.Dimension(int,int): 1
+
+	181) java.util.HashSet<java.lang.String>.HashSet<String>(): Found in 1 distinct programs (1.0%)
+			javax.swing.JComponent.setMinimumSize(java.awt.Dimension): 1
+			javax.swing.JComponent.setPreferredSize(java.awt.Dimension): 1
+			java.awt.Dimension.Dimension(int,int): 1
+
+	182) java.io.BufferedOutputStream.BufferedOutputStream(java.io.OutputStream): Found in 1 distinct programs (1.0%)
+			java.io.ObjectOutputStream.writeObject(java.lang.Object): 1
+			java.io.ObjectOutputStream.close(): 1
+			java.io.File.getParentFile(): 1
+			java.io.FileOutputStream.FileOutputStream(java.io.File): 1
+			java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream): 1
+
+	183) java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream): Found in 1 distinct programs (1.0%)
+			java.io.ObjectOutputStream.writeObject(java.lang.Object): 1
+			java.io.ObjectOutputStream.close(): 1
+			java.io.File.getParentFile(): 1
+			java.io.BufferedOutputStream.BufferedOutputStream(java.io.OutputStream): 1
+			java.io.FileOutputStream.FileOutputStream(java.io.File): 1
+
+	184) java.io.ObjectOutputStream.writeObject(java.lang.Object): Found in 1 distinct programs (1.0%)
+			java.io.ObjectOutputStream.close(): 1
+			java.io.File.getParentFile(): 1
+			java.io.BufferedOutputStream.BufferedOutputStream(java.io.OutputStream): 1
+			java.io.FileOutputStream.FileOutputStream(java.io.File): 1
+			java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream): 1
+
+	185) java.io.ObjectOutputStream.close(): Found in 1 distinct programs (1.0%)
+			java.io.ObjectOutputStream.writeObject(java.lang.Object): 1
+			java.io.File.getParentFile(): 1
+			java.io.BufferedOutputStream.BufferedOutputStream(java.io.OutputStream): 1
+			java.io.FileOutputStream.FileOutputStream(java.io.File): 1
+			java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream): 1
+
+	186) java.util.LinkedList<Tau_E>.LinkedList(): Found in 1 distinct programs (1.0%)
+			java.util.HashSet<Tau_E>.HashSet(java.util.Collection): 1
+			java.util.HashSet<Tau_E>.HashSet(): 1
+
+	187) java.util.HashSet<Tau_E>.HashSet(java.util.Collection): Found in 1 distinct programs (1.0%)
+			java.util.LinkedList<Tau_E>.LinkedList(): 1
+			java.util.HashSet<Tau_E>.HashSet(): 1
+
+	188) $NOT$java.util.logging.Logger.internalIsLoggable(java.util.logging.Level): Found in 1 distinct programs (1.0%)
+			java.util.logging.Logger.log(java.util.logging.LogRecord): 1
+			java.util.logging.Logger.setResourceBundle(java.util.logging.LogRecord): 1
+
+	189) java.util.logging.Logger.setResourceBundle(java.util.logging.LogRecord): Found in 1 distinct programs (1.0%)
+			java.util.logging.Logger.log(java.util.logging.LogRecord): 1
+			$NOT$java.util.logging.Logger.internalIsLoggable(java.util.logging.Level): 1
+
+	190) java.util.logging.Logger.log(java.util.logging.LogRecord): Found in 1 distinct programs (1.0%)
+			$NOT$java.util.logging.Logger.internalIsLoggable(java.util.logging.Level): 1
+			java.util.logging.Logger.setResourceBundle(java.util.logging.LogRecord): 1
+
+	191) java.util.logging.Logger.getLogger(java.lang.String): Found in 1 distinct programs (1.0%)
+			DExcept: 1
+			java.net.URI.URI(java.lang.String): 1
+			java.lang.Class<Tau_T>.getName(): 1
+
+	192) java.net.URI.URI(java.lang.String): Found in 1 distinct programs (1.0%)
+			DExcept: 1
+			java.util.logging.Logger.getLogger(java.lang.String): 1
+			java.lang.Class<Tau_T>.getName(): 1
+
+	193) java.util.Collections.emptyList(): Found in 1 distinct programs (1.0%)
+			java.util.List<java.lang.String>.add(java.lang.String): 1
+			java.util.List<>.size(): 1
+			java.util.ArrayList<java.lang.String>.ArrayList<String>(): 1
+			DExcept: 1
+
+	194) java.util.List<>.size(): Found in 1 distinct programs (1.0%)
+			java.util.Collections.emptyList(): 1
+			java.util.List<java.lang.String>.add(java.lang.String): 1
+			java.util.ArrayList<java.lang.String>.ArrayList<String>(): 1
+			DExcept: 1
+
+	195) java.lang.StringBuilder.append(long): Found in 1 distinct programs (1.0%)
+			java.lang.StringBuilder.append(java.lang.String): 1
+			java.lang.StringBuilder.toString(): 1
+			java.lang.StringBuilder.append(int): 1
+			java.lang.StringBuilder.StringBuilder(java.lang.String): 1
+			java.lang.StringBuilder.append(java.lang.Object): 1
+
+	196) java.lang.StringBuilder.append(int): Found in 1 distinct programs (1.0%)
+			java.lang.StringBuilder.append(java.lang.String): 1
+			java.lang.StringBuilder.append(long): 1
+			java.lang.StringBuilder.toString(): 1
+			java.lang.StringBuilder.StringBuilder(java.lang.String): 1
+			java.lang.StringBuilder.append(java.lang.Object): 1
+
+	197) java.awt.Shape.getBounds2D(): Found in 1 distinct programs (1.0%)
+			java.awt.Graphics.getClip(): 1
+			java.awt.Graphics2D.clip(java.awt.Shape): 1
+			java.awt.Graphics.setClip(java.awt.Shape): 1
+			javax.swing.text.View.modelToView(int,javax.swing.text.Position.Bias,int,javax.swing.text.Position.Bias,java.awt.Shape): 1
+
+	198) javax.swing.text.View.modelToView(int,javax.swing.text.Position.Bias,int,javax.swing.text.Position.Bias,java.awt.Shape): Found in 1 distinct programs (1.0%)
+			java.awt.Graphics.getClip(): 1
+			java.awt.Graphics2D.clip(java.awt.Shape): 1
+			java.awt.Shape.getBounds2D(): 1
+			java.awt.Graphics.setClip(java.awt.Shape): 1
+
+	199) java.awt.Graphics.getClip(): Found in 1 distinct programs (1.0%)
+			java.awt.Graphics2D.clip(java.awt.Shape): 1
+			java.awt.Shape.getBounds2D(): 1
+			java.awt.Graphics.setClip(java.awt.Shape): 1
+			javax.swing.text.View.modelToView(int,javax.swing.text.Position.Bias,int,javax.swing.text.Position.Bias,java.awt.Shape): 1
+
+	200) java.awt.Graphics2D.clip(java.awt.Shape): Found in 1 distinct programs (1.0%)
+			java.awt.Graphics.getClip(): 1
+			java.awt.Shape.getBounds2D(): 1
+			java.awt.Graphics.setClip(java.awt.Shape): 1
+			javax.swing.text.View.modelToView(int,javax.swing.text.Position.Bias,int,javax.swing.text.Position.Bias,java.awt.Shape): 1
+
+	201) java.awt.Graphics.setClip(java.awt.Shape): Found in 1 distinct programs (1.0%)
+			java.awt.Graphics.getClip(): 1
+			java.awt.Graphics2D.clip(java.awt.Shape): 1
+			java.awt.Shape.getBounds2D(): 1
+			javax.swing.text.View.modelToView(int,javax.swing.text.Position.Bias,int,javax.swing.text.Position.Bias,java.awt.Shape): 1
+
+	202) java.lang.Thread.setDaemon(boolean): Found in 1 distinct programs (1.0%)
+			java.lang.Thread.Thread(java.lang.Runnable): 1
+			java.lang.Thread.start(): 1
+
+	203) java.io.FileOutputStream.close(): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.io.FileInputStream.FileInputStream(java.io.File): 1
+			java.io.FileInputStream.close(): 1
+			java.io.File.renameTo(java.io.File): 1
+			java.io.FileOutputStream.FileOutputStream(java.io.File): 1
+
+	204) java.io.FileInputStream.close(): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.io.FileInputStream.FileInputStream(java.io.File): 1
+			java.io.FileOutputStream.close(): 1
+			java.io.File.renameTo(java.io.File): 1
+			java.io.FileOutputStream.FileOutputStream(java.io.File): 1
+
+	205) java.io.File.renameTo(java.io.File): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.io.FileInputStream.FileInputStream(java.io.File): 1
+			java.io.FileOutputStream.close(): 1
+			java.io.FileInputStream.close(): 1
+			java.io.FileOutputStream.FileOutputStream(java.io.File): 1
+
+	206) java.io.File.length(): Found in 1 distinct programs (1.0%)
+			java.lang.String.substring(int): 1
+			java.lang.String.lastIndexOf(java.lang.String): 1
+
+	207) java.lang.String.lastIndexOf(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.lang.String.substring(int): 1
+			java.io.File.length(): 1
+
+	208) java.util.List<java.lang.Class>.remove(java.lang.Object): Found in 1 distinct programs (1.0%)
+			java.lang.Class<Tau_T>.isAssignableFrom(java.lang.Class): 1
+			java.util.List<java.lang.Class>.isEmpty(): 1
+			java.lang.Class<>.isAssignableFrom(java.lang.Class): 1
+
+	209) java.util.List<java.lang.Class>.isEmpty(): Found in 1 distinct programs (1.0%)
+			java.lang.Class<Tau_T>.isAssignableFrom(java.lang.Class): 1
+			java.util.List<java.lang.Class>.remove(java.lang.Object): 1
+			java.lang.Class<>.isAssignableFrom(java.lang.Class): 1
+
+	210) java.lang.Class<>.isAssignableFrom(java.lang.Class): Found in 1 distinct programs (1.0%)
+			java.lang.Class<Tau_T>.isAssignableFrom(java.lang.Class): 1
+			java.util.List<java.lang.Class>.remove(java.lang.Object): 1
+			java.util.List<java.lang.Class>.isEmpty(): 1
+
+	211) java.lang.Class<Tau_T>.isAssignableFrom(java.lang.Class): Found in 1 distinct programs (1.0%)
+			java.util.List<java.lang.Class>.remove(java.lang.Object): 1
+			java.util.List<java.lang.Class>.isEmpty(): 1
+			java.lang.Class<>.isAssignableFrom(java.lang.Class): 1
+
+	212) java.lang.Character.isJavaIdentifierStart(char): Found in 1 distinct programs (1.0%)
+			java.lang.StringBuffer.append(char): 1
+			DBranch: 1
+			java.lang.StringBuffer.setLength(int): 1
+
+	213) java.lang.StringBuffer.setLength(int): Found in 1 distinct programs (1.0%)
+			java.lang.Character.isJavaIdentifierStart(char): 1
+			java.lang.StringBuffer.append(char): 1
+			DBranch: 1
+
+	214) javax.swing.JTree.setCellRenderer(javax.swing.tree.TreeCellRenderer): Found in 1 distinct programs (1.0%)
+			javax.swing.JTree.setRootVisible(boolean): 1
+			javax.swing.JTree.setRowHeight(int): 1
+			javax.swing.JComponent.setFont(java.awt.Font): 1
+			java.awt.Font.Font(java.lang.String,int,int): 1
+			java.awt.Component.addMouseListener(java.awt.event.MouseListener): 1
+
+	215) javax.swing.JTree.setRootVisible(boolean): Found in 1 distinct programs (1.0%)
+			javax.swing.JTree.setRowHeight(int): 1
+			javax.swing.JComponent.setFont(java.awt.Font): 1
+			java.awt.Font.Font(java.lang.String,int,int): 1
+			java.awt.Component.addMouseListener(java.awt.event.MouseListener): 1
+			javax.swing.JTree.setCellRenderer(javax.swing.tree.TreeCellRenderer): 1
+
+	216) javax.swing.JTree.setRowHeight(int): Found in 1 distinct programs (1.0%)
+			javax.swing.JTree.setRootVisible(boolean): 1
+			javax.swing.JComponent.setFont(java.awt.Font): 1
+			java.awt.Font.Font(java.lang.String,int,int): 1
+			java.awt.Component.addMouseListener(java.awt.event.MouseListener): 1
+			javax.swing.JTree.setCellRenderer(javax.swing.tree.TreeCellRenderer): 1
+
+	217) java.awt.Component.addMouseListener(java.awt.event.MouseListener): Found in 1 distinct programs (1.0%)
+			javax.swing.JTree.setRootVisible(boolean): 1
+			javax.swing.JTree.setRowHeight(int): 1
+			javax.swing.JComponent.setFont(java.awt.Font): 1
+			java.awt.Font.Font(java.lang.String,int,int): 1
+			javax.swing.JTree.setCellRenderer(javax.swing.tree.TreeCellRenderer): 1
+
+	218) java.awt.Font.Font(java.lang.String,int,int): Found in 1 distinct programs (1.0%)
+			javax.swing.JTree.setRootVisible(boolean): 1
+			javax.swing.JTree.setRowHeight(int): 1
+			javax.swing.JComponent.setFont(java.awt.Font): 1
+			java.awt.Component.addMouseListener(java.awt.event.MouseListener): 1
+			javax.swing.JTree.setCellRenderer(javax.swing.tree.TreeCellRenderer): 1
+
+	219) javax.swing.JComponent.setFont(java.awt.Font): Found in 1 distinct programs (1.0%)
+			javax.swing.JTree.setRootVisible(boolean): 1
+			javax.swing.JTree.setRowHeight(int): 1
+			java.awt.Font.Font(java.lang.String,int,int): 1
+			java.awt.Component.addMouseListener(java.awt.event.MouseListener): 1
+			javax.swing.JTree.setCellRenderer(javax.swing.tree.TreeCellRenderer): 1
+
+	220) java.lang.Class<T>.getDeclaringClass0(): Found in 1 distinct programs (1.0%)
+			java.lang.Class<>.checkPackageAccess(java.lang.ClassLoader,boolean): 1
+			java.lang.ClassLoader.getClassLoader(java.lang.Class): 1
+
+	221) java.lang.ClassLoader.getClassLoader(java.lang.Class): Found in 1 distinct programs (1.0%)
+			java.lang.Class<T>.getDeclaringClass0(): 1
+			java.lang.Class<>.checkPackageAccess(java.lang.ClassLoader,boolean): 1
+
+	222) java.lang.Class<>.checkPackageAccess(java.lang.ClassLoader,boolean): Found in 1 distinct programs (1.0%)
+			java.lang.Class<T>.getDeclaringClass0(): 1
+			java.lang.ClassLoader.getClassLoader(java.lang.Class): 1
+
+	223) java.io.File.exists(): Found in 1 distinct programs (1.0%)
+			$NOT$java.io.File.getAbsoluteFile(): 1
+			java.io.File.getParentFile(): 1
+			java.io.File.File(java.io.File,java.lang.String): 1
+			DLoop: 1
+			java.io.File.File(java.lang.String): 1
+
+	224) $NOT$java.io.File.getAbsoluteFile(): Found in 1 distinct programs (1.0%)
+			java.io.File.exists(): 1
+			java.io.File.getParentFile(): 1
+			java.io.File.File(java.io.File,java.lang.String): 1
+			DLoop: 1
+			java.io.File.File(java.lang.String): 1
+
+	225) java.util.List<java.lang.String>.isEmpty(): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.util.List<java.lang.String>.size(): 1
+			java.util.List<java.lang.String>.get(int): 1
+			java.util.List<java.lang.String>.set(int,java.lang.String): 1
+
+	226) java.util.List<java.lang.String>.get(int): Found in 1 distinct programs (1.0%)
+			java.util.List<java.lang.String>.isEmpty(): 1
+			DBranch: 1
+			java.util.List<java.lang.String>.size(): 1
+			java.util.List<java.lang.String>.set(int,java.lang.String): 1
+
+	227) java.util.List<java.lang.String>.set(int,java.lang.String): Found in 1 distinct programs (1.0%)
+			java.util.List<java.lang.String>.isEmpty(): 1
+			DBranch: 1
+			java.util.List<java.lang.String>.size(): 1
+			java.util.List<java.lang.String>.get(int): 1
+
+	228) java.util.regex.Pattern.compile(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.util.regex.Matcher.find(): 1
+			java.util.regex.Pattern.matcher(java.lang.CharSequence): 1
+
+	229) java.util.regex.Pattern.matcher(java.lang.CharSequence): Found in 1 distinct programs (1.0%)
+			java.util.regex.Matcher.find(): 1
+			java.util.regex.Pattern.compile(java.lang.String): 1
+
+	230) java.util.regex.Matcher.find(): Found in 1 distinct programs (1.0%)
+			java.util.regex.Pattern.compile(java.lang.String): 1
+			java.util.regex.Pattern.matcher(java.lang.CharSequence): 1
+
+	231) javax.swing.JComponent.getFontMetrics(java.awt.Font): Found in 1 distinct programs (1.0%)
+			java.awt.event.MouseEvent.getY(): 1
+			java.awt.FontMetrics.getHeight(): 1
+
+	232) java.awt.FontMetrics.getHeight(): Found in 1 distinct programs (1.0%)
+			java.awt.event.MouseEvent.getY(): 1
+			javax.swing.JComponent.getFontMetrics(java.awt.Font): 1
+
+	233) java.awt.event.MouseEvent.getY(): Found in 1 distinct programs (1.0%)
+			java.awt.FontMetrics.getHeight(): 1
+			javax.swing.JComponent.getFontMetrics(java.awt.Font): 1
+
+	234) java.lang.StringBuffer.append(int): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.lang.StringBuffer.toString(): 1
+			java.lang.StringBuffer.StringBuffer(): 1
+			java.lang.StringBuffer.append(java.lang.String): 1
+
+	235) java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream): Found in 1 distinct programs (1.0%)
+			java.io.FileInputStream.FileInputStream(java.io.File): 1
+			java.io.File.File(java.lang.String): 1
+
+	236) java.lang.Thread.currentThread(): Found in 1 distinct programs (1.0%)
+			DExcept: 1
+			java.lang.System.exit(int): 1
+			java.lang.Math.addExact(long,long): 1
+
+	237) java.lang.Math.addExact(long,long): Found in 1 distinct programs (1.0%)
+			DExcept: 1
+			java.lang.System.exit(int): 1
+			java.lang.Thread.currentThread(): 1
+
+	238) java.awt.Component.getWidth(): Found in 1 distinct programs (1.0%)
+			java.awt.Component.getHeight(): 1
+			java.awt.Container.add(java.awt.Component): 1
+
+	239) java.awt.Component.getHeight(): Found in 1 distinct programs (1.0%)
+			java.awt.Container.add(java.awt.Component): 1
+			java.awt.Component.getWidth(): 1
+
+	240) java.awt.Container.add(java.awt.Component): Found in 1 distinct programs (1.0%)
+			java.awt.Component.getHeight(): 1
+			java.awt.Component.getWidth(): 1
+
+	241) java.lang.String.trim(): Found in 1 distinct programs (1.0%)
+			java.security.KeyStore.getInstance(java.lang.String,java.security.Provider): 1
+			java.security.Security.getProvider(java.lang.String): 1
+			java.lang.String.length(): 1
+
+	242) java.security.Security.getProvider(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.security.KeyStore.getInstance(java.lang.String,java.security.Provider): 1
+			java.lang.String.trim(): 1
+			java.lang.String.length(): 1
+
+	243) java.security.KeyStore.getInstance(java.lang.String,java.security.Provider): Found in 1 distinct programs (1.0%)
+			java.security.Security.getProvider(java.lang.String): 1
+			java.lang.String.trim(): 1
+			java.lang.String.length(): 1
+
+	244) java.lang.Math.random(): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.lang.Long.toString(long): 1
+			java.util.Calendar.getInstance(): 1
+			java.lang.Math.round(double): 1
+			java.io.File.File(java.lang.String): 1
+
+	245) java.lang.Math.round(double): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.lang.Math.random(): 1
+			java.lang.Long.toString(long): 1
+			java.util.Calendar.getInstance(): 1
+			java.io.File.File(java.lang.String): 1
+
+	246) java.util.Calendar.getInstance(): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.lang.Math.random(): 1
+			java.lang.Long.toString(long): 1
+			java.lang.Math.round(double): 1
+			java.io.File.File(java.lang.String): 1
+
+	247) java.awt.image.BufferedImage.BufferedImage(int,int,int): Found in 1 distinct programs (1.0%)
+			java.awt.Graphics.fillRect(int,int,int,int): 1
+			java.awt.Graphics.dispose(): 1
+			javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File): 1
+			java.awt.Graphics2D.setPaint(java.awt.Paint): 1
+			java.awt.image.BufferedImage.createGraphics(): 1
+
+	248) java.awt.image.BufferedImage.createGraphics(): Found in 1 distinct programs (1.0%)
+			java.awt.Graphics.fillRect(int,int,int,int): 1
+			java.awt.Graphics.dispose(): 1
+			javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File): 1
+			java.awt.image.BufferedImage.BufferedImage(int,int,int): 1
+			java.awt.Graphics2D.setPaint(java.awt.Paint): 1
+
+	249) java.awt.Graphics2D.setPaint(java.awt.Paint): Found in 1 distinct programs (1.0%)
+			java.awt.Graphics.fillRect(int,int,int,int): 1
+			java.awt.Graphics.dispose(): 1
+			javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File): 1
+			java.awt.image.BufferedImage.BufferedImage(int,int,int): 1
+			java.awt.image.BufferedImage.createGraphics(): 1
+
+	250) java.awt.Graphics.fillRect(int,int,int,int): Found in 1 distinct programs (1.0%)
+			java.awt.Graphics.dispose(): 1
+			javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File): 1
+			java.awt.image.BufferedImage.BufferedImage(int,int,int): 1
+			java.awt.Graphics2D.setPaint(java.awt.Paint): 1
+			java.awt.image.BufferedImage.createGraphics(): 1
+
+	251) java.awt.Graphics.dispose(): Found in 1 distinct programs (1.0%)
+			java.awt.Graphics.fillRect(int,int,int,int): 1
+			javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File): 1
+			java.awt.image.BufferedImage.BufferedImage(int,int,int): 1
+			java.awt.Graphics2D.setPaint(java.awt.Paint): 1
+			java.awt.image.BufferedImage.createGraphics(): 1
+
+	252) javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File): Found in 1 distinct programs (1.0%)
+			java.awt.Graphics.fillRect(int,int,int,int): 1
+			java.awt.Graphics.dispose(): 1
+			java.awt.image.BufferedImage.BufferedImage(int,int,int): 1
+			java.awt.Graphics2D.setPaint(java.awt.Paint): 1
+			java.awt.image.BufferedImage.createGraphics(): 1
+
+	253) java.lang.Class<T>.getMethods(): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.util.List<com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder>.add(com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder): 1
+			java.util.ArrayList<Tau_E>.ArrayList(): 1
+			java.lang.reflect.Method.getAnnotation(java.lang.Class): 1
+			java.lang.reflect.Method.getReturnType(): 1
+
+	254) java.lang.reflect.Method.getReturnType(): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.lang.Class<T>.getMethods(): 1
+			java.util.List<com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder>.add(com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder): 1
+			java.util.ArrayList<Tau_E>.ArrayList(): 1
+			java.lang.reflect.Method.getAnnotation(java.lang.Class): 1
+
+	255) java.lang.reflect.Method.getAnnotation(java.lang.Class): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.lang.Class<T>.getMethods(): 1
+			java.util.List<com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder>.add(com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder): 1
+			java.util.ArrayList<Tau_E>.ArrayList(): 1
+			java.lang.reflect.Method.getReturnType(): 1
+
+	256) java.util.List<com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder>.add(com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder): Found in 1 distinct programs (1.0%)
+			DBranch: 1
+			java.lang.Class<T>.getMethods(): 1
+			java.util.ArrayList<Tau_E>.ArrayList(): 1
+			java.lang.reflect.Method.getAnnotation(java.lang.Class): 1
+			java.lang.reflect.Method.getReturnType(): 1
+
+	257) java.lang.String.isEmpty(): Found in 1 distinct programs (1.0%)
+			java.lang.String.equals(java.lang.Object): 1
+			$NOT$java.lang.String.startsWith(java.lang.String): 1
+
+	258) java.nio.ByteBuffer.wrap(byte[]): Found in 1 distinct programs (1.0%)
+			java.math.BigDecimal.BigDecimal(int): 1
+			java.lang.String.getBytes(): 1
+			java.lang.Double.Double(double): 1
+			java.lang.System.currentTimeMillis(): 1
+			java.lang.Float.Float(float): 1
+			java.math.BigInteger.BigInteger(java.lang.String): 1
+
+	259) java.lang.System.currentTimeMillis(): Found in 1 distinct programs (1.0%)
+			java.math.BigDecimal.BigDecimal(int): 1
+			java.lang.String.getBytes(): 1
+			java.lang.Double.Double(double): 1
+			java.lang.Float.Float(float): 1
+			java.nio.ByteBuffer.wrap(byte[]): 1
+			java.math.BigInteger.BigInteger(java.lang.String): 1
+
+	260) java.math.BigDecimal.BigDecimal(int): Found in 1 distinct programs (1.0%)
+			java.lang.String.getBytes(): 1
+			java.lang.Double.Double(double): 1
+			java.lang.System.currentTimeMillis(): 1
+			java.lang.Float.Float(float): 1
+			java.nio.ByteBuffer.wrap(byte[]): 1
+			java.math.BigInteger.BigInteger(java.lang.String): 1
+
+	261) java.lang.Double.Double(double): Found in 1 distinct programs (1.0%)
+			java.math.BigDecimal.BigDecimal(int): 1
+			java.lang.String.getBytes(): 1
+			java.lang.System.currentTimeMillis(): 1
+			java.lang.Float.Float(float): 1
+			java.nio.ByteBuffer.wrap(byte[]): 1
+			java.math.BigInteger.BigInteger(java.lang.String): 1
+
+	262) java.lang.Float.Float(float): Found in 1 distinct programs (1.0%)
+			java.math.BigDecimal.BigDecimal(int): 1
+			java.lang.String.getBytes(): 1
+			java.lang.Double.Double(double): 1
+			java.lang.System.currentTimeMillis(): 1
+			java.nio.ByteBuffer.wrap(byte[]): 1
+			java.math.BigInteger.BigInteger(java.lang.String): 1
+
+	263) java.math.BigInteger.BigInteger(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.math.BigDecimal.BigDecimal(int): 1
+			java.lang.String.getBytes(): 1
+			java.lang.Double.Double(double): 1
+			java.lang.System.currentTimeMillis(): 1
+			java.lang.Float.Float(float): 1
+			java.nio.ByteBuffer.wrap(byte[]): 1
+
+	264) java.util.ArrayList<java.lang.String>.add(java.lang.String): Found in 1 distinct programs (1.0%)
+			java.util.ArrayList<java.lang.String>.ArrayList<String>(): 1
+			java.lang.String.format(java.lang.String,java.lang.Object[]): 1
+
+	265) java.io.StringWriter.StringWriter(): Found in 1 distinct programs (1.0%)
+			java.io.PrintWriter.PrintWriter(java.io.Writer): 1
+			java.lang.Throwable.printStackTrace(java.io.PrintWriter): 1
+			java.io.StringWriter.toString(): 1
+
+	266) java.io.PrintWriter.PrintWriter(java.io.Writer): Found in 1 distinct programs (1.0%)
+			java.lang.Throwable.printStackTrace(java.io.PrintWriter): 1
+			java.io.StringWriter.toString(): 1
+			java.io.StringWriter.StringWriter(): 1
+
+	267) java.lang.Throwable.printStackTrace(java.io.PrintWriter): Found in 1 distinct programs (1.0%)
+			java.io.PrintWriter.PrintWriter(java.io.Writer): 1
+			java.io.StringWriter.toString(): 1
+			java.io.StringWriter.StringWriter(): 1
+
+	268) java.io.StringWriter.toString(): Found in 1 distinct programs (1.0%)
+			java.io.PrintWriter.PrintWriter(java.io.Writer): 1
+			java.lang.Throwable.printStackTrace(java.io.PrintWriter): 1
+			java.io.StringWriter.StringWriter(): 1
+
+	269) java.awt.Point.Point(): Found in 1 distinct programs (1.0%)
+			javax.swing.JComponent.getWidth(): 1
+			javax.swing.JComponent.getHeight(): 1
+			javax.swing.SwingUtilities.convertPointToScreen(java.awt.Point,java.awt.Component): 1
+
+	270) javax.swing.JComponent.getWidth(): Found in 1 distinct programs (1.0%)
+			java.awt.Point.Point(): 1
+			javax.swing.JComponent.getHeight(): 1
+			javax.swing.SwingUtilities.convertPointToScreen(java.awt.Point,java.awt.Component): 1
+
+	271) javax.swing.JComponent.getHeight(): Found in 1 distinct programs (1.0%)
+			javax.swing.JComponent.getWidth(): 1
+			java.awt.Point.Point(): 1
+			javax.swing.SwingUtilities.convertPointToScreen(java.awt.Point,java.awt.Component): 1
+
+	272) javax.swing.SwingUtilities.convertPointToScreen(java.awt.Point,java.awt.Component): Found in 1 distinct programs (1.0%)
+			javax.swing.JComponent.getWidth(): 1
+			java.awt.Point.Point(): 1
+			javax.swing.JComponent.getHeight(): 1
+
+	273) java.util.Iterator<byte[]>.next(): Found in 1 distinct programs (1.0%)
+			java.lang.StringBuilder.StringBuilder(): 1
+			java.util.Iterator<byte[]>.hasNext(): 1
+			java.lang.StringBuilder.toString(): 1
+			java.lang.StringBuilder.append(java.lang.Object): 1
+			DLoop: 1
+
+	274) java.util.Iterator<byte[]>.hasNext(): Found in 1 distinct programs (1.0%)
+			java.lang.StringBuilder.StringBuilder(): 1
+			java.lang.StringBuilder.toString(): 1
+			java.util.Iterator<byte[]>.next(): 1
+			java.lang.StringBuilder.append(java.lang.Object): 1
+			DLoop: 1
+
+	275) java.util.List<T>.addAll(java.util.Collection): Found in 1 distinct programs (1.0%)
+			java.util.ArrayList<Tau_E>.ArrayList(): 1
+			java.util.List<T>.isEmpty(): 1
+
+	276) java.util.List<T>.isEmpty(): Found in 1 distinct programs (1.0%)
+			java.util.ArrayList<Tau_E>.ArrayList(): 1
+			java.util.List<T>.addAll(java.util.Collection): 1
+
+
+Top 50 APIs Per Branching Condition (Includes Multiple Occurrences within Single Program)
+DBranch
+	_cond:
+		1) java.lang.String.equals(java.lang.Object): 4
+		2) java.lang.String.startsWith(java.lang.String): 3
+		3) java.util.List<java.security.AccessControlContext>.isEmpty(): 1
+		4) java.lang.Class<T>.isAssignableFrom(java.lang.Class): 1
+		5) java.io.Reader.markSupported(): 1
+		6) java.lang.System.getenv(java.lang.String): 1
+		7) java.lang.Class<>.isPrimitive(): 1
+		8) java.util.zip.ZipEntry.getName(): 1
+		9) java.util.concurrent.ThreadPoolExecutor.runStateLessThan(int,int): 1
+		10) java.util.List<java.lang.Object>.size(): 1
+		11) java.lang.String.length(): 1
+		12) java.awt.event.MouseEvent.getClickCount(): 1
+		13) java.util.List.remove(java.lang.Object): 1
+		14) java.util.List<java.lang.String>.isEmpty(): 1
+		15) java.lang.String.charAt(int): 1
+		16) java.lang.reflect.Method.getReturnType(): 1
+		17) java.lang.System.currentTimeMillis(): 1
+
+	_else:
+		1) java.lang.String.equals(java.lang.Object): 3
+		2) java.io.File.File(java.lang.String): 2
+		3) java.lang.String.valueOf(int): 1
+		4) java.util.List<java.security.AccessControlContext>.size(): 1
+		5) java.util.List<java.security.AccessControlContext>.get(int): 1
+		6) java.io.BufferedReader.BufferedReader(java.io.Reader): 1
+		7) java.util.Vector<java.lang.String>.addElement(java.lang.String): 1
+		8) java.util.List<java.security.cert.CertStore>.iterator(): 1
+		9) DLoop: 1
+		10) java.util.Iterator<java.security.cert.CertStore>.hasNext(): 1
+		11) java.util.ArrayList<java.security.cert.CertStore>.ArrayList<CertStore>(java.util.Collection): 1
+		12) java.lang.Integer.valueOf(java.lang.String): 1
+		13) java.util.Date.toString(): 1
+		14) java.lang.Class.isPrimitive(): 1
+		15) $NOT$java.lang.String.equals(java.lang.Object): 1
+		16) $NOT$java.lang.String.matches(java.lang.String): 1
+		17) java.util.concurrent.ThreadPoolExecutor.runStateAtLeast(int,int): 1
+		18) java.io.FileInputStream.FileInputStream(java.io.File): 1
+		19) java.io.FileOutputStream.FileOutputStream(java.io.File): 1
+		20) java.io.FileOutputStream.close(): 1
+		21) java.io.FileInputStream.close(): 1
+		22) java.lang.StringBuilder.StringBuilder(java.lang.String): 1
+		23) java.lang.StringBuilder.append(java.lang.String): 1
+		24) java.lang.StringBuilder.toString(): 1
+		25) java.lang.Character.isJavaIdentifierStart(char): 1
+		26) java.lang.StringBuffer.append(java.lang.String): 1
+
+	_then:
+		1) java.lang.String.substring(int): 3
+		2) java.lang.String.length(): 2
+		3) java.lang.StringBuilder.append(java.lang.String): 2
+		4) java.io.File.File(java.lang.String): 2
+		5) java.lang.String.indexOf(int): 2
+		6) java.lang.String.valueOf(int): 1
+		7) java.util.Set<T>.add(Tau_T): 1
+		8) java.util.Vector<java.lang.String>.addElement(java.lang.String): 1
+		9) java.lang.System.getenv(java.lang.String): 1
+		10) java.lang.System.setProperty(java.lang.String,java.lang.String): 1
+		11) java.util.ArrayList<java.security.cert.CertStore>.ArrayList<CertStore>(): 1
+		12) java.lang.Integer.valueOf(java.lang.String): 1
+		13) java.util.Date.toString(): 1
+		14) java.io.ByteArrayOutputStream.ByteArrayOutputStream(): 1
+		15) java.io.FilterInputStream.read(byte[]): 1
+		16) java.io.ByteArrayOutputStream.write(byte[],int,int): 1
+		17) java.io.ByteArrayOutputStream.toByteArray(): 1
+		18) java.util.List<java.lang.Object>.get(int): 1
+		19) java.io.File.renameTo(java.io.File): 1
+		20) java.lang.StringBuilder.StringBuilder(java.lang.String): 1
+		21) java.lang.StringBuilder.toString(): 1
+		22) java.lang.StringBuffer.setLength(int): 1
+		23) java.lang.StringBuffer.append(char): 1
+		24) java.util.List.size(): 1
+		25) java.util.List<java.lang.String>.size(): 1
+		26) java.util.List<java.lang.String>.get(int): 1
+		27) java.util.List<java.lang.String>.set(int,java.lang.String): 1
+		28) java.lang.String.equals(java.lang.Object): 1
+		29) java.lang.StringBuffer.append(java.lang.String): 1
+		30) java.lang.reflect.Method.getAnnotation(java.lang.Class): 1
+		31) java.util.List<com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder>.add(com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder): 1
+		32) java.lang.System.currentTimeMillis(): 1
+
+
+DExcept
+	_catch:
+		1) java.lang.Throwable.printStackTrace(): 4
+		2) java.lang.Throwable.getMessage(): 1
+		3) java.lang.Class<Tau_T>.getName(): 1
+		4) java.util.logging.Logger.getLogger(java.lang.String): 1
+		5) java.util.Collections.emptyList(): 1
+		6) java.io.File.getAbsolutePath(): 1
+		7) java.lang.System.exit(int): 1
+		8) java.lang.Exception.Exception(java.lang.String): 1
+
+	_try:
+		1) DLoop: 2
+		2) java.sql.ResultSet.next(): 2
+		3) java.lang.reflect.Field.get(java.lang.Object): 1
+		4) java.sql.Statement.executeQuery(java.lang.String): 1
+		5) java.sql.ResultSet.getInt(java.lang.String): 1
+		6) java.sql.ResultSet.getString(java.lang.String): 1
+		7) java.lang.Thread.join(): 1
+		8) java.net.URI.URI(java.lang.String): 1
+		9) java.util.Collections.emptyList(): 1
+		10) java.util.List<>.size(): 1
+		11) java.util.List<java.lang.String>.add(java.lang.String): 1
+		12) java.io.File.getCanonicalPath(): 1
+		13) java.lang.Thread.Thread(java.lang.Runnable): 1
+		14) java.lang.Thread.start(): 1
+		15) java.lang.Integer.parseInt(java.lang.String): 1
+		16) java.lang.System.exit(int): 1
+		17) java.lang.Thread.currentThread(): 1
+		18) java.lang.Math.addExact(long,long): 1
+
+
+DLoop
+	_body:
+		1) java.sql.ResultSet.getString(java.lang.String): 4
+		2) java.sql.ResultSet.getDate(java.lang.String): 2
+		3) java.lang.String.charAt(int): 1
+		4) java.awt.Point.Point(int,int): 1
+		5) java.util.LinkedList<java.awt.Point>.add(java.awt.Point): 1
+		6) java.sql.ResultSet.getLong(java.lang.String): 1
+		7) java.util.ArrayList.get(int): 1
+		8) java.lang.String.length(): 1
+		9) java.sql.ResultSet.getInt(java.lang.String): 1
+		10) java.io.File.getParentFile(): 1
+		11) java.io.File.File(java.io.File,java.lang.String): 1
+		12) java.io.File.exists(): 1
+		13) java.util.ArrayList<java.lang.Integer>.get(int): 1
+		14) java.util.Iterator<byte[]>.next(): 1
+		15) java.lang.StringBuilder.append(java.lang.Object): 1
+
+	_cond:
+		1) java.sql.ResultSet.next(): 3
+		2) java.util.Iterator.hasNext(): 2
+		3) java.lang.String.length(): 1
+		4) java.util.LinkedList<java.awt.Point>.size(): 1
+		5) java.util.Iterator<java.security.cert.CertStore>.hasNext(): 1
+		6) java.util.ArrayList.size(): 1
+		7) $NOT$java.io.File.getAbsoluteFile(): 1
+		8) java.util.ArrayList<java.lang.Integer>.size(): 1
+		9) java.util.Iterator<byte[]>.hasNext(): 1
+
+
