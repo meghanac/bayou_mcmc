@@ -8,3 +8,11 @@ data_extractor/data/vldb_data.2.tar.gz
 data_extractor/data/vocab_constraint_1k-1000.json
 data_extractor/data/vocab_constraint_1k.json
 data_extractor/data/vocab_constraint_1k_min_3.json
+data_extractor/data/10k_vocab_constraint.json
+data_extractor/data/10k_vocab_constraint_min_2.json
+data_extractor/data/10k_vocab_constraint_min_3.json
+data_extractor/data/1k_vocab_constraint.json
+data_extractor/data/1k_vocab_constraint_min_2.json
+data_extractor/data/1k_vocab_constraint_min_3.json
+data_extractor/data/all_training_data.json
+data_extractor/data/no_vocab_constraint_min_3-100.json
