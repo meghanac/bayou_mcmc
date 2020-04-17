@@ -406,7 +406,7 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
         analysis_f.write("\n")
 
 
-copy_json_data_limit_vocab("data_surrounding_methods.json", "all_training_data.json", 200000, is_test_data=False)
+copy_json_data_limit_vocab("data_surrounding_methods.json", "1k_vocab_min_3.json", 1000, num_programs=600000, min_length=3, is_test_data=False)
 
 # copy_json_data_limit_vocab("data_surrounding_methods.json", "no_vocab_constraint_min_3.json", 100000, num_programs=10000,
 #                            is_test_data=False, min_length=3)

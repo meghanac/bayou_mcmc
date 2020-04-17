@@ -1,0 +1,98 @@
+0/937500 (epoch 1) loss: 54.585, gen loss: 40.291, ret loss: 6.718, fp loss: 7.561, KL loss: 0.143. 
+Model checkpoint: save/model1.ckpt. Average for epoch , loss: 14.439
+Model checkpoint: save/model2.ckpt. Average for epoch , loss: 9.560
+Model checkpoint: save/model3.ckpt. Average for epoch , loss: 8.364
+Model checkpoint: save/model4.ckpt. Average for epoch , loss: 7.721
+Model checkpoint: save/model5.ckpt. Average for epoch , loss: 7.378
+Model checkpoint: save/model6.ckpt. Average for epoch , loss: 7.115
+Model checkpoint: save/model7.ckpt. Average for epoch , loss: 6.895
+Model checkpoint: save/model8.ckpt. Average for epoch , loss: 6.744
+Model checkpoint: save/model9.ckpt. Average for epoch , loss: 6.603
+Model checkpoint: save/model10.ckpt. Average for epoch , loss: 6.465
+100000/937500 (epoch 11) loss: 6.379, gen loss: 2.112, ret loss: 0.116, fp loss: 0.498, KL loss: 36.531. 
+Model checkpoint: save/model11.ckpt. Average for epoch , loss: 6.369
+Model checkpoint: save/model12.ckpt. Average for epoch , loss: 6.296
+Model checkpoint: save/model13.ckpt. Average for epoch , loss: 6.230
+Model checkpoint: save/model14.ckpt. Average for epoch , loss: 6.179
+Model checkpoint: save/model15.ckpt. Average for epoch , loss: 6.163
+Model checkpoint: save/model16.ckpt. Average for epoch , loss: 6.173
+Model checkpoint: save/model17.ckpt. Average for epoch , loss: 6.086
+Model checkpoint: save/model18.ckpt. Average for epoch , loss: 6.054
+Model checkpoint: save/model19.ckpt. Average for epoch , loss: 6.015
+Model checkpoint: save/model20.ckpt. Average for epoch , loss: 5.982
+Model checkpoint: save/model21.ckpt. Average for epoch , loss: 5.953
+200000/937500 (epoch 22) loss: 5.947, gen loss: 1.775, ret loss: 0.101, fp loss: 0.427, KL loss: 36.439. 
+Model checkpoint: save/model22.ckpt. Average for epoch , loss: 5.936
+Model checkpoint: save/model23.ckpt. Average for epoch , loss: 5.910
+Model checkpoint: save/model24.ckpt. Average for epoch , loss: 5.893
+Model checkpoint: save/model25.ckpt. Average for epoch , loss: 5.869
+Model checkpoint: save/model26.ckpt. Average for epoch , loss: 5.852
+Model checkpoint: save/model27.ckpt. Average for epoch , loss: 5.839
+Model checkpoint: save/model28.ckpt. Average for epoch , loss: 5.823
+Model checkpoint: save/model29.ckpt. Average for epoch , loss: 5.816
+Model checkpoint: save/model30.ckpt. Average for epoch , loss: 5.805
+Model checkpoint: save/model31.ckpt. Average for epoch , loss: 5.790
+Model checkpoint: save/model32.ckpt. Average for epoch , loss: 5.774
+300000/937500 (epoch 33) loss: 5.933, gen loss: 2.062, ret loss: 0.113, fp loss: 0.212, KL loss: 35.465. 
+Model checkpoint: save/model33.ckpt. Average for epoch , loss: 5.763
+Model checkpoint: save/model34.ckpt. Average for epoch , loss: 5.757
+Model checkpoint: save/model35.ckpt. Average for epoch , loss: 5.749
+Model checkpoint: save/model36.ckpt. Average for epoch , loss: 5.740
+Model checkpoint: save/model37.ckpt. Average for epoch , loss: 5.735
+Model checkpoint: save/model38.ckpt. Average for epoch , loss: 5.726
+Model checkpoint: save/model39.ckpt. Average for epoch , loss: 5.726
+Model checkpoint: save/model40.ckpt. Average for epoch , loss: 5.733
+Model checkpoint: save/model41.ckpt. Average for epoch , loss: 5.721
+Model checkpoint: save/model42.ckpt. Average for epoch , loss: 5.702
+400000/937500 (epoch 43) loss: 5.694, gen loss: 1.586, ret loss: 0.089, fp loss: 0.382, KL loss: 36.366. 
+Model checkpoint: save/model43.ckpt. Average for epoch , loss: 5.694
+Model checkpoint: save/model44.ckpt. Average for epoch , loss: 5.690
+Model checkpoint: save/model45.ckpt. Average for epoch , loss: 5.688
+Model checkpoint: save/model46.ckpt. Average for epoch , loss: 5.680
+Model checkpoint: save/model47.ckpt. Average for epoch , loss: 5.669
+Model checkpoint: save/model48.ckpt. Average for epoch , loss: 5.663
+Model checkpoint: save/model49.ckpt. Average for epoch , loss: 5.664
+Model checkpoint: save/model50.ckpt. Average for epoch , loss: 5.650
+Model checkpoint: save/model51.ckpt. Average for epoch , loss: 5.651
+Model checkpoint: save/model52.ckpt. Average for epoch , loss: 5.650
+Model checkpoint: save/model53.ckpt. Average for epoch , loss: 5.642
+500000/937500 (epoch 54) loss: 5.637, gen loss: 1.546, ret loss: 0.087, fp loss: 0.369, KL loss: 36.347. 
+Model checkpoint: save/model54.ckpt. Average for epoch , loss: 5.639
+Model checkpoint: save/model55.ckpt. Average for epoch , loss: 5.637
+Model checkpoint: save/model56.ckpt. Average for epoch , loss: 5.640
+Model checkpoint: save/model57.ckpt. Average for epoch , loss: 5.634
+Model checkpoint: save/model58.ckpt. Average for epoch , loss: 5.633
+Model checkpoint: save/model59.ckpt. Average for epoch , loss: 5.631
+Model checkpoint: save/model60.ckpt. Average for epoch , loss: 5.629
+Model checkpoint: save/model61.ckpt. Average for epoch , loss: 5.625
+Model checkpoint: save/model62.ckpt. Average for epoch , loss: 5.622
+Model checkpoint: save/model63.ckpt. Average for epoch , loss: 5.620
+Model checkpoint: save/model64.ckpt. Average for epoch , loss: 5.616
+600000/937500 (epoch 65) loss: 5.615, gen loss: 1.781, ret loss: 0.164, fp loss: 0.134, KL loss: 35.358. 
+Model checkpoint: save/model65.ckpt. Average for epoch , loss: 5.616
+Model checkpoint: save/model66.ckpt. Average for epoch , loss: 5.611
+Model checkpoint: save/model67.ckpt. Average for epoch , loss: 5.612
+Model checkpoint: save/model68.ckpt. Average for epoch , loss: 5.609
+Model checkpoint: save/model69.ckpt. Average for epoch , loss: 5.604
+Model checkpoint: save/model70.ckpt. Average for epoch , loss: 5.598
+Model checkpoint: save/model71.ckpt. Average for epoch , loss: 5.597
+Model checkpoint: save/model72.ckpt. Average for epoch , loss: 5.587
+Model checkpoint: save/model73.ckpt. Average for epoch , loss: 5.589
+Model checkpoint: save/model74.ckpt. Average for epoch , loss: 5.590
+700000/937500 (epoch 75) loss: 5.584, gen loss: 1.507, ret loss: 0.085, fp loss: 0.359, KL loss: 36.334. 
+Model checkpoint: save/model75.ckpt. Average for epoch , loss: 5.587
+Model checkpoint: save/model76.ckpt. Average for epoch , loss: 5.589
+Model checkpoint: save/model77.ckpt. Average for epoch , loss: 5.594
+Model checkpoint: save/model78.ckpt. Average for epoch , loss: 5.587
+Model checkpoint: save/model79.ckpt. Average for epoch , loss: 5.585
+Model checkpoint: save/model80.ckpt. Average for epoch , loss: 5.584
+Model checkpoint: save/model81.ckpt. Average for epoch , loss: 5.578
+Model checkpoint: save/model82.ckpt. Average for epoch , loss: 5.581
+Model checkpoint: save/model83.ckpt. Average for epoch , loss: 5.581
+Model checkpoint: save/model84.ckpt. Average for epoch , loss: 5.582
+Model checkpoint: save/model85.ckpt. Average for epoch , loss: 5.599
+800000/937500 (epoch 86) loss: 5.594, gen loss: 1.503, ret loss: 0.084, fp loss: 0.370, KL loss: 36.372. 
+Model checkpoint: save/model86.ckpt. Average for epoch , loss: 5.592
+Model checkpoint: save/model87.ckpt. Average for epoch , loss: 5.590
+Model checkpoint: save/model88.ckpt. Average for epoch , loss: 5.589
+Model checkpoint: save/model89.ckpt. Average for epoch , loss: 5.583

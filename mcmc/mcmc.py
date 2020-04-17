@@ -12,6 +12,16 @@ SIBLING_EDGE = False
 
 MAX_LOOP_NUM = 3
 MAX_BRANCHING_NUM = 3
+MAX_AST_DEPTH = 32
+
+STOP = 'DStop'
+DBRANCH = 'DBranch'
+DLOOP = 'DLoop'
+DEXCEPT = 'DExcept'
+START = 'DSubTree'
+DNODES = {START, STOP, DBRANCH, DLOOP, DEXCEPT}
+
+EMPTY = '__delim__'
 
 
 class TooLongLoopingException(Exception):
@@ -50,10 +60,16 @@ class Node:
         self.length = 1  # Number of nodes in subtree starting at this node (i.e., how many nodes stem out of this node)
         self.parent_edge = parent_edge
 
-    def update_length(self, length, add_or_sub):
+        if self.api_name in DNODES:
+            self.non_dnode_length = 0
+        else:
+            self.non_dnode_length = 1
+
+    def update_length(self, length, non_dnode_length, add_or_sub):
         """
         Updates length of this node and recursively updates all node above it so that length of head of the program
         (DSubtree) accounts for all nodes in program
+        :param non_dnode_length: length of program excluding all dnodes
         :param length: (int) length to be added to or subtracted from this node
         :param add_or_sub: (string - ust be either 'add' or 'subtract') flag whether to add length or subtract length
         :return:
@@ -61,12 +77,14 @@ class Node:
         # Add length
         if add_or_sub == 'add':
             self.length += length
+            self.non_dnode_length += non_dnode_length
         # Subtract length
         else:
             self.length -= length
+            self.non_dnode_length -= non_dnode_length
         # Recursively update parent nodes' length
         if self.parent is not None:
-            self.parent.update_length(length, add_or_sub)
+            self.parent.update_length(length, non_dnode_length, add_or_sub)
 
     def add_node(self, node, edge):
         """
@@ -80,7 +98,7 @@ class Node:
                 if self.sibling is not None:
                     self.remove_node(SIBLING_EDGE)
                 # Update self
-                self.update_length(node.length, 'add')
+                self.update_length(node.length, node.non_dnode_length, 'add')
                 self.sibling = node
                 # Update node
                 node.parent = self
@@ -91,7 +109,7 @@ class Node:
                 if self.child is not None:
                     self.remove_node(CHILD_EDGE)
                 # Update self
-                self.update_length(node.length, 'add')
+                self.update_length(node.length, node.non_dnode_length, 'add')
                 self.child = node
                 # Update node
                 node.parent = self
@@ -111,7 +129,7 @@ class Node:
                 self.sibling = None
                 old_sibling.parent = None
                 old_sibling.parent_edge = None
-                self.update_length(old_sibling.length, 'sub')
+                self.update_length(old_sibling.length, old_sibling.non_dnode_length, 'sub')
 
         elif edge == CHILD_EDGE:
             if self.child is not None:
@@ -119,7 +137,7 @@ class Node:
                 self.child = None
                 child.parent = None
                 child.parent_edge = None
-                self.update_length(child.length, 'sub')
+                self.update_length(child.length, child.non_dnode_length, 'sub')
 
         else:
             raise ValueError('edge must but a sibling or child edge')
@@ -154,7 +172,8 @@ class MCMCProgram:
             self.config = config = read_config(json.load(f), infer=True)
 
         # Initialize model configurations
-        self.max_depth = self.config.max_ast_depth
+        self.max_num_api = self.config.max_ast_depth
+        self.max_length = MAX_AST_DEPTH
         self.config.max_ast_depth = 1
         self.config.max_fp_depth = 1
         self.config.batch_size = 1
@@ -192,9 +211,11 @@ class MCMCProgram:
         self.add_accepted = 0
         self.delete_accepted = 0
         self.swap_accepted = 0
-        self.add_invalid = 0
-        self.delete_invalid = 0
-        self.swap_invalid = 0
+        # self.add_invalid = 0
+        # self.delete_invalid = 0
+        # self.swap_invalid = 0
+        self.add_dnode = 0
+        self.add_dnode_accepted = 0
 
     def restore(self, save):
         """
@@ -234,7 +255,7 @@ class MCMCProgram:
             self.add_constraint(i)
 
         # Initialize tree
-        head = self.create_and_add_node('DSubTree', None, SIBLING_EDGE)
+        head = self.create_and_add_node(START, None, SIBLING_EDGE)
         self.curr_prog = head
 
         # Add constraint nodes to tree
@@ -267,7 +288,7 @@ class MCMCProgram:
             self.node_id_counter += 1
 
             # Update parent according to edge
-            if api_name != 'DSubTree':
+            if api_name != START:
                 parent.add_node(node, edge)
 
             return node
@@ -289,7 +310,7 @@ class MCMCProgram:
         """
         Get Node object for node in given position. Position number is determined by DFS, with child edges taking
         precedence over sibling edges.
-        :param pos_num: (int) position number of node required
+        :param pos_num: (int) position number of node required. THIS IS ZERO-INDEXED POSITION NUMBER>
         :return: (Node) required node
         """
         assert pos_num < self.curr_prog.length, "Position number must be less than total length of program"
@@ -300,7 +321,7 @@ class MCMCProgram:
 
         while num_explored != pos_num and curr_node is not None:
             # Fail safe
-            if num_explored > self.max_depth + 1:
+            if num_explored > self.max_length + 1:
                 raise ValueError("WARNING: Caught in infinite loop")
 
             # Update curr_node
@@ -343,7 +364,7 @@ class MCMCProgram:
 
             counter += 1
 
-            if counter > self.max_depth + 1:
+            if counter > self.max_num_api + 1:
                 raise ValueError("WARNING: Caught in infinite loop")
             if curr_node.child is not None:
                 if curr_node.sibling is not None:
@@ -369,17 +390,20 @@ class MCMCProgram:
         nodes_dfs = []
         edges_dfs = []
 
-        # DFS
         while curr_node is not None:
+            # Add current node to list
             nodes_dfs.append(curr_node.api_num)
+
+            # Update edges list
+            if curr_node.api_name != START:
+                edges_dfs.append(curr_node.parent_edge)
+
+            # Find next node
             if curr_node.child is not None:
                 if curr_node.sibling is not None:
                     stack.append(curr_node.sibling)
-                edges_dfs.append(CHILD_EDGE)
                 curr_node = curr_node.child
-
             elif curr_node.sibling is not None:
-                edges_dfs.append(SIBLING_EDGE)
                 curr_node = curr_node.sibling
             else:
                 if len(stack) > 0:
@@ -387,8 +411,9 @@ class MCMCProgram:
                 else:
                     curr_node = None
 
-        nodes = np.zeros([1, self.max_depth], dtype=np.int32)
-        edges = np.zeros([1, self.max_depth], dtype=np.bool)
+        # Fill in blank nodes and take only self.max_length number of nodes in the tree
+        nodes = np.zeros([1, self.max_length], dtype=np.int32)
+        edges = np.zeros([1, self.max_length], dtype=np.bool)
         nodes[0, :len(nodes_dfs)] = nodes_dfs
         edges[0, :len(edges_dfs)] = edges_dfs
 
@@ -418,10 +443,10 @@ class MCMCProgram:
         selectable_node_exists_in_program = None
 
         # Parent nodes whose children are invalid
-        unselectable_parent_dnodes = {self.vocab2node['DLoop'], self.vocab2node['DExcept']}  # TODO: make sure I can actually remove DBranch node
+        unselectable_parent_dnodes = {self.vocab2node[DLOOP], self.vocab2node[DEXCEPT]}  # TODO: make sure I can actually remove DBranch node
 
         # Unselectable nodes
-        unselectable_nodes = {self.vocab2node['DSubTree'], self.vocab2node['DStop'], self.vocab2node['__delim__']}
+        unselectable_nodes = {self.vocab2node[START], self.vocab2node[STOP], self.vocab2node[EMPTY]}
 
         while True:  # while a valid node exists in the program
             # If no list of nodes is specified, choose a random one from the program
@@ -478,14 +503,14 @@ class MCMCProgram:
         fragmentation in the program.
         :return: (Node) selected node, (int) selected node's position
         """
-        while True: # This shouldn't cause problems because at the very least the program must contain constraint apis
+        while True:  # This shouldn't cause problems because at the very least the program must contain constraint apis
             # exclude DSubTree node, randint is [a,b] inclusive
             rand_node_pos = random.randint(1,
                                            self.curr_prog.length - 1)
             node = self.get_node_in_position(rand_node_pos)
 
             # Checks parent edge to prevent deleting half a branch or leave dangling D-nodes
-            if node.api_name != 'DStop' and node.parent_edge != CHILD_EDGE:
+            if node.api_name != STOP and node.parent_edge != CHILD_EDGE:
                 return node, rand_node_pos
 
     def add_random_node(self):
@@ -495,7 +520,7 @@ class MCMCProgram:
         :return:
         """
         # if tree not at max AST depth, can add a node
-        if self.curr_prog.length >= self.max_depth:
+        if self.curr_prog.non_dnode_length >= self.max_num_api or self.curr_prog.length >= self.max_length:
             return None
 
         # Get a random position in the tree to be the parent of the new node to be added
@@ -504,15 +529,15 @@ class MCMCProgram:
         new_node_parent = self.get_node_in_position(rand_node_pos)
 
         # Probabilistically choose the node that should appear after selected random parent
-        new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos)]
+        new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos, non_dnode=False)]
 
 
         # If a dnode is chosen, grow it out
-        if new_node_api == 'DBranch':
+        if new_node_api == DBRANCH:
             return self.grow_dbranch(new_node_parent)
-        elif new_node_api == 'DLoop':
+        elif new_node_api == DLOOP:
             return self.grow_dloop(new_node_parent)
-        elif new_node_api == 'DExcept':
+        elif new_node_api == DEXCEPT:
             return self.grow_dexcept(new_node_parent)
 
         # Add node to parent
@@ -562,6 +587,12 @@ class MCMCProgram:
             sibling = node.sibling
             node.remove_node(SIBLING_EDGE)
             parent_node.add_node(sibling, SIBLING_EDGE)
+
+        # Remove dangling DStop node if there is one
+        elif parent_edge == SIBLING_EDGE and node.sibling is None:
+            last_node = self.get_node_in_position(self.curr_prog.length - 1)
+            if last_node.api_name == STOP:
+                last_node.parent.remove_node(last_node.parent_edge)
 
         self.calculate_probability()
 
@@ -691,6 +722,10 @@ class MCMCProgram:
             node1_parent.add_node(node2, node1_edge)
             node2_parent.add_node(node1, node2_edge)
 
+    def undo_swap_nodes(self, node1, node2):
+        self.swap_nodes(node1, node2)
+        self.curr_log_prob = self.prev_log_prob
+
     def grow_dbranch(self, parent):
         """
         Create full DBranch (DBranch, condition, then, else) from parent node.
@@ -702,7 +737,7 @@ class MCMCProgram:
         parent.remove_node(SIBLING_EDGE)
 
         # Create a DBranch node
-        dbranch = self.create_and_add_node('DBranch', parent, SIBLING_EDGE)
+        dbranch = self.create_and_add_node(DBRANCH, parent, SIBLING_EDGE)
         dbranch_pos = self.get_nodes_position(dbranch)
         assert dbranch_pos > 0, "Error: DBranch position couldn't be found"
 
@@ -712,6 +747,14 @@ class MCMCProgram:
         # If adding DBranch to end of tree, do not add DStop node to last sibling of branch
         add_stop_node_to_end_branch = not (dbranch_pos == (self.curr_prog.length - 1))
 
+        # Ensure adding a DBranch won't exceed max depth
+        if add_stop_node_to_end_branch and (
+                self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 6 > self.max_length):
+            return None
+        elif (not add_stop_node_to_end_branch) and (
+                self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 5 > self.max_length):
+            return None
+
         # Create condition as DBranch child
         condition = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dbranch_pos)], dbranch, CHILD_EDGE)
         cond_pos = self.get_nodes_position(condition)
@@ -719,12 +762,12 @@ class MCMCProgram:
 
         # Add then api as child to condition node
         then_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos)], condition, CHILD_EDGE)
-        self.create_and_add_node('DStop', then_node, SIBLING_EDGE)
+        self.create_and_add_node(STOP, then_node, SIBLING_EDGE)
 
         # Add else api as sibling to condition node
         else_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos)], condition, SIBLING_EDGE)
         if add_stop_node_to_end_branch:
-            self.create_and_add_node('DStop', else_node, SIBLING_EDGE)
+            self.create_and_add_node(STOP, else_node, SIBLING_EDGE)
 
         return dbranch
 
@@ -739,7 +782,7 @@ class MCMCProgram:
         parent.remove_node(SIBLING_EDGE)
 
         # Create a DLoop node
-        dloop = self.create_and_add_node('DLoop', parent, SIBLING_EDGE)
+        dloop = self.create_and_add_node(DLOOP, parent, SIBLING_EDGE)
         dloop_pos = self.get_nodes_position(dloop)
         assert dloop_pos > 0, "Error: DLoop position couldn't be found"
 
@@ -749,6 +792,14 @@ class MCMCProgram:
         # If adding DLoop to end of tree, do not add DStop node to last sibling of branch
         add_stop_node_to_end_branch = not (dloop_pos == (self.curr_prog.length - 1))
 
+        # Ensure adding a DLoop won't exceed max depth
+        if add_stop_node_to_end_branch and (
+                self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 4 > self.max_length):
+            return None
+        elif (not add_stop_node_to_end_branch) and (
+                self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 3 > self.max_length):
+            return None
+
         # Create condition as DLoop child
         condition = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dloop_pos)], dloop, CHILD_EDGE)
         cond_pos = self.get_nodes_position(condition)
@@ -757,7 +808,7 @@ class MCMCProgram:
         # Add body api as child to condition node
         body = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos)], condition, CHILD_EDGE)
         if add_stop_node_to_end_branch:
-            self.create_and_add_node('DStop', body, SIBLING_EDGE)
+            self.create_and_add_node(STOP, body, SIBLING_EDGE)
 
         return dloop
 
@@ -772,15 +823,23 @@ class MCMCProgram:
         parent.remove_node(SIBLING_EDGE)
 
         # Create a DExcept node
-        dexcept = self.create_and_add_node('DExcept', parent, SIBLING_EDGE)
+        dexcept = self.create_and_add_node(DEXCEPT, parent, SIBLING_EDGE)
         dexcept_pos = self.get_nodes_position(dexcept)
         assert dexcept_pos > 0, "Error: DExcept position couldn't be found"
 
-        # Add parent's old silibng node to DExcept with sibling edge
+        # Add parent's old sibling node to DExcept with sibling edge
         dexcept.add_node(parent_sibling, SIBLING_EDGE)
 
         # If adding DLoop to end of tree, do not add DStop node to last sibling of branch
         add_stop_node_to_end_branch = not (dexcept_pos == (self.curr_prog.length - 1))
+
+        # Ensure adding a DExcept won't exceed max depth
+        if add_stop_node_to_end_branch and (
+                self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 4 > self.max_length):
+            return None
+        elif (not add_stop_node_to_end_branch) and (
+                self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 3 > self.max_length):
+            return None
 
         # Create catch as DExcept child
         catch = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dexcept_pos)], dexcept, CHILD_EDGE)
@@ -790,7 +849,7 @@ class MCMCProgram:
         # Add try api as child to catch node
         try_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(catch_pos)], catch, CHILD_EDGE)
         if add_stop_node_to_end_branch:
-            self.create_and_add_node('DStop', try_node, SIBLING_EDGE)
+            self.create_and_add_node(STOP, try_node, SIBLING_EDGE)
 
         return dexcept
 
@@ -799,20 +858,20 @@ class MCMCProgram:
         Adds a DBranch, DLoop or DExcept to a random node in the current program.
         :return: (Node) the dnode node
         """
-        dnode_type = random.choice(['DBranch', 'DLoop', 'DExcept'])
+        dnode_type = random.choice([DBRANCH, DLOOP, DEXCEPT])
 
         parent, _ = self.get_valid_random_node()
 
         if parent is None:
             return None
 
-        assert parent.child is not None, "WARNING: there's a bug in get_valid_random_node because parent node has child"
+        assert parent.child is None or parent.parent.api_name == DBRANCH , \
+            "WARNING: there's a bug in get_valid_random_node because parent node has child"
 
         # Grow dnode type
-        if dnode_type == 'DBranch':
+        if dnode_type == DBRANCH:
             return self.grow_dbranch(parent)
-
-        elif dnode_type == 'DLoop':
+        elif dnode_type == DLOOP:
             return self.grow_dloop(parent)
         else:
             return self.grow_dexcept(parent)
@@ -827,6 +886,8 @@ class MCMCProgram:
         dnode_parent = dnode.parent
         dnode_parent.remove_node(SIBLING_EDGE)
         dnode_parent.add_node(dnode_sibling, SIBLING_EDGE)
+
+        self.curr_log_prob = self.prev_log_prob
 
     def check_validity(self):
         """
@@ -848,22 +909,26 @@ class MCMCProgram:
                 constraints.remove(curr_node.api_num)
 
             # Check that DStop does not have any nodes after it
-            if curr_node.api_name == 'DStop':
+            if curr_node.api_name == STOP:
                 if not (curr_node.sibling is None and curr_node.child is None):
                     return False
 
             # Check that DBranch has the proper form
-            if curr_node.api_name == 'DBranch':
+            if curr_node.api_name == DBRANCH:
                 if curr_node.child is None:
                     return False
                 if curr_node.child.child is None or curr_node.child.sibling is None:
                     return False
+                if curr_node.child.api_name in DNODES:
+                    return False
 
             # Check that DLoop and DExcept have the proper form
-            if curr_node.api_name == 'DLoop' or curr_node.api_name == 'DExcept':
+            if curr_node.api_name == DLOOP or curr_node.api_name == DEXCEPT:
                 if curr_node.child is None:
                     return False
                 if curr_node.child.child is None:
+                    return False
+                if curr_node.child.api_name in DNODES:
                     return False
 
             # Choose next node to explore
@@ -880,7 +945,7 @@ class MCMCProgram:
                     curr_node = None
 
         # Last node in program cannot be DStop node
-        if last_node.api_name == 'DStop':
+        if last_node.api_name == STOP:
             return False
 
         # Return whether all constraints have been met
@@ -920,6 +985,7 @@ class MCMCProgram:
         :return: (bool) whether current tree was transformed or not
         """
         move = random.choice(['add', 'delete', 'swap'])
+        # move = np.random.choice(['add', 'delete', 'swap', 'add_dnode'], p=[0.3, 0.3, 0.3, 0.1])
         print("move:", move)
 
         if move == 'add':
@@ -944,10 +1010,18 @@ class MCMCProgram:
             if node1 is None or node2 is None:
                 return False
             if not self.validate_and_update_program():
-                self.swap_nodes(node1, node2)
-                self.curr_log_prob = self.prev_log_prob
+                self.undo_swap_nodes(node1, node2)
                 return False
             self.swap_accepted += 1
+        elif move == 'add_dnode':
+            self.add_dnode += 1
+            dnode = self.add_random_dnode()
+            if dnode is None:
+                return False
+            if not self.validate_and_update_program():
+                self.undo_add_random_dnode(dnode)
+                return False
+            self.add_dnode_accepted += 1
         else:
             raise ValueError('move not defined')  # TODO: remove once tested
 
@@ -974,14 +1048,14 @@ class MCMCProgram:
 
         return ast_state, ast_ln_prob
 
-    def get_ast_idx(self, parent_pos):
-        # return self.get_ast_idx_all_vocab(parent_pos)
+    def get_ast_idx(self, parent_pos, non_dnode=True):
+        # return self.get_ast_idx_all_vocab(parent_pos, non_dnode)
 
-        # return self.get_ast_idx_top_k(parent_pos)
+        # return self.get_ast_idx_top_k(parent_pos, non_dnode)
 
-        return self.get_ast_idx_random_top_k(parent_pos)
+        return self.get_ast_idx_random_top_k(parent_pos, non_dnode)
 
-    def get_ast_idx_all_vocab(self, parent_pos):
+    def get_ast_idx_all_vocab(self, parent_pos, non_dnode):
         """
         Returns api number (based on vocabulary). Probabilistically selected based on parent node.
         :param parent_pos: (int) position of parent node in current program (by DFS)
@@ -1008,7 +1082,7 @@ class MCMCProgram:
                 ast_idx = self.sess.run(ast_idx, feed)
                 return ast_idx[0][0]
 
-    def get_ast_idx_top_k(self, parent_pos, top_k=10):
+    def get_ast_idx_top_k(self, parent_pos, non_dnode, top_k=10):
         """
                 Returns api number (based on vocabulary). Probabilistically selected from top k based on parent node.
                 :param parent_pos: (int) position of parent node in current program (by DFS)
@@ -1050,7 +1124,7 @@ class MCMCProgram:
 
                 return chosen_idx
 
-    def get_ast_idx_random_top_k(self, parent_pos, top_k=10):
+    def get_ast_idx_random_top_k(self, parent_pos, non_dnode, top_k=10):
         """
                 Returns api number (based on vocabulary). Uniform randomly selected from top k based on parent node.
                 :param parent_pos: (int) position of parent node in current program (by DFS)
@@ -1072,11 +1146,18 @@ class MCMCProgram:
             if i < parent_pos:
                 self.sess.run(self.model.decoder.ast_logits, feed)
             else:
-                rand_idx = random.randint(0, top_k-1)  # Note: randint is a,b inclusive
-                _, idxs = tf.math.top_k(self.model.decoder.ast_logits[0], k=top_k)
-                chosen_idx = self.sess.run(idxs[0][rand_idx], feed)
-
-                return chosen_idx
+                if non_dnode:  # TODO: make this code better
+                    _, idxs = self.sess.run(tf.math.top_k(self.model.decoder.ast_logits[0], k=top_k), feed)
+                    selectable = []
+                    for k in range(top_k):
+                        if self.node2vocab[idxs[0][k]] not in DNODES:
+                            selectable.append(idxs[0][k])
+                    rand_idx = random.randint(0, len(selectable)-1)
+                    return idxs[0][rand_idx]
+                else:
+                    rand_idx = random.randint(0, top_k-1)  # Note: randint is a,b inclusive
+                    _, idxs = tf.math.top_k(self.model.decoder.ast_logits[0], k=top_k)
+                    return self.sess.run(idxs[0][rand_idx], feed)
 
 
     def random_walk_latent_space(self):
@@ -1145,7 +1226,7 @@ class MCMCProgram:
             state = np.array(state)
             if i == self.curr_prog.length - 1:
                 # add prob of stop node
-                stop_node = self.vocab2node['DStop']
+                stop_node = self.vocab2node[STOP]
                 curr_prob += ast_prob[0][stop_node]
             else:
                 curr_prob += ast_prob[0][nodes[i + 1]]  # should I be taking this node or the next node?

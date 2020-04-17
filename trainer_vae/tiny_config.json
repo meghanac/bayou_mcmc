@@ -1,6 +1,6 @@
 {
     "latent_size": 32,
-    "batch_size": 16,
+    "batch_size": 64,
     "num_epochs": 100,
     "learning_rate": 0.001,
     "beta": 0.1,
@@ -14,11 +14,11 @@
     "checkpoint_step": 1,
     "trunct_num_batch": null,
     "encoder": {
-        "units": 32,
+        "units": 128,
         "num_layers": 1
     },
     "decoder": {
-        "units": 32,
+        "units": 128,
         "num_layers": 1
     }
 }

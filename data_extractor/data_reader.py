@@ -66,7 +66,7 @@ class Reader:
             self.fp_dict = Dictionary()
             self.keyword_dict = Dictionary()
 
-        ast_programs, return_types, formal_params, keywords = self.read_data(clargs.data + '/vocab_constraint_1k-1000.json')
+        ast_programs, return_types, formal_params, keywords = self.read_data(clargs.data + '/1k_vocab_min_3-600000.json')
 
         # setup input and target chars/vocab
         if not self.infer:

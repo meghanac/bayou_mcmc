@@ -47,8 +47,8 @@ def train(clargs):
 
     with open(config_file) as f:
         config = read_config(json.load(f))
-    reader = Reader(clargs)
-    reader.save_data('../data_extractor/data/')
+    # reader = Reader(clargs)
+    # reader.save_data('../data_extractor/data/')
     loader = Loader(clargs, config)
     model = Model(config)
 
