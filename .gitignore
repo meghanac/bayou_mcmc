@@ -16,3 +16,12 @@ data_extractor/data/1k_vocab_constraint_min_2.json
 data_extractor/data/1k_vocab_constraint_min_3.json
 data_extractor/data/all_training_data.json
 data_extractor/data/no_vocab_constraint_min_3-100.json
+data_extractor/data/ast_apis.pickle
+data_extractor/data/1k_vocab_min_3-600000.json
+data_extractor/data/formal_params.pickle
+data_extractor/data/ast_apis.pickle
+data_extractor/data/formal_params.pickle
+data_extractor/data/keywords.pickle
+data_extractor/data/return_types.pickle
+data_extractor/data/testing-500000.json
+data_extractor/data/vocab.json
