@@ -1,3 +1,4 @@
+import math
 import os
 from copy import deepcopy
 from trainer_vae.model import Model
@@ -364,7 +365,7 @@ class MCMCProgram:
 
             counter += 1
 
-            if counter > self.max_num_api + 1:
+            if counter > self.max_length + 1:
                 raise ValueError("WARNING: Caught in infinite loop")
             if curr_node.child is not None:
                 if curr_node.sibling is not None:
@@ -769,6 +770,9 @@ class MCMCProgram:
         if add_stop_node_to_end_branch:
             self.create_and_add_node(STOP, else_node, SIBLING_EDGE)
 
+        # Calculate probability of new program
+        self.calculate_probability()
+
         return dbranch
 
     def grow_dloop(self, parent):
@@ -810,6 +814,9 @@ class MCMCProgram:
         if add_stop_node_to_end_branch:
             self.create_and_add_node(STOP, body, SIBLING_EDGE)
 
+        # Calculate probability of new program
+        self.calculate_probability()
+
         return dloop
 
     def grow_dexcept(self, parent):
@@ -850,6 +857,9 @@ class MCMCProgram:
         try_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(catch_pos)], catch, CHILD_EDGE)
         if add_stop_node_to_end_branch:
             self.create_and_add_node(STOP, try_node, SIBLING_EDGE)
+
+        # Calculate probability of new program
+        self.calculate_probability()
 
         return dexcept
 
@@ -968,9 +978,11 @@ class MCMCProgram:
         Calculates whether to accept or reject current program based on Metropolis Hastings algorithm.
         :return: (bool)
         """
-        alpha = self.curr_log_prob / self.prev_log_prob
-        mu = random.uniform(0, 1)
-        if mu <= alpha:
+        alpha = self.curr_log_prob - self.prev_log_prob
+        # print(alpha)
+        mu = math.log(random.uniform(0, 1))
+        # print(mu)
+        if mu < alpha:
             self.prev_log_prob = self.curr_log_prob  # TODO: add logging for graph here
             self.accepted += 1
             return True
@@ -1229,7 +1241,8 @@ class MCMCProgram:
                 stop_node = self.vocab2node[STOP]
                 curr_prob += ast_prob[0][stop_node]
             else:
-                curr_prob += ast_prob[0][nodes[i + 1]]  # should I be taking this node or the next node?
+                curr_prob += ast_prob[0][nodes[i + 1]]
+                # pass
 
         self.curr_log_prob = curr_prob
 
