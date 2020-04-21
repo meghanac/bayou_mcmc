@@ -1,0 +1,59 @@
+04/21/20
+
+---------------------- CODE ----------------------
+
+Code: https://github.com/meghanac/bayou_mcmc/tree/master/mcmc
+
+Full training dataset analysis: https://raw.githubusercontent.com/meghanac/bayou_mcmc/master/data_extractor/data/all_training_data_analysis.txt
+
+Smaller dataset analysis: https://github.com/meghanac/bayou_mcmc/blob/master/data_extractor/data/1k_vocab_min_3-600000_analysis.txt
+
+Current transitions:
+- add node:
+  - randomly choose a node from vocabulary (ineffecient)
+  - choose from top K logits using multinomial function
+  - randomly choose from top K logits
+- delete random node (except for start node)
+- swap nodes:
+  - only selected nodes get swapped, all nodes above and below these nodes stay in place.
+  - cannot swap DSubtree, DBranch, DLoop, DExcept or DStop nodes
+- add DBranch, DLoop or DExcept
+  - just to see what happens if we try to force longer trees
+
+Calculating probability:
+- checked with Rohan and am calculating probabilty of the AST correctly. Pass each node through the decoder and add the logit of the next node to current probability.
+- Probability of trees is very very low (~E-40) and hence selecting mu uniform randomly from [0,1] results in mostly rejections. Probability of initial tree (start node + constraints) is usually higher than longer trees. Currently I'm using a model that I trained on 600K datapoints that only contains asts with at least 3 APIs.
+- I'm pretty sure I'm calculating the accept-reject probability wrong at the moment because of the random/multinomial selection from top K when adding a node.
+
+Where I'm at code-wise:
+- On some tutorials I've noticed that they usually run their experiments for at least 250000 iterations. I've only run it with 100-1000 steps just to make sure I'm getting valid trees (i.e., not messing up the structure of DBranch, DLoop, DExcept and having DStop in random places). Today I found one small bug I need to fix but otherwise my code does produce on valid trees. Once I make a transformation, I check if it's valid and if it's not valid I immediately reject it. 
+- Decided to pause coding and read more papers before running any real experiments in order to make sure the implemented MCMC algorithm is correct. 
+
+---------------------- PAPERS ----------------------
+
+MCMC & Variational Inference:
+- (Main paper) Markvo Chain Monte Carlo & Variational Inference: Bridging the Gap [Salimas et al]- https://arxiv.org/pdf/1410.6460.pdf
+- Paper that got declined from ICLR about using MCMC on top of VAE (Improving Sampling from Generative Autoencoders with Markov Chains): https://openreview.net/forum?id=ryXZmzNeg 
+  - reviewers included a lot of relevant papers that I'm slowly parsing through
+- Hamiltonian Variational Autoencoder [Caterini et al]: https://papers.nips.cc/paper/8039-hamiltonian-variational-auto-encoder.pdf
+- Stochastic backpropagation and approx-imate inference in deep generative models [Rezende et al]- https://arxiv.org/pdf/1401.4082.pdf
+
+
+MCMC & Bayesian Phylogenetics:
+- Efficiency of Markov Chain Monte Carlo Tree Proposals in Bayesian Phylogenetics [Lakner et al]- https://academic.oup.com/sysbio/article/57/1/86/1704335
+- Markov Chain Monte Carlo Algorithms for the Bayesian Analysis of Phylogenetic Trees [Larget et al]- https://academic.oup.com/mbe/article/16/6/750/2925469
+- Guided Tree Topology Proposals for Bayesian Phylogenetic Inference [Höhna et al] - https://academic.oup.com/sysbio/article/61/1/1/1676649
+- There are a few reviews mentioned in the above two papers that summarize techniques
+  - Quantitative Phylogenetic Analysis in the 21st Century [Brooks et al]
+  - 
+- More commonly used MCMC algorithms: https://en.wikipedia.org/wiki/Bayesian_inference_in_phylogeny#Metropolis-coupled_MCMC
+
+
+How Gibbs Sampling and Other MCMC techniques are used with non-continuous space data:
+- Image Denoising with Gibbs Sampling: https://towardsdatascience.com/image-denoising-with-gibbs-sampling-mcmc-concepts-and-code-implementation-11d42a90e153 [Markov Random Fields and Gibbs Sampling for Image Denoising by Chang Yue http://stanford.edu/class/ee367/Winter2018/yue_ee367_win18_report.pdf]
+- CGMH: Constrained Sentence Generation by Metropolis-Hastings Sampling [Miao et al]
+
+
+---------------------- RESOURCES ----------------------
+
+Intro to MCMC for Deep Learning Lecture on YouTube: https://www.youtube.com/watch?v=Em6mQQy4wYA
