@@ -162,6 +162,7 @@ class MCMCProgram:
     """
 
     """
+
     def __init__(self, save_dir):
         """
         Initialize program
@@ -444,7 +445,8 @@ class MCMCProgram:
         selectable_node_exists_in_program = None
 
         # Parent nodes whose children are invalid
-        unselectable_parent_dnodes = {self.vocab2node[DLOOP], self.vocab2node[DEXCEPT]}  # TODO: make sure I can actually remove DBranch node
+        unselectable_parent_dnodes = {self.vocab2node[DLOOP],
+                                      self.vocab2node[DEXCEPT]}  # TODO: make sure I can actually remove DBranch node
 
         # Unselectable nodes
         unselectable_nodes = {self.vocab2node[START], self.vocab2node[STOP], self.vocab2node[EMPTY]}
@@ -531,7 +533,7 @@ class MCMCProgram:
 
         # Probabilistically choose the node that should appear after selected random parent
         new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos, non_dnode=False)]
-
+        # new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos)]
 
         # If a dnode is chosen, grow it out
         if new_node_api == DBRANCH:
@@ -561,6 +563,9 @@ class MCMCProgram:
         :param added_node: (Node) the node that was added in add_random_node() that is to be removed.
         :return:
         """
+        if added_node.api_name in {DBRANCH, DLOOP, DEXCEPT}:
+            return self.undo_add_random_dnode(added_node)
+
         if added_node.sibling is None:
             added_node.parent.remove_node(SIBLING_EDGE)
         else:
@@ -875,7 +880,7 @@ class MCMCProgram:
         if parent is None:
             return None
 
-        assert parent.child is None or parent.parent.api_name == DBRANCH , \
+        assert parent.child is None or parent.parent.api_name == DBRANCH, \
             "WARNING: there's a bug in get_valid_random_node because parent node has child"
 
         # Grow dnode type
@@ -913,10 +918,15 @@ class MCMCProgram:
         curr_node = self.curr_prog
         last_node = curr_node
 
+        counter = 0
+
         while curr_node is not None:
             # Update constraint list
             if curr_node.api_num in constraints:
                 constraints.remove(curr_node.api_num)
+
+            if counter != 0 and curr_node.api_name == START:
+                return False
 
             # Check that DStop does not have any nodes after it
             if curr_node.api_name == STOP:
@@ -927,10 +937,20 @@ class MCMCProgram:
             if curr_node.api_name == DBRANCH:
                 if curr_node.child is None:
                     return False
-                if curr_node.child.child is None or curr_node.child.sibling is None:
+                if curr_node.child.child is None or curr_node.child.sibling is None \
+                        or curr_node.child.child.sibling is None:
                     return False
-                if curr_node.child.api_name in DNODES:
+                if curr_node.child.api_name in DNODES or curr_node.child.child.api_name in DNODES \
+                        or curr_node.child.sibling.api_name in DNODES:
                     return False
+                if curr_node.child.child.sibling.api_name != STOP:
+                    return False
+                # If this is not the end of program, there should be a DStop node after else node
+                if not (curr_node.sibling is None and len(stack) == 0):
+                    if curr_node.child.sibling.sibling is None:
+                        return False
+                    if curr_node.child.sibling.sibling.api_name != STOP:
+                        return False
 
             # Check that DLoop and DExcept have the proper form
             if curr_node.api_name == DLOOP or curr_node.api_name == DEXCEPT:
@@ -938,8 +958,14 @@ class MCMCProgram:
                     return False
                 if curr_node.child.child is None:
                     return False
-                if curr_node.child.api_name in DNODES:
+                if curr_node.child.api_name in DNODES or curr_node.child.child.api_name in DNODES:
                     return False
+                # If this is not the end of program, there should be a DStop node
+                if not (curr_node.sibling is None and len(stack) == 0):
+                    if curr_node.child.child.sibling is None:
+                        return False
+                    if curr_node.child.child.sibling.api_name != STOP:
+                        return False
 
             # Choose next node to explore
             if curr_node.child is not None:
@@ -956,8 +982,9 @@ class MCMCProgram:
 
         # Last node in program cannot be DStop node
         if last_node.api_name == STOP:
+            print("HERE")
             return False
-
+        print(len(constraints))
         # Return whether all constraints have been met
         return len(constraints) == 0
 
@@ -978,10 +1005,12 @@ class MCMCProgram:
         Calculates whether to accept or reject current program based on Metropolis Hastings algorithm.
         :return: (bool)
         """
+        print(math.exp(self.curr_log_prob))
         alpha = self.curr_log_prob - self.prev_log_prob
-        # print(alpha)
+        print(alpha)
         mu = math.log(random.uniform(0, 1))
-        # print(mu)
+        # mu = math.log(random.uniform(0, 2 * 10 ** -40))
+        print(mu)
         if mu < alpha:
             self.prev_log_prob = self.curr_log_prob  # TODO: add logging for graph here
             self.accepted += 1
@@ -1067,7 +1096,7 @@ class MCMCProgram:
 
         return self.get_ast_idx_random_top_k(parent_pos, non_dnode)
 
-    def get_ast_idx_all_vocab(self, parent_pos, non_dnode):
+    def get_ast_idx_all_vocab(self, parent_pos, non_dnode):  # TODO: FIX AND TEST
         """
         Returns api number (based on vocabulary). Probabilistically selected based on parent node.
         :param parent_pos: (int) position of parent node in current program (by DFS)
@@ -1094,7 +1123,7 @@ class MCMCProgram:
                 ast_idx = self.sess.run(ast_idx, feed)
                 return ast_idx[0][0]
 
-    def get_ast_idx_top_k(self, parent_pos, non_dnode, top_k=10):
+    def get_ast_idx_top_k(self, parent_pos, non_dnode, top_k=10):  # TODO: FIX AND TEST
         """
                 Returns api number (based on vocabulary). Probabilistically selected from top k based on parent node.
                 :param parent_pos: (int) position of parent node in current program (by DFS)
@@ -1136,7 +1165,7 @@ class MCMCProgram:
 
                 return chosen_idx
 
-    def get_ast_idx_random_top_k(self, parent_pos, non_dnode, top_k=10):
+    def get_ast_idx_random_top_k(self, parent_pos, non_dnode, top_k=10):  # TODO: TEST
         """
                 Returns api number (based on vocabulary). Uniform randomly selected from top k based on parent node.
                 :param parent_pos: (int) position of parent node in current program (by DFS)
@@ -1164,13 +1193,12 @@ class MCMCProgram:
                     for k in range(top_k):
                         if self.node2vocab[idxs[0][k]] not in DNODES:
                             selectable.append(idxs[0][k])
-                    rand_idx = random.randint(0, len(selectable)-1)
+                    rand_idx = random.randint(0, len(selectable) - 1)
                     return idxs[0][rand_idx]
                 else:
-                    rand_idx = random.randint(0, top_k-1)  # Note: randint is a,b inclusive
+                    rand_idx = random.randint(0, top_k - 1)  # Note: randint is a,b inclusive
                     _, idxs = tf.math.top_k(self.model.decoder.ast_logits[0], k=top_k)
                     return self.sess.run(idxs[0][rand_idx], feed)
-
 
     def random_walk_latent_space(self):
         """
@@ -1242,7 +1270,7 @@ class MCMCProgram:
                 curr_prob += ast_prob[0][stop_node]
             else:
                 curr_prob += ast_prob[0][nodes[i + 1]]
-                # pass
+                pass
 
         self.curr_log_prob = curr_prob
 
@@ -1255,10 +1283,11 @@ class MCMCProgram:
         4) Compute the new initial state of the decoder.
         :return:
         """
+        self.transform_tree()
         # Attempt to transform the current program
-        if self.transform_tree():
-            # If successful, update encoder's latent state
-            self.update_latent_state()
-        # self.transform_tree()
-        self.random_walk_latent_space()
-        self.get_initial_decoder_state()
+        # if self.transform_tree():
+        # If successful, update encoder's latent state
+        #     self.update_latent_state()
+        # # self.transform_tree()
+        # self.random_walk_latent_space()
+        # self.get_initial_decoder_state()

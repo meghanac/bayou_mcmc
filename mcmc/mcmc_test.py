@@ -235,26 +235,8 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertListEqual(nodes.tolist(), exp_node_nums, "Nodes must be equal to expected nodes in program.")
         self.assertListEqual(edges.tolist(), exp_edges, "Edges must be equal to expected nodes in program.")
 
-    def test_validity(self):
-        test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
-        self.assertTrue(test_prog.prog.check_validity())
+    # def test_validity(self):
 
-        test_prog.prog.add_constraint(STR_APP)
-        self.assertTrue(test_prog.prog.check_validity())
-        test_prog.prog.add_constraint(STR_APP)
-        self.assertTrue(test_prog.prog.check_validity())
-
-        # Test invalid node
-        test_prog.prog.add_constraint('abc')
-        self.assertTrue(test_prog.prog.check_validity())
-
-        # Fail case
-        test_prog.prog.add_constraint(STR_APP)
-        self.assertFalse(test_prog.prog.check_validity())
-
-        # All branches valid case
-        test_prog, expected_nodes, expected_edges = self.create_all_dtypes_program()
-        self.assertTrue(test_prog.prog.check_validity())
 
     @mock.patch.object(MCMCProgram, 'get_ast_idx')
     @mock.patch.object(random, 'randint')
@@ -412,31 +394,112 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertEqual(test_prog.prog.curr_prog.length, 8)
 
     @mock.patch.object(random, 'randint')
-    def test_check_validity(self, mock_randint):  # FIX
-        test_prog, expected_nodes, expected_edges = self.create_all_dtypes_program()
-        self.assertTrue(test_prog.prog.check_validity())
+    def test_check_validity(self, mock_randint):
+        # test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
+        # self.assertTrue(test_prog.prog.check_validity())
+        #
+        # test_prog.prog.add_constraint(STR_APP)
+        # self.assertTrue(test_prog.prog.check_validity())
+        # test_prog.prog.add_constraint(STR_APP)
+        # self.assertTrue(test_prog.prog.check_validity())
+        #
+        # # Test invalid node
+        # test_prog.prog.add_constraint('abc')
+        # self.assertTrue(test_prog.prog.check_validity())
+        #
+        # # Fail case
+        # test_prog.prog.add_constraint(STR_APP)
+        # self.assertFalse(test_prog.prog.check_validity())
+        #
+        # # All branches valid case
+        # test_prog, expected_nodes, expected_edges = self.create_all_dtypes_program()
+        # self.assertTrue(test_prog.prog.check_validity())
+        #
+        # test_prog, expected_nodes, expected_edges = self.create_all_dtypes_program()
+        # self.assertTrue(test_prog.prog.check_validity())
+        #
+        # mock_randint.return_value = 12
+        # test_prog.prog.delete_random_node()
+        # test_prog.update_nodes_and_edges()
+        # self.assertTrue(test_prog.prog.check_validity())
+        # self.assertEqual(test_prog.prog.curr_prog.length, 11)
+        #
+        # mock_randint.return_value = 8
+        # test_prog.prog.delete_random_node()
+        # test_prog.update_nodes_and_edges()
+        # self.assertTrue(test_prog.prog.check_validity())
+        # self.assertEqual(test_prog.prog.curr_prog.length, 7)
+        #
+        # mock_randint.return_value = 2
+        # test_prog.prog.delete_random_node()
+        # test_prog.update_nodes_and_edges()
+        # self.assertTrue(test_prog.prog.check_validity())
+        #
+        # mock_randint.return_value = 1
+        # test_prog.prog.delete_random_node()
+        # test_prog.update_nodes_and_edges()
+        # self.assertFalse(test_prog.prog.check_validity())
 
-        mock_randint.return_value = 12
-        test_prog.prog.delete_random_node()
-        test_prog.update_nodes_and_edges()
-        self.assertTrue(test_prog.prog.check_validity())
-        self.assertEqual(test_prog.prog.curr_prog.length, 11)
-
-        mock_randint.return_value = 8
-        test_prog.prog.delete_random_node()
-        test_prog.update_nodes_and_edges()
-        self.assertTrue(test_prog.prog.check_validity())
-        self.assertEqual(test_prog.prog.curr_prog.length, 7)
-
-        mock_randint.return_value = 2
-        test_prog.prog.delete_random_node()
-        test_prog.update_nodes_and_edges()
-        self.assertTrue(test_prog.prog.check_validity())
-
-        mock_randint.return_value = 1
-        test_prog.prog.delete_random_node()
-        test_prog.update_nodes_and_edges()
+        # Test DBranch fail
+        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        dbranch = test_prog.add_to_first_available_node(DBRANCH, SIBLING_EDGE)
         self.assertFalse(test_prog.prog.check_validity())
+        cond = test_prog.prog.create_and_add_node(DLOOP, dbranch, CHILD_EDGE)
+        then = test_prog.prog.create_and_add_node(STR_APP, cond, CHILD_EDGE)
+        else_node = test_prog.prog.create_and_add_node(STR_APP, cond, SIBLING_EDGE)
+        test_prog.prog.create_and_add_node(STOP, then, SIBLING_EDGE)
+        self.assertFalse(test_prog.prog.check_validity())
+
+        # Test DBranch
+        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        dbranch = test_prog.add_to_first_available_node(DBRANCH, SIBLING_EDGE)
+        cond = test_prog.prog.create_and_add_node(STR_BUF, dbranch, CHILD_EDGE)
+        self.assertFalse(test_prog.prog.check_validity())
+        then = test_prog.prog.create_and_add_node(STR_APP, cond, CHILD_EDGE)
+        self.assertFalse(test_prog.prog.check_validity())
+        else_node = test_prog.prog.create_and_add_node(STR_APP, cond, SIBLING_EDGE)
+        self.assertFalse(test_prog.prog.check_validity())
+        test_prog.prog.create_and_add_node(STOP, then, SIBLING_EDGE)
+        self.assertTrue(test_prog.prog.check_validity())
+
+        # Test DLoop fail
+        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        dloop = test_prog.add_to_first_available_node(DLOOP, SIBLING_EDGE)
+        self.assertFalse(test_prog.prog.check_validity())
+        cond = test_prog.prog.create_and_add_node(DEXCEPT, dloop, CHILD_EDGE)
+        body = test_prog.prog.create_and_add_node(STR_APP, cond, CHILD_EDGE)
+        test_prog.prog.create_and_add_node(STOP, body, SIBLING_EDGE)
+        self.assertFalse(test_prog.prog.check_validity())
+
+        # Test DLoop
+        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        dloop = test_prog.add_to_first_available_node(DLOOP, SIBLING_EDGE)
+        self.assertFalse(test_prog.prog.check_validity())
+        cond = test_prog.prog.create_and_add_node(STR_BUF, dloop, CHILD_EDGE)
+        self.assertFalse(test_prog.prog.check_validity())
+        body = test_prog.prog.create_and_add_node(STR_APP, cond, CHILD_EDGE)
+        test_prog.prog.create_and_add_node(STOP, body, SIBLING_EDGE)
+        self.assertTrue(test_prog.prog.check_validity())
+
+        # Test DExcept fail
+        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        dexcept = test_prog.add_to_first_available_node(DEXCEPT, SIBLING_EDGE)
+        self.assertFalse(test_prog.prog.check_validity())
+        cond = test_prog.prog.create_and_add_node(DBRANCH, dexcept, CHILD_EDGE)
+        body = test_prog.prog.create_and_add_node(STR_APP, cond, CHILD_EDGE)
+        test_prog.prog.create_and_add_node(STOP, body, SIBLING_EDGE)
+        self.assertFalse(test_prog.prog.check_validity())
+
+        # Test DExcept
+        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        dexcept = test_prog.add_to_first_available_node(DEXCEPT, SIBLING_EDGE)
+        self.assertFalse(test_prog.prog.check_validity())
+        cond = test_prog.prog.create_and_add_node(STR_BUF, dexcept, CHILD_EDGE)
+        self.assertFalse(test_prog.prog.check_validity())
+        body = test_prog.prog.create_and_add_node(STR_APP, cond, CHILD_EDGE)
+        test_prog.prog.create_and_add_node(STOP, body, SIBLING_EDGE)
+        self.assertTrue(test_prog.prog.check_validity())
+
 
     @mock.patch.object(MCMCProgram, 'get_ast_idx')
     @mock.patch.object(random, 'randint')
@@ -586,14 +649,16 @@ class MCMCProgramTest(unittest.TestCase):
 
         # test_prog.prog.max_depth = 15
 
-        num_iter = 500
+        num_iter = 200
 
         for i in range(num_iter):
-            print("\n", i)
-            # print(i)
+            # print("\n", i)
+            print(i)
             test_prog.prog.mcmc()
-            test_prog.update_nodes_and_edges(verbose=True)
+            if i % 1 == 0:
+                test_prog.update_nodes_and_edges(verbose=True)
         #
+        # test_prog.update_nodes_and_edges(verbose=True)
         test_prog.print_summary_logs()
 
     # @mock.patch.object(random, 'choice')
@@ -702,6 +767,9 @@ class MCMCProgramWrapper:
                         edges.pop()
                         parents.pop()
                     curr_node = None
+
+        if verbose:
+            print("\n")
 
         self.nodes = nodes
         self.edges = edges
