@@ -49,9 +49,10 @@ MCMC & Bayesian Phylogenetics:
 - More commonly used MCMC algorithms: https://en.wikipedia.org/wiki/Bayesian_inference_in_phylogeny#Metropolis-coupled_MCMC
 
 
-How Gibbs Sampling and Other MCMC techniques are used with non-continuous space data:
+How Gibbs Sampling and Other MCMC techniques are used in image and sentence generation:
 - Image Denoising with Gibbs Sampling: https://towardsdatascience.com/image-denoising-with-gibbs-sampling-mcmc-concepts-and-code-implementation-11d42a90e153 [Markov Random Fields and Gibbs Sampling for Image Denoising by Chang Yue http://stanford.edu/class/ee367/Winter2018/yue_ee367_win18_report.pdf]
 - CGMH: Constrained Sentence Generation by Metropolis-Hastings Sampling [Miao et al]
+- MCMC Sentence generation: https://lili-mou.github.io/slides/MCMC.pdf
 
 
 ---------------------- RESOURCES ----------------------
