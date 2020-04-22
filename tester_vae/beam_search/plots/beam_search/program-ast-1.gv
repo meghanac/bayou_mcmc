@@ -1,9 +1,0 @@
-// Program AST
-digraph {
-	1.0 [label=1.0]
-	0 [label=DSubTree]
-	1 [label="java.util.HashMap.HashMap()"]
-	0 -> 1 [label="sibling / 1" constraint=true direction=LR]
-	2 [label=DStop]
-	1 -> 2 [label="sibling / 2" constraint=true direction=LR]
-}

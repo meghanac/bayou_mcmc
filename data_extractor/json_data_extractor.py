@@ -149,9 +149,9 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
     branching = defaultdict()
 
     # Add branching to vocab_freq
-    vocab_freq['DBranch'] = [0, {}]
-    vocab_freq['DLoop'] = [0, {}]
-    vocab_freq['DExcept'] = [0, {}]
+    vocab_freq['DBranch'] = [0, {}, {}]  # count, dict(api : count), dict(prog_length : count)
+    vocab_freq['DLoop'] = [0, {}, {}]
+    vocab_freq['DExcept'] = [0, {}, {}]
 
     # create dictionary to save information about branching
     branching['DBranch'] = {'_cond': {}, '_else': {}, '_then': {}}
@@ -225,7 +225,7 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
             try:
                 vocab_freq[call][0] += 1
             except KeyError:
-                vocab_freq[call] = [1, {}]
+                vocab_freq[call] = [1, {}, {}]
 
         if vocab_size < vocab_num:
             if call != '':
@@ -237,9 +237,13 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
 
         return valid_prog, vocab, vocab_size, prog_length, vocab_freq, apis_list
 
-    def update_api_cofrequencies(apis_list, vocab_freq):
+    def update_api_cofrequencies(apis_list, vocab_freq, prog_length):
         apis_list = list(set(apis_list))
         for api1 in apis_list:
+            try:
+                vocab_freq[api1][2][prog_length] += 1
+            except KeyError:
+                vocab_freq[api1][2][prog_length] = 1
             for api2 in apis_list:
                 # if api1 != api2:  # by leaving this in we're able to know how many distinct programs this API shows up in
                 try:
@@ -293,7 +297,7 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
                 prog_sizes[prog_length] += 1
             except KeyError:
                 prog_sizes[prog_length] = 1
-            vocab_freq = update_api_cofrequencies(apis_list, vocab_freq)
+            vocab_freq = update_api_cofrequencies(apis_list, vocab_freq, prog_length)
 
             for i in range(len(data_types)):
                 if i == 0:
@@ -342,7 +346,7 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
     for i in range(len(sorted_prog_length)):
         analysis_f.write(
             "\t program length of " + str(sorted_prog_length[i][0]) + ": " + str(sorted_prog_length[i][1]) + " (" + str(
-                round(1.0 * sorted_prog_length[i][1] / counter, 4) * 100) + "%)\n")
+                round(100.0 * sorted_prog_length[i][1] / counter, 4)) + "%)\n")
     analysis_f.write("\n")
 
     sorted_vocab_freq_items = sorted(vocab_freq.items(), key=lambda k: k[1][0], reverse=True)
@@ -376,10 +380,10 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
 
     def get_api_cofrequencies(vocab_freq):
         vocab_items = vocab_freq.items()
-        sorted_apis = sorted([((i[0], i[1][1][i[0]]), i[1][1]) for i in vocab_items], key=lambda k: k[0][1],
+        sorted_apis = sorted([((i[0], i[1][1][i[0]]), i[1][1], sorted(i[1][2].items())) for i in vocab_items], key=lambda k: k[0][1],
                              reverse=True)
-        sorted_apis = [(i[0], remove_self_from_cofreq_list(i[0][0], i[1])) for i in sorted_apis]
-        api_cofreq = [(i[0], get_top_k_cofreq(i[1], 10)) for i in sorted_apis]
+        sorted_apis = [(i[0], remove_self_from_cofreq_list(i[0][0], i[1]), i[2]) for i in sorted_apis]
+        api_cofreq = [(i[0], get_top_k_cofreq(i[1], 10), i[2]) for i in sorted_apis]
         return api_cofreq
 
     api_cofreq = get_api_cofrequencies(vocab_freq)
@@ -387,7 +391,17 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
     for i in range(len(api_cofreq)):
         analysis_f.write("\t" + str(i + 1) + ") " + api_cofreq[i][0][0] + ": Found in " + str(
             api_cofreq[i][0][1]) + " distinct programs (" + str(
-            round((1.0 * api_cofreq[i][0][1]) / counter, 6) * 100) + "%)\n")
+            round((100.0 * api_cofreq[i][0][1]) / counter, 4)) + "%)\n")
+
+        analysis_f.write("\t\t Program lengths: {")
+        for k in range(len(api_cofreq[i][2])):
+            prog_len = api_cofreq[i][2][k]
+            analysis_f.write(str(prog_len[0]) + ": " + str(prog_len[1]) + " ("
+                             + str(round(100.0*prog_len[1]/api_cofreq[i][0][1], 2)) + "%)")
+            if k != len(api_cofreq[i][2]) - 1:
+                analysis_f.write(", ")
+        analysis_f.write("} \n")
+
         for j in api_cofreq[i][1]:
             analysis_f.write("\t\t\t" + j[0] + ": " + str(j[1]) + "\n")
         analysis_f.write("\n")
@@ -406,7 +420,10 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
         analysis_f.write("\n")
 
 
-copy_json_data_limit_vocab("data_surrounding_methods.json", "1k_vocab_min_3.json", 1000, num_programs=600000, min_length=3, is_test_data=False)
+copy_json_data_limit_vocab("data_surrounding_methods.json", "new_1k_vocab_min_3.json", 1000, num_programs=600000, min_length=3, is_test_data=False)
+
+# copy_json_data_limit_vocab("data_surrounding_methods.json", "delete.json", 1000, num_programs=6000, min_length=3, is_test_data=False)
+
 
 # copy_json_data_limit_vocab("data_surrounding_methods.json", "no_vocab_constraint_min_3.json", 100000, num_programs=10000,
 #                            is_test_data=False, min_length=3)

@@ -629,7 +629,7 @@ class MCMCProgram:
         :return: (Node) node that was swapped, (Node) other node that was swapped
         """
         # get 2 distinct node positions
-        node1, rand_node1_pos = self.get_valid_random_node()
+        node1, rand_node1_pos = self.get_valid_random_node()  # TODO: FIX THIS BECAUSE IT IS WRONG
         other_nodes = list(range(1, self.curr_prog.length))
         other_nodes.remove(rand_node1_pos)
         node2, node2_pos = self.get_valid_random_node(given_list=other_nodes)
