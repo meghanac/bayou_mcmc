@@ -269,6 +269,7 @@ class MCMCProgram:
         # Initialize model states
         self.update_latent_state()
         self.get_initial_decoder_state()
+        # self.get_random_initial_state()
 
         # Update probabilities of tree
         self.calculate_probability()
@@ -487,6 +488,60 @@ class MCMCProgram:
                 else:
                     selectable_node_exists_in_program = True
 
+    def get_random_node_to_swap(self, given_list=None):
+        """
+        Returns a valid node in the program or in the given list of positions of nodes that can be chosen.
+        Valid node is one that is not a 'DSubtree' or 'DStop' nodes. Additionally, it must be one that can have a
+        sibling node. Nodes that cannot have a sibling node are the condition/catch nodes that occur right after a DLoop
+        or DExcept node.
+        :param given_list: (list of ints) list of positions (ints) that represent nodes in the program that can
+        be selected
+        :return: (Node) the randomly selected node, (int) position of the randomly selected node
+        """
+        # Boolean flag that checks whether a valid node exists in the program or given list. Is computed at the end of
+        # the first iteration
+        selectable_node_exists_in_program = None
+
+        # Unselectable nodes
+        unselectable_nodes = {self.vocab2node[START], self.vocab2node[STOP], self.vocab2node[EMPTY],
+                              self.vocab2node[DLOOP], self.vocab2node[DEXCEPT], self.vocab2node[DBRANCH]}
+
+        while True:  # while a valid node exists in the program
+            # If no list of nodes is specified, choose a random one from the program
+            if given_list is None:
+                if self.curr_prog.length > 1:
+                    # exclude DSubTree node, randint is [a,b] inclusive
+                    rand_node_pos = random.randint(1, self.curr_prog.length - 1)
+                else:
+                    return None, None
+            elif len(given_list) == 0:
+                return None, None
+            else:
+                rand_node_pos = random.choice(given_list)
+
+            node = self.get_node_in_position(rand_node_pos)
+
+            # Check validity of selected node
+            if node.api_num not in unselectable_nodes:
+                return node, rand_node_pos
+
+            # If node is invalid, check if valid node exists in program or given list
+            if selectable_node_exists_in_program is None:
+                print("-----------------HERE-----------")
+                nodes, _ = self.get_vector_representation()
+                if given_list is not None:
+                    nodes = [nodes[i] for i in given_list]
+                for i in range(len(nodes)):
+                    if i == 0:
+                        nodes[i] = 0
+                    else:
+                        if nodes[i] in unselectable_nodes:
+                            nodes[i] = 0
+                if sum(nodes) == 0:
+                    return None, None
+                else:
+                    selectable_node_exists_in_program = True
+
     # def get_non_stop_random_pos(self):
     #     """
     #     Returns a node and its position of a random node in the current program that is not a DStop node.
@@ -587,6 +642,7 @@ class MCMCProgram:
         (bool- SIBLING_EDGE or CHILD_EDGE) edge between deleted node and its parent
         """
         node, _ = self.get_deletable_node()
+        print("deleted node:", node.api_name)
         parent_node = node.parent
         parent_edge = node.parent_edge
 
@@ -598,11 +654,11 @@ class MCMCProgram:
             node.remove_node(SIBLING_EDGE)
             parent_node.add_node(sibling, SIBLING_EDGE)
 
-        # Remove dangling DStop node if there is one
-        elif parent_edge == SIBLING_EDGE and node.sibling is None:
-            last_node = self.get_node_in_position(self.curr_prog.length - 1)
-            if last_node.api_name == STOP:
-                last_node.parent.remove_node(last_node.parent_edge)
+        # # Remove dangling DStop node if there is one
+        # elif parent_edge == SIBLING_EDGE and node.sibling is None:
+        #     last_node = self.get_node_in_position(self.curr_prog.length - 1)
+        #     if last_node.api_name == STOP:
+        #         last_node.parent.remove_node(last_node.parent_edge)
 
         self.calculate_probability()
 
@@ -633,10 +689,12 @@ class MCMCProgram:
         :return: (Node) node that was swapped, (Node) other node that was swapped
         """
         # get 2 distinct node positions
-        node1, rand_node1_pos = self.get_valid_random_node()  # TODO: FIX THIS BECAUSE IT IS WRONG
+        # node1, rand_node1_pos = self.get_valid_random_node()  # TODO: FIX THIS BECAUSE IT IS WRONG
+        node1, rand_node1_pos = self.get_random_node_to_swap()
         other_nodes = list(range(1, self.curr_prog.length))
         other_nodes.remove(rand_node1_pos)
-        node2, node2_pos = self.get_valid_random_node(given_list=other_nodes)
+        # node2, node2_pos = self.get_valid_random_node(given_list=other_nodes)
+        node2, node2_pos = self.get_random_node_to_swap(given_list=other_nodes)
 
         if node1 is None or node2 is None:
             return None, None
@@ -790,9 +848,9 @@ class MCMCProgram:
         # Calculate probability of new program
         self.calculate_probability()
 
-        print(condition.api_name)
-        print(then_node.api_name)
-        print(else_node.api_name)
+        # print(condition.api_name)
+        # print(then_node.api_name)
+        # print(else_node.api_name)
 
         return dbranch
 
@@ -1053,7 +1111,7 @@ class MCMCProgram:
         Randomly chooses a transformation and transforms the current program if it is accepted.
         :return: (bool) whether current tree was transformed or not
         """
-        move = random.choice(['add'])
+        move = random.choice(['add', 'delete', 'swap'])
         # move = np.random.choice(['add', 'delete', 'swap', 'add_dnode'], p=[0.3, 0.3, 0.3, 0.1])
         print("move:", move)
 
@@ -1278,6 +1336,14 @@ class MCMCProgram:
         self.initial_state = initial_state
         return initial_state
 
+    def get_random_initial_state(self):
+        self.latent_state = np.random.normal(loc=0., scale=1.,
+                                        size=(self.config.batch_size, self.config.latent_size))
+        self.initial_state = self.sess.run(self.model.initial_state,
+                                      feed_dict={self.model.latent_state: self.latent_state})
+        self.initial_state = np.transpose(np.array(self.initial_state), [1, 0, 2])  # batch-first
+        return self.initial_state
+
     def calculate_probability(self):
         """
         Calculate probability of current program.
@@ -1304,6 +1370,8 @@ class MCMCProgram:
 
         self.curr_log_prob = curr_prob
 
+        return curr_prob
+
     def mcmc(self):
         """
         Perform one MCMC step.
@@ -1313,11 +1381,12 @@ class MCMCProgram:
         4) Compute the new initial state of the decoder.
         :return:
         """
-        self.transform_tree()
+        # self.transform_tree()
+
         # Attempt to transform the current program
-        # if self.transform_tree():
+        if self.transform_tree():
         # If successful, update encoder's latent state
-        #     self.update_latent_state()
-        # # self.transform_tree()
-        # self.random_walk_latent_space()
-        # self.get_initial_decoder_state()
+            self.update_latent_state()
+        # self.transform_tree()
+        self.random_walk_latent_space()
+        self.get_initial_decoder_state()

@@ -1,3 +1,4 @@
+import math
 import random
 import unittest
 from mcmc import Node, MCMCProgram, SIBLING_EDGE, CHILD_EDGE, START, STOP, DBRANCH, DLOOP, DEXCEPT
@@ -666,34 +667,36 @@ class MCMCProgramTest(unittest.TestCase):
 
         # test_prog.prog.max_depth = 15
 
-        num_iter = 200
+        num_iter = 500
 
         for i in range(num_iter):
             print(i)
             test_prog.prog.mcmc()
             if i % 1 == 0:
                 test_prog.update_nodes_and_edges(verbose=True)
-        #
+
         # test_prog.update_nodes_and_edges(verbose=True)
         test_prog.print_summary_logs()
 
-    # @mock.patch.object(random, 'choice')
-    # def test_dev(self, mock_rand_choice):
-    #     mock_rand_choice.return_value = 'add'
-    #
-    #     test_prog, expected_nodes, expected_edges = self.create_base_program([STR_LEN, 'slkfje'])
-    #
-    #     test_prog.prog.max_depth = 15
-    #
-    #     num_iter = 1
-    #
-    #     for i in range(num_iter):
-    #         print("\n", i)
-    #         # print(i)
-    #         test_prog.prog.mcmc()
-    #         test_prog.update_nodes_and_edges(verbose=True)
-    #     #
-    #     test_prog.print_summary_logs()
+    def test_dev(self):
+        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, 'slkfje'])
+        #
+        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        # parent = test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+
+        prob = test_prog.prog.calculate_probability()
+        print(prob)
+
+
+        for i in range(10):
+            node = test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+            new_prob = test_prog.prog.calculate_probability()
+            print(new_prob)
+            print(math.exp(new_prob) / math.exp(prob))
+            test_prog.prog.undo_add_random_node(node)
+            print(test_prog.prog.calculate_probability())
 
 
 class MCMCProgramWrapper:
