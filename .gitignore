@@ -25,3 +25,4 @@ data_extractor/data/keywords.pickle
 data_extractor/data/return_types.pickle
 data_extractor/data/testing-500000.json
 data_extractor/data/vocab.json
+data_extractor/data/new_1k_vocab_min_3-600000.json

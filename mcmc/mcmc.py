@@ -535,6 +535,8 @@ class MCMCProgram:
         new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos, non_dnode=False)]
         # new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos)]
 
+        print(new_node_api)
+
         # If a dnode is chosen, grow it out
         if new_node_api == DBRANCH:
             return self.grow_dbranch(new_node_parent)
@@ -563,6 +565,8 @@ class MCMCProgram:
         :param added_node: (Node) the node that was added in add_random_node() that is to be removed.
         :return:
         """
+        print(added_node.api_name)
+        print(added_node.api_name in {DBRANCH, DLOOP, DEXCEPT})
         if added_node.api_name in {DBRANCH, DLOOP, DEXCEPT}:
             return self.undo_add_random_dnode(added_node)
 
@@ -738,12 +742,14 @@ class MCMCProgram:
         :param parent: (Node) parent of DBranch
         :return: (Node) DBranch node
         """
+        print("HELLOOOO")
         # remove parent's current sibling node if there
         parent_sibling = parent.sibling
         parent.remove_node(SIBLING_EDGE)
 
         # Create a DBranch node
         dbranch = self.create_and_add_node(DBRANCH, parent, SIBLING_EDGE)
+        print("dbranch is none: ", dbranch is None)
         dbranch_pos = self.get_nodes_position(dbranch)
         assert dbranch_pos > 0, "Error: DBranch position couldn't be found"
 
@@ -756,9 +762,15 @@ class MCMCProgram:
         # Ensure adding a DBranch won't exceed max depth
         if add_stop_node_to_end_branch and (
                 self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 6 > self.max_length):
+            # remove added dbranch
+            parent.remove_node(SIBLING_EDGE)
+            parent.sibling = parent_sibling
             return None
         elif (not add_stop_node_to_end_branch) and (
                 self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 5 > self.max_length):
+            # remove added dbranch
+            parent.remove_node(SIBLING_EDGE)
+            parent.sibling = parent_sibling
             return None
 
         # Create condition as DBranch child
@@ -777,6 +789,10 @@ class MCMCProgram:
 
         # Calculate probability of new program
         self.calculate_probability()
+
+        print(condition.api_name)
+        print(then_node.api_name)
+        print(else_node.api_name)
 
         return dbranch
 
@@ -804,9 +820,15 @@ class MCMCProgram:
         # Ensure adding a DLoop won't exceed max depth
         if add_stop_node_to_end_branch and (
                 self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 4 > self.max_length):
+            # remove added dloop
+            parent.remove_node(SIBLING_EDGE)
+            parent.sibling = parent_sibling
             return None
         elif (not add_stop_node_to_end_branch) and (
                 self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 3 > self.max_length):
+            # remove added dloop
+            parent.remove_node(SIBLING_EDGE)
+            parent.sibling = parent_sibling
             return None
 
         # Create condition as DLoop child
@@ -848,9 +870,15 @@ class MCMCProgram:
         # Ensure adding a DExcept won't exceed max depth
         if add_stop_node_to_end_branch and (
                 self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 4 > self.max_length):
+            # remove added dexcept
+            parent.remove_node(SIBLING_EDGE)
+            parent.sibling = parent_sibling
             return None
         elif (not add_stop_node_to_end_branch) and (
                 self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 3 > self.max_length):
+            # remove added dexcept
+            parent.remove_node(SIBLING_EDGE)
+            parent.sibling = parent_sibling
             return None
 
         # Create catch as DExcept child
@@ -1025,7 +1053,7 @@ class MCMCProgram:
         Randomly chooses a transformation and transforms the current program if it is accepted.
         :return: (bool) whether current tree was transformed or not
         """
-        move = random.choice(['add', 'delete', 'swap'])
+        move = random.choice(['add'])
         # move = np.random.choice(['add', 'delete', 'swap', 'add_dnode'], p=[0.3, 0.3, 0.3, 0.1])
         print("move:", move)
 
@@ -1033,7 +1061,9 @@ class MCMCProgram:
             self.add += 1
             added_node = self.add_random_node()
             if added_node is None:
+                print("node is none")
                 return False
+            print("valid:", self.validate_and_update_program())
             if not self.validate_and_update_program():
                 self.undo_add_random_node(added_node)
                 return False
