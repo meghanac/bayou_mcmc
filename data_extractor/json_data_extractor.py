@@ -124,11 +124,15 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
         new_f = open(new_data_path, 'w+')
         analysis_f = open(os.path.join(TEST_DATA_DIR_PATH, analysis_filename), 'w+')
     else:
+        new_dir_name = new_data_filename[:-5]
+        new_dir_path = os.path.join(TRAINING_DATA_DIR_PATH, new_dir_name)
+        if not os.path.exists(new_dir_path):
+            os.mkdir(new_dir_path)
         old_data_path = os.path.join(TRAINING_DATA_DIR_PATH, old_data_filename)
-        new_data_path = os.path.join(TRAINING_DATA_DIR_PATH, new_data_filename)
+        new_data_path = os.path.join(new_dir_path, new_data_filename)
         old_f = open(old_data_path, 'rb')
         new_f = open(new_data_path, 'w+')
-        analysis_f = open(os.path.join(TRAINING_DATA_DIR_PATH, analysis_filename), 'w+')
+        analysis_f = open(os.path.join(new_dir_path, analysis_filename), 'w+')
 
     # initialize new json file
     new_f.write("{\n")
@@ -420,7 +424,7 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
         analysis_f.write("\n")
 
 
-copy_json_data_limit_vocab("data_surrounding_methods.json", "new_1k_vocab_min_3.json", 1000, num_programs=600000, min_length=3, is_test_data=False)
+copy_json_data_limit_vocab("data_surrounding_methods.json", "1k_vocab_constraint_min_3.json", 1000, num_programs=600000, min_length=3, is_test_data=False)
 
 # copy_json_data_limit_vocab("data_surrounding_methods.json", "delete.json", 1000, num_programs=6000, min_length=3, is_test_data=False)
 

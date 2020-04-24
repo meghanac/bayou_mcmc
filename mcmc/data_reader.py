@@ -66,7 +66,7 @@ class Reader:
             self.fp_dict = Dictionary()
             self.keyword_dict = Dictionary()
 
-        ast_programs, return_types, formal_params, keywords = self.read_data(clargs.data + '/constraints.json')
+        ast_programs, return_types, formal_params = self.read_data(clargs.data + '/constraints.json')
 
         # setup input and target chars/vocab
         if not self.infer:
@@ -105,12 +105,12 @@ class Reader:
             self.fp_type_targets[i, 0:(len_list - 1)] = mod_list[1:len_list]
 
 
-        ## Wrangle Keywords
-        self.keywords = np.zeros((sz, MAX_KEYWORDS), dtype=np.int32)
-        for i, kw in enumerate(keywords):
-            len_list = min(len(kw), MAX_KEYWORDS)
-            mod_list = kw[:len_list]
-            self.keywords[i, :len_list] = mod_list
+        # ## Wrangle Keywords
+        # self.keywords = np.zeros((sz, MAX_KEYWORDS), dtype=np.int32)
+        # for i, kw in enumerate(keywords):
+        #     len_list = min(len(kw), MAX_KEYWORDS)
+        #     mod_list = kw[:len_list]
+        #     self.keywords[i, :len_list] = mod_list
 
 
         # self.js_programs = js_programs
@@ -134,9 +134,9 @@ class Reader:
                 parsed_api_array = self.read_ast(program['ast'])
                 return_type_id = self.read_return_type(program['returnType'])
                 parsed_fp_array = self.read_formal_params(program['formalParam'])
-                keywords = self.read_keywords(program['keywords'])
+                # keywords = self.read_keywords(program['keywords'])
 
-                data_points.append((parsed_api_array, return_type_id, parsed_fp_array, keywords))
+                data_points.append((parsed_api_array, return_type_id, parsed_fp_array))
                 done += 1
 
             except TooLongLoopingException as e1:
@@ -155,9 +155,9 @@ class Reader:
 
         # randomly shuffle to avoid bias towards initial data points during training
         random.shuffle(data_points)
-        parsed_api_array, return_type_ids, formal_param_ids, keywords = zip(*data_points)  # unzip
+        parsed_api_array, return_type_ids, formal_param_ids = zip(*data_points)  # unzip
 
-        return parsed_api_array, return_type_ids, formal_param_ids, keywords
+        return parsed_api_array, return_type_ids, formal_param_ids
 
     def save_data(self, path):
         if not os.path.exists(path):
@@ -172,8 +172,8 @@ class Reader:
         with open(path + '/formal_params.pickle', 'wb') as f:
             pickle.dump([self.fp_types, self.fp_type_targets], f)
 
-        with open(path + '/keywords.pickle', 'wb') as f:
-            pickle.dump(self.keywords, f)
+        # with open(path + '/keywords.pickle', 'wb') as f:
+        #     pickle.dump(self.keywords, f)
 
         with open(os.path.join(path + '/vocab.json'), 'w') as f:
             json.dump(dump_vocab(self.vocab), fp=f, indent=2)
@@ -225,16 +225,16 @@ class Reader:
             parsed_fp_array.append(fp_call_id)
         return parsed_fp_array
 
-    def read_keywords(self, program_keyword_js):
-        # Read the keywords
-        keywords = []
-        for kw in program_keyword_js:
-            if self.infer:
-                kw_id = self.keyword_dict.get_node_val(kw)
-            else:
-                kw_id = self.keyword_dict.conditional_add_node_val(kw)
-            keywords.append(kw_id)
-        return keywords
+    # def read_keywords(self, program_keyword_js):
+    #     # Read the keywords
+    #     keywords = []
+    #     for kw in program_keyword_js:
+    #         if self.infer:
+    #             kw_id = self.keyword_dict.get_node_val(kw)
+    #         else:
+    #             kw_id = self.keyword_dict.conditional_add_node_val(kw)
+    #         keywords.append(kw_id)
+    #     return keywords
 
 
 # %%

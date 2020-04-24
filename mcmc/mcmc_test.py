@@ -15,10 +15,11 @@ STR_APP = 'java.lang.StringBuffer.append(java.lang.String)'
 READ_LINE = 'java.io.BufferedReader.readLine()'
 CLOSE = 'java.io.InputStream.close()'
 STR_LEN = 'java.lang.String.length()'
-STR_BUILD = 'java.lang.StringBuilder.StringBuilder(java.lang.String)'
+STR_BUILD = 'java.lang.StringBuilder.StringBuilder(int)'
+STR_BUILD_APP = 'java.lang.StringBuilder.append(java.lang.String)'
 
 # SAVED MODEL
-SAVED_MODEL_PATH = '/Users/meghanachilukuri/Documents/GitHub/bayou_mcmc/trainer_vae/save/1k_vocab_min_3'
+SAVED_MODEL_PATH = '/Users/meghanachilukuri/Documents/GitHub/bayou_mcmc/trainer_vae/save/1k_vocab_constraint_min_3-600000'
 
 
 class MCMCProgramTest(unittest.TestCase):
@@ -657,17 +658,19 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertEqual(test_prog.prog.curr_prog.non_dnode_length, 1)
 
     def test_mcmc(self):
-        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, 'slkfje'])
+        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, STR_BUILD_APP])
 
-        test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-        test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
 
         # test_prog.prog.max_depth = 15
 
-        num_iter = 500
+        num_iter = 50
+
+        test_prog.prog.loader()
 
         for i in range(num_iter):
             print(i)
@@ -680,23 +683,29 @@ class MCMCProgramTest(unittest.TestCase):
 
     def test_dev(self):
         test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, 'slkfje'])
+        # #
+        # # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        # # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        # # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        # # parent = test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         #
-        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-        # parent = test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        # prob = test_prog.prog.calculate_probability()
+        # print(prob)
+        #
+        #
+        # for i in range(10):
+        #     node = test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        #     new_prob = test_prog.prog.calculate_probability()
+        #     print(new_prob)
+        #     print(math.exp(new_prob) / math.exp(prob))
+        #     test_prog.prog.undo_add_random_node(node)
+        #     print(test_prog.prog.calculate_probability())
 
-        prob = test_prog.prog.calculate_probability()
-        print(prob)
+        # test_prog.prog.get_encoder_psi()
+        # test_prog.prog.get_bayesian_predictor()
 
-
-        for i in range(10):
-            node = test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-            new_prob = test_prog.prog.calculate_probability()
-            print(new_prob)
-            print(math.exp(new_prob) / math.exp(prob))
-            test_prog.prog.undo_add_random_node(node)
-            print(test_prog.prog.calculate_probability())
+        # test_prog.prog.reader()
+        test_prog.prog.loader()
 
 
 class MCMCProgramWrapper:

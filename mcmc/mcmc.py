@@ -1,6 +1,14 @@
+import argparse
 import math
 import os
+import sys
+import textwrap
 from copy import deepcopy
+
+from ast_helper.beam_searcher.program_beam_searcher import ProgramBeamSearcher
+from data_reader import Reader
+from data_loader import Loader
+from trainer_vae.infer import BayesianPredictor
 from trainer_vae.model import Model
 from trainer_vae.utils import get_var_list, read_config
 import numpy as np
@@ -168,6 +176,8 @@ class MCMCProgram:
         Initialize program
         :param save_dir: (string) path to directory in which saved model checkpoints are in
         """
+        self.save_dir = save_dir
+
         # Initialize model
         config_file = os.path.join(save_dir, 'config.json')
         with open(config_file) as f:
@@ -193,6 +203,10 @@ class MCMCProgram:
         self.constraint_nodes = []  # has node numbers of constraints
         self.vocab2node = self.config.vocab.api_dict
         self.node2vocab = dict(zip(self.vocab2node.values(), self.vocab2node.keys()))
+        self.rettype2num = self.config.vocab.ret_dict
+        self.num2rettype = dict(zip(self.rettype2num.values(), self.rettype2num.keys()))
+        self.fp2num = self.config.vocab.fp_dict
+        self.num2fp = dict(zip(self.fp2num.values(), self.fp2num.keys()))
         self.curr_prog = None
         self.curr_log_prob = -0.0
         self.prev_log_prob = -0.0
@@ -201,6 +215,8 @@ class MCMCProgram:
         self.initial_state = None
         self.encoder_mean = None
         self.encoder_covar = None
+        self.predictor = None
+        self.searcher = None
 
         # Logging  # TODO: change to Logger
         self.accepted = 0
@@ -1111,7 +1127,7 @@ class MCMCProgram:
         Randomly chooses a transformation and transforms the current program if it is accepted.
         :return: (bool) whether current tree was transformed or not
         """
-        move = random.choice(['add', 'delete', 'swap'])
+        move = random.choice(['add'])
         # move = np.random.choice(['add', 'delete', 'swap', 'add_dnode'], p=[0.3, 0.3, 0.3, 0.1])
         print("move:", move)
 
@@ -1308,13 +1324,20 @@ class MCMCProgram:
         node = np.zeros([1, 1], dtype=np.int32)
         edge = np.zeros([1, 1], dtype=np.bool)
         fp = np.zeros([1, 1], dtype=np.int32)
+
+        ret_type = [self.rettype2num["Typeface"]]
+        fp_type = np.zeros([1, 1], dtype=np.int32)
+        fp_type[0][0] = self.fp2num["String"]
+        ret_type = np.array(ret_type)
+        fp_type = np.array(fp_type)
+
         state = None
         for i in range(self.curr_prog.length):
             node[0][0] = nodes[i]
             edge[0][0] = edges[i]
             feed = {self.model.edges.name: node, self.model.nodes.name: edge,
-                    self.model.return_type: [void_ret_type],
-                    self.model.formal_params: fp}
+                    self.model.return_type: ret_type,
+                    self.model.formal_params: fp_type}
             if i < self.curr_prog.length - 1:
                 state = self.sess.run(self.model.latent_state, feed)
             else:  # for last node, save encoder mean and variance as well
@@ -1381,12 +1404,181 @@ class MCMCProgram:
         4) Compute the new initial state of the decoder.
         :return:
         """
-        # self.transform_tree()
+        self.transform_tree()
 
-        # Attempt to transform the current program
-        if self.transform_tree():
-        # If successful, update encoder's latent state
-            self.update_latent_state()
-        # self.transform_tree()
-        self.random_walk_latent_space()
-        self.get_initial_decoder_state()
+        # # Attempt to transform the current program
+        # if self.transform_tree():
+        # # If successful, update encoder's latent state
+        #     self.update_latent_state()
+        # # self.transform_tree()
+        # self.random_walk_latent_space()
+        # self.get_initial_decoder_state()
+
+    def reader(self):
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                         description=textwrap.dedent(""))
+        parser.add_argument('--data', type=str, default='data/',
+                            help='load data from here')
+
+        clargs = parser.parse_args()
+
+        reader = Reader(clargs)
+        reader.save_data('data/')
+
+    def loader(self):
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                         description=textwrap.dedent(""))
+        parser.add_argument('--data', type=str, default='data/',
+                            help='load data from here')
+        parser.add_argument('--continue_from', type=str, default=self.save_dir,
+                            help='ignore config options and continue training model checkpointed here')
+
+        clargs = parser.parse_args()
+
+        # print()
+        self.config.max_ast_depth = self.max_num_api
+        loader = Loader(clargs, self.config)
+
+        encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
+
+        nodes, edges, targets, \
+        ret_type, fp_type, fp_type_targets = loader.next_batch()
+        print(ret_type)
+        print(fp_type)
+        print(fp_type_targets)
+        print(type(fp_type))
+        print(nodes)
+
+        loader_num2api = dict(zip(loader.config.vocab.api_dict.values(), loader.config.vocab.api_dict.keys()))
+        loader_num2ret = dict(zip(loader.config.vocab.ret_dict.values(), loader.config.vocab.ret_dict.keys()))
+        loader_num2fp = dict(zip(loader.config.vocab.fp_dict.values(), loader.config.vocab.fp_dict.keys()))
+
+        nodes = [[loader_num2api[i] for i in nodes[0]]]
+        ret_type = [loader_num2ret[i] for i in ret_type]
+        fp_type = [[loader_num2fp[i] for i in fp_type[0]]]
+        print(ret_type)
+        print(fp_type)
+        print(nodes)
+
+        nodes = np.array([[self.vocab2node[i] for i in nodes[0]]])
+        print(nodes.shape)
+        # nodes = nodes.T
+        # print(nodes.shape)
+        ret_type = [self.rettype2num[i] for i in ret_type]
+        fp_type = [[self.fp2num[i] for i in fp_type[0]]]
+        fp = np.zeros([1,8])
+        fp[0][0] = fp_type[0][0]
+        print(ret_type)
+        print(fp)
+        print(nodes)
+        print(edges)
+
+        psi = encoder.get_initial_state(nodes, edges, ret_type, fp)
+        psi_ = np.transpose(np.array(psi), [1, 0, 2])  # batch_first
+        encoder.close()
+
+        print(psi_)
+        self.initial_state = psi_
+
+        beam_width = 1
+        decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
+        program_beam_searcher = ProgramBeamSearcher(decoder)
+
+        temp = psi_
+        ast_paths, fp_paths, ret_types = program_beam_searcher.beam_search(initial_state=temp)
+
+        print(' ========== AST ==========')
+        for ast_path in ast_paths:
+            print(ast_path)
+
+        print(' ========== Fp ==========')
+        for fp_path in fp_paths:
+            print(fp_path)
+
+        print(' ========== Return Type ==========')
+        print(ret_types)
+
+        print('\n\n\n\n')
+        decoder.close()
+
+
+    def get_bayesian_predictor(self):
+        HELP = """"""
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+        os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"  # see issue #152
+        os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                         description=textwrap.dedent(HELP))
+        parser.add_argument('--python_recursion_limit', type=int, default=10000,
+                            help='set recursion limit for the Python interpreter')
+        parser.add_argument('--continue_from', type=str, default=self.save_dir,
+                            help='ignore config options and continue training model checkpointed here')
+        parser.add_argument('--saver', type=str, default='plots/beam_search/')
+        parser.add_argument('--data', type=str, default='../data_extractor/data/1k_vocab_constraint_min_3-600000',
+                            help='load data from here')
+
+        clargs = parser.parse_args()
+        if not os.path.exists(clargs.saver):
+            os.mkdir(clargs.saver)
+
+        sys.setrecursionlimit(clargs.python_recursion_limit)
+
+        ret_type = [self.rettype2num["Typeface"]]
+        fp_type = ["String"]  # "String", "int"
+        fp_type = [self.fp2num[i] for i in fp_type]
+        nodes, edges = self.get_vector_representation()
+        nodes = nodes[:self.max_num_api]
+        nodes = np.array([nodes])
+        edges = edges[:self.max_num_api]
+        edges = np.array([edges])
+        ret_type = np.array(ret_type)
+        fp_type = np.array([fp_type])
+        encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
+        psi = encoder.get_initial_state(nodes, edges, ret_type, fp_type)
+        psi_ = np.transpose(np.array(psi), [1, 0, 2])  # batch_first
+        print(psi_)
+
+
+        # feed = {self.model.edges.name: edges, self.model.nodes.name: nodes,
+        #         self.model.return_type: ret_type,
+        #         self.model.formal_params: fp_type}
+        # state = self.sess.run(self.model.initial_state, feed)
+        # psi = np.transpose(np.array(state), [1, 0, 2])  # batch_first
+
+        # print(psi)
+
+        HELP = """"""
+
+        # reader = Reader(clargs, infer=True)
+        # print(reader.read_return_type(ret_type))
+
+        # beam_width = 20
+        # self.predictor = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
+        # self.searcher = ProgramBeamSearcher(self.predictor)
+        #
+        # ast_paths, fp_paths, ret_types = self.searcher.beam_search()
+        #
+        # print(' ========== AST ==========')
+        # for i, ast_path in enumerate(ast_paths):
+        #     print(ast_path)
+        #
+        # print(' ========== Fp ==========')
+        # for i, fp_path in enumerate(fp_paths):
+        #     print(fp_path)
+        #
+        # print(' ========== Return Type ==========')
+        # print(ret_types)
+        #
+        # nodes, edges = self.get_vector_representation()
+        # return_types = ['boolean', 'String', 'void', 'File', 'OpenForReadResult', 'List<String>', '__UDT__', 'List',
+        #                 'Bitmap', 'Long', 'ByteBuffer', 'URI', 'ClassFile', 'ArrayList<String>', 'Page', 'IMOps',
+        #                 'double', 'Hashtable', 'Iterator<Object[]>', 'Map']
+        # formal_params = ['DSubTree', 'String', 'boolean', 'int']
+        # init_state = self.predictor.get_initial_state(nodes, edges, return_types, formal_params)
+
+
+    # def get_encoder_psi(self):
+
+
+        # psi = self.model.encoder.get_initial_state(nodes, edges, ret_type, fp_type)
+        # psi = np.transpose(np.array(psi), [1, 0, 2])  # batch_first

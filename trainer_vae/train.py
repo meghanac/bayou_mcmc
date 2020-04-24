@@ -48,7 +48,7 @@ def train(clargs):
     with open(config_file) as f:
         config = read_config(json.load(f))
     # reader = Reader(clargs)
-    # reader.save_data('../data_extractor/data/')
+    # reader.save_data('../data_extractor/data/1k_vocab_constraint_min_3-600000')
     loader = Loader(clargs, config)
     model = Model(config)
 
@@ -153,7 +153,7 @@ if __name__ == '__main__':
                         help='set recursion limit for the Python interpreter')
     parser.add_argument('--save', type=str, default='save',
                         help='checkpoint model during training here')
-    parser.add_argument('--data', type=str, default='../data_extractor/data',
+    parser.add_argument('--data', type=str, default='../data_extractor/data/1k_vocab_constraint_min_3-600000',
                         help='load data from here')
     parser.add_argument('--config', type=str, default='tiny_config.json',
                         help='config file (see description above for help)')

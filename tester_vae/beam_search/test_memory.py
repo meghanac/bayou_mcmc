@@ -38,6 +38,8 @@ def test_memory(_clargs):
     for i in range(20):
         nodes, edges, targets, \
                 ret_type, fp_type, fp_type_targets, _ = loader.next_batch()
+        print(ret_type)
+        print(fp_type)
         psi = encoder.get_initial_state(nodes, edges, ret_type, fp_type)
         psi_ = np.transpose(np.array(psi), [1, 0, 2])  # batch_first
         psis.extend(psi_)
