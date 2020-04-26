@@ -13,6 +13,9 @@
 # limitations under the License.
 
 from __future__ import print_function
+
+import math
+
 import numpy as np
 from copy import deepcopy
 
@@ -40,6 +43,7 @@ class TreeBeamSearcher:
         i = 0
         while True:
             # states was batch_size * LSTM_Decoder_state_size
+            print(i)
             candies = self.get_next_output_with_fan_out(candies)
 
             if self.check_for_all_STOP(candies):  # branch_stack and last_item
@@ -65,6 +69,7 @@ class TreeBeamSearcher:
         topK = len(candies)
 
         last_item = [[self.infer_model.config.vocab.api_dict[candy.last_item]] for candy in candies]
+        print("last item:", [candy.last_item for candy in candies])
         last_edge = [[candy.last_edge] for candy in candies]
         states = [candy.state for candy in candies]
         states = np.transpose(np.array(states), [1, 0, 2])
@@ -78,6 +83,8 @@ class TreeBeamSearcher:
         # states = states[0]
         next_nodes = [[self.infer_model.config.vocab.chars_api[idx] for idx in beam] for beam in beam_ids]
 
+        print("next nodes:", next_nodes)
+
         # states is still topK * LSTM_Decoder_state_size
         # next_node is topK * topK
         # node_probs in  topK * topK
@@ -85,6 +92,10 @@ class TreeBeamSearcher:
 
         log_probabilty = np.array([candy.log_probabilty for candy in candies])
         length = np.array([candy.length for candy in candies])
+
+        print("beam ln probs:", beam_ln_probs)
+        print("log probabilities:", log_probabilty)
+        print("probs:", [math.exp(i) for i in log_probabilty])
 
         for i in range(topK):
             if candies[i].rolling == False:
@@ -101,7 +112,11 @@ class TreeBeamSearcher:
 
         new_probs = log_probabilty[:, None] + beam_ln_probs
 
+        print("new probs:", new_probs)
+
         len_norm_probs = new_probs / np.power(length[:, None], 1.0)
+
+        print("len norm probs:", len_norm_probs)
 
         rows, cols = np.unravel_index(np.argsort(len_norm_probs, axis=None)[::-1], new_probs.shape)
         rows, cols = rows[:topK], cols[:topK]

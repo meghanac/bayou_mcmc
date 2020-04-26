@@ -682,7 +682,7 @@ class MCMCProgramTest(unittest.TestCase):
         test_prog.print_summary_logs()
 
     def test_dev(self):
-        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, 'slkfje'])
+        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, STR_BUILD_APP])
         # #
         # # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         # # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)

@@ -8,7 +8,7 @@ from copy import deepcopy
 from ast_helper.beam_searcher.program_beam_searcher import ProgramBeamSearcher
 from data_reader import Reader
 from data_loader import Loader
-from trainer_vae.infer import BayesianPredictor
+from infer import BayesianPredictor
 from trainer_vae.model import Model
 from trainer_vae.utils import get_var_list, read_config
 import numpy as np
@@ -1391,7 +1391,7 @@ class MCMCProgram:
                 curr_prob += ast_prob[0][nodes[i + 1]]
                 pass
 
-        self.curr_log_prob = curr_prob
+        self.curr_log_prob = curr_prob / self.curr_prog.length
 
         return curr_prob
 
@@ -1436,8 +1436,9 @@ class MCMCProgram:
         clargs = parser.parse_args()
 
         # print()
-        self.config.max_ast_depth = self.max_num_api
-        loader = Loader(clargs, self.config)
+        config = deepcopy(self.config)
+        config.max_ast_depth = self.max_num_api
+        loader = Loader(clargs, config)
 
         encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
 
@@ -1468,16 +1469,19 @@ class MCMCProgram:
         fp_type = [[self.fp2num[i] for i in fp_type[0]]]
         fp = np.zeros([1,8])
         fp[0][0] = fp_type[0][0]
+        fp[0][1] = self.fp2num["int"]
         print(ret_type)
         print(fp)
         print(nodes)
         print(edges)
 
+        nodes[0][2] = 0
+
         psi = encoder.get_initial_state(nodes, edges, ret_type, fp)
         psi_ = np.transpose(np.array(psi), [1, 0, 2])  # batch_first
         encoder.close()
 
-        print(psi_)
+        # print(psi_)
         self.initial_state = psi_
 
         beam_width = 1
@@ -1499,7 +1503,61 @@ class MCMCProgram:
         print(ret_types)
 
         print('\n\n\n\n')
-        decoder.close()
+        # decoder.close()
+        self.model = decoder.model
+
+        node = np.zeros([1, 1], dtype=np.int32)
+        edge = np.zeros([1, 1], dtype=np.bool)
+        fp_input = np.zeros([1, 1], dtype=np.bool)
+        fp_input[0][0] = fp[0][0]
+
+        parent_pos = 2
+
+        append = 'java.lang.StringBuilder.append(java.lang.String)'
+
+        nodes = nodes[0]
+        edges = edges[0]
+        node[0][0] = self.vocab2node[append]
+        edge[0][0] = edges[2]
+
+        state = decoder.get_random_initial_state()
+        # ast_ln_probs = None
+        # state = psi_
+
+        next_state, idxs, probs = decoder.get_next_ast_state(node, edge, psi_)
+
+        print(probs)
+
+        print([self.node2vocab[i] for i in idxs[0]])
+
+        api1 = idxs[0][0]
+
+        node[0][0] = idxs[0][0]
+        next_state, idxs, probs = decoder.get_next_ast_state(node, edge, next_state)
+
+        print(probs)
+
+        print([self.node2vocab[i] for i in idxs[0]])
+
+        api2 = idxs[0][0]
+
+        # # Pass in all nodes that appear before and including the parent through the decoder to get normalized logits
+        # for i in range(parent_pos + 1):
+        #     node[0][0] = nodes[i]
+        #     edge[0][0] = edges[i]
+        #     state, ast_ln_probs = decoder.get_ast_logits(node, edge, state)
+        #     if i == parent_pos:
+        #         rand_idx = random.randint(0, 10 - 1)  # Note: randint is a,b inclusive
+        #         print(ast_ln_probs.shape)
+        #         print(type(ast_ln_probs))
+        #         order = ast_ln_probs.argsort()
+        #         print(order)
+        #         print(order[:, :10])
+        #         order = order[0, :10]
+        #         # print(ast_ln_probs[0][order])
+        #         # _, idxs = self.sess.run(tf.math.top_k(ast_ln_probs, k=10), {})
+        #         print([self.node2vocab[i] for i in order])
+        #         # print(idx)
 
 
     def get_bayesian_predictor(self):
