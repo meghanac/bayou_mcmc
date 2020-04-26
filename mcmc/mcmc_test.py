@@ -705,7 +705,11 @@ class MCMCProgramTest(unittest.TestCase):
         # test_prog.prog.get_bayesian_predictor()
 
         # test_prog.prog.reader()
-        test_prog.prog.loader()
+        # test_prog.prog.loader()
+
+        test_prog.prog.encode()
+        # test_prog.prog.decode_beam_search()
+        test_prog.prog.decode_calculate_prob()
 
 
 class MCMCProgramWrapper:

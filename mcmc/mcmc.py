@@ -1425,6 +1425,111 @@ class MCMCProgram:
         reader = Reader(clargs)
         reader.save_data('data/')
 
+    def encode(self):
+        nodes, edges = self.get_vector_representation()
+        nodes = nodes[:self.max_num_api]
+        edges = edges[:self.max_num_api]
+        nodes = np.array([nodes])
+        edges = np.array([edges])
+
+        ret_type = [self.rettype2num["Typeface"]]
+
+        fp = np.zeros([1, self.max_num_api])
+        fp[0][0] = self.fp2num["String"]
+        fp[0][1] = self.fp2num["int"]
+
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                         description=textwrap.dedent(""))
+        parser.add_argument('--continue_from', type=str, default=self.save_dir,
+                            help='ignore config options and continue training model checkpointed here')
+        clargs = parser.parse_args()
+
+        encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
+        psi = encoder.get_initial_state(nodes, edges, ret_type, fp)
+        self.initial_state = np.transpose(np.array(psi), [1, 0, 2])  # batch_first
+        print(self.initial_state)
+        encoder.close()
+
+    def decode_beam_search(self):
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                         description=textwrap.dedent(""))
+        parser.add_argument('--continue_from', type=str, default=self.save_dir,
+                            help='ignore config options and continue training model checkpointed here')
+        clargs = parser.parse_args()
+
+        beam_width = 1
+        decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
+        program_beam_searcher = ProgramBeamSearcher(decoder)
+
+        ast_paths, fp_paths, ret_types = program_beam_searcher.beam_search(initial_state=self.initial_state)
+
+        print(' ========== AST ==========')
+        for ast_path in ast_paths:
+            print(ast_path)
+
+        print(' ========== Fp ==========')
+        for fp_path in fp_paths:
+            print(fp_path)
+
+        print(' ========== Return Type ==========')
+        print(ret_types)
+
+    def decode_calculate_prob(self):
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                         description=textwrap.dedent(""))
+        parser.add_argument('--continue_from', type=str, default=self.save_dir,
+                            help='ignore config options and continue training model checkpointed here')
+        clargs = parser.parse_args()
+
+        beam_width = 1
+        decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
+
+        state = self.initial_state
+        nodes, edges = self.get_vector_representation()
+
+        node = np.zeros([1, 1], dtype=np.int32)
+        edge = np.zeros([1, 1], dtype=np.bool)
+
+        curr_prob = 0.0
+
+        for i in range(self.curr_prog.length):
+            node[0][0] = nodes[i]
+            edge[0][0] = edges[i]
+            if i == self.curr_prog.length - 1:
+                # add prob of stop node
+                state, idxs, ast_prob = decoder.get_next_ast_state(node, edge, state)
+                print(ast_prob)
+                print([self.node2vocab[i] for i in idxs[0]])
+                max_arg = np.argmax(ast_prob[0])
+                print(self.node2vocab[idxs[0][max_arg]])
+                # stop_node = self.vocab2node[STOP]
+                curr_prob += ast_prob[0][max_arg]
+            else:
+                state, ast_prob = decoder.get_ast_logits(node, edge, state)
+                print(ast_prob[0][nodes[i + 1]])
+                print(math.exp(ast_prob[0][nodes[i + 1]]))
+                curr_prob += ast_prob[0][nodes[i + 1]]
+                pass
+
+        print(curr_prob / self.curr_prog.length)
+
+        state, idxs, ast_prob = decoder.get_next_ast_state(node, edge, state)
+        print(ast_prob)
+        print([self.node2vocab[i] for i in idxs[0]])
+        max_arg = np.argmax(ast_prob[0])
+        print(self.node2vocab[idxs[0][max_arg]])
+        print(math.exp(curr_prob))
+        print(math.exp(curr_prob + ast_prob[0][max_arg]))
+        print("difference", math.exp(ast_prob[0][max_arg]))
+        print(math.exp(curr_prob + ast_prob[0][max_arg])/math.exp(curr_prob))
+        curr_prob += ast_prob[0][max_arg]
+
+        print(curr_prob / self.curr_prog.length)
+
+
+
+
+
     def loader(self):
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                          description=textwrap.dedent(""))
@@ -1432,7 +1537,7 @@ class MCMCProgram:
                             help='load data from here')
         parser.add_argument('--continue_from', type=str, default=self.save_dir,
                             help='ignore config options and continue training model checkpointed here')
-
+        parser.add_argument('--vocab_path', type=str, default='../data_extractor/data/1k_vocab_constraint_min_3-600000/')
         clargs = parser.parse_args()
 
         # print()
