@@ -218,6 +218,10 @@ class MCMCProgram:
         self.predictor = None
         self.searcher = None
 
+        self.ret_type = []
+        self.fp = [[]]
+        self.decoder = None
+
         # Logging  # TODO: change to Logger
         self.accepted = 0
         self.valid = 0
@@ -256,21 +260,53 @@ class MCMCProgram:
         """
         try:
             node_num = self.vocab2node[constraint]
-            self.constraint_nodes.append(node_num)
-            self.constraints.append(constraint)
+            if len(self.constraints) < self.max_num_api:
+                self.constraint_nodes.append(node_num)
+                self.constraints.append(constraint)
+            else:
+                print("Cannot add constraint", constraint, ". Limit reached.")
         except KeyError:
             print("Constraint ", constraint, " is not in vocabulary. Will be skipped.")
 
-    def init_program(self, constraints):
+    def add_return_type(self, ret_type):
+        try:
+            ret_num = self.rettype2num[ret_type]
+            if len(self.ret_type) < self.max_num_api:  # Might just be 1
+                self.ret_type.append(ret_num)
+            else:
+                print("Cannot add return type", ret_type, ". Limit reached.")
+        except KeyError:
+            print("Return type ", ret_type, " is not in the vocabulary. Will be skipped.")
+
+    def add_formal_parameters(self, fp):
+        try:
+            fp_num = self.fp2num[fp]
+            if len(self.fp[0]) <= self.max_num_api:
+                self.fp[0].append(fp_num)
+            else:
+                 print("Cannot add formal parameter", fp, ". Limit reached.")
+        except KeyError:
+            print("Formal parameter ", fp, "is not in the vocabulary. Will be skipped")
+
+    def init_program(self, constraints, ret_types, fps):
         """
         Creates initial program that satisfies all given constraints.
         :param constraints: (list of strings (api names)) list of apis that must appear in the program for
         it to be valid
         :return:
         """
-        # Add given constraints if valid
+        # Add given constraints, return types and formal parameters if valid
         for i in constraints:
             self.add_constraint(i)
+
+        for r in ret_types:
+            self.add_return_type(r)
+
+        for f in fps:
+            self.add_formal_parameters(f)
+        if len(self.fp[0]) < self.max_num_api:
+            for i in range(self.max_num_api - len(self.fp[0])):
+                self.fp[0].append(0)
 
         # Initialize tree
         head = self.create_and_add_node(START, None, SIBLING_EDGE)
@@ -283,7 +319,7 @@ class MCMCProgram:
             last_node = node
 
         # Initialize model states
-        self.update_latent_state()
+        # self.update_latent_state()
         self.get_initial_decoder_state()
         # self.get_random_initial_state()
 
@@ -1127,7 +1163,7 @@ class MCMCProgram:
         Randomly chooses a transformation and transforms the current program if it is accepted.
         :return: (bool) whether current tree was transformed or not
         """
-        move = random.choice(['add'])
+        move = random.choice(['add', 'delete'])
         # move = np.random.choice(['add', 'delete', 'swap', 'add_dnode'], p=[0.3, 0.3, 0.3, 0.1])
         print("move:", move)
 
@@ -1275,34 +1311,59 @@ class MCMCProgram:
                 :param parent_pos: (int) position of parent node in current program (by DFS)
                 :return: (int) number of api in vocabulary
                 """
-        void_ret_type = self.config.vocab.ret_dict["void"]
+        # void_ret_type = self.config.vocab.ret_dict["void"]
+        # nodes, edges = self.get_vector_representation()
+        # node = np.zeros([1, 1], dtype=np.int32)
+        # edge = np.zeros([1, 1], dtype=np.bool)
+        # fp = np.zeros([1, 1], dtype=np.int32)
+        #
+        # # Pass in all nodes that appear before and including the parent through the decoder to get normalized logits
+        # for i in range(parent_pos + 1):
+        #     node[0][0] = nodes[i]
+        #     edge[0][0] = edges[i]
+        #     feed = {self.model.edges.name: node, self.model.nodes.name: edge,
+        #             self.model.return_type: [void_ret_type],
+        #             self.model.formal_params: fp}
+        #     if i < parent_pos:
+        #         self.sess.run(self.model.decoder.ast_logits, feed)
+        #     else:
+        #         if non_dnode:  # TODO: make this code better
+        #             _, idxs = self.sess.run(tf.math.top_k(self.model.decoder.ast_logits[0], k=top_k), feed)
+        #             selectable = []
+        #             for k in range(top_k):
+        #                 if self.node2vocab[idxs[0][k]] not in DNODES:
+        #                     selectable.append(idxs[0][k])
+        #             rand_idx = random.randint(0, len(selectable) - 1)
+        #             return idxs[0][rand_idx]
+        #         else:
+        #             rand_idx = random.randint(0, top_k - 1)  # Note: randint is a,b inclusive
+        #             _, idxs = tf.math.top_k(self.model.decoder.ast_logits[0], k=top_k)
+        #             return self.sess.run(idxs[0][rand_idx], feed)
+
+        state = self.initial_state
         nodes, edges = self.get_vector_representation()
+
         node = np.zeros([1, 1], dtype=np.int32)
         edge = np.zeros([1, 1], dtype=np.bool)
-        fp = np.zeros([1, 1], dtype=np.int32)
 
-        # Pass in all nodes that appear before and including the parent through the decoder to get normalized logits
         for i in range(parent_pos + 1):
             node[0][0] = nodes[i]
             edge[0][0] = edges[i]
-            feed = {self.model.edges.name: node, self.model.nodes.name: edge,
-                    self.model.return_type: [void_ret_type],
-                    self.model.formal_params: fp}
-            if i < parent_pos:
-                self.sess.run(self.model.decoder.ast_logits, feed)
-            else:
+            if i == parent_pos:
                 if non_dnode:  # TODO: make this code better
-                    _, idxs = self.sess.run(tf.math.top_k(self.model.decoder.ast_logits[0], k=top_k), feed)
+                    _, idxs, _ = self.decoder.get_next_ast_state(node, edge, state)
                     selectable = []
-                    for k in range(top_k):
+                    for k in range(self.decoder.top_k):
                         if self.node2vocab[idxs[0][k]] not in DNODES:
                             selectable.append(idxs[0][k])
                     rand_idx = random.randint(0, len(selectable) - 1)
                     return idxs[0][rand_idx]
                 else:
-                    rand_idx = random.randint(0, top_k - 1)  # Note: randint is a,b inclusive
-                    _, idxs = tf.math.top_k(self.model.decoder.ast_logits[0], k=top_k)
-                    return self.sess.run(idxs[0][rand_idx], feed)
+                    rand_idx = random.randint(0, self.decoder.top_k - 1)  # Note: randint is a,b inclusive
+                    _, idxs, _ = self.decoder.get_next_ast_state(node, edge, state)
+                    return idxs[0][rand_idx]
+            else:
+                state, _ = self.decoder.get_ast_logits(node, edge, state)
 
     def random_walk_latent_space(self):
         """
@@ -1351,13 +1412,30 @@ class MCMCProgram:
         Get initial state of the decoder given the encoder's latent state
         :return:
         """
-        # latent_state = np.random.normal(loc=0., scale=1.,
-        #                  size=(self.config.batch_size, self.config.latent_size))
-        initial_state = self.sess.run(self.model.initial_state,
-                                      feed_dict={self.model.latent_state: self.latent_state})
-        initial_state = np.transpose(np.array(initial_state), [1, 0, 2])  # batch-first
-        self.initial_state = initial_state
-        return initial_state
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                         description=textwrap.dedent(""))
+        parser.add_argument('--continue_from', type=str, default=self.save_dir,
+                            help='ignore config options and continue training model checkpointed here')
+        clargs = parser.parse_args()
+
+        encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
+
+        nodes, edges = self.get_vector_representation()
+        nodes = nodes[:self.max_num_api]
+        edges = edges[:self.max_num_api]
+        nodes = np.array([nodes])
+        edges = np.array([edges])
+        print(nodes.shape)
+        print(edges.shape)
+        print(np.array(self.fp).shape)
+        print(np.array(self.ret_type).shape)
+        self.initial_state = encoder.get_initial_state(nodes, edges, np.array(self.ret_type), np.array(self.fp))
+        self.initial_state = np.transpose(np.array(self.initial_state), [1, 0, 2])  # batch_first
+        print(self.initial_state)
+        encoder.close()
+
+        beam_width = 1
+        self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
 
     def get_random_initial_state(self):
         self.latent_state = np.random.normal(loc=0., scale=1.,
@@ -1381,15 +1459,18 @@ class MCMCProgram:
         for i in range(self.curr_prog.length):
             node[0][0] = nodes[i]
             edge[0][0] = edges[i]
-            state, ast_prob = self.get_next_ast_state_and_prob(node, edge, state)
-            state = np.array(state)
             if i == self.curr_prog.length - 1:
                 # add prob of stop node
+                state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
                 stop_node = self.vocab2node[STOP]
                 curr_prob += ast_prob[0][stop_node]
             else:
+                state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
+                print(ast_prob[0][nodes[i + 1]])
+                print(math.exp(ast_prob[0][nodes[i + 1]]))
                 curr_prob += ast_prob[0][nodes[i + 1]]
-                pass
+
+        print(curr_prob / self.curr_prog.length)
 
         self.curr_log_prob = curr_prob / self.curr_prog.length
 
@@ -1447,7 +1528,6 @@ class MCMCProgram:
         encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
         psi = encoder.get_initial_state(nodes, edges, ret_type, fp)
         self.initial_state = np.transpose(np.array(psi), [1, 0, 2])  # batch_first
-        print(self.initial_state)
         encoder.close()
 
     def decode_beam_search(self):
@@ -1509,7 +1589,6 @@ class MCMCProgram:
                 print(ast_prob[0][nodes[i + 1]])
                 print(math.exp(ast_prob[0][nodes[i + 1]]))
                 curr_prob += ast_prob[0][nodes[i + 1]]
-                pass
 
         print(curr_prob / self.curr_prog.length)
 
@@ -1625,7 +1704,7 @@ class MCMCProgram:
         node[0][0] = self.vocab2node[append]
         edge[0][0] = edges[2]
 
-        state = decoder.get_random_initial_state()
+        # state = decoder.get_random_initial_state()
         # ast_ln_probs = None
         # state = psi_
 

@@ -670,8 +670,6 @@ class MCMCProgramTest(unittest.TestCase):
 
         num_iter = 50
 
-        test_prog.prog.loader()
-
         for i in range(num_iter):
             print(i)
             test_prog.prog.mcmc()
@@ -716,7 +714,7 @@ class MCMCProgramWrapper:
     def __init__(self, save_dir, constraints):
         # init MCMCProgram
         self.prog = MCMCProgram(save_dir)
-        self.prog.init_program(constraints)
+        self.prog.init_program(constraints, ["Typeface"], ["String", "int"])
 
         self.constraints = self.prog.constraints
         self.vocab2node = self.prog.vocab2node

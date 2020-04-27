@@ -24,7 +24,7 @@ from trainer_vae.utils import get_var_list, read_config
 
 class BayesianPredictor(object):
 
-    def __init__(self, save_dir, depth=None, batch_size=None):
+    def __init__(self, save_dir, top_k=10, depth=None, batch_size=None):
 
         config_file = os.path.join(save_dir, 'config.json')
         with open(config_file) as f:
@@ -41,26 +41,28 @@ class BayesianPredictor(object):
         self.sess = tf.Session()
         self.restore(save_dir)
 
+        self.top_k = top_k
+
         with tf.name_scope("ast_inference"):
             ast_logits = self.model.decoder.ast_logits[:, 0, :]
             self.ast_ln_probs = tf.nn.log_softmax(ast_logits)
             self.ast_idx = tf.multinomial(ast_logits, 1)
             self.ast_top_k_values, self.ast_top_k_indices = tf.nn.top_k(self.ast_ln_probs,
-                                                                        k=3)
+                                                                        k=top_k)
 
         with tf.name_scope("fp_inference"):
             fp_logits = self.model.decoder.fp_logits[:, 0, :]
             self.fp_ln_probs = tf.nn.log_softmax(fp_logits)
             self.fp_idx = tf.multinomial(fp_logits, 1)
             self.fp_top_k_values, self.fp_top_k_indices = tf.nn.top_k(self.fp_ln_probs,
-                                                                      k=self.config.batch_size)
+                                                                      k=top_k)
 
         with tf.name_scope("ret_inference"):
             ret_logits = self.model.decoder.ret_logits
             self.ret_ln_probs = tf.nn.log_softmax(ret_logits)
             self.ret_idx = tf.multinomial(ret_logits, 1)
             self.ret_top_k_values, self.ret_top_k_indices = tf.nn.top_k(self.ret_ln_probs,
-                                                                      k=self.config.batch_size)
+                                                                      k=top_k)
 
     def restore(self, save):
         # restore the saved model
