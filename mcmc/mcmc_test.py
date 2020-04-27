@@ -23,8 +23,8 @@ SAVED_MODEL_PATH = '/Users/meghanachilukuri/Documents/GitHub/bayou_mcmc/trainer_
 
 
 class MCMCProgramTest(unittest.TestCase):
-    def create_base_program(self, constraints):
-        test_prog = MCMCProgramWrapper(SAVED_MODEL_PATH, constraints)
+    def create_base_program(self, constraints, ret_type, fp):
+        test_prog = MCMCProgramWrapper(SAVED_MODEL_PATH, constraints, ret_type, fp)
         test_prog.update_nodes_and_edges()
         expected_nodes = [START]
         expected_edges = []
@@ -34,7 +34,7 @@ class MCMCProgramTest(unittest.TestCase):
         return test_prog, expected_nodes, expected_edges
 
     def create_str_buf_base_program(self):
-        return self.create_base_program([STR_BUF, 'abc'])
+        return self.create_base_program([STR_BUF, 'abc'], ["void"], ["__delim__"])
 
     def create_eight_node_program(self):
         test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
@@ -658,10 +658,11 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertEqual(test_prog.prog.curr_prog.non_dnode_length, 1)
 
     def test_mcmc(self):
-        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, STR_BUILD_APP])
+        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, STR_BUILD_APP], ["Typeface"],
+                                                                             ["String", "int"])
 
-        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
@@ -680,41 +681,15 @@ class MCMCProgramTest(unittest.TestCase):
         test_prog.print_summary_logs()
 
     def test_dev(self):
-        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, STR_BUILD_APP])
-        # #
-        # # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-        # # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-        # # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-        # # parent = test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-        #
-        # prob = test_prog.prog.calculate_probability()
-        # print(prob)
-        #
-        #
-        # for i in range(10):
-        #     node = test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-        #     new_prob = test_prog.prog.calculate_probability()
-        #     print(new_prob)
-        #     print(math.exp(new_prob) / math.exp(prob))
-        #     test_prog.prog.undo_add_random_node(node)
-        #     print(test_prog.prog.calculate_probability())
-
-        # test_prog.prog.get_encoder_psi()
-        # test_prog.prog.get_bayesian_predictor()
-
-        # test_prog.prog.reader()
-        # test_prog.prog.loader()
-
-        test_prog.prog.encode()
-        # test_prog.prog.decode_beam_search()
-        test_prog.prog.decode_calculate_prob()
+        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, STR_BUILD_APP], ["Typeface"],
+                                                                             ["String", "int"])
 
 
 class MCMCProgramWrapper:
-    def __init__(self, save_dir, constraints):
+    def __init__(self, save_dir, constraints, return_type, formal_params):
         # init MCMCProgram
         self.prog = MCMCProgram(save_dir)
-        self.prog.init_program(constraints, ["Typeface"], ["String", "int"])
+        self.prog.init_program(constraints, return_type, formal_params)
 
         self.constraints = self.prog.constraints
         self.vocab2node = self.prog.vocab2node

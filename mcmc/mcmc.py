@@ -5,9 +5,6 @@ import sys
 import textwrap
 from copy import deepcopy
 
-from ast_helper.beam_searcher.program_beam_searcher import ProgramBeamSearcher
-from data_reader import Reader
-from data_loader import Loader
 from infer import BayesianPredictor
 from trainer_vae.model import Model
 from trainer_vae.utils import get_var_list, read_config
@@ -207,17 +204,13 @@ class MCMCProgram:
         self.num2rettype = dict(zip(self.rettype2num.values(), self.rettype2num.keys()))
         self.fp2num = self.config.vocab.fp_dict
         self.num2fp = dict(zip(self.fp2num.values(), self.fp2num.keys()))
+
         self.curr_prog = None
         self.curr_log_prob = -0.0
         self.prev_log_prob = -0.0
         self.node_id_counter = 0
-        self.latent_state = None
-        self.initial_state = None
-        self.encoder_mean = None
-        self.encoder_covar = None
-        self.predictor = None
-        self.searcher = None
 
+        self.initial_state = None
         self.ret_type = []
         self.fp = [[]]
         self.decoder = None
@@ -319,9 +312,7 @@ class MCMCProgram:
             last_node = node
 
         # Initialize model states
-        # self.update_latent_state()
         self.get_initial_decoder_state()
-        # self.get_random_initial_state()
 
         # Update probabilities of tree
         self.calculate_probability()
@@ -351,15 +342,6 @@ class MCMCProgram:
         except KeyError:  # api does not exist in vocabulary and hence node cannot be made
             print(api_name, " is not in vocabulary. Node was not added.")
             return None
-
-    # def get_random_api(self):
-    #     """
-    #     :return: (string) random API from vocab that is not D-node
-    #     """
-    #     while True:
-    #         api = self.node2vocab[random.randint(1, self.model.config.vocab.api_dict_size - 1)]  # exclude 0
-    #         if api not in {'DBranch', 'DLoop', 'DExcept', 'DStop', 'DSubtree'}:
-    #             return api
 
     def get_node_in_position(self, pos_num):
         """
@@ -525,7 +507,6 @@ class MCMCProgram:
 
             # If node is invalid, check if valid node exists in program or given list
             if selectable_node_exists_in_program is None:
-                print("-----------------HERE-----------")
                 nodes, _ = self.get_vector_representation()
                 if given_list is not None:
                     nodes = [nodes[i] for i in given_list]
@@ -579,7 +560,6 @@ class MCMCProgram:
 
             # If node is invalid, check if valid node exists in program or given list
             if selectable_node_exists_in_program is None:
-                print("-----------------HERE-----------")
                 nodes, _ = self.get_vector_representation()
                 if given_list is not None:
                     nodes = [nodes[i] for i in given_list]
@@ -593,19 +573,6 @@ class MCMCProgram:
                     return None, None
                 else:
                     selectable_node_exists_in_program = True
-
-    # def get_non_stop_random_pos(self):
-    #     """
-    #     Returns a node and its position of a random node in the current program that is not a DStop node.
-    #     :return: (Node) selected node, (int) selected node's position
-    #     """
-    #     while True:  # This shouldn't cause problems because at the very least the program must contain constraint apis
-    #         # exclude DSubTree node, randint is [a,b] inclusive
-    #         rand_node_pos = random.randint(1, self.curr_prog.length - 1)
-    #         node = self.get_node_in_position(rand_node_pos)
-    #
-    #         if node.api_name != 'DStop':
-    #             return node, rand_node_pos
 
     def get_deletable_node(self):
         """
@@ -642,8 +609,6 @@ class MCMCProgram:
         new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos, non_dnode=False)]
         # new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos)]
 
-        print(new_node_api)
-
         # If a dnode is chosen, grow it out
         if new_node_api == DBRANCH:
             return self.grow_dbranch(new_node_parent)
@@ -672,8 +637,6 @@ class MCMCProgram:
         :param added_node: (Node) the node that was added in add_random_node() that is to be removed.
         :return:
         """
-        print(added_node.api_name)
-        print(added_node.api_name in {DBRANCH, DLOOP, DEXCEPT})
         if added_node.api_name in {DBRANCH, DLOOP, DEXCEPT}:
             return self.undo_add_random_dnode(added_node)
 
@@ -694,7 +657,6 @@ class MCMCProgram:
         (bool- SIBLING_EDGE or CHILD_EDGE) edge between deleted node and its parent
         """
         node, _ = self.get_deletable_node()
-        print("deleted node:", node.api_name)
         parent_node = node.parent
         parent_edge = node.parent_edge
 
@@ -852,14 +814,12 @@ class MCMCProgram:
         :param parent: (Node) parent of DBranch
         :return: (Node) DBranch node
         """
-        print("HELLOOOO")
         # remove parent's current sibling node if there
         parent_sibling = parent.sibling
         parent.remove_node(SIBLING_EDGE)
 
         # Create a DBranch node
         dbranch = self.create_and_add_node(DBRANCH, parent, SIBLING_EDGE)
-        print("dbranch is none: ", dbranch is None)
         dbranch_pos = self.get_nodes_position(dbranch)
         assert dbranch_pos > 0, "Error: DBranch position couldn't be found"
 
@@ -899,10 +859,6 @@ class MCMCProgram:
 
         # Calculate probability of new program
         self.calculate_probability()
-
-        # print(condition.api_name)
-        # print(then_node.api_name)
-        # print(else_node.api_name)
 
         return dbranch
 
@@ -1120,9 +1076,8 @@ class MCMCProgram:
 
         # Last node in program cannot be DStop node
         if last_node.api_name == STOP:
-            print("HERE")
             return False
-        print(len(constraints))
+
         # Return whether all constraints have been met
         return len(constraints) == 0
 
@@ -1145,10 +1100,7 @@ class MCMCProgram:
         """
         print(math.exp(self.curr_log_prob)/math.exp(self.prev_log_prob))
         alpha = self.curr_log_prob - self.prev_log_prob
-        # print(alpha)
         mu = math.log(random.uniform(0, 1))
-        # mu = math.log(random.uniform(0, 2 * 10 ** -40))
-        # print(mu)
         if mu < alpha:
             self.prev_log_prob = self.curr_log_prob  # TODO: add logging for graph here
             self.accepted += 1
@@ -1210,101 +1162,12 @@ class MCMCProgram:
         print("move was successful")
         return True
 
-    def get_next_ast_state_and_prob(self, ast_node, ast_edge, ast_state):
-        """
-        Calculates next decoder state and logits after feeding in given node and edge.
-        :param ast_node: (int) node number (from vocabulary)
-        :param ast_edge: (bool- SIBLING_EDGE or CHILD_EDGE) edge between node and parent
-        :param ast_state: current state of decoder
-        :return: (np.array) current state of decoder, (np.array) normalized logits from decoder
-        """
-        # Create feed
-        feed = {self.model.nodes.name: np.array(ast_node, dtype=np.int32),
-                self.model.edges.name: np.array(ast_edge, dtype=np.bool)}
-        for i in range(self.config.decoder.num_layers):
-            feed[self.model.initial_state[i].name] = np.array(ast_state[i])
-
-        # Pass through model
-        [ast_state, ast_ln_prob] = self.sess.run(
-            [self.model.decoder.ast_tree.state, self.ast_ln_probs], feed)
-
-        return ast_state, ast_ln_prob
-
     def get_ast_idx(self, parent_pos, non_dnode=True):
-        # return self.get_ast_idx_all_vocab(parent_pos, non_dnode)
+        # return self.get_ast_idx_all_vocab(parent_pos, non_dnode)  # multinomial on all
 
-        # return self.get_ast_idx_top_k(parent_pos, non_dnode)
+        # return self.get_ast_idx_top_k(parent_pos, non_dnode) # multinomial on top k
 
-        return self.get_ast_idx_random_top_k(parent_pos, non_dnode)
-
-    def get_ast_idx_all_vocab(self, parent_pos, non_dnode):  # TODO: FIX AND TEST
-        """
-        Returns api number (based on vocabulary). Probabilistically selected based on parent node.
-        :param parent_pos: (int) position of parent node in current program (by DFS)
-        :return: (int) number of api in vocabulary
-        """
-        void_ret_type = self.config.vocab.ret_dict["void"]
-        nodes, edges = self.get_vector_representation()
-        node = np.zeros([1, 1], dtype=np.int32)
-        edge = np.zeros([1, 1], dtype=np.bool)
-        fp = np.zeros([1, 1], dtype=np.int32)
-
-        # Pass in all nodes that appear before and including the parent through the decoder to get normalized logits
-        for i in range(parent_pos + 1):
-            node[0][0] = nodes[i]
-            edge[0][0] = edges[i]
-            feed = {self.model.edges.name: node, self.model.nodes.name: edge,
-                    self.model.return_type: [void_ret_type],
-                    self.model.formal_params: fp}
-            if i < parent_pos:
-                self.sess.run(self.model.decoder.ast_logits, feed)
-            else:
-                # Sample from normalized logits
-                ast_idx = tf.multinomial(self.model.decoder.ast_logits[0], 1)
-                ast_idx = self.sess.run(ast_idx, feed)
-                return ast_idx[0][0]
-
-    def get_ast_idx_top_k(self, parent_pos, non_dnode, top_k=10):  # TODO: FIX AND TEST
-        """
-                Returns api number (based on vocabulary). Probabilistically selected from top k based on parent node.
-                :param parent_pos: (int) position of parent node in current program (by DFS)
-                :return: (int) number of api in vocabulary
-                """
-        void_ret_type = self.config.vocab.ret_dict["void"]
-        nodes, edges = self.get_vector_representation()
-        node = np.zeros([1, 1], dtype=np.int32)
-        edge = np.zeros([1, 1], dtype=np.bool)
-        fp = np.zeros([1, 1], dtype=np.int32)
-
-        # Pass in all nodes that appear before and including the parent through the decoder to get normalized logits
-        for i in range(parent_pos + 1):
-            node[0][0] = nodes[i]
-            edge[0][0] = edges[i]
-            feed = {self.model.edges.name: node, self.model.nodes.name: edge,
-                    self.model.return_type: [void_ret_type],
-                    self.model.formal_params: fp}
-            if i < parent_pos:
-                self.sess.run(self.model.decoder.ast_logits, feed)
-            else:
-                # get topk logits
-                # index twice into logits because logits.shape = [1, 1, vocab_size])
-
-                # # ---- CODE FOR DEBUGGING ------
-                # logits = self.model.decoder.ast_logits[0]
-                # vals, idxs = tf.math.top_k(logits, k=top_k)
-                # chosen_idx, vals, idxs, logits = self.sess.run([tf.multinomial(vals, 1)[0][0], vals[0], idxs[0], logits], feed)
-                # names = [self.node2vocab[i] for i in idxs]
-                # print(sorted(logits[0], reverse=True))
-                # print(chosen_idx)
-                # print(self.node2vocab[idxs[chosen_idx]])
-                # print(idxs)
-                # print(names)
-                # print(vals)
-
-                vals, idxs = tf.math.top_k(self.model.decoder.ast_logits[0], k=top_k)
-                chosen_idx = self.sess.run(idxs[0][tf.multinomial(vals, 1)[0][0]], feed)
-
-                return chosen_idx
+        return self.get_ast_idx_random_top_k(parent_pos, non_dnode)  # randomly choose from top k
 
     def get_ast_idx_random_top_k(self, parent_pos, non_dnode, top_k=10):  # TODO: TEST
         """
@@ -1338,47 +1201,6 @@ class MCMCProgram:
             else:
                 state, _ = self.decoder.get_ast_logits(node, edge, state)
 
-    def random_walk_latent_space(self):
-        """
-        Do a random walk in latent space Z.
-        :return:
-        """
-        samples = tf.random.normal([self.config.batch_size, self.config.latent_size], mean=0., stddev=1.,
-                                   dtype=tf.float32)
-        latent_state = self.encoder_mean + tf.sqrt(self.encoder_covar) * samples
-        self.latent_state = self.sess.run(latent_state, {})
-
-    def update_latent_state(self):
-        """
-        Update encoder mean, encoder covariance and encoder latent state
-        :return: (np.array) new latent state
-        """
-        void_ret_type = self.config.vocab.ret_dict["void"]
-        nodes, edges = self.get_vector_representation()
-        node = np.zeros([1, 1], dtype=np.int32)
-        edge = np.zeros([1, 1], dtype=np.bool)
-        fp = np.zeros([1, 1], dtype=np.int32)
-
-        ret_type = [self.rettype2num["Typeface"]]
-        fp_type = np.zeros([1, 1], dtype=np.int32)
-        fp_type[0][0] = self.fp2num["String"]
-        ret_type = np.array(ret_type)
-        fp_type = np.array(fp_type)
-
-        state = None
-        for i in range(self.curr_prog.length):
-            node[0][0] = nodes[i]
-            edge[0][0] = edges[i]
-            feed = {self.model.edges.name: node, self.model.nodes.name: edge,
-                    self.model.return_type: ret_type,
-                    self.model.formal_params: fp_type}
-            if i < self.curr_prog.length - 1:
-                state = self.sess.run(self.model.latent_state, feed)
-            else:  # for last node, save encoder mean and variance as well
-                [state, self.encoder_mean, self.encoder_covar] = self.sess.run(
-                    [self.model.latent_state, self.model.encoder.output_mean, self.model.encoder.output_covar], feed)
-                self.latent_state = state
-        return state
 
     def get_initial_decoder_state(self):
         """
@@ -1404,14 +1226,6 @@ class MCMCProgram:
 
         beam_width = 1
         self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
-
-    def get_random_initial_state(self):
-        self.latent_state = np.random.normal(loc=0., scale=1.,
-                                        size=(self.config.batch_size, self.config.latent_size))
-        self.initial_state = self.sess.run(self.model.initial_state,
-                                      feed_dict={self.model.latent_state: self.latent_state})
-        self.initial_state = np.transpose(np.array(self.initial_state), [1, 0, 2])  # batch-first
-        return self.initial_state
 
     def calculate_probability(self):
         """
@@ -1458,333 +1272,3 @@ class MCMCProgram:
         # # self.transform_tree()
         # self.random_walk_latent_space()
         # self.get_initial_decoder_state()
-
-    def reader(self):
-        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                         description=textwrap.dedent(""))
-        parser.add_argument('--data', type=str, default='data/',
-                            help='load data from here')
-
-        clargs = parser.parse_args()
-
-        reader = Reader(clargs)
-        reader.save_data('data/')
-
-    def encode(self):
-        nodes, edges = self.get_vector_representation()
-        nodes = nodes[:self.max_num_api]
-        edges = edges[:self.max_num_api]
-        nodes = np.array([nodes])
-        edges = np.array([edges])
-
-        ret_type = [self.rettype2num["Typeface"]]
-
-        fp = np.zeros([1, self.max_num_api])
-        fp[0][0] = self.fp2num["String"]
-        fp[0][1] = self.fp2num["int"]
-
-        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                         description=textwrap.dedent(""))
-        parser.add_argument('--continue_from', type=str, default=self.save_dir,
-                            help='ignore config options and continue training model checkpointed here')
-        clargs = parser.parse_args()
-
-        encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
-        psi = encoder.get_initial_state(nodes, edges, ret_type, fp)
-        self.initial_state = np.transpose(np.array(psi), [1, 0, 2])  # batch_first
-        encoder.close()
-
-    def decode_beam_search(self):
-        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                         description=textwrap.dedent(""))
-        parser.add_argument('--continue_from', type=str, default=self.save_dir,
-                            help='ignore config options and continue training model checkpointed here')
-        clargs = parser.parse_args()
-
-        beam_width = 1
-        decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
-        program_beam_searcher = ProgramBeamSearcher(decoder)
-
-        ast_paths, fp_paths, ret_types = program_beam_searcher.beam_search(initial_state=self.initial_state)
-
-        print(' ========== AST ==========')
-        for ast_path in ast_paths:
-            print(ast_path)
-
-        print(' ========== Fp ==========')
-        for fp_path in fp_paths:
-            print(fp_path)
-
-        print(' ========== Return Type ==========')
-        print(ret_types)
-
-    def decode_calculate_prob(self):
-        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                         description=textwrap.dedent(""))
-        parser.add_argument('--continue_from', type=str, default=self.save_dir,
-                            help='ignore config options and continue training model checkpointed here')
-        clargs = parser.parse_args()
-
-        beam_width = 1
-        decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
-
-        state = self.initial_state
-        nodes, edges = self.get_vector_representation()
-
-        node = np.zeros([1, 1], dtype=np.int32)
-        edge = np.zeros([1, 1], dtype=np.bool)
-
-        curr_prob = 0.0
-
-        for i in range(self.curr_prog.length):
-            node[0][0] = nodes[i]
-            edge[0][0] = edges[i]
-            if i == self.curr_prog.length - 1:
-                # add prob of stop node
-                state, idxs, ast_prob = decoder.get_next_ast_state(node, edge, state)
-                print(ast_prob)
-                print([self.node2vocab[i] for i in idxs[0]])
-                max_arg = np.argmax(ast_prob[0])
-                print(self.node2vocab[idxs[0][max_arg]])
-                # stop_node = self.vocab2node[STOP]
-                curr_prob += ast_prob[0][max_arg]
-            else:
-                state, ast_prob = decoder.get_ast_logits(node, edge, state)
-                print(ast_prob[0][nodes[i + 1]])
-                print(math.exp(ast_prob[0][nodes[i + 1]]))
-                curr_prob += ast_prob[0][nodes[i + 1]]
-
-        print(curr_prob / self.curr_prog.length)
-
-        state, idxs, ast_prob = decoder.get_next_ast_state(node, edge, state)
-        print(ast_prob)
-        print([self.node2vocab[i] for i in idxs[0]])
-        max_arg = np.argmax(ast_prob[0])
-        print(self.node2vocab[idxs[0][max_arg]])
-        print(math.exp(curr_prob))
-        print(math.exp(curr_prob + ast_prob[0][max_arg]))
-        print("difference", math.exp(ast_prob[0][max_arg]))
-        print(math.exp(curr_prob + ast_prob[0][max_arg])/math.exp(curr_prob))
-        curr_prob += ast_prob[0][max_arg]
-
-        print(curr_prob / self.curr_prog.length)
-
-
-
-
-
-    def loader(self):
-        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                         description=textwrap.dedent(""))
-        parser.add_argument('--data', type=str, default='data/',
-                            help='load data from here')
-        parser.add_argument('--continue_from', type=str, default=self.save_dir,
-                            help='ignore config options and continue training model checkpointed here')
-        parser.add_argument('--vocab_path', type=str, default='../data_extractor/data/1k_vocab_constraint_min_3-600000/')
-        clargs = parser.parse_args()
-
-        # print()
-        config = deepcopy(self.config)
-        config.max_ast_depth = self.max_num_api
-        loader = Loader(clargs, config)
-
-        encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
-
-        nodes, edges, targets, \
-        ret_type, fp_type, fp_type_targets = loader.next_batch()
-        print(ret_type)
-        print(fp_type)
-        print(fp_type_targets)
-        print(type(fp_type))
-        print(nodes)
-
-        loader_num2api = dict(zip(loader.config.vocab.api_dict.values(), loader.config.vocab.api_dict.keys()))
-        loader_num2ret = dict(zip(loader.config.vocab.ret_dict.values(), loader.config.vocab.ret_dict.keys()))
-        loader_num2fp = dict(zip(loader.config.vocab.fp_dict.values(), loader.config.vocab.fp_dict.keys()))
-
-        nodes = [[loader_num2api[i] for i in nodes[0]]]
-        ret_type = [loader_num2ret[i] for i in ret_type]
-        fp_type = [[loader_num2fp[i] for i in fp_type[0]]]
-        print(ret_type)
-        print(fp_type)
-        print(nodes)
-
-        nodes = np.array([[self.vocab2node[i] for i in nodes[0]]])
-        print(nodes.shape)
-        # nodes = nodes.T
-        # print(nodes.shape)
-        ret_type = [self.rettype2num[i] for i in ret_type]
-        fp_type = [[self.fp2num[i] for i in fp_type[0]]]
-        fp = np.zeros([1,8])
-        fp[0][0] = fp_type[0][0]
-        fp[0][1] = self.fp2num["int"]
-        print(ret_type)
-        print(fp)
-        print(nodes)
-        print(edges)
-
-        nodes[0][2] = 0
-
-        psi = encoder.get_initial_state(nodes, edges, ret_type, fp)
-        psi_ = np.transpose(np.array(psi), [1, 0, 2])  # batch_first
-        encoder.close()
-
-        # print(psi_)
-        self.initial_state = psi_
-
-        beam_width = 1
-        decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
-        program_beam_searcher = ProgramBeamSearcher(decoder)
-
-        temp = psi_
-        ast_paths, fp_paths, ret_types = program_beam_searcher.beam_search(initial_state=temp)
-
-        print(' ========== AST ==========')
-        for ast_path in ast_paths:
-            print(ast_path)
-
-        print(' ========== Fp ==========')
-        for fp_path in fp_paths:
-            print(fp_path)
-
-        print(' ========== Return Type ==========')
-        print(ret_types)
-
-        print('\n\n\n\n')
-        # decoder.close()
-        self.model = decoder.model
-
-        node = np.zeros([1, 1], dtype=np.int32)
-        edge = np.zeros([1, 1], dtype=np.bool)
-        fp_input = np.zeros([1, 1], dtype=np.bool)
-        fp_input[0][0] = fp[0][0]
-
-        parent_pos = 2
-
-        append = 'java.lang.StringBuilder.append(java.lang.String)'
-
-        nodes = nodes[0]
-        edges = edges[0]
-        node[0][0] = self.vocab2node[append]
-        edge[0][0] = edges[2]
-
-        # state = decoder.get_random_initial_state()
-        # ast_ln_probs = None
-        # state = psi_
-
-        next_state, idxs, probs = decoder.get_next_ast_state(node, edge, psi_)
-
-        print(probs)
-
-        print([self.node2vocab[i] for i in idxs[0]])
-
-        api1 = idxs[0][0]
-
-        node[0][0] = idxs[0][0]
-        next_state, idxs, probs = decoder.get_next_ast_state(node, edge, next_state)
-
-        print(probs)
-
-        print([self.node2vocab[i] for i in idxs[0]])
-
-        api2 = idxs[0][0]
-
-        # # Pass in all nodes that appear before and including the parent through the decoder to get normalized logits
-        # for i in range(parent_pos + 1):
-        #     node[0][0] = nodes[i]
-        #     edge[0][0] = edges[i]
-        #     state, ast_ln_probs = decoder.get_ast_logits(node, edge, state)
-        #     if i == parent_pos:
-        #         rand_idx = random.randint(0, 10 - 1)  # Note: randint is a,b inclusive
-        #         print(ast_ln_probs.shape)
-        #         print(type(ast_ln_probs))
-        #         order = ast_ln_probs.argsort()
-        #         print(order)
-        #         print(order[:, :10])
-        #         order = order[0, :10]
-        #         # print(ast_ln_probs[0][order])
-        #         # _, idxs = self.sess.run(tf.math.top_k(ast_ln_probs, k=10), {})
-        #         print([self.node2vocab[i] for i in order])
-        #         # print(idx)
-
-
-    def get_bayesian_predictor(self):
-        HELP = """"""
-        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-        os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"  # see issue #152
-        os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                         description=textwrap.dedent(HELP))
-        parser.add_argument('--python_recursion_limit', type=int, default=10000,
-                            help='set recursion limit for the Python interpreter')
-        parser.add_argument('--continue_from', type=str, default=self.save_dir,
-                            help='ignore config options and continue training model checkpointed here')
-        parser.add_argument('--saver', type=str, default='plots/beam_search/')
-        parser.add_argument('--data', type=str, default='../data_extractor/data/1k_vocab_constraint_min_3-600000',
-                            help='load data from here')
-
-        clargs = parser.parse_args()
-        if not os.path.exists(clargs.saver):
-            os.mkdir(clargs.saver)
-
-        sys.setrecursionlimit(clargs.python_recursion_limit)
-
-        ret_type = [self.rettype2num["Typeface"]]
-        fp_type = ["String"]  # "String", "int"
-        fp_type = [self.fp2num[i] for i in fp_type]
-        nodes, edges = self.get_vector_representation()
-        nodes = nodes[:self.max_num_api]
-        nodes = np.array([nodes])
-        edges = edges[:self.max_num_api]
-        edges = np.array([edges])
-        ret_type = np.array(ret_type)
-        fp_type = np.array([fp_type])
-        encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
-        psi = encoder.get_initial_state(nodes, edges, ret_type, fp_type)
-        psi_ = np.transpose(np.array(psi), [1, 0, 2])  # batch_first
-        print(psi_)
-
-
-        # feed = {self.model.edges.name: edges, self.model.nodes.name: nodes,
-        #         self.model.return_type: ret_type,
-        #         self.model.formal_params: fp_type}
-        # state = self.sess.run(self.model.initial_state, feed)
-        # psi = np.transpose(np.array(state), [1, 0, 2])  # batch_first
-
-        # print(psi)
-
-        HELP = """"""
-
-        # reader = Reader(clargs, infer=True)
-        # print(reader.read_return_type(ret_type))
-
-        # beam_width = 20
-        # self.predictor = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
-        # self.searcher = ProgramBeamSearcher(self.predictor)
-        #
-        # ast_paths, fp_paths, ret_types = self.searcher.beam_search()
-        #
-        # print(' ========== AST ==========')
-        # for i, ast_path in enumerate(ast_paths):
-        #     print(ast_path)
-        #
-        # print(' ========== Fp ==========')
-        # for i, fp_path in enumerate(fp_paths):
-        #     print(fp_path)
-        #
-        # print(' ========== Return Type ==========')
-        # print(ret_types)
-        #
-        # nodes, edges = self.get_vector_representation()
-        # return_types = ['boolean', 'String', 'void', 'File', 'OpenForReadResult', 'List<String>', '__UDT__', 'List',
-        #                 'Bitmap', 'Long', 'ByteBuffer', 'URI', 'ClassFile', 'ArrayList<String>', 'Page', 'IMOps',
-        #                 'double', 'Hashtable', 'Iterator<Object[]>', 'Map']
-        # formal_params = ['DSubTree', 'String', 'boolean', 'int']
-        # init_state = self.predictor.get_initial_state(nodes, edges, return_types, formal_params)
-
-
-    # def get_encoder_psi(self):
-
-
-        # psi = self.model.encoder.get_initial_state(nodes, edges, ret_type, fp_type)
-        # psi = np.transpose(np.array(psi), [1, 0, 2])  # batch_first
