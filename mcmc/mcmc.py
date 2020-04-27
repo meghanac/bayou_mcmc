@@ -1143,12 +1143,12 @@ class MCMCProgram:
         Calculates whether to accept or reject current program based on Metropolis Hastings algorithm.
         :return: (bool)
         """
-        print(math.exp(self.curr_log_prob))
+        print(math.exp(self.curr_log_prob)/math.exp(self.prev_log_prob))
         alpha = self.curr_log_prob - self.prev_log_prob
-        print(alpha)
+        # print(alpha)
         mu = math.log(random.uniform(0, 1))
         # mu = math.log(random.uniform(0, 2 * 10 ** -40))
-        print(mu)
+        # print(mu)
         if mu < alpha:
             self.prev_log_prob = self.curr_log_prob  # TODO: add logging for graph here
             self.accepted += 1
@@ -1173,8 +1173,9 @@ class MCMCProgram:
             if added_node is None:
                 print("node is none")
                 return False
-            print("valid:", self.validate_and_update_program())
-            if not self.validate_and_update_program():
+            valid = self.validate_and_update_program()
+            # print("valid:", valid)
+            if not valid:
                 self.undo_add_random_node(added_node)
                 return False
             self.add_accepted += 1
@@ -1307,38 +1308,10 @@ class MCMCProgram:
 
     def get_ast_idx_random_top_k(self, parent_pos, non_dnode, top_k=10):  # TODO: TEST
         """
-                Returns api number (based on vocabulary). Uniform randomly selected from top k based on parent node.
-                :param parent_pos: (int) position of parent node in current program (by DFS)
-                :return: (int) number of api in vocabulary
-                """
-        # void_ret_type = self.config.vocab.ret_dict["void"]
-        # nodes, edges = self.get_vector_representation()
-        # node = np.zeros([1, 1], dtype=np.int32)
-        # edge = np.zeros([1, 1], dtype=np.bool)
-        # fp = np.zeros([1, 1], dtype=np.int32)
-        #
-        # # Pass in all nodes that appear before and including the parent through the decoder to get normalized logits
-        # for i in range(parent_pos + 1):
-        #     node[0][0] = nodes[i]
-        #     edge[0][0] = edges[i]
-        #     feed = {self.model.edges.name: node, self.model.nodes.name: edge,
-        #             self.model.return_type: [void_ret_type],
-        #             self.model.formal_params: fp}
-        #     if i < parent_pos:
-        #         self.sess.run(self.model.decoder.ast_logits, feed)
-        #     else:
-        #         if non_dnode:  # TODO: make this code better
-        #             _, idxs = self.sess.run(tf.math.top_k(self.model.decoder.ast_logits[0], k=top_k), feed)
-        #             selectable = []
-        #             for k in range(top_k):
-        #                 if self.node2vocab[idxs[0][k]] not in DNODES:
-        #                     selectable.append(idxs[0][k])
-        #             rand_idx = random.randint(0, len(selectable) - 1)
-        #             return idxs[0][rand_idx]
-        #         else:
-        #             rand_idx = random.randint(0, top_k - 1)  # Note: randint is a,b inclusive
-        #             _, idxs = tf.math.top_k(self.model.decoder.ast_logits[0], k=top_k)
-        #             return self.sess.run(idxs[0][rand_idx], feed)
+        Returns api number (based on vocabulary). Uniform randomly selected from top k based on parent node.
+        :param parent_pos: (int) position of parent node in current program (by DFS)
+        :return: (int) number of api in vocabulary
+        """
 
         state = self.initial_state
         nodes, edges = self.get_vector_representation()
@@ -1425,13 +1398,8 @@ class MCMCProgram:
         edges = edges[:self.max_num_api]
         nodes = np.array([nodes])
         edges = np.array([edges])
-        print(nodes.shape)
-        print(edges.shape)
-        print(np.array(self.fp).shape)
-        print(np.array(self.ret_type).shape)
         self.initial_state = encoder.get_initial_state(nodes, edges, np.array(self.ret_type), np.array(self.fp))
         self.initial_state = np.transpose(np.array(self.initial_state), [1, 0, 2])  # batch_first
-        print(self.initial_state)
         encoder.close()
 
         beam_width = 1
@@ -1466,15 +1434,11 @@ class MCMCProgram:
                 curr_prob += ast_prob[0][stop_node]
             else:
                 state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
-                print(ast_prob[0][nodes[i + 1]])
-                print(math.exp(ast_prob[0][nodes[i + 1]]))
                 curr_prob += ast_prob[0][nodes[i + 1]]
-
-        print(curr_prob / self.curr_prog.length)
 
         self.curr_log_prob = curr_prob / self.curr_prog.length
 
-        return curr_prob
+        return self.curr_log_prob
 
     def mcmc(self):
         """
