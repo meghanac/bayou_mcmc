@@ -277,7 +277,7 @@ class MCMCProgram:
             if len(self.fp[0]) <= self.max_num_api:
                 self.fp[0].append(fp_num)
             else:
-                 print("Cannot add formal parameter", fp, ". Limit reached.")
+                print("Cannot add formal parameter", fp, ". Limit reached.")
         except KeyError:
             print("Formal parameter ", fp, "is not in the vocabulary. Will be skipped")
 
@@ -657,6 +657,7 @@ class MCMCProgram:
         (bool- SIBLING_EDGE or CHILD_EDGE) edge between deleted node and its parent
         """
         node, _ = self.get_deletable_node()
+        assert node.api_name != STOP
         parent_node = node.parent
         parent_edge = node.parent_edge
 
@@ -834,13 +835,13 @@ class MCMCProgram:
                 self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 6 > self.max_length):
             # remove added dbranch
             parent.remove_node(SIBLING_EDGE)
-            parent.sibling = parent_sibling
+            parent.add_node(parent_sibling, SIBLING_EDGE)
             return None
         elif (not add_stop_node_to_end_branch) and (
                 self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 5 > self.max_length):
             # remove added dbranch
             parent.remove_node(SIBLING_EDGE)
-            parent.sibling = parent_sibling
+            parent.add_node(parent_sibling, SIBLING_EDGE)
             return None
 
         # Create condition as DBranch child
@@ -888,13 +889,13 @@ class MCMCProgram:
                 self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 4 > self.max_length):
             # remove added dloop
             parent.remove_node(SIBLING_EDGE)
-            parent.sibling = parent_sibling
+            parent.add_node(parent_sibling, SIBLING_EDGE)
             return None
         elif (not add_stop_node_to_end_branch) and (
                 self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 3 > self.max_length):
             # remove added dloop
             parent.remove_node(SIBLING_EDGE)
-            parent.sibling = parent_sibling
+            parent.add_node(parent_sibling, SIBLING_EDGE)
             return None
 
         # Create condition as DLoop child
@@ -938,13 +939,13 @@ class MCMCProgram:
                 self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 4 > self.max_length):
             # remove added dexcept
             parent.remove_node(SIBLING_EDGE)
-            parent.sibling = parent_sibling
+            parent.add_node(parent_sibling, SIBLING_EDGE)
             return None
         elif (not add_stop_node_to_end_branch) and (
                 self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 3 > self.max_length):
             # remove added dexcept
             parent.remove_node(SIBLING_EDGE)
-            parent.sibling = parent_sibling
+            parent.add_node(parent_sibling, SIBLING_EDGE)
             return None
 
         # Create catch as DExcept child
@@ -1050,7 +1051,7 @@ class MCMCProgram:
             if curr_node.api_name == DLOOP or curr_node.api_name == DEXCEPT:
                 if curr_node.child is None:
                     return False
-                if curr_node.child.child is None:
+                if curr_node.child.child is None or curr_node.child.sibling is not None:
                     return False
                 if curr_node.child.api_name in DNODES or curr_node.child.child.api_name in DNODES:
                     return False
@@ -1072,9 +1073,11 @@ class MCMCProgram:
                 if len(stack) > 0:
                     curr_node = stack.pop()
                 else:
+                    last_node = curr_node
                     curr_node = None
 
         # Last node in program cannot be DStop node
+        # assert last_node.api_name != STOP
         if last_node.api_name == STOP:
             return False
 
@@ -1086,7 +1089,9 @@ class MCMCProgram:
         Validate current program and if valid decide whether to accept or reject it.
         :return: (bool) whether to accept or reject current program
         """
-        if self.check_validity():
+        valid = self.check_validity()
+        print("valid:", valid)
+        if valid:
             self.valid += 1
             return self.accept_or_reject()
 
@@ -1098,7 +1103,7 @@ class MCMCProgram:
         Calculates whether to accept or reject current program based on Metropolis Hastings algorithm.
         :return: (bool)
         """
-        print(math.exp(self.curr_log_prob)/math.exp(self.prev_log_prob))
+        # print(math.exp(self.curr_log_prob)/math.exp(self.prev_log_prob))
         alpha = self.curr_log_prob - self.prev_log_prob
         mu = math.log(random.uniform(0, 1))
         if mu < alpha:
@@ -1117,26 +1122,64 @@ class MCMCProgram:
         """
         move = random.choice(['add', 'delete'])
         # move = np.random.choice(['add', 'delete', 'swap', 'add_dnode'], p=[0.3, 0.3, 0.3, 0.1])
-        print("move:", move)
+        # print("move:", move)
 
         if move == 'add':
+            prev_length = self.curr_prog.length
             self.add += 1
             added_node = self.add_random_node()
+            self.print_verbose_tree_info()
             if added_node is None:
-                print("node is none")
+                assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                    self.curr_prog.length) + " != prev length: " + str(prev_length)
+                # print("node is none")
                 return False
             valid = self.validate_and_update_program()
             # print("valid:", valid)
             if not valid:
                 self.undo_add_random_node(added_node)
+                assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                    self.curr_prog.length) + " != prev length: " + str(prev_length)
                 return False
+            if added_node.api_name not in DNODES:
+                assert self.curr_prog.length == prev_length + 1, "Curr prog length: " + str(
+                    self.curr_prog.length) + ", prev length: " + str(prev_length) + ", added node length: " + str(
+                    added_node.length)
+            elif added_node.api_name == DBRANCH:
+                assert self.curr_prog.length == prev_length + 5 or self.curr_prog.length + 6, "Curr prog length: " + str(
+                    self.curr_prog.length) + ", prev length: " + str(prev_length) + ", added node length: " + str(
+                    added_node.length)
+            elif added_node.api_name == DLOOP or added_node.api_name == DEXCEPT:
+                assert self.curr_prog.length == prev_length + 3 or self.curr_prog.length + 4, "Curr prog length: " + str(
+                    self.curr_prog.length) + ", prev length: " + str(prev_length) + ", added node length: " + str(
+                    added_node.length)
+            # else:
+            #     raise ValueError("Added DStop or DSubtree node when that's not allowed")
             self.add_accepted += 1
         elif move == 'delete':
+            prev_length = self.curr_prog.length
             self.delete += 1
             node, parent_node, parent_edge = self.delete_random_node()
+            self.print_verbose_tree_info()
             if not self.validate_and_update_program():
                 self.undo_delete_random_node(node, parent_node, parent_edge)
+                assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                    self.curr_prog.length) + " != prev length: " + str(prev_length)
                 return False
+            if node.api_name not in DNODES:
+                assert self.curr_prog.length == prev_length - 1, "Curr prog length: " + str(
+                    self.curr_prog.length) + ", prev length: " + str(prev_length) + ", deleted node length: " + str(
+                    node.length)
+            elif node.api_name == DBRANCH:
+                assert self.curr_prog.length == prev_length - 5 or self.curr_prog.length == prev_length - 6, \
+                    "Curr prog length: " + str(self.curr_prog.length) + ", prev length: " + str(
+                        prev_length) + ", deleted node length: " + str(node.length)
+            elif node.api_name == DLOOP or node.api_name == DEXCEPT:
+                assert self.curr_prog.length == prev_length - 3 or self.curr_prog.length == prev_length - 4, \
+                    "Curr prog length: " + str(self.curr_prog.length) + ", prev length: " + str(
+                        prev_length) + ", deleted node length: " + str(node.length)
+            # else:
+            #     raise ValueError("Deleted DStop or DSubtree node when that's not allowed")
             self.delete_accepted += 1
         elif move == 'swap':
             self.swap += 1
@@ -1159,7 +1202,7 @@ class MCMCProgram:
         else:
             raise ValueError('move not defined')  # TODO: remove once tested
 
-        print("move was successful")
+        # print("move was successful")
         return True
 
     def get_ast_idx(self, parent_pos, non_dnode=True):
@@ -1195,12 +1238,16 @@ class MCMCProgram:
                     rand_idx = random.randint(0, len(selectable) - 1)
                     return idxs[0][rand_idx]
                 else:
-                    rand_idx = random.randint(0, self.decoder.top_k - 1)  # Note: randint is a,b inclusive
                     _, idxs, _ = self.decoder.get_next_ast_state(node, edge, state)
+                    selectable = []
+                    for k in range(self.decoder.top_k):
+                        # Can't add DStop and DSubTree as those are structural nodes and added when needed
+                        if self.node2vocab[idxs[0][k]] != STOP and self.node2vocab[idxs[0][k]] != START:
+                            selectable.append(idxs[0][k])
+                    rand_idx = random.randint(0, len(selectable) - 1)
                     return idxs[0][rand_idx]
             else:
                 state, _ = self.decoder.get_ast_logits(node, edge, state)
-
 
     def get_initial_decoder_state(self):
         """
@@ -1226,6 +1273,8 @@ class MCMCProgram:
 
         beam_width = 1
         self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
+
+        # self.initial_state = self.decoder.get_random_initial_state()
 
     def calculate_probability(self):
         """
@@ -1272,3 +1321,72 @@ class MCMCProgram:
         # # self.transform_tree()
         # self.random_walk_latent_space()
         # self.get_initial_decoder_state()
+
+
+    def print_verbose_tree_info(self):
+        curr_node = self.curr_prog
+
+        stack = []
+        pos_counter = 0
+
+        while curr_node is not None:
+            self.verbose_node_info(curr_node, pos=pos_counter)
+
+            pos_counter += 1
+
+            if curr_node.child is not None:
+                if curr_node.sibling is not None:
+                    stack.append(curr_node.sibling)
+                curr_node = curr_node.child
+            elif curr_node.sibling is not None:
+                curr_node = curr_node.sibling
+            else:
+                if len(stack) > 0:
+                    curr_node = stack.pop()
+                else:
+                    curr_node = None
+
+        print("\n")
+
+    def verbose_node_info(self, node, pos=None):
+        node_info = {"api name": node.api_name, "length": node.length, "api num": node.api_num,
+                     "parent edge": node.parent_edge}
+
+        if pos is not None:
+            node_info["position"] = pos
+
+        if node.parent is not None:
+            node_info["parent"] = node.parent.api_name
+        else:
+            node_info["parent"] = node.parent
+
+            if node.api_name != 'DSubTree':
+                print("WARNING: node does not have a parent", node.api_name)
+
+        if node.sibling is not None:
+            node_info["sibling"] = node.sibling.api_name
+
+            if node.sibling.parent is None:
+                print("WARNING: sibling parent is None for node", node.api_name, "in pos", pos)
+                node_info["sibling parent"] = node.sibling.parent
+            else:
+                node_info["sibling parent"] = node.sibling.parent.api_name
+
+            node_info["sibling parent edge"] = node.sibling.parent_edge
+        else:
+            node_info["sibling"] = node.sibling
+
+        if node.child is not None:
+            node_info["child"] = node.child.api_name
+
+            if node.child.parent is None:
+                print("WARNING: child parent is None for node", node.api_name, "in pos", pos)
+                node_info["child parent"] = node.child.parent
+            else:
+                node_info["child parent"] = node.child.parent.api_name
+
+            node_info["child parent edge"] = node.child.parent_edge
+
+        print(node_info)
+
+        return node_info
