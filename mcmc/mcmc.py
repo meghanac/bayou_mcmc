@@ -613,9 +613,9 @@ class MCMCProgram:
         if new_node_api == DBRANCH:
             return self.grow_dbranch(new_node_parent)
         elif new_node_api == DLOOP:
-            return self.grow_dloop(new_node_parent)
+            return self.grow_dloop_or_dexcept(new_node_parent, True)
         elif new_node_api == DEXCEPT:
-            return self.grow_dexcept(new_node_parent)
+            return self.grow_dloop_or_dexcept(new_node_parent, False)
 
         # Add node to parent
         if new_node_parent.sibling is None:
@@ -668,12 +668,6 @@ class MCMCProgram:
             sibling = node.sibling
             node.remove_node(SIBLING_EDGE)
             parent_node.add_node(sibling, SIBLING_EDGE)
-
-        # # Remove dangling DStop node if there is one
-        # elif parent_edge == SIBLING_EDGE and node.sibling is None:
-        #     last_node = self.get_node_in_position(self.curr_prog.length - 1)
-        #     if last_node.api_name == STOP:
-        #         last_node.parent.remove_node(last_node.parent_edge)
 
         self.calculate_probability()
 
@@ -827,18 +821,8 @@ class MCMCProgram:
         # Add parent's old sibling node to DBranch with sibling edge
         dbranch.add_node(parent_sibling, SIBLING_EDGE)
 
-        # If adding DBranch to end of tree, do not add DStop node to last sibling of branch
-        add_stop_node_to_end_branch = not (dbranch_pos == (self.curr_prog.length - 1))
-
         # Ensure adding a DBranch won't exceed max depth
-        if add_stop_node_to_end_branch and (
-                self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 6 > self.max_length):
-            # remove added dbranch
-            parent.remove_node(SIBLING_EDGE)
-            parent.add_node(parent_sibling, SIBLING_EDGE)
-            return None
-        elif (not add_stop_node_to_end_branch) and (
-                self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 5 > self.max_length):
+        if self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 6 > self.max_length:
             # remove added dbranch
             parent.remove_node(SIBLING_EDGE)
             parent.add_node(parent_sibling, SIBLING_EDGE)
@@ -855,17 +839,18 @@ class MCMCProgram:
 
         # Add else api as sibling to condition node
         else_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos)], condition, SIBLING_EDGE)
-        if add_stop_node_to_end_branch:
-            self.create_and_add_node(STOP, else_node, SIBLING_EDGE)
+
+        self.create_and_add_node(STOP, else_node, SIBLING_EDGE)
 
         # Calculate probability of new program
         self.calculate_probability()
 
         return dbranch
 
-    def grow_dloop(self, parent):
+    def grow_dloop_or_dexcept(self, parent, create_dloop):
         """
         Create full DLoop (DLoop, condition, body) from parent node
+        :param create_dloop: (bool) True to create dloop, False to create dexcept
         :param parent: (Node) parent of DLoop
         :return: (Node) DLoop node
         """
@@ -873,95 +858,40 @@ class MCMCProgram:
         parent_sibling = parent.sibling
         parent.remove_node(SIBLING_EDGE)
 
-        # Create a DLoop node
-        dloop = self.create_and_add_node(DLOOP, parent, SIBLING_EDGE)
-        dloop_pos = self.get_nodes_position(dloop)
-        assert dloop_pos > 0, "Error: DLoop position couldn't be found"
+        if create_dloop:
+            # Create a DLoop node
+            dnode = self.create_and_add_node(DLOOP, parent, SIBLING_EDGE)
+        else:
+            # Create a DExcept node
+            dnode = self.create_and_add_node(DEXCEPT, parent, SIBLING_EDGE)
 
-        # Add parent's old sibling node to DLoop with sibling edge
-        dloop.add_node(parent_sibling, SIBLING_EDGE)
+        dnode_pos = self.get_nodes_position(dnode)
+        assert dnode_pos > 0, "Error: DNode position couldn't be found"
 
-        # If adding DLoop to end of tree, do not add DStop node to last sibling of branch
-        add_stop_node_to_end_branch = not (dloop_pos == (self.curr_prog.length - 1))
+        # Add parent's old sibling node to D-node with sibling edge
+        dnode.add_node(parent_sibling, SIBLING_EDGE)
 
         # Ensure adding a DLoop won't exceed max depth
-        if add_stop_node_to_end_branch and (
-                self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 4 > self.max_length):
-            # remove added dloop
-            parent.remove_node(SIBLING_EDGE)
-            parent.add_node(parent_sibling, SIBLING_EDGE)
-            return None
-        elif (not add_stop_node_to_end_branch) and (
-                self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 3 > self.max_length):
-            # remove added dloop
+        if self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 4 > self.max_length:
+            # remove added dnode
             parent.remove_node(SIBLING_EDGE)
             parent.add_node(parent_sibling, SIBLING_EDGE)
             return None
 
-        # Create condition as DLoop child
-        condition = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dloop_pos)], dloop, CHILD_EDGE)
+        # Create condition/try as DNode child
+        condition = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dnode_pos)], dnode, CHILD_EDGE)
         cond_pos = self.get_nodes_position(condition)
         assert cond_pos > 0, "Error: Condition node position couldn't be found"
 
-        # Add body api as child to condition node
+        # Add body/catch api as child to condition node
         body = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos)], condition, CHILD_EDGE)
-        if add_stop_node_to_end_branch:
-            self.create_and_add_node(STOP, body, SIBLING_EDGE)
+
+        self.create_and_add_node(STOP, body, SIBLING_EDGE)
 
         # Calculate probability of new program
         self.calculate_probability()
 
-        return dloop
-
-    def grow_dexcept(self, parent):
-        """
-        Create full DExcept (DExcept, catch, try) from parent node
-        :param parent: (Node) parent of DExcept
-        :return: (Node) DExcept node
-        """
-        # remove parent's current sibling node if there
-        parent_sibling = parent.sibling
-        parent.remove_node(SIBLING_EDGE)
-
-        # Create a DExcept node
-        dexcept = self.create_and_add_node(DEXCEPT, parent, SIBLING_EDGE)
-        dexcept_pos = self.get_nodes_position(dexcept)
-        assert dexcept_pos > 0, "Error: DExcept position couldn't be found"
-
-        # Add parent's old sibling node to DExcept with sibling edge
-        dexcept.add_node(parent_sibling, SIBLING_EDGE)
-
-        # If adding DLoop to end of tree, do not add DStop node to last sibling of branch
-        add_stop_node_to_end_branch = not (dexcept_pos == (self.curr_prog.length - 1))
-
-        # Ensure adding a DExcept won't exceed max depth
-        if add_stop_node_to_end_branch and (
-                self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 4 > self.max_length):
-            # remove added dexcept
-            parent.remove_node(SIBLING_EDGE)
-            parent.add_node(parent_sibling, SIBLING_EDGE)
-            return None
-        elif (not add_stop_node_to_end_branch) and (
-                self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 3 > self.max_length):
-            # remove added dexcept
-            parent.remove_node(SIBLING_EDGE)
-            parent.add_node(parent_sibling, SIBLING_EDGE)
-            return None
-
-        # Create catch as DExcept child
-        catch = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dexcept_pos)], dexcept, CHILD_EDGE)
-        catch_pos = self.get_nodes_position(catch)
-        assert catch_pos > 0, "Error: Catch node position couldn't be found"
-
-        # Add try api as child to catch node
-        try_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(catch_pos)], catch, CHILD_EDGE)
-        if add_stop_node_to_end_branch:
-            self.create_and_add_node(STOP, try_node, SIBLING_EDGE)
-
-        # Calculate probability of new program
-        self.calculate_probability()
-
-        return dexcept
+        return dnode
 
     def add_random_dnode(self):
         """
@@ -982,9 +912,9 @@ class MCMCProgram:
         if dnode_type == DBRANCH:
             return self.grow_dbranch(parent)
         elif dnode_type == DLOOP:
-            return self.grow_dloop(parent)
+            return self.grow_dloop_or_dexcept(parent, True)
         else:
-            return self.grow_dexcept(parent)
+            return self.grow_dloop_or_dexcept(parent, False)
 
     def undo_add_random_dnode(self, dnode):
         """
@@ -1047,6 +977,10 @@ class MCMCProgram:
                     if curr_node.child.sibling.sibling.api_name != STOP:
                         return False
 
+            #TODO: basically what is happening is that a DExcept gets added to the end of the program so there's no DStop
+            # node but then a node gets added onto the catch node and the required DStop node isn't there
+            # easiest solution might just be to allow DStop nodes at the end and discard them when calculating probability
+
             # Check that DLoop and DExcept have the proper form
             if curr_node.api_name == DLOOP or curr_node.api_name == DEXCEPT:
                 if curr_node.child is None:
@@ -1076,10 +1010,10 @@ class MCMCProgram:
                     last_node = curr_node
                     curr_node = None
 
-        # Last node in program cannot be DStop node
-        # assert last_node.api_name != STOP
-        if last_node.api_name == STOP:
-            return False
+        # # Last node in program cannot be DStop node
+        # # assert last_node.api_name != STOP
+        # if last_node.api_name == STOP:
+        #     return False
 
         # Return whether all constraints have been met
         return len(constraints) == 0
@@ -1120,6 +1054,8 @@ class MCMCProgram:
         Randomly chooses a transformation and transforms the current program if it is accepted.
         :return: (bool) whether current tree was transformed or not
         """
+        assert self.check_validity() is True
+
         move = random.choice(['add', 'delete'])
         # move = np.random.choice(['add', 'delete', 'swap', 'add_dnode'], p=[0.3, 0.3, 0.3, 0.1])
         # print("move:", move)
@@ -1182,13 +1118,21 @@ class MCMCProgram:
             #     raise ValueError("Deleted DStop or DSubtree node when that's not allowed")
             self.delete_accepted += 1
         elif move == 'swap':
+            prev_length = self.curr_prog.length
             self.swap += 1
             node1, node2 = self.random_swap()
+            self.print_verbose_tree_info()
             if node1 is None or node2 is None:
+                assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                    self.curr_prog.length) + " != prev length: " + str(prev_length)
                 return False
             if not self.validate_and_update_program():
                 self.undo_swap_nodes(node1, node2)
+                assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                    self.curr_prog.length) + " != prev length: " + str(prev_length)
                 return False
+            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                self.curr_prog.length) + " != prev length: " + str(prev_length)
             self.swap_accepted += 1
         elif move == 'add_dnode':
             self.add_dnode += 1
@@ -1291,10 +1235,13 @@ class MCMCProgram:
             node[0][0] = nodes[i]
             edge[0][0] = edges[i]
             if i == self.curr_prog.length - 1:
-                # add prob of stop node
-                state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
-                stop_node = self.vocab2node[STOP]
-                curr_prob += ast_prob[0][stop_node]
+                if self.node2vocab[node[0][0]] == STOP:
+                    pass
+                else:
+                    # add prob of stop node
+                    state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
+                    stop_node = self.vocab2node[STOP]
+                    curr_prob += ast_prob[0][stop_node]
             else:
                 state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
                 curr_prob += ast_prob[0][nodes[i + 1]]
