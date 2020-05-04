@@ -99,7 +99,7 @@ class BayesianPredictor(object):
         initial_state = np.transpose(np.array(initial_state), [1, 0, 2])  # batch-first
         return initial_state
 
-    def get_next_ast_state(self, ast_node, ast_edge, ast_state):
+    def get_next_ast_state_top_k(self, ast_node, ast_edge, ast_state):
         feed = {self.model.nodes.name: np.array(ast_node, dtype=np.int32),
                 self.model.edges.name: np.array(ast_edge, dtype=np.bool)}
         for i in range(self.config.decoder.num_layers):
@@ -107,6 +107,17 @@ class BayesianPredictor(object):
 
         [ast_state, beam_ids, beam_ln_probs] = self.sess.run(
             [self.model.decoder.ast_tree.state, self.ast_top_k_indices, self.ast_top_k_values], feed)
+
+        return ast_state, beam_ids, beam_ln_probs
+
+    def get_next_ast_state(self, ast_node, ast_edge, ast_state):
+        feed = {self.model.nodes.name: np.array(ast_node, dtype=np.int32),
+                self.model.edges.name: np.array(ast_edge, dtype=np.bool)}
+        for i in range(self.config.decoder.num_layers):
+            feed[self.model.initial_state[i].name] = np.array(ast_state[i])
+
+        [ast_state, beam_ids, beam_ln_probs] = self.sess.run(
+            [self.model.decoder.ast_tree.state, self.ast_idx, self.ast_ln_probs], feed)
 
         return ast_state, beam_ids, beam_ln_probs
 

@@ -580,15 +580,23 @@ class MCMCProgram:
         fragmentation in the program.
         :return: (Node) selected node, (int) selected node's position
         """
-        while True:  # This shouldn't cause problems because at the very least the program must contain constraint apis
-            # exclude DSubTree node, randint is [a,b] inclusive
-            rand_node_pos = random.randint(1,
-                                           self.curr_prog.length - 1)
-            node = self.get_node_in_position(rand_node_pos)
+        # while True:  # This shouldn't cause problems because at the very least the program must contain constraint apis
+        #     # exclude DSubTree node, randint is [a,b] inclusive
+        #     rand_node_pos = random.randint(1,
+        #                                    self.curr_prog.length - 1)
+        #     node = self.get_node_in_position(rand_node_pos)
+        #
+        #     # Checks parent edge to prevent deleting half a branch or leave dangling D-nodes
+        #     if node.api_name != STOP and node.parent_edge != CHILD_EDGE:
+        #         return node, rand_node_pos
 
-            # Checks parent edge to prevent deleting half a branch or leave dangling D-nodes
-            if node.api_name != STOP and node.parent_edge != CHILD_EDGE:
-                return node, rand_node_pos
+        # exclude DSubTree node, randint is [a,b] inclusive
+        rand_node_pos = random.randint(1,
+                                       self.curr_prog.length - 1)
+        node = self.get_node_in_position(rand_node_pos)
+
+        # Checks parent edge to prevent deleting half a branch or leave dangling D-nodes
+        return node, rand_node_pos
 
     def add_random_node(self):
         """
@@ -606,7 +614,7 @@ class MCMCProgram:
         new_node_parent = self.get_node_in_position(rand_node_pos)
 
         # Probabilistically choose the node that should appear after selected random parent
-        new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos, non_dnode=False)]
+        new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos, SIBLING_EDGE, non_dnode=False)]
         # new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos)]
 
         # If a dnode is chosen, grow it out
@@ -829,16 +837,16 @@ class MCMCProgram:
             return None
 
         # Create condition as DBranch child
-        condition = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dbranch_pos)], dbranch, CHILD_EDGE)
+        condition = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dbranch_pos, CHILD_EDGE)], dbranch, CHILD_EDGE)
         cond_pos = self.get_nodes_position(condition)
         assert cond_pos > 0, "Error: Condition node position couldn't be found"
 
         # Add then api as child to condition node
-        then_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos)], condition, CHILD_EDGE)
+        then_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos, CHILD_EDGE)], condition, CHILD_EDGE)
         self.create_and_add_node(STOP, then_node, SIBLING_EDGE)
 
         # Add else api as sibling to condition node
-        else_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos)], condition, SIBLING_EDGE)
+        else_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos, SIBLING_EDGE)], condition, SIBLING_EDGE)
 
         self.create_and_add_node(STOP, else_node, SIBLING_EDGE)
 
@@ -879,12 +887,12 @@ class MCMCProgram:
             return None
 
         # Create condition/try as DNode child
-        condition = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dnode_pos)], dnode, CHILD_EDGE)
+        condition = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dnode_pos, CHILD_EDGE)], dnode, CHILD_EDGE)
         cond_pos = self.get_nodes_position(condition)
         assert cond_pos > 0, "Error: Condition node position couldn't be found"
 
         # Add body/catch api as child to condition node
-        body = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos)], condition, CHILD_EDGE)
+        body = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos, CHILD_EDGE)], condition, CHILD_EDGE)
 
         self.create_and_add_node(STOP, body, SIBLING_EDGE)
 
@@ -1149,19 +1157,38 @@ class MCMCProgram:
         # print("move was successful")
         return True
 
-    def get_ast_idx(self, parent_pos, non_dnode=True):
+    def get_ast_idx(self, parent_pos, edge, non_dnode=False):
         # return self.get_ast_idx_all_vocab(parent_pos, non_dnode)  # multinomial on all
 
         # return self.get_ast_idx_top_k(parent_pos, non_dnode) # multinomial on top k
 
-        return self.get_ast_idx_random_top_k(parent_pos, non_dnode)  # randomly choose from top k
+        return self.get_ast_idx_random_top_k(parent_pos, non_dnode, edge)  # randomly choose from top k
 
-    def get_ast_idx_random_top_k(self, parent_pos, non_dnode, top_k=10):  # TODO: TEST
+    def get_ast_idx_random_top_k(self, parent_pos, non_dnode, added_edge):  # TODO: TEST
         """
         Returns api number (based on vocabulary). Uniform randomly selected from top k based on parent node.
         :param parent_pos: (int) position of parent node in current program (by DFS)
         :return: (int) number of api in vocabulary
         """
+        def choose_ast_idx(logits):
+            logits = logits["probs"]
+            sorted_logits = np.argsort(-logits)
+
+            # print(sorted_logits)
+            # print(logits[sorted_logits[0]])
+            # print(logits[sorted_logits[1]])
+
+            mu = random.uniform(0, 1)
+            if mu <= 0.95:
+                rand_idx = random.randint(0, self.decoder.top_k - 1)  # randint is a,b inclusive
+                print("topk", [self.node2vocab[sorted_logits[i]] for i in range(0, self.decoder.top_k)])
+                print("topk", self.node2vocab[sorted_logits[rand_idx]])
+
+                return sorted_logits[rand_idx]
+            else:
+                rand_idx = random.randint(self.decoder.top_k, len(sorted_logits) - 1)
+                print("-topk", self.node2vocab[sorted_logits[rand_idx]])
+                return sorted_logits[rand_idx]
 
         state = self.initial_state
         nodes, edges = self.get_vector_representation()
@@ -1169,29 +1196,59 @@ class MCMCProgram:
         node = np.zeros([1, 1], dtype=np.int32)
         edge = np.zeros([1, 1], dtype=np.bool)
 
-        for i in range(parent_pos + 1):
+        vocab_size = self.config.vocab.api_dict_size
+
+        logits = {}
+
+        for i in range(self.curr_prog.length):
             node[0][0] = nodes[i]
             edge[0][0] = edges[i]
             if i == parent_pos:
-                if non_dnode:  # TODO: make this code better
-                    _, idxs, _ = self.decoder.get_next_ast_state(node, edge, state)
-                    selectable = []
-                    for k in range(self.decoder.top_k):
-                        if self.node2vocab[idxs[0][k]] not in DNODES:
-                            selectable.append(idxs[0][k])
-                    rand_idx = random.randint(0, len(selectable) - 1)
-                    return idxs[0][rand_idx]
-                else:
-                    _, idxs, _ = self.decoder.get_next_ast_state(node, edge, state)
-                    selectable = []
-                    for k in range(self.decoder.top_k):
-                        # Can't add DStop and DSubTree as those are structural nodes and added when needed
-                        if self.node2vocab[idxs[0][k]] != STOP and self.node2vocab[idxs[0][k]] != START:
-                            selectable.append(idxs[0][k])
-                    rand_idx = random.randint(0, len(selectable) - 1)
-                    return idxs[0][rand_idx]
+                state, probs = self.decoder.get_ast_logits(node, edge, state)
+
+                assert(vocab_size == len(probs[0]), str(vocab_size) + ", " + str(len(probs[0])))
+
+                logits["probs"] = np.zeros(vocab_size)
+                for j in range(len(probs[0])):
+                    logits[j] = state
+                    logits["probs"][j] += probs[0][j]
+
+                # pass in each node that could be added into decoder
+                for k in range(vocab_size):
+                    node[0][0] = k
+                    edge[0][0] = added_edge
+
+                    ast_state, probs = self.decoder.get_ast_logits(node, edge, state)
+                    logits[k] = ast_state
+                    if parent_pos == self.curr_prog.length - 1:
+                        logits["probs"][k] += probs[0][self.vocab2node[STOP]]
+                    else:
+                        logits["probs"][k] += probs[0][nodes[i+1]]
+
+                if parent_pos == self.curr_prog.length - 1:
+                    return choose_ast_idx(logits)
+
+            elif parent_pos < i < self.curr_prog.length - 1:
+                for k in range(vocab_size):
+                    ast_state, probs = self.decoder.get_ast_logits(node, edge, state)
+                    logits[k] = ast_state
+                    logits["probs"][k] += probs[0][nodes[i+1]]
+
+            elif i == self.curr_prog.length - 1:
+                if self.node2vocab[nodes[i]] != STOP:
+                    ast_state, probs = self.decoder.get_ast_logits(node, edge, state)
+                    logits[k] = ast_state
+                    logits["probs"][k] += probs[0][self.vocab2node[STOP]]
+
+                return choose_ast_idx(logits)
+
             else:
                 state, _ = self.decoder.get_ast_logits(node, edge, state)
+
+
+
+    def get_random_initial_state(self):
+        self.initial_state = self.decoder.get_random_initial_state()
 
     def get_initial_decoder_state(self):
         """

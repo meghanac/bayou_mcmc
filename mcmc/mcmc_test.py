@@ -681,8 +681,24 @@ class MCMCProgramTest(unittest.TestCase):
         test_prog.print_summary_logs()
 
     def test_dev(self):
-        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, STR_BUILD_APP], ["Typeface"],
-                                                                             ["String", "int"])
+        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, "java.io.ObjectInputStream.defaultReadObject()"], ["void"],
+                                                                             ["String", "int", "ObjectInputStream"])
+
+        added_node = test_prog.prog.add_random_node()
+        #
+        # test_prog.prog.undo_add_random_node(added_node)
+
+        # test_prog.prog.get_random_initial_state()
+        #
+        # test_prog.prog.add_random_node()
+
+        # num_iter = 10000
+        #
+        # for i in range(num_iter):
+        #     print(i)
+        #     test_prog.prog.mcmc()
+        #
+        # test_prog.print_summary_logs()
 
 
 class MCMCProgramWrapper:
