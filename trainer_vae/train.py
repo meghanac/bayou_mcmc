@@ -28,6 +28,8 @@ from data_extractor.data_loader import Loader
 from data_extractor.data_reader import Reader
 from trainer_vae.model import Model
 from trainer_vae.utils import read_config, dump_config
+from tester_vae.tSNE_visualizor.plot import plot
+
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"  # see issue #152
@@ -47,8 +49,8 @@ def train(clargs):
 
     with open(config_file) as f:
         config = read_config(json.load(f))
-    # reader = Reader(clargs)
-    # reader.save_data('../data_extractor/data/1k_vocab_constraint_min_3-600000')
+    reader = Reader(clargs)
+    reader.save_data(clargs.data)  # '../data_extractor/data/1k_vocab_constraint_min_3-600000'
     loader = Loader(clargs, config)
     model = Model(config)
 
@@ -147,24 +149,37 @@ def train(clargs):
 
 # %%
 if __name__ == '__main__':
+    folder_name = 'testing-600'
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=textwrap.dedent(HELP))
     parser.add_argument('--python_recursion_limit', type=int, default=10000,
                         help='set recursion limit for the Python interpreter')
-    parser.add_argument('--save', type=str, default='save',
+    parser.add_argument('--save', type=str, default='save/' + folder_name + "/",
                         help='checkpoint model during training here')
-    parser.add_argument('--data', type=str, default='../data_extractor/data/1k_vocab_constraint_min_3-600000',
+    parser.add_argument('--data', type=str, default='../data_extractor/data/' + folder_name + "/",
                         help='load data from here')
     parser.add_argument('--config', type=str, default='tiny_config.json',
                         help='config file (see description above for help)')
     parser.add_argument('--continue_from', type=str, default=None,
                         help='ignore config options and continue training model checkpointed here')
+    parser.add_argument('--topK', type=int, default=10,
+                        help='plot only the top-k labels')
+    parser.add_argument('--filename', type=str, help='name of data file and dir name')
     clargs_ = parser.parse_args()
     if not os.path.exists(clargs_.save):
         os.makedirs(clargs_.save)
+    if not os.path.exists(clargs_.save + '/plots'):
+        os.makedirs(clargs_.save + '/plots')
+    clargs_.folder_name = folder_name
     sys.setrecursionlimit(clargs_.python_recursion_limit)
     if clargs_.config and clargs_.continue_from:
         parser.error('Do not provide --config if you are continuing from checkpointed model')
     if not clargs_.config and not clargs_.continue_from:
         parser.error('Provide at least one option: --config or --continue_from')
     train(clargs_)
+
+    if clargs_.continue_from is None:
+        clargs_.continue_from = clargs_.save
+
+    clargs_.filename = 'plot_' + folder_name + '.png'
+    plot(clargs_)

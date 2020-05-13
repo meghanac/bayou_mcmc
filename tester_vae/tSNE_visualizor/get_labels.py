@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LABELS = ['swing', 'awt', 'security', 'sql', 'net', 'xml', 'crypto', 'math']
+LABELS = ['swing', 'awt', 'security', 'sql', 'net', 'xml', 'crypto', 'math', 'lang', 'util']
 
 def get_api(config, calls):
 
@@ -20,16 +20,18 @@ def get_api(config, calls):
     apis_ = []
     for api in apis:
         try:
+            # print(api.split('.'))
             api_mid = api.split('.')[1]
         except:
             api_mid = []
         apis_.append(api_mid)
 
     guard = []
-    for api in apis_:
-        if api in LABELS:
-            label = api
-            guard.append(label)
+    for apis in apis_:
+        if apis != []:
+            if apis in LABELS:
+                label = apis
+                guard.append(label)
 
     if len(set(guard)) != 1:
         return 'N/A'

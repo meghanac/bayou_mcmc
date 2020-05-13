@@ -16,24 +16,24 @@ import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-# from sklearn.manifold import TSNE
-from MulticoreTSNE import MulticoreTSNE as TSNE
+from sklearn.manifold import TSNE
+# from MulticoreTSNE import MulticoreTSNE as TSNE
 import numpy as np
 import os
 
 from tester_vae.tSNE_visualizor.get_labels import LABELS
 
-def fitTSNEandplot(psis, labels, name):
-    model = TSNE(n_jobs=24)
+def fitTSNEandplot(psis, labels, clargs):
+    model = TSNE()
     psis_2d = model.fit_transform(np.array(psis))
 
     assert len(psis_2d) == len(labels)
     print('Doing a scatter plot')
-    scatter(zip(psis_2d, labels), name)
+    scatter(zip(psis_2d, labels), clargs)
 
 
-def scatter(data, name):
-    dic = {}
+def scatter(data, clargs):
+    dic = {'swing': [], 'awt': [], 'security': [], 'sql': [], 'net': [], 'xml': [], 'crypto': [], 'math': [], 'lang': [], 'util': []}
     for psi_2d, label in data:
         if label == 'N/A':
             continue
@@ -74,5 +74,6 @@ def scatter(data, name):
     # ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.12),
     #      fancybox=True, shadow=True, ncol=3)
     # plt.rcParams.update({'font.size': 14})
-    plt.savefig(os.path.join(os.getcwd(), "plots/tSNE_" + name), bbox_inches='tight')
+    name = clargs.filename
+    plt.savefig(os.path.join(clargs.save + "/plots/", name), bbox_inches='tight')
     # plt.show()

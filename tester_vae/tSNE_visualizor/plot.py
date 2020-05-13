@@ -19,30 +19,33 @@ import argparse
 import sys
 import textwrap
 
+from data_extractor.data_loader import Loader
+from trainer_vae.infer import BayesianPredictor
+from tester_vae.tSNE_visualizor.get_labels import get_api
+from tester_vae.tSNE_visualizor.tSNE import fitTSNEandplot
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"  # see issue #152
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
-from trainer_vae.infer import BayesianPredictor
-from data_extractor.data_loader import Loader
-from tester_vae.tSNE_visualizor.get_labels import get_api
-from tester_vae.tSNE_visualizor.tSNE import fitTSNEandplot
 
 HELP = """{}"""
 
 
 def plot(clargs):
 
-    predictor = BayesianPredictor(clargs.continue_from)
+    predictor = BayesianPredictor(clargs.continue_from, batch_size=5)
     loader = Loader(clargs, predictor.config)
+
     states, labels = [], []
-    for i in range(2000):
+    for i in range(5):
         nodes, edges, targets, \
             ret_type, fp_type, fp_type_targets, _ = loader.next_batch()
         state = predictor.get_latent_state(nodes, edges, ret_type, fp_type)
         states.extend(state)
         for node in nodes:
             label = get_api(predictor.config, node)
+            print(label)
             labels.append(label)
     predictor.close()
 
@@ -52,7 +55,7 @@ def plot(clargs):
             new_states.append(state)
             new_labels.append(label)
     print('Fitting tSNE')
-    fitTSNEandplot(new_states, new_labels, clargs.name)
+    fitTSNEandplot(new_states, new_labels, clargs)
 
 #%%
 if __name__ == '__main__':
@@ -64,12 +67,13 @@ if __name__ == '__main__':
                         help='ignore config options and continue training model checkpointed here')
     parser.add_argument('--topK', type=int, default=10,
                         help='plot only the top-k labels')
-    parser.add_argument('--data', type=str, default='../data_extractor/data',
+    parser.add_argument('--data', type=str, default='../data_extraction/data_reader/data',
                         help='load data from here')
     clargs = parser.parse_args()
-    clargs.name = 'plot_' + clargs.continue_from + '.png'
-    if not os.path.exists('plots'):
-        os.makedirs('plots')
+    clargs.folder = 'plots/test_visualize/'
+    clargs.filename = clargs.folder + 'plot_' + clargs.continue_from + '.png'
+    if not os.path.exists(clargs.folder):
+        os.makedirs(clargs.folder)
     sys.setrecursionlimit(clargs.python_recursion_limit)
 
     plot(clargs)

@@ -214,6 +214,7 @@ class MCMCProgram:
         self.ret_type = []
         self.fp = [[]]
         self.decoder = None
+        self.encoder = None
 
         # Logging  # TODO: change to Logger
         self.accepted = 0
@@ -1261,21 +1262,30 @@ class MCMCProgram:
                             help='ignore config options and continue training model checkpointed here')
         clargs = parser.parse_args()
 
-        encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
+        self.encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
 
         nodes, edges = self.get_vector_representation()
         nodes = nodes[:self.max_num_api]
         edges = edges[:self.max_num_api]
         nodes = np.array([nodes])
         edges = np.array([edges])
-        self.initial_state = encoder.get_initial_state(nodes, edges, np.array(self.ret_type), np.array(self.fp))
+        self.initial_state = self.encoder.get_initial_state(nodes, edges, np.array(self.ret_type), np.array(self.fp))
         self.initial_state = np.transpose(np.array(self.initial_state), [1, 0, 2])  # batch_first
-        encoder.close()
+        # encoder.close()
 
         beam_width = 1
         self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
 
         # self.initial_state = self.decoder.get_random_initial_state()
+
+    def update_latent_state_and_decoder_state(self):
+        nodes, edges = self.get_vector_representation()
+        nodes = nodes[:self.max_num_api]
+        edges = edges[:self.max_num_api]
+        nodes = np.array([nodes])
+        edges = np.array([edges])
+        self.initial_state = self.encoder.get_initial_state(nodes, edges, np.array(self.ret_type), np.array(self.fp))
+        self.initial_state = np.transpose(np.array(self.initial_state), [1, 0, 2])  # batch_first
 
     def calculate_probability(self):
         """
