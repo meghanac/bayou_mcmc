@@ -83,8 +83,127 @@ def copy_json_data(old_data_filename, new_data_filename, num_programs=None, is_t
     new_f.write("]\n")
     new_f.write("}\n")
 
+def add_branched_to_vocab(valid_prog, vocab, vocab_size, node, prog_length, vocab_freq, apis_list, branching, vocab_num):
+    if node['node'] == 'DLoop':
+        # print("DLOOP keys:", node.keys())
+        types = ['_body', '_cond']
+        apis_list.append('DLoop')
+        vocab_freq['DLoop'][0] += 1
+    elif node['node'] == 'DExcept':
+        # print("DExcept keys:", node.keys())
+        types = ['_catch', '_try']
+        apis_list.append("DExcept")
+        vocab_freq['DExcept'][0] += 1
+    elif node['node'] == 'DBranch':
+        # print("DBranch keys:", node.keys())
+        types = ['_cond', '_else', '_then']
+        apis_list.append('DBranch')
+        vocab_freq['DBranch'][0] += 1
+    else:
+        types = []
+        print("skipped node type:", node['node'])
 
-# copy_json_data("data_surrounding_methods.json", "training_data_vae2.json", is_test_data=False)
+        # print(node['node'])
+    if len(types) > 0:
+        for t in types:
+            for i in range(len(node[t])):
+                branching_apis = []
+                if node[t][i]['node'] != 'DAPICall':
+                    valid, vocab, vocab_size, prog_length, vocab_freq, branching_apis, branching = add_branched_to_vocab(
+                        valid_prog,
+                        vocab,
+                        vocab_size,
+                        node[t][i],
+                        prog_length,
+                        vocab_freq,
+                        branching_apis,
+                        branching,
+                        vocab_num)
+                    valid_prog = valid and valid_prog
+                else:
+                    if len(node[t][i]) > 0:
+                        valid, vocab, vocab_size, prog_length, vocab_freq, branching_apis = add_call_to_vocab(
+                            valid_prog,
+                            vocab,
+                            vocab_size,
+                            node[t][i][
+                                "_call"],
+                            prog_length,
+                            vocab_freq,
+                            branching_apis,
+                            vocab_num)
+                        valid_prog = valid and valid_prog
+
+                apis_list += branching_apis
+
+                # add branching information to branching dict
+                for i in branching_apis:
+                    try:
+                        branching[node['node']][t][i] += 1
+                    except KeyError:
+                        branching[node['node']][t][i] = 1
+
+    return valid_prog, vocab, vocab_size, prog_length, vocab_freq, apis_list, branching
+
+def add_call_to_vocab(valid_prog, vocab, vocab_size, call, prog_length, vocab_freq, apis_list, vocab_num):
+    if call != '' and call != '__delim__':
+        prog_length += 1
+        apis_list.append(call)
+        try:
+            vocab_freq[call][0] += 1
+        except KeyError:
+            vocab_freq[call] = [1, {}, {}]
+
+    if vocab_size < vocab_num:
+        if call != '':
+            vocab.add(call)
+            vocab_size = len(vocab)
+    else:
+        in_vocab = call in vocab
+        valid_prog = valid_prog and in_vocab
+
+    return valid_prog, vocab, vocab_size, prog_length, vocab_freq, apis_list
+
+def update_api_cofrequencies(apis_list, vocab_freq, prog_length):
+    apis_list = list(set(apis_list))
+    for api1 in apis_list:
+        try:
+            vocab_freq[api1][2][prog_length] += 1
+        except KeyError:
+            vocab_freq[api1][2][prog_length] = 1
+        for api2 in apis_list:
+            # if api1 != api2:  # by leaving this in we're able to know how many distinct programs this API shows up in
+            try:
+                vocab_freq[api1][1][api2] += 1
+            except KeyError:
+                vocab_freq[api1][1][api2] = 1
+    return vocab_freq
+
+def get_top_k_cofreq(cofreq_dict, k):
+    sorted_items = sorted(cofreq_dict.items(), key=lambda v: v[1], reverse=True)
+    if len(sorted_items) > k:
+        return sorted_items[:k]
+    else:
+        return sorted_items
+
+def remove_self_from_cofreq_list(api, api_cofreq_dict):
+    try:
+        del api_cofreq_dict[api]
+    except KeyError as e:
+        print("Error: couldn't delete api from it's cofreq dict: ", e)
+    return api_cofreq_dict
+
+def get_sorted_api_cofreq(vocab_freq):
+    vocab_items = vocab_freq.items()
+    sorted_apis = sorted([((i[0], i[1][1][i[0]]), i[1][1], sorted(i[1][2].items())) for i in vocab_items],
+                         key=lambda k: k[0][1],
+                         reverse=True)
+    sorted_apis = [(i[0], remove_self_from_cofreq_list(i[0][0], i[1]), i[2]) for i in sorted_apis]
+    return sorted_apis
+
+def get_api_cofrequencies(sorted_apis):
+    api_cofreq = [(i[0], get_top_k_cofreq(i[1], 10), i[2]) for i in sorted_apis]
+    return api_cofreq
 
 
 def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, num_programs=None, is_test_data=False,
@@ -108,16 +227,6 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
             new_data_filename += "-" + str(num_programs) + ".json"
 
     analysis_filename = new_data_filename[:-5] + "_analysis.txt"
-
-    # # Use directory path to old and new data if specified, else use default directory paths
-    # if old_data_dir_path is not None:
-    #     old_f = open(os.path.join(old_data_dir_path, old_data_filename), 'rb')
-    #     if new_data_dir_path is not None:
-    #         new_f = open(os.path.join(new_data_dir_path, new_data_filename), 'w+')
-    #     else:
-    #         new_f = open(os.path.join(old_data_dir_path, new_data_filename), 'w+')
-    # else:
-    # open and create appropriate data files
 
     if is_test_data:
         old_data_path = os.path.join(TEST_DATA_DIR_PATH, old_data_filename)
@@ -179,99 +288,7 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
     branching['DExcept'] = {'_catch': {}, '_try': {}}
     branching['DLoop'] = {'_body': {}, '_cond': {}}
 
-    def add_branched_to_vocab(valid_prog, vocab, vocab_size, node, prog_length, vocab_freq, apis_list, branching):
-        if node['node'] == 'DLoop':
-            # print("DLOOP keys:", node.keys())
-            types = ['_body', '_cond']
-            apis_list.append('DLoop')
-            vocab_freq['DLoop'][0] += 1
-        elif node['node'] == 'DExcept':
-            # print("DExcept keys:", node.keys())
-            types = ['_catch', '_try']
-            apis_list.append("DExcept")
-            vocab_freq['DExcept'][0] += 1
-        elif node['node'] == 'DBranch':
-            # print("DBranch keys:", node.keys())
-            types = ['_cond', '_else', '_then']
-            apis_list.append('DBranch')
-            vocab_freq['DBranch'][0] += 1
-        else:
-            types = []
-            print("skipped node type:", node['node'])
 
-            # print(node['node'])
-        if len(types) > 0:
-            for t in types:
-                for i in range(len(node[t])):
-                    branching_apis = []
-                    if node[t][i]['node'] != 'DAPICall':
-                        valid, vocab, vocab_size, prog_length, vocab_freq, branching_apis, branching = add_branched_to_vocab(
-                            valid_prog,
-                            vocab,
-                            vocab_size,
-                            node[t][i],
-                            prog_length,
-                            vocab_freq,
-                            branching_apis,
-                            branching)
-                        valid_prog = valid and valid_prog
-                    else:
-                        if len(node[t][i]) > 0:
-                            valid, vocab, vocab_size, prog_length, vocab_freq, branching_apis = add_call_to_vocab(
-                                valid_prog,
-                                vocab,
-                                vocab_size,
-                                node[t][i][
-                                    "_call"],
-                                prog_length,
-                                vocab_freq,
-                                branching_apis)
-                            valid_prog = valid and valid_prog
-
-                    apis_list += branching_apis
-
-                    # add branching information to branching dict
-                    for i in branching_apis:
-                        try:
-                            branching[node['node']][t][i] += 1
-                        except KeyError:
-                            branching[node['node']][t][i] = 1
-
-        return valid_prog, vocab, vocab_size, prog_length, vocab_freq, apis_list, branching
-
-    def add_call_to_vocab(valid_prog, vocab, vocab_size, call, prog_length, vocab_freq, apis_list):
-        if call != '' and call != '__delim__':
-            prog_length += 1
-            apis_list.append(call)
-            try:
-                vocab_freq[call][0] += 1
-            except KeyError:
-                vocab_freq[call] = [1, {}, {}]
-
-        if vocab_size < vocab_num:
-            if call != '':
-                vocab.add(call)
-                vocab_size = len(vocab)
-        else:
-            in_vocab = call in vocab
-            valid_prog = valid_prog and in_vocab
-
-        return valid_prog, vocab, vocab_size, prog_length, vocab_freq, apis_list
-
-    def update_api_cofrequencies(apis_list, vocab_freq, prog_length):
-        apis_list = list(set(apis_list))
-        for api1 in apis_list:
-            try:
-                vocab_freq[api1][2][prog_length] += 1
-            except KeyError:
-                vocab_freq[api1][2][prog_length] = 1
-            for api2 in apis_list:
-                # if api1 != api2:  # by leaving this in we're able to know how many distinct programs this API shows up in
-                try:
-                    vocab_freq[api1][1][api2] += 1
-                except KeyError:
-                    vocab_freq[api1][1][api2] = 1
-        return vocab_freq
 
     valid_prog = False
     added_to_training = False
@@ -293,14 +310,14 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
             try:
                 if node['node'] == 'DAPICall':
                     valid, new_vocab, new_vocab_size, prog_length, new_vocab_freq, apis_list = add_call_to_vocab(
-                        valid_prog, vocab, vocab_size, node['_call'], prog_length, new_vocab_freq, apis_list)
+                        valid_prog, vocab, vocab_size, node['_call'], prog_length, new_vocab_freq, apis_list, vocab_num)
                 elif node['node'] == 'DSubTree':
                     print("nested Dsubtree")
                     print(node)
                     valid = False
                 else:
                     valid, new_vocab, new_vocab_size, prog_length, new_vocab_freq, apis_list, new_branching = add_branched_to_vocab(
-                        valid_prog, vocab, vocab_size, node, prog_length, new_vocab_freq, apis_list, new_branching)
+                        valid_prog, vocab, vocab_size, node, prog_length, new_vocab_freq, apis_list, new_branching, vocab_num)
 
                 valid_prog = valid and valid_prog
             except KeyError as e:
@@ -400,39 +417,6 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
             "\t" + str(i + 1) + ") " + sorted_vocab_freq[i][0] + ": " + str(sorted_vocab_freq[i][1]) + "\n")
     analysis_f.write("\n")
 
-    # def get_top_10_cofreq(cofreq_dict):
-    #     sorted_items = sorted(cofreq_dict.items(), key=lambda k: k[1], reverse=True)
-    #     if len(sorted_items) > 10:
-    #         return sorted_items[:10]
-    #     else:
-    #         return sorted_items
-
-    def get_top_k_cofreq(cofreq_dict, k):
-        sorted_items = sorted(cofreq_dict.items(), key=lambda v: v[1], reverse=True)
-        if len(sorted_items) > k:
-            return sorted_items[:k]
-        else:
-            return sorted_items
-
-    def remove_self_from_cofreq_list(api, api_cofreq_dict):
-        try:
-            del api_cofreq_dict[api]
-        except KeyError as e:
-            print("Error: couldn't delete api from it's cofreq dict: ", e)
-        return api_cofreq_dict
-
-    def get_sorted_api_cofreq(vocab_freq):
-        vocab_items = vocab_freq.items()
-        sorted_apis = sorted([((i[0], i[1][1][i[0]]), i[1][1], sorted(i[1][2].items())) for i in vocab_items],
-                             key=lambda k: k[0][1],
-                             reverse=True)
-        sorted_apis = [(i[0], remove_self_from_cofreq_list(i[0][0], i[1]), i[2]) for i in sorted_apis]
-        return sorted_apis
-
-    def get_api_cofrequencies(sorted_apis):
-        api_cofreq = [(i[0], get_top_k_cofreq(i[1], 10), i[2]) for i in sorted_apis]
-        return api_cofreq
-
     sorted_apis = get_sorted_api_cofreq(vocab_freq)
     api_cofreq = get_api_cofrequencies(sorted_apis)
     analysis_f.write("API Cofrequency- Top 10\n")
@@ -475,6 +459,9 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
         test_f.close()
         analyze_file(new_dir_path, test_data_filename)
 
+    build_graph(sorted_apis, new_data_filename, new_dir_path)
+
+def build_graph(sorted_apis, new_data_filename, new_dir_path):
     # build graph
     g = nx.Graph()
 
@@ -506,17 +493,15 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
     graph_f.close()
 
 def load_graph(path):
-    G = nx.Graph()
+    g = nx.Graph()
     d = json.load(open(path))
-    G.add_nodes_from(d['nodes'])
-    G.add_edges_from(d['edges'])
-    return G
+    g.add_nodes_from(d['nodes'])
+    g.add_edges_from(d['edges'])
+    return g
 
 def view_graph(path):
     g = load_graph(path)
     print(nx.algorithms.components.number_connected_components(g))
-
-
 
 def analyze_file(dir_path, filename):
 
@@ -547,100 +532,6 @@ def analyze_file(dir_path, filename):
     branching['DBranch'] = {'_cond': {}, '_else': {}, '_then': {}}
     branching['DExcept'] = {'_catch': {}, '_try': {}}
     branching['DLoop'] = {'_body': {}, '_cond': {}}
-
-    def add_branched_to_vocab(valid_prog, vocab, vocab_size, node, prog_length, vocab_freq, apis_list, branching):
-        if node['node'] == 'DLoop':
-            # print("DLOOP keys:", node.keys())
-            types = ['_body', '_cond']
-            apis_list.append('DLoop')
-            vocab_freq['DLoop'][0] += 1
-        elif node['node'] == 'DExcept':
-            # print("DExcept keys:", node.keys())
-            types = ['_catch', '_try']
-            apis_list.append("DExcept")
-            vocab_freq['DExcept'][0] += 1
-        elif node['node'] == 'DBranch':
-            # print("DBranch keys:", node.keys())
-            types = ['_cond', '_else', '_then']
-            apis_list.append('DBranch')
-            vocab_freq['DBranch'][0] += 1
-        else:
-            types = []
-            print("skipped node type:", node['node'])
-
-            # print(node['node'])
-        if len(types) > 0:
-            for t in types:
-                for i in range(len(node[t])):
-                    branching_apis = []
-                    if node[t][i]['node'] != 'DAPICall':
-                        valid, vocab, vocab_size, prog_length, vocab_freq, branching_apis, branching = add_branched_to_vocab(
-                            valid_prog,
-                            vocab,
-                            vocab_size,
-                            node[t][i],
-                            prog_length,
-                            vocab_freq,
-                            branching_apis,
-                            branching)
-                        valid_prog = valid and valid_prog
-                    else:
-                        if len(node[t][i]) > 0:
-                            valid, vocab, vocab_size, prog_length, vocab_freq, branching_apis = add_call_to_vocab(
-                                valid_prog,
-                                vocab,
-                                vocab_size,
-                                node[t][i][
-                                    "_call"],
-                                prog_length,
-                                vocab_freq,
-                                branching_apis)
-                            valid_prog = valid and valid_prog
-
-                    apis_list += branching_apis
-
-                    # add branching information to branching dict
-                    for i in branching_apis:
-                        try:
-                            branching[node['node']][t][i] += 1
-                        except KeyError:
-                            branching[node['node']][t][i] = 1
-
-        return valid_prog, vocab, vocab_size, prog_length, vocab_freq, apis_list, branching
-
-    def add_call_to_vocab(valid_prog, vocab, vocab_size, call, prog_length, vocab_freq, apis_list):
-        if call != '' and call != '__delim__':
-            prog_length += 1
-            apis_list.append(call)
-            try:
-                vocab_freq[call][0] += 1
-            except KeyError:
-                vocab_freq[call] = [1, {}, {}]
-
-        if vocab_size < vocab_num:
-            if call != '':
-                vocab.add(call)
-                vocab_size = len(vocab)
-        else:
-            in_vocab = call in vocab
-            valid_prog = valid_prog and in_vocab
-
-        return valid_prog, vocab, vocab_size, prog_length, vocab_freq, apis_list
-
-    def update_api_cofrequencies(apis_list, vocab_freq, prog_length):
-        apis_list = list(set(apis_list))
-        for api1 in apis_list:
-            try:
-                vocab_freq[api1][2][prog_length] += 1
-            except KeyError:
-                vocab_freq[api1][2][prog_length] = 1
-            for api2 in apis_list:
-                # if api1 != api2:  # by leaving this in we're able to know how many distinct programs this API shows up in
-                try:
-                    vocab_freq[api1][1][api2] += 1
-                except KeyError:
-                    vocab_freq[api1][1][api2] = 1
-        return vocab_freq
 
     for program in ijson.items(f, 'programs.item'):
         valid_prog = True
@@ -709,32 +600,6 @@ def analyze_file(dir_path, filename):
             "\t" + str(i + 1) + ") " + sorted_vocab_freq[i][0] + ": " + str(sorted_vocab_freq[i][1]) + "\n")
     analysis_f.write("\n")
 
-    def get_top_k_cofreq(cofreq_dict, k):
-        sorted_items = sorted(cofreq_dict.items(), key=lambda v: v[1], reverse=True)
-        if len(sorted_items) > k:
-            return sorted_items[:k]
-        else:
-            return sorted_items
-
-    def remove_self_from_cofreq_list(api, api_cofreq_dict):
-        try:
-            del api_cofreq_dict[api]
-        except KeyError as e:
-            print("Error: couldn't delete api from it's cofreq dict: ", e)
-        return api_cofreq_dict
-
-    def get_sorted_api_cofreq(vocab_freq):
-        vocab_items = vocab_freq.items()
-        sorted_apis = sorted([((i[0], i[1][1][i[0]]), i[1][1], sorted(i[1][2].items())) for i in vocab_items],
-                             key=lambda k: k[0][1],
-                             reverse=True)
-        sorted_apis = [(i[0], remove_self_from_cofreq_list(i[0][0], i[1]), i[2]) for i in sorted_apis]
-        return sorted_apis
-
-    def get_api_cofrequencies(sorted_apis):
-        api_cofreq = [(i[0], get_top_k_cofreq(i[1], 10), i[2]) for i in sorted_apis]
-        return api_cofreq
-
     sorted_apis = get_sorted_api_cofreq(vocab_freq)
     api_cofreq = get_api_cofrequencies(sorted_apis)
     analysis_f.write("API Cofrequency- Top 10\n")
@@ -768,6 +633,8 @@ def analyze_file(dir_path, filename):
                 analysis_f.write("\t\t" + str(i + 1) + ") " + t_cofreq[i][0] + ": " + str(t_cofreq[i][1]) + "\n")
             analysis_f.write("\n")
         analysis_f.write("\n")
+
+    build_graph(sorted_apis, filename, dir_path)
 
 # copy_json_data_limit_vocab("data_surrounding_methods.json", "all_data_50k_vocab.json", 50000, split_data=1000)
 
