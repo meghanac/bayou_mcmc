@@ -45,7 +45,6 @@ def plot(clargs):
         states.extend(state)
         for node in nodes:
             label = get_api(predictor.config, node)
-            print(label)
             labels.append(label)
     predictor.close()
 

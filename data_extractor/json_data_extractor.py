@@ -2,6 +2,8 @@ import ijson
 import json
 import os
 from collections import defaultdict
+import networkx as nx
+from networkx.readwrite import json_graph
 
 TRAINING_DATA_DIR_PATH = "data"
 TEST_DATA_DIR_PATH = "data/test_data"
@@ -419,15 +421,20 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
             print("Error: couldn't delete api from it's cofreq dict: ", e)
         return api_cofreq_dict
 
-    def get_api_cofrequencies(vocab_freq):
+    def get_sorted_api_cofreq(vocab_freq):
         vocab_items = vocab_freq.items()
-        sorted_apis = sorted([((i[0], i[1][1][i[0]]), i[1][1], sorted(i[1][2].items())) for i in vocab_items], key=lambda k: k[0][1],
+        sorted_apis = sorted([((i[0], i[1][1][i[0]]), i[1][1], sorted(i[1][2].items())) for i in vocab_items],
+                             key=lambda k: k[0][1],
                              reverse=True)
         sorted_apis = [(i[0], remove_self_from_cofreq_list(i[0][0], i[1]), i[2]) for i in sorted_apis]
+        return sorted_apis
+
+    def get_api_cofrequencies(sorted_apis):
         api_cofreq = [(i[0], get_top_k_cofreq(i[1], 10), i[2]) for i in sorted_apis]
         return api_cofreq
 
-    api_cofreq = get_api_cofrequencies(vocab_freq)
+    sorted_apis = get_sorted_api_cofreq(vocab_freq)
+    api_cofreq = get_api_cofrequencies(sorted_apis)
     analysis_f.write("API Cofrequency- Top 10\n")
     for i in range(len(api_cofreq)):
         analysis_f.write("\t" + str(i + 1) + ") " + api_cofreq[i][0][0] + ": Found in " + str(
@@ -468,6 +475,46 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
         test_f.close()
         analyze_file(new_dir_path, test_data_filename)
 
+    # build graph
+    g = nx.Graph()
+
+    node_attr = [(i[0][0], {'frequency': i[0][1]}) for i in sorted_apis]
+    g.add_nodes_from(node_attr)
+
+    nodes_edges = [(i[0][0], i[1].items()) for i in sorted_apis]
+    for node, edges in nodes_edges:
+        g.add_edges_from([(node, edge[0], {'weight': edge[1]}) for edge in edges])
+
+    # dump graph to json file
+    data = json_graph.adjacency_data(g)
+    s = json.dumps(data)
+    graph_filename = new_data_filename[:-5] + "_graph.json"
+    graph_f = open(os.path.join(new_dir_path, graph_filename), "w+")
+    graph_f.write(s)
+    graph_f.close()
+
+    g.remove_node('DBranch')
+    g.remove_node('DLoop')
+    g.remove_node('DExcept')
+
+    # dump graph to json file
+    data = json_graph.adjacency_data(g)
+    s = json.dumps(data)
+    graph_filename = new_data_filename[:-5] + "_api_graph.json"
+    graph_f = open(os.path.join(new_dir_path, graph_filename), "w+")
+    graph_f.write(s)
+    graph_f.close()
+
+def load_graph(path):
+    G = nx.Graph()
+    d = json.load(open(path))
+    G.add_nodes_from(d['nodes'])
+    G.add_edges_from(d['edges'])
+    return G
+
+def view_graph(path):
+    g = load_graph(path)
+    print(nx.algorithms.components.number_connected_components(g))
 
 
 
@@ -676,16 +723,20 @@ def analyze_file(dir_path, filename):
             print("Error: couldn't delete api from it's cofreq dict: ", e)
         return api_cofreq_dict
 
-    def get_api_cofrequencies(vocab_freq):
+    def get_sorted_api_cofreq(vocab_freq):
         vocab_items = vocab_freq.items()
         sorted_apis = sorted([((i[0], i[1][1][i[0]]), i[1][1], sorted(i[1][2].items())) for i in vocab_items],
                              key=lambda k: k[0][1],
                              reverse=True)
         sorted_apis = [(i[0], remove_self_from_cofreq_list(i[0][0], i[1]), i[2]) for i in sorted_apis]
+        return sorted_apis
+
+    def get_api_cofrequencies(sorted_apis):
         api_cofreq = [(i[0], get_top_k_cofreq(i[1], 10), i[2]) for i in sorted_apis]
         return api_cofreq
 
-    api_cofreq = get_api_cofrequencies(vocab_freq)
+    sorted_apis = get_sorted_api_cofreq(vocab_freq)
+    api_cofreq = get_api_cofrequencies(sorted_apis)
     analysis_f.write("API Cofrequency- Top 10\n")
     for i in range(len(api_cofreq)):
         analysis_f.write("\t" + str(i + 1) + ") " + api_cofreq[i][0][0] + ": Found in " + str(
@@ -718,14 +769,12 @@ def analyze_file(dir_path, filename):
             analysis_f.write("\n")
         analysis_f.write("\n")
 
+# copy_json_data_limit_vocab("data_surrounding_methods.json", "all_data_50k_vocab.json", 50000, split_data=1000)
 
-
-
-
-copy_json_data_limit_vocab("data_surrounding_methods.json", "testing.json", 1000, num_programs=600, split_data=10)
-
-# copy_json_data_limit_vocab("data_surrounding_methods.json", "delete.json", 1000, num_programs=6000, min_length=3, is_test_data=False)
+# copy_json_data_limit_vocab("data_surrounding_methods.json", "delete.json", 1000, num_programs=6000, is_test_data=False)
 
 
 # copy_json_data_limit_vocab("data_surrounding_methods.json", "no_vocab_constraint_min_3.json", 100000, num_programs=10000,
 #                            is_test_data=False, min_length=3)
+
+view_graph("delete-6000/delete-6000_api_graph.json")
