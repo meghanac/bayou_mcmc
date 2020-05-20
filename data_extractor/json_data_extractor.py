@@ -492,30 +492,25 @@ def build_graph(sorted_apis, new_data_filename, new_dir_path):
     graph_f.write(s)
     graph_f.close()
 
+    return g, os.path.join(new_dir_path, graph_filename)
+
 def load_graph(path):
-    g = nx.Graph()
-    d = json.load(open(path))
-    g.add_nodes_from(d['nodes'])
-    g.add_edges_from(d['edges'])
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    d = json.load(open(os.path.join(dir_path, path)))
+    g = json_graph.adjacency_graph(d)
     return g
 
 def view_graph(path):
     g = load_graph(path)
     print(nx.algorithms.components.number_connected_components(g))
 
-def analyze_file(dir_path, filename):
 
-    analysis_filename = filename[:-5] + "_analysis.txt"
-    f = open(os.path.join(dir_path, filename), 'r')
-    analysis_f = open(os.path.join(dir_path, analysis_filename), 'w+')
-
+def get_vocab_frequencies(f, vocab_num):
     # initialize number of programs copied counter
     counter = 0
 
     vocab = set([])
     vocab_size = len(vocab)
-
-    vocab_num = 100000000000
 
     num_skipped = 0
 
@@ -545,14 +540,15 @@ def analyze_file(dir_path, filename):
             try:
                 if node['node'] == 'DAPICall':
                     valid, new_vocab, new_vocab_size, prog_length, new_vocab_freq, apis_list = add_call_to_vocab(
-                        valid_prog, vocab, vocab_size, node['_call'], prog_length, new_vocab_freq, apis_list)
+                        valid_prog, vocab, vocab_size, node['_call'], prog_length, new_vocab_freq, apis_list, vocab_num)
                 elif node['node'] == 'DSubTree':
                     print("nested Dsubtree")
                     print(node)
                     valid = False
                 else:
                     valid, new_vocab, new_vocab_size, prog_length, new_vocab_freq, apis_list, new_branching = add_branched_to_vocab(
-                        valid_prog, vocab, vocab_size, node, prog_length, new_vocab_freq, apis_list, new_branching)
+                        valid_prog, vocab, vocab_size, node, prog_length, new_vocab_freq, apis_list, new_branching,
+                        vocab_num)
 
                 valid_prog = valid and valid_prog
             except KeyError as e:
@@ -573,6 +569,58 @@ def analyze_file(dir_path, filename):
                 prog_sizes[prog_length] = 1
             vocab_freq = update_api_cofrequencies(apis_list, vocab_freq, prog_length)
             counter += 1
+
+    data = {"counter": counter, "vocab_freq": vocab_freq, "prog_sizes": prog_sizes,
+            "vocab": vocab, "num_skipped": num_skipped, "vocab_size": vocab_size, "branching": branching}
+
+    return data
+
+
+def build_graph_from_json_file(dir_path, filename, vocab_freq_saved=False, vocab_num=1000000000000):
+    f = open(os.path.join(dir_path, filename), 'r')
+    if vocab_freq_saved:
+        vocab_f = open(os.path.join(dir_path, filename[:-5] + "_vocab_freq.json"), "r")
+        data = json.load(vocab_f)
+        vocab_freq = data['vocab_freq']
+    else:
+        vocab_freq_data = get_vocab_frequencies(f, vocab_num)
+        vocab_freq = vocab_freq_data['vocab_freq']
+        dump_vocab_freq(dir_path, filename, vocab_freq_data)
+    sorted_apis = get_sorted_api_cofreq(vocab_freq)
+    g, _ = build_graph(sorted_apis, filename, dir_path)
+    print(nx.algorithms.components.number_connected_components(g))
+    return g
+
+
+def dump_vocab_freq(dir_path, filename, vocab_freq_data):
+    json_data = json.dumps(vocab_freq_data)
+    filename = filename[:-5] + "_vocab_freq.json"
+    f = open(os.path.join(dir_path, filename), 'w+')
+    f.write(json_data)
+    f.close()
+
+
+def analyze_file(dir_path, filename, vocab_freq_saved=True):
+    analysis_filename = filename[:-5] + "_analysis.txt"
+    f = open(os.path.join(dir_path, filename), 'r')
+    analysis_f = open(os.path.join(dir_path, analysis_filename), 'w+')
+
+    vocab_num = 100000000000
+
+    if vocab_freq_saved:
+        vocab_f = open(os.path.join(dir_path, filename[:-5] + "_vocab_freq.json"), "r")
+        vocab_freq_data = json.load(vocab_f)
+    else:
+        vocab_freq_data = get_vocab_frequencies(f, vocab_num)
+        dump_vocab_freq(dir_path, filename, vocab_freq_data)
+
+    vocab_freq = vocab_freq_data['vocab_freq']
+    counter = vocab_freq_data['counter']
+    vocab = vocab_freq_data['vocab']
+    num_skipped = vocab_freq_data['num_skipped']
+    prog_sizes = vocab_freq_data['prog_sizes']
+    vocab_size = vocab_freq_data['vocab_size']
+    branching = vocab_freq_data['vocab_size']
 
     print(str(counter) + " json objects in " + filename)
     print("Vocab size:", len(vocab))
@@ -644,4 +692,6 @@ def analyze_file(dir_path, filename):
 # copy_json_data_limit_vocab("data_surrounding_methods.json", "no_vocab_constraint_min_3.json", 100000, num_programs=10000,
 #                            is_test_data=False, min_length=3)
 
-view_graph("delete-6000/delete-6000_api_graph.json")
+# view_graph("data/delete-6000/delete-6000_api_graph.json")
+
+build_graph_from_json_file("data/all_data_10k_vocab/", "all_data_10k_vocab.json")
