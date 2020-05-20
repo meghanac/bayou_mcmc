@@ -593,7 +593,8 @@ def build_graph_from_json_file(dir_path, filename, vocab_freq_saved=False, vocab
 
 
 def dump_vocab_freq(dir_path, filename, vocab_freq_data):
-    json_data = json.dumps(vocab_freq_data)
+    vocab_freq_data['vocab'] = list(vocab_freq_data['vocab'])
+    json_data = json.dumps(dict(vocab_freq_data))
     filename = filename[:-5] + "_vocab_freq.json"
     f = open(os.path.join(dir_path, filename), 'w+')
     f.write(json_data)
@@ -616,7 +617,7 @@ def analyze_file(dir_path, filename, vocab_freq_saved=True):
 
     vocab_freq = vocab_freq_data['vocab_freq']
     counter = vocab_freq_data['counter']
-    vocab = vocab_freq_data['vocab']
+    vocab = set(vocab_freq_data['vocab'])
     num_skipped = vocab_freq_data['num_skipped']
     prog_sizes = vocab_freq_data['prog_sizes']
     vocab_size = vocab_freq_data['vocab_size']
@@ -694,4 +695,4 @@ def analyze_file(dir_path, filename, vocab_freq_saved=True):
 
 # view_graph("data/delete-6000/delete-6000_api_graph.json")
 
-build_graph_from_json_file("data/all_data_10k_vocab/", "all_data_10k_vocab.json")
+build_graph_from_json_file("data/all_data_50k_vocab", "all_data_50k_vocab.json")

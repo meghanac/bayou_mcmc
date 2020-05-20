@@ -29,6 +29,11 @@ DNODES = {START, STOP, DBRANCH, DLOOP, DEXCEPT}
 
 EMPTY = '__delim__'
 
+INSERT = 'insert'
+DELETE = 'delete'
+SWAP = 'swap'
+REPLACE = 'replace'
+ADD_DNODE = 'add_dnode'
 
 class TooLongLoopingException(Exception):
     pass
@@ -215,6 +220,10 @@ class MCMCProgram:
         self.fp = [[]]
         self.decoder = None
         self.encoder = None
+
+        self.proposal_probs = {INSERT: 0.25, DELETE: 0.25, SWAP: 0.25, REPLACE: 0.25}
+        self.proposals = self.proposal_probs.keys()
+        self.p_probs = [self.proposal_probs[p] for p in self.proposals]
 
         # Logging  # TODO: change to Logger
         self.accepted = 0
@@ -615,8 +624,8 @@ class MCMCProgram:
         new_node_parent = self.get_node_in_position(rand_node_pos)
 
         # Probabilistically choose the node that should appear after selected random parent
-        new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos, SIBLING_EDGE, non_dnode=False)]
-        # new_node_api = self.node2vocab[self.get_ast_idx(rand_node_pos)]
+        new_node_idx, prob = self.get_ast_idx(rand_node_pos, SIBLING_EDGE, non_dnode=False)
+        new_node_api = self.node2vocab[new_node_idx]
 
         # If a dnode is chosen, grow it out
         if new_node_api == DBRANCH:
@@ -638,7 +647,7 @@ class MCMCProgram:
         # Calculate probability of new program
         self.calculate_probability()
 
-        return new_node
+        return new_node, prob
 
     def undo_add_random_node(self, added_node):
         """
@@ -818,6 +827,8 @@ class MCMCProgram:
         :param parent: (Node) parent of DBranch
         :return: (Node) DBranch node
         """
+        ln_prob = 0
+
         # remove parent's current sibling node if there
         parent_sibling = parent.sibling
         parent.remove_node(SIBLING_EDGE)
@@ -838,23 +849,29 @@ class MCMCProgram:
             return None
 
         # Create condition as DBranch child
-        condition = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dbranch_pos, CHILD_EDGE)], dbranch, CHILD_EDGE)
+        cond_idx, prob = self.get_ast_idx(dbranch_pos, CHILD_EDGE)
+        condition = self.create_and_add_node(self.node2vocab[cond_idx], dbranch, CHILD_EDGE)
         cond_pos = self.get_nodes_position(condition)
         assert cond_pos > 0, "Error: Condition node position couldn't be found"
+        ln_prob += prob
 
         # Add then api as child to condition node
-        then_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos, CHILD_EDGE)], condition, CHILD_EDGE)
+        then_idx, prob = self.get_ast_idx(cond_pos, CHILD_EDGE)
+        then_node = self.create_and_add_node(self.node2vocab[then_idx], condition, CHILD_EDGE)
         self.create_and_add_node(STOP, then_node, SIBLING_EDGE)
+        ln_prob += prob
 
         # Add else api as sibling to condition node
-        else_node = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos, SIBLING_EDGE)], condition, SIBLING_EDGE)
+        else_idx, prob = self.get_ast_idx(cond_pos, SIBLING_EDGE)
+        else_node = self.create_and_add_node(self.node2vocab[else_idx], condition, SIBLING_EDGE)
+        ln_prob += prob
 
         self.create_and_add_node(STOP, else_node, SIBLING_EDGE)
 
         # Calculate probability of new program
         self.calculate_probability()
 
-        return dbranch
+        return dbranch, ln_prob
 
     def grow_dloop_or_dexcept(self, parent, create_dloop):
         """
@@ -863,6 +880,7 @@ class MCMCProgram:
         :param parent: (Node) parent of DLoop
         :return: (Node) DLoop node
         """
+        ln_prob = 0
         # remove parent's current sibling node if there
         parent_sibling = parent.sibling
         parent.remove_node(SIBLING_EDGE)
@@ -888,19 +906,23 @@ class MCMCProgram:
             return None
 
         # Create condition/try as DNode child
-        condition = self.create_and_add_node(self.node2vocab[self.get_ast_idx(dnode_pos, CHILD_EDGE)], dnode, CHILD_EDGE)
+        cond_idx, prob = self.get_ast_idx(dnode_pos, CHILD_EDGE)
+        condition = self.create_and_add_node(self.node2vocab[cond_idx], dnode, CHILD_EDGE)
         cond_pos = self.get_nodes_position(condition)
         assert cond_pos > 0, "Error: Condition node position couldn't be found"
+        ln_prob += prob
 
         # Add body/catch api as child to condition node
-        body = self.create_and_add_node(self.node2vocab[self.get_ast_idx(cond_pos, CHILD_EDGE)], condition, CHILD_EDGE)
+        body_idx, prob = self.get_ast_idx(cond_pos, CHILD_EDGE)
+        body = self.create_and_add_node(self.node2vocab[body_idx], condition, CHILD_EDGE)
+        ln_prob += prob
 
         self.create_and_add_node(STOP, body, SIBLING_EDGE)
 
         # Calculate probability of new program
         self.calculate_probability()
 
-        return dnode
+        return dnode, ln_prob
 
     def add_random_dnode(self):
         """
@@ -1058,100 +1080,160 @@ class MCMCProgram:
             self.rejected += 1
             return False
 
-    def transform_tree(self):
+    def check_insert(self, added_node, prev_length):
+        if added_node.api_name not in DNODES:
+            assert self.curr_prog.length == prev_length + 1, "Curr prog length: " + str(
+                self.curr_prog.length) + ", prev length: " + str(prev_length) + ", added node length: " + str(
+                added_node.length)
+        elif added_node.api_name == DBRANCH:
+            assert self.curr_prog.length == prev_length + 5 or self.curr_prog.length + 6, "Curr prog length: " + str(
+                self.curr_prog.length) + ", prev length: " + str(prev_length) + ", added node length: " + str(
+                added_node.length)
+        elif added_node.api_name == DLOOP or added_node.api_name == DEXCEPT:
+            assert self.curr_prog.length == prev_length + 3 or self.curr_prog.length + 4, "Curr prog length: " + str(
+                self.curr_prog.length) + ", prev length: " + str(prev_length) + ", added node length: " + str(
+                added_node.length)
+
+    def check_delete(self, node, prev_length):
+        if node.api_name not in DNODES:
+            assert self.curr_prog.length == prev_length - 1, "Curr prog length: " + str(
+                self.curr_prog.length) + ", prev length: " + str(prev_length) + ", deleted node length: " + str(
+                node.length)
+        elif node.api_name == DBRANCH:
+            assert self.curr_prog.length == prev_length - 5 or self.curr_prog.length == prev_length - 6, \
+                "Curr prog length: " + str(self.curr_prog.length) + ", prev length: " + str(
+                    prev_length) + ", deleted node length: " + str(node.length)
+        elif node.api_name == DLOOP or node.api_name == DEXCEPT:
+            assert self.curr_prog.length == prev_length - 3 or self.curr_prog.length == prev_length - 4, \
+                "Curr prog length: " + str(self.curr_prog.length) + ", prev length: " + str(
+                    prev_length) + ", deleted node length: " + str(node.length)
+
+    def insert_proposal(self, verbose):
+        # Logging and checks
+        prev_length = self.curr_prog.length
+        self.add += 1
+
+        # Add node
+        added_node, ln_prob = self.add_random_node()
+
+        # Print logs
+        if verbose:
+            self.print_verbose_tree_info()
+
+        # If no node was added, return False
+        if added_node is None:
+            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                self.curr_prog.length) + " != prev length: " + str(prev_length)
+            return False
+
+        # Validate current program
+        valid = self.validate_and_update_program()
+
+        # Undo move if not valid
+        if not valid:
+            self.undo_add_random_node(added_node)
+            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                self.curr_prog.length) + " != prev length: " + str(prev_length)
+            return False
+
+        # Check that insertion was valid and that there aren't any bugs
+        self.check_insert(added_node, prev_length)
+
+        # Logging
+        self.add_accepted += 1
+
+    def delete_proposal(self, verbose):
+        # Logging and checks
+        prev_length = self.curr_prog.length
+        self.delete += 1
+
+        # Delete node
+        node, parent_node, parent_edge = self.delete_random_node()
+
+        # Print logs
+        if verbose:
+            self.print_verbose_tree_info()
+
+        # Undo move if not valid
+        if not self.validate_and_update_program():
+            self.undo_delete_random_node(node, parent_node, parent_edge)
+            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                self.curr_prog.length) + " != prev length: " + str(prev_length)
+            return False
+
+        # Check that insertion was valid and that there aren't any bugs
+        self.check_delete(node, prev_length)
+
+        # Logging
+        self.delete_accepted += 1
+
+    def swap_proposal(self, verbose):
+        # Logging and checks
+        prev_length = self.curr_prog.length
+        self.swap += 1
+
+        # Swap nodes
+        node1, node2 = self.random_swap()
+
+        # Print logs
+        if verbose:
+            self.print_verbose_tree_info()
+
+        # Undo move if invalid
+        if node1 is None or node2 is None:
+            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                self.curr_prog.length) + " != prev length: " + str(prev_length)
+            return False
+        if not self.validate_and_update_program():
+            self.undo_swap_nodes(node1, node2)
+            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                self.curr_prog.length) + " != prev length: " + str(prev_length)
+            return False
+
+        # Check that there are no bugs in implementation
+        assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+            self.curr_prog.length) + " != prev length: " + str(prev_length)
+
+        # Logging
+        self.swap_accepted += 1
+
+    def add_dnode_proposal(self, verbose):
+        self.add_dnode += 1
+        dnode = self.add_random_dnode()
+
+        # Print logs
+        if verbose:
+            self.print_verbose_tree_info()
+
+        if dnode is None:
+            return False
+        if not self.validate_and_update_program():
+            self.undo_add_random_dnode(dnode)
+            return False
+        self.add_dnode_accepted += 1
+
+
+    def transform_tree(self, verbose=False):
         """
         Randomly chooses a transformation and transforms the current program if it is accepted.
         :return: (bool) whether current tree was transformed or not
         """
         assert self.check_validity() is True
 
-        move = random.choice(['add', 'delete'])
+        move = np.random.choice(self.proposals, p=self.p_probs)
         # move = np.random.choice(['add', 'delete', 'swap', 'add_dnode'], p=[0.3, 0.3, 0.3, 0.1])
         # print("move:", move)
 
-        if move == 'add':
-            prev_length = self.curr_prog.length
-            self.add += 1
-            added_node = self.add_random_node()
-            self.print_verbose_tree_info()
-            if added_node is None:
-                assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
-                    self.curr_prog.length) + " != prev length: " + str(prev_length)
-                # print("node is none")
-                return False
-            valid = self.validate_and_update_program()
-            # print("valid:", valid)
-            if not valid:
-                self.undo_add_random_node(added_node)
-                assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
-                    self.curr_prog.length) + " != prev length: " + str(prev_length)
-                return False
-            if added_node.api_name not in DNODES:
-                assert self.curr_prog.length == prev_length + 1, "Curr prog length: " + str(
-                    self.curr_prog.length) + ", prev length: " + str(prev_length) + ", added node length: " + str(
-                    added_node.length)
-            elif added_node.api_name == DBRANCH:
-                assert self.curr_prog.length == prev_length + 5 or self.curr_prog.length + 6, "Curr prog length: " + str(
-                    self.curr_prog.length) + ", prev length: " + str(prev_length) + ", added node length: " + str(
-                    added_node.length)
-            elif added_node.api_name == DLOOP or added_node.api_name == DEXCEPT:
-                assert self.curr_prog.length == prev_length + 3 or self.curr_prog.length + 4, "Curr prog length: " + str(
-                    self.curr_prog.length) + ", prev length: " + str(prev_length) + ", added node length: " + str(
-                    added_node.length)
-            # else:
-            #     raise ValueError("Added DStop or DSubtree node when that's not allowed")
-            self.add_accepted += 1
-        elif move == 'delete':
-            prev_length = self.curr_prog.length
-            self.delete += 1
-            node, parent_node, parent_edge = self.delete_random_node()
-            self.print_verbose_tree_info()
-            if not self.validate_and_update_program():
-                self.undo_delete_random_node(node, parent_node, parent_edge)
-                assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
-                    self.curr_prog.length) + " != prev length: " + str(prev_length)
-                return False
-            if node.api_name not in DNODES:
-                assert self.curr_prog.length == prev_length - 1, "Curr prog length: " + str(
-                    self.curr_prog.length) + ", prev length: " + str(prev_length) + ", deleted node length: " + str(
-                    node.length)
-            elif node.api_name == DBRANCH:
-                assert self.curr_prog.length == prev_length - 5 or self.curr_prog.length == prev_length - 6, \
-                    "Curr prog length: " + str(self.curr_prog.length) + ", prev length: " + str(
-                        prev_length) + ", deleted node length: " + str(node.length)
-            elif node.api_name == DLOOP or node.api_name == DEXCEPT:
-                assert self.curr_prog.length == prev_length - 3 or self.curr_prog.length == prev_length - 4, \
-                    "Curr prog length: " + str(self.curr_prog.length) + ", prev length: " + str(
-                        prev_length) + ", deleted node length: " + str(node.length)
-            # else:
-            #     raise ValueError("Deleted DStop or DSubtree node when that's not allowed")
-            self.delete_accepted += 1
-        elif move == 'swap':
-            prev_length = self.curr_prog.length
-            self.swap += 1
-            node1, node2 = self.random_swap()
-            self.print_verbose_tree_info()
-            if node1 is None or node2 is None:
-                assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
-                    self.curr_prog.length) + " != prev length: " + str(prev_length)
-                return False
-            if not self.validate_and_update_program():
-                self.undo_swap_nodes(node1, node2)
-                assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
-                    self.curr_prog.length) + " != prev length: " + str(prev_length)
-                return False
-            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
-                self.curr_prog.length) + " != prev length: " + str(prev_length)
-            self.swap_accepted += 1
-        elif move == 'add_dnode':
-            self.add_dnode += 1
-            dnode = self.add_random_dnode()
-            if dnode is None:
-                return False
-            if not self.validate_and_update_program():
-                self.undo_add_random_dnode(dnode)
-                return False
-            self.add_dnode_accepted += 1
+        if move == INSERT:
+            return self.insert_proposal(verbose)
+        elif move == DELETE:
+            return self.delete_proposal(verbose)
+        elif move == SWAP:
+            return self.swap_proposal(verbose)
+        elif move == ADD_DNODE:
+            return self.add_dnode_proposal(verbose)
+        elif move == REPLACE:  # TODO: add this
+            return False
         else:
             raise ValueError('move not defined')  # TODO: remove once tested
 
@@ -1165,32 +1247,53 @@ class MCMCProgram:
 
         return self.get_ast_idx_random_top_k(parent_pos, non_dnode, edge)  # randomly choose from top k
 
-    def get_ast_idx_random_top_k(self, parent_pos, non_dnode, added_edge):  # TODO: TEST
+    def get_ast_idx_random_top_k(self, parent_pos, added_edge, top_k_prob=0.95):  # TODO: TEST
         """
         Returns api number (based on vocabulary). Uniform randomly selected from top k based on parent node.
         :param parent_pos: (int) position of parent node in current program (by DFS)
         :return: (int) number of api in vocabulary
         """
-        def choose_ast_idx(logits):
-            logits = logits["probs"]
-            sorted_logits = np.argsort(-logits)
 
-            # print(sorted_logits)
-            # print(logits[sorted_logits[0]])
-            # print(logits[sorted_logits[1]])
+        logits = self.get_logits_for_add_node(parent_pos, added_edge)
+        sorted_logits = np.argsort(-logits)
 
-            mu = random.uniform(0, 1)
-            if mu <= 0.95:
-                rand_idx = random.randint(0, self.decoder.top_k - 1)  # randint is a,b inclusive
-                print("topk", [self.node2vocab[sorted_logits[i]] for i in range(0, self.decoder.top_k)])
-                print("topk", self.node2vocab[sorted_logits[rand_idx]])
+        # print(sorted_logits)
+        # print(logits[sorted_logits[0]])
+        # print(logits[sorted_logits[1]])
 
-                return sorted_logits[rand_idx]
-            else:
-                rand_idx = random.randint(self.decoder.top_k, len(sorted_logits) - 1)
-                print("-topk", self.node2vocab[sorted_logits[rand_idx]])
-                return sorted_logits[rand_idx]
+        mu = random.uniform(0, 1)
+        if mu <= top_k_prob:
+            rand_idx = random.randint(0, self.decoder.top_k - 1)  # randint is a,b inclusive
+            print("topk", [self.node2vocab[sorted_logits[i]] for i in range(0, self.decoder.top_k)])
+            print("topk", self.node2vocab[sorted_logits[rand_idx]])
+            prob = top_k_prob * 1.0 / self.decoder.top_k
+            return sorted_logits[rand_idx], prob
+        else:
+            rand_idx = random.randint(self.decoder.top_k, len(sorted_logits) - 1)
+            print("-topk", self.node2vocab[sorted_logits[rand_idx]])
+            prob = (1 - top_k_prob) * 1.0 / self.decoder.top_k
+            return sorted_logits[rand_idx], prob
 
+    def get_ast_idx_top_k(self, parent_pos, added_edge, top_k_prob=0.95):
+        logits = self.get_logits_for_add_node(parent_pos, added_edge)
+        sorted_logits = np.argsort(-logits)
+
+        mu = random.uniform(0, 1)
+        if mu <= top_k_prob:
+            top_k = sorted_logits[:self.decoder.top_k]
+            top_k /= np.linalg.norm(top_k)
+            # u = random.uniform(0, 1)
+            # cum_topk = np.cumsum(top_k)
+            # prob = top_k_prob * 1.0 / self.decoder.top_k
+            selected = tf.multinomial(top_k)
+            return sorted_logits[selected], top_k[selected]
+        else:
+            not_topk = sorted_logits[self.decoder.top_k:]
+            not_topk /= np.linalg.norm(not_topk)
+            selected = tf.multinomial(not_topk)
+            return sorted_logits[selected], not_topk[selected]
+
+    def get_logits_for_add_node(self, parent_pos, added_edge):
         state = self.initial_state
         nodes, edges = self.get_vector_representation()
 
@@ -1207,7 +1310,7 @@ class MCMCProgram:
             if i == parent_pos:
                 state, probs = self.decoder.get_ast_logits(node, edge, state)
 
-                assert(vocab_size == len(probs[0]), str(vocab_size) + ", " + str(len(probs[0])))
+                assert (vocab_size == len(probs[0]), str(vocab_size) + ", " + str(len(probs[0])))
 
                 logits["probs"] = np.zeros(vocab_size)
                 for j in range(len(probs[0])):
@@ -1224,16 +1327,16 @@ class MCMCProgram:
                     if parent_pos == self.curr_prog.length - 1:
                         logits["probs"][k] += probs[0][self.vocab2node[STOP]]
                     else:
-                        logits["probs"][k] += probs[0][nodes[i+1]]
+                        logits["probs"][k] += probs[0][nodes[i + 1]]
 
                 if parent_pos == self.curr_prog.length - 1:
-                    return choose_ast_idx(logits)
+                    return logits["probs"]
 
             elif parent_pos < i < self.curr_prog.length - 1:
                 for k in range(vocab_size):
                     ast_state, probs = self.decoder.get_ast_logits(node, edge, state)
                     logits[k] = ast_state
-                    logits["probs"][k] += probs[0][nodes[i+1]]
+                    logits["probs"][k] += probs[0][nodes[i + 1]]
 
             elif i == self.curr_prog.length - 1:
                 if self.node2vocab[nodes[i]] != STOP:
@@ -1241,12 +1344,10 @@ class MCMCProgram:
                     logits[k] = ast_state
                     logits["probs"][k] += probs[0][self.vocab2node[STOP]]
 
-                return choose_ast_idx(logits)
+                return logits["probs"]
 
             else:
                 state, _ = self.decoder.get_ast_logits(node, edge, state)
-
-
 
     def get_random_initial_state(self):
         self.initial_state = self.decoder.get_random_initial_state()
