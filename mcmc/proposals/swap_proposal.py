@@ -196,4 +196,4 @@ class SwapProposal:
             node2_parent.add_node(node1, node2_edge)
 
     def calculate_ln_prob_of_move(self):
-        return 0
+        return self.ln_proposal_dist

@@ -86,4 +86,4 @@ class DeleteProposal:
         return node, rand_node_pos
 
     def calculate_ln_prob_of_move(self):
-        return 0
+        return self.ln_proposal_dist
