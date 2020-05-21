@@ -1,4 +1,3 @@
-
 def print_verbose_tree_info(curr_prog):
     curr_node = curr_prog
 

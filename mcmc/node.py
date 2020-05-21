@@ -133,5 +133,3 @@ class Node:
             new_child_node = self.child.copy()
             new_node.add_node(new_child_node, CHILD_EDGE)
         return new_node
-
-

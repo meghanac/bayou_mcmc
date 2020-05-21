@@ -85,4 +85,3 @@ class InsertProposal(ProposalWithInsertion):
             parent_node = added_node.parent
             added_node.parent.remove_node(SIBLING_EDGE)
             parent_node.add_node(sibling_node, SIBLING_EDGE)
-

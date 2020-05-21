@@ -151,4 +151,3 @@ class TreeModifier:
         except KeyError:  # api does not exist in vocabulary and hence node cannot be made
             print(api_name, " is not in vocabulary. Node was not added.")
             return None
-

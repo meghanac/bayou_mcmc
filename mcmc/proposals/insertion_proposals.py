@@ -142,10 +142,12 @@ class ProposalWithInsertion:
 
         # Parent nodes whose children are invalid
         unselectable_parent_dnodes = {self.config.vocab2node[DLOOP],
-                                      self.config.vocab2node[DEXCEPT]}  # TODO: make sure I can actually remove DBranch node
+                                      self.config.vocab2node[
+                                          DEXCEPT]}  # TODO: make sure I can actually remove DBranch node
 
         # Unselectable nodes
-        unselectable_nodes = {self.config.vocab2node[START], self.config.vocab2node[STOP], self.config.vocab2node[EMPTY]}
+        unselectable_nodes = {self.config.vocab2node[START], self.config.vocab2node[STOP],
+                              self.config.vocab2node[EMPTY]}
 
         while True:  # while a valid node exists in the program
             # If no list of nodes is specified, choose a random one from the program
@@ -325,14 +327,14 @@ class ProposalWithInsertion:
                 # get probability of adding then node
                 cond_pos = self.tree_mod.get_nodes_position(curr_prog, cond_node)
                 stop_node = then_node.remove_node(SIBLING_EDGE)
-                assert(then_node.child is None)
+                assert (then_node.child is None)
                 ln_prob += self._get_prob_from_logits(curr_prog, initial_state, cond_pos, then_node, CHILD_EDGE)
                 cond_node.add_node(then_node, CHILD_EDGE)
                 then_node.add_node(stop_node, SIBLING_EDGE)
 
                 # get probability of adding else node
                 stop_node = else_node.remove_node(SIBLING_EDGE)
-                assert(else_node.child is None)
+                assert (else_node.child is None)
                 ln_prob += self._get_prob_from_logits(curr_prog, initial_state, cond_pos, else_node, SIBLING_EDGE)
                 cond_node.add_node(else_node, SIBLING_EDGE)
                 else_node.add_node(stop_node, SIBLING_EDGE)
@@ -346,7 +348,7 @@ class ProposalWithInsertion:
 
                 # remove child from DNode and then add DNode node
                 added_node.remove_node(CHILD_EDGE)
-                assert(added_node.sibling is None)
+                assert (added_node.sibling is None)
                 parent_node = self.tree_mod.get_node_in_position(curr_prog, parent_pos)
                 if is_dloop:
                     self.tree_mod.create_and_add_node(DLOOP, parent_node, SIBLING_EDGE)
@@ -356,7 +358,7 @@ class ProposalWithInsertion:
                 # get probability of adding condition node
                 dnode_pos = self.tree_mod.get_nodes_position(curr_prog, added_node)
                 cond_node.remove_node(CHILD_EDGE)
-                assert(cond_node.sibling is None)
+                assert (cond_node.sibling is None)
                 ln_prob = self._get_prob_from_logits(curr_prog, initial_state, dnode_pos, cond_node, CHILD_EDGE)
                 added_node.add_node(cond_node, CHILD_EDGE)
 

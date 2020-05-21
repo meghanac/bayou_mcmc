@@ -28,6 +28,7 @@ SWAP = 'swap'
 REPLACE = 'replace'
 ADD_DNODE = 'add_dnode'
 
+
 class TooLongLoopingException(Exception):
     pass
 
@@ -80,7 +81,6 @@ class MCMCProgram:
         self.Swap = SwapProposal(self.tree_mod)
         self.AddDnode = AddDnodeProposal(self.tree_mod, self.decoder)
         self.Replace = ReplaceProposal(self.tree_mod, self.decoder)
-
 
         # Logging  # TODO: change to Logger
         self.accepted = 0
@@ -222,7 +222,7 @@ class MCMCProgram:
                     if curr_node.child.sibling.sibling.api_name != STOP:
                         return False
 
-            #TODO: basically what is happening is that a DExcept gets added to the end of the program so there's no DStop
+            # TODO: basically what is happening is that a DExcept gets added to the end of the program so there's no DStop
             # node but then a node gets added onto the catch node and the required DStop node isn't there
             # easiest solution might just be to allow DStop nodes at the end and discard them when calculating probability
 
@@ -286,7 +286,7 @@ class MCMCProgram:
         ln_prob_reverse_move = math.log(self.proposal_probs[self.reverse[move]])
         ln_prob_move = math.log(self.proposal_probs[move])
         alpha = (ln_prob_reverse_move + ln_reversal_prob + self.curr_log_prob) - (
-                    self.prev_log_prob + ln_prob_move + ln_proposal_prob)
+                self.prev_log_prob + ln_prob_move + ln_proposal_prob)
         mu = math.log(random.uniform(0, 1))
         if mu < alpha:
             self.prev_log_prob = self.curr_log_prob  # TODO: add logging for graph here
@@ -373,9 +373,11 @@ class MCMCProgram:
         self.Replace.attempted += 1
 
         # Add node
-        self.curr_prog, new_node, replaced_node, ln_proposal_prob = self.Replace.replace_random_node(self.curr_prog, self.initial_state)
+        self.curr_prog, new_node, replaced_node, ln_proposal_prob = self.Replace.replace_random_node(self.curr_prog,
+                                                                                                     self.initial_state)
         parent_pos = self.tree_mod.get_nodes_position(self.curr_prog, new_node.parent)
-        ln_reversal_prob = self.Replace.calculate_ln_prob_of_move(self.curr_prog, self.initial_state, parent_pos, replaced_node, new_node.parent_edge)
+        ln_reversal_prob = self.Replace.calculate_ln_prob_of_move(self.curr_prog, self.initial_state, parent_pos,
+                                                                  replaced_node, new_node.parent_edge)
 
         # Calculate probability of new program
         self.calculate_probability()
