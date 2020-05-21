@@ -11,6 +11,7 @@ import tensorflow as tf
 
 from mcmc.node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
 
+
 class ProposalWithInsertion:
     def __init__(self, tree_modifier, decoder, top_k_prob=0.95):
         self.decoder = decoder

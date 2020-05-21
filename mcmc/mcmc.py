@@ -19,6 +19,8 @@ from mcmc.tree_modifier import TreeModifier
 from mcmc.proposals.insert_proposal import InsertProposal
 from mcmc.proposals.delete_proposal import DeleteProposal
 from mcmc.proposals.swap_proposal import SwapProposal
+from mcmc.proposals.add_dnode_proposal import AddDnodeProposal
+from mcmc.proposals.replace_proposal import ReplaceProposal
 
 INSERT = 'insert'
 DELETE = 'delete'
@@ -76,8 +78,8 @@ class MCMCProgram:
         self.Insert = InsertProposal(self.tree_mod, self.decoder)
         self.Delete = DeleteProposal(self.tree_mod)
         self.Swap = SwapProposal(self.tree_mod)
-        self.AddDnode = InsertProposal(self.tree_mod, self.decoder)
-        self.Replace = None
+        self.AddDnode = AddDnodeProposal(self.tree_mod, self.decoder)
+        self.Replace = ReplaceProposal(self.tree_mod, self.decoder)
 
 
         # Logging  # TODO: change to Logger
@@ -365,6 +367,46 @@ class MCMCProgram:
         # successful
         return True
 
+    def replace_proposal(self, verbose):
+        # Logging and checks
+        prev_length = self.curr_prog.length
+        self.Replace.attempted += 1
+
+        # Add node
+        self.curr_prog, new_node, replaced_node, ln_proposal_prob = self.Replace.replace_random_node(self.curr_prog, self.initial_state)
+        parent_pos = self.tree_mod.get_nodes_position(self.curr_prog, new_node.parent)
+        ln_reversal_prob = self.Replace.calculate_ln_prob_of_move(self.curr_prog, self.initial_state, parent_pos, replaced_node, new_node.parent_edge)
+
+        # Calculate probability of new program
+        self.calculate_probability()
+
+        # Print logs
+        if verbose:
+            print_verbose_tree_info(self.curr_prog)
+
+        # If no node was added, return False
+        if new_node is None:
+            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                self.curr_prog.length) + " != prev length: " + str(prev_length)
+            return False
+
+        # Validate current program
+        valid = self.validate_and_update_program(REPLACE, ln_proposal_prob, ln_reversal_prob)
+
+        # Undo move if not valid
+        if not valid:
+            self.Replace.undo_replace_random_node(new_node, replaced_node)
+            self.curr_log_prob = self.prev_log_prob
+            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                self.curr_prog.length) + " != prev length: " + str(prev_length)
+            return False
+
+        # # Check that insertion was valid and that there aren't any bugs
+        # self.check_replace(new_node, replaced_node, prev_length)
+
+        # Logging
+        self.Replace.accepted += 1
+
     def delete_proposal(self, verbose):
         # Logging and checks
         prev_length = self.curr_prog.length
@@ -457,11 +499,11 @@ class MCMCProgram:
         if dnode is None:
             return False
         if not self.validate_and_update_program(ADD_DNODE, ln_proposal_prob, reversal_ln_prob):
-            self.Insert.undo_add_random_dnode(dnode)
+            self.AddDnode.undo_add_random_dnode(dnode)
             self.curr_log_prob = self.prev_log_prob
             return False
 
-        # Loging
+        # Logging
         self.AddDnode.accepted += 1
 
         # successful
@@ -475,8 +517,7 @@ class MCMCProgram:
         assert self.check_validity() is True
 
         move = np.random.choice(self.proposals, p=self.p_probs)
-        # move = np.random.choice(['add', 'delete', 'swap', 'add_dnode'], p=[0.3, 0.3, 0.3, 0.1])
-        # print("move:", move)
+        print("move:", move)
 
         if move == INSERT:
             return self.insert_proposal(verbose)
@@ -487,7 +528,7 @@ class MCMCProgram:
         elif move == ADD_DNODE:
             return self.add_dnode_proposal(verbose)
         elif move == REPLACE:  # TODO: add this
-            return False
+            return self.replace_proposal(verbose)
         else:
             raise ValueError('move not defined')  # TODO: remove once tested
 
@@ -570,6 +611,7 @@ class MCMCProgram:
         :return:
         """
         self.transform_tree()
+        self.update_latent_state_and_decoder_state()
 
         # # Attempt to transform the current program
         # if self.transform_tree():

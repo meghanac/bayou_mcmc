@@ -12,6 +12,7 @@ import tensorflow as tf
 from mcmc.node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
 from mcmc.proposals.insertion_proposals import ProposalWithInsertion
 
+
 class ReplaceProposal(ProposalWithInsertion):
 
     def __init__(self, tree_modifier, decoder):
@@ -65,7 +66,7 @@ class ReplaceProposal(ProposalWithInsertion):
 
         return curr_prog, new_node, replaced_node, prob
 
-    def undo_replace_random_node(self, curr_prog, new_node, replaced_node):
+    def undo_replace_random_node(self, new_node, replaced_node):
         parent = new_node.parent
         parent_edge = new_node.parent_edge
 
@@ -76,3 +77,10 @@ class ReplaceProposal(ProposalWithInsertion):
         # Add replaced node bac
         parent.add_node(replaced_node, parent_edge)
         replaced_node.add_node(sibling, SIBLING_EDGE)
+
+    def calculate_ln_prob_of_move(self, curr_prog, initial_state, parent_pos, added_node, added_edge):
+        # remove new_node (node that replaced added_node with added_edge) from parent_pos
+        parent = self.tree_mod.get_node_in_position(curr_prog, parent_pos)
+        parent.remove_node(added_edge)
+
+        return super().calculate_ln_prob_of_move(curr_prog, initial_state, parent_pos, added_node, added_edge)
