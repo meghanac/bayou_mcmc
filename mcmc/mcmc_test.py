@@ -850,14 +850,14 @@ class MCMCProgramWrapper:
         print("Total rejected transformations:", self.prog.rejected)
         print("Total valid transformations:", self.prog.valid)
         print("Total invalid transformations:", self.prog.invalid)
-        print("Total attempted add transforms:", self.prog.add)
-        print("Total accepted add transforms:", self.prog.add_accepted)
-        print("Total attempted delete transforms:", self.prog.delete)
-        print("Total accepted delete transforms:", self.prog.delete_accepted)
-        print("Total attempted swap transforms:", self.prog.swap)
-        print("Total accepted swap transforms:", self.prog.swap_accepted)
-        print("Total attempted add dnode transforms:", self.prog.add_dnode)
-        print("Total accepted add dnode transforms:", self.prog.add_dnode_accepted)
+        print("Total attempted add transforms:", self.prog.Insert.attempted)
+        print("Total accepted add transforms:", self.prog.Insert.accepted)
+        print("Total attempted delete transforms:", self.prog.Delete.attempted)
+        print("Total accepted delete transforms:", self.prog.Delete.accepted)
+        print("Total attempted swap transforms:", self.prog.Swap.attempted)
+        print("Total accepted swap transforms:", self.prog.Swap.accepted)
+        print("Total attempted add dnode transforms:", self.prog.AddDnode.attempted)
+        print("Total accepted add dnode transforms:", self.prog.AddDnode.accepted)
 
 
 

@@ -19,7 +19,7 @@ class SwapProposal:
         self.tree_mod = tree_modifier
         self.max_num_api = self.config.max_num_api
         self.max_length = self.config.max_length
-        self.proposal_dist = 1
+        self.ln_proposal_dist = 0
 
         self.curr_prog = None
 
@@ -51,7 +51,7 @@ class SwapProposal:
         # Reset self.curr_prog
         self.curr_prog = None
 
-        return curr_prog, node1, node2, self.proposal_dist
+        return curr_prog, node1, node2, self.ln_proposal_dist
 
     def undo_swap_nodes(self, node1, node2):
         self.__swap_nodes(node1, node2)
@@ -195,4 +195,5 @@ class SwapProposal:
             node1_parent.add_node(node2, node1_edge)
             node2_parent.add_node(node1, node2_edge)
 
-
+    def calculate_ln_prob_of_move(self):
+        return 0

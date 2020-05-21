@@ -69,10 +69,10 @@ class MCMCProgram:
         self.decoder = None
         self.encoder = None
 
-        self.proposal_probs = {INSERT: 0.25, DELETE: 0.25, SWAP: 0.25, REPLACE: 0.25}
+        self.proposal_probs = {INSERT: 0.25, DELETE: 0.25, SWAP: 0.25, REPLACE: 0.25, ADD_DNODE: 0.0}
         self.proposals = self.proposal_probs.keys()
         self.p_probs = [self.proposal_probs[p] for p in self.proposals]
-        self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE}
+        self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE, ADD_DNODE: DELETE}
         self.Insert = InsertProposal(self.tree_mod, self.decoder)
         self.Delete = DeleteProposal(self.tree_mod)
         self.Swap = SwapProposal(self.tree_mod)
@@ -283,7 +283,7 @@ class MCMCProgram:
         # print(math.exp(self.curr_log_prob)/math.exp(self.prev_log_prob))
         ln_prob_reverse_move = math.log(self.proposal_probs[self.reverse[move]])
         ln_prob_move = math.log(self.proposal_probs[move])
-        alpha = (ln_prob_reverse_move + ln_reversal_prob + self.curr_log_prob) + (
+        alpha = (ln_prob_reverse_move + ln_reversal_prob + self.curr_log_prob) - (
                     self.prev_log_prob + ln_prob_move + ln_proposal_prob)
         mu = math.log(random.uniform(0, 1))
         if mu < alpha:
@@ -330,6 +330,7 @@ class MCMCProgram:
 
         # Add node
         self.curr_prog, added_node, ln_proposal_prob = self.Insert.add_random_node(self.curr_prog, self.initial_state)
+        ln_reversal_prob = self.Delete.calculate_ln_prob_of_move()
 
         # Calculate probability of new program
         self.calculate_probability()
@@ -345,7 +346,7 @@ class MCMCProgram:
             return False
 
         # Validate current program
-        valid = self.validate_and_update_program()
+        valid = self.validate_and_update_program(INSERT, ln_proposal_prob, ln_reversal_prob)
 
         # Undo move if not valid
         if not valid:
@@ -370,7 +371,10 @@ class MCMCProgram:
         self.Delete.attempted += 1
 
         # Delete node
-        self.curr_prog, node, parent_node, parent_edge, prob = self.Delete.delete_random_node(self.curr_prog)
+        self.curr_prog, node, parent_node, parent_edge, ln_prob = self.Delete.delete_random_node(self.curr_prog)
+        parent_pos = self.tree_mod.get_nodes_position(self.curr_prog, parent_node)
+        ln_reversal_prob = self.Insert.calculate_ln_prob_of_move(self.curr_prog, self.initial_state, parent_pos, node,
+                                                                 parent_edge)
 
         # Calculate probability of new program
         self.calculate_probability()
@@ -380,7 +384,7 @@ class MCMCProgram:
             print_verbose_tree_info(self.curr_prog)
 
         # Undo move if not valid
-        if not self.validate_and_update_program():
+        if not self.validate_and_update_program(DELETE, ln_prob, ln_reversal_prob):
             self.Delete.undo_delete_random_node(node, parent_node, parent_edge)
             self.curr_log_prob = self.prev_log_prob
             assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
@@ -402,7 +406,8 @@ class MCMCProgram:
         self.Swap.attempted += 1
 
         # Swap nodes
-        self.curr_prog, node1, node2, prob = self.Swap.random_swap(self.curr_prog)
+        self.curr_prog, node1, node2, ln_prob = self.Swap.random_swap(self.curr_prog)
+        reversal_ln_prob = self.Swap.calculate_ln_prob_of_move()
 
         # Calculate probability of new program
         self.calculate_probability()
@@ -416,7 +421,7 @@ class MCMCProgram:
             assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
                 self.curr_prog.length) + " != prev length: " + str(prev_length)
             return False
-        if not self.validate_and_update_program():
+        if not self.validate_and_update_program(SWAP, ln_prob, reversal_ln_prob):
             self.Swap.undo_swap_nodes(node1, node2)
             self.curr_log_prob = self.prev_log_prob
             assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
@@ -436,7 +441,10 @@ class MCMCProgram:
     def add_dnode_proposal(self, verbose):
         # Logging and checks
         self.AddDnode.attempted += 1
-        self.curr_prog, dnode, proposal_prob = self.AddDnode.add_random_dnode(self.curr_prog, self.initial_state)
+
+        # Add dnode
+        self.curr_prog, dnode, ln_proposal_prob = self.AddDnode.add_random_dnode(self.curr_prog, self.initial_state)
+        reversal_ln_prob = self.Delete.calculate_ln_prob_of_move()
 
         # Calculate probability of new program
         self.calculate_probability()
@@ -448,7 +456,7 @@ class MCMCProgram:
         # If not valid, return False
         if dnode is None:
             return False
-        if not self.validate_and_update_program():
+        if not self.validate_and_update_program(ADD_DNODE, ln_proposal_prob, reversal_ln_prob):
             self.Insert.undo_add_random_dnode(dnode)
             self.curr_log_prob = self.prev_log_prob
             return False

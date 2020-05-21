@@ -19,7 +19,7 @@ class DeleteProposal:
         self.tree_mod = tree_modifier
         self.max_num_api = self.config.max_num_api
         self.max_length = self.config.max_length
-        self.proposal_dist = 1
+        self.ln_proposal_dist = 0
 
         # Temporary attributes
         self.curr_prog = None
@@ -53,7 +53,7 @@ class DeleteProposal:
         # Reset self.curr_prog
         self.curr_prog = None
 
-        return curr_prog, node, parent_node, parent_edge, self.proposal_dist
+        return curr_prog, node, parent_node, parent_edge, self.ln_proposal_dist
 
     def undo_delete_random_node(self, node, parent_node, edge):
         """
@@ -85,3 +85,5 @@ class DeleteProposal:
         # Checks parent edge to prevent deleting half a branch or leave dangling D-nodes
         return node, rand_node_pos
 
+    def calculate_ln_prob_of_move(self):
+        return 0

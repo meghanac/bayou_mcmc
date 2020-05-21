@@ -14,12 +14,13 @@ from mcmc.node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DE
 
 class InsertProposal:
 
-    def __init__(self, tree_modifier, decoder):
+    def __init__(self, tree_modifier, decoder, top_k_prob=0.95):
         self.decoder = decoder
         self.config = tree_modifier.config
         self.tree_mod = tree_modifier
         self.max_num_api = self.config.max_num_api
         self.max_length = self.config.max_length
+        self.top_k_prob = top_k_prob
 
         # Temporary attributes
         self.curr_prog = None
@@ -296,16 +297,16 @@ class InsertProposal:
 
         # return self.get_ast_idx_top_k(parent_pos, non_dnode) # multinomial on top k
 
-        return self.__get_ast_idx_random_top_k(parent_pos, non_dnode, edge)  # randomly choose from top k
+        return self.__get_ast_idx_random_top_k(parent_pos, edge)  # randomly choose from top k
 
-    def __get_ast_idx_random_top_k(self, parent_pos, added_edge, top_k_prob=0.95):  # TODO: TEST
+    def __get_ast_idx_random_top_k(self, parent_pos, added_edge):  # TODO: TEST
         """
         Returns api number (based on vocabulary). Uniform randomly selected from top k based on parent node.
         :param parent_pos: (int) position of parent node in current program (by DFS)
         :return: (int) number of api in vocabulary
         """
 
-        logits = self.__get_logits_for_add_node(parent_pos, added_edge)
+        logits = self.__get_logits_for_add_node(self.curr_prog, self.initial_state, parent_pos, added_edge)
         sorted_logits = np.argsort(-logits)
 
         # print(sorted_logits)
@@ -313,17 +314,17 @@ class InsertProposal:
         # print(logits[sorted_logits[1]])
 
         mu = random.uniform(0, 1)
-        if mu <= top_k_prob:
+        if mu <= self.top_k_prob:
             rand_idx = random.randint(0, self.decoder.top_k - 1)  # randint is a,b inclusive
             print("topk", [self.config.node2vocab[sorted_logits[i]] for i in range(0, self.decoder.top_k)])
             print("topk", self.config.node2vocab[sorted_logits[rand_idx]])
-            prob = top_k_prob * 1.0 / self.decoder.top_k
-            return sorted_logits[rand_idx], prob
+            prob = self.top_k_prob * 1.0 / self.decoder.top_k
+            return sorted_logits[rand_idx], math.log(prob)
         else:
             rand_idx = random.randint(self.decoder.top_k, len(sorted_logits) - 1)
             print("-topk", self.config.node2vocab[sorted_logits[rand_idx]])
-            prob = (1 - top_k_prob) * 1.0 / self.decoder.top_k
-            return sorted_logits[rand_idx], prob
+            prob = (1 - self.top_k_prob) * 1.0 / (len(logits) - self.decoder.top_k)
+            return sorted_logits[rand_idx], math.log(prob)
 
     # def __get_ast_idx_top_k(self, parent_pos, added_edge, top_k_prob=0.95):
     #     logits = self.get_logits_for_add_node(parent_pos, added_edge)
@@ -344,8 +345,8 @@ class InsertProposal:
     #         selected = tf.multinomial(not_topk)
     #         return sorted_logits[selected], not_topk[selected]
 
-    def __get_logits_for_add_node(self, parent_pos, added_edge):
-        state = self.initial_state
+    def __get_logits_for_add_node(self, curr_prog, initial_state, parent_pos, added_edge):
+        state = initial_state
         nodes, edges = self.tree_mod.get_vector_representation()
 
         node = np.zeros([1, 1], dtype=np.int32)
@@ -355,7 +356,7 @@ class InsertProposal:
 
         logits = {}
 
-        for i in range(self.curr_prog.length):
+        for i in range(curr_prog.length):
             node[0][0] = nodes[i]
             edge[0][0] = edges[i]
             if i == parent_pos:
@@ -375,21 +376,21 @@ class InsertProposal:
 
                     ast_state, probs = self.decoder.get_ast_logits(node, edge, state)
                     logits[k] = ast_state
-                    if parent_pos == self.curr_prog.length - 1:
+                    if parent_pos == curr_prog.length - 1:
                         logits["probs"][k] += probs[0][self.config.vocab2node[STOP]]
                     else:
                         logits["probs"][k] += probs[0][nodes[i + 1]]
 
-                if parent_pos == self.curr_prog.length - 1:
+                if parent_pos == curr_prog.length - 1:
                     return logits["probs"]
 
-            elif parent_pos < i < self.curr_prog.length - 1:
+            elif parent_pos < i < curr_prog.length - 1:
                 for k in range(vocab_size):
                     ast_state, probs = self.decoder.get_ast_logits(node, edge, state)
                     logits[k] = ast_state
                     logits["probs"][k] += probs[0][nodes[i + 1]]
 
-            elif i == self.curr_prog.length - 1:
+            elif i == curr_prog.length - 1:
                 if self.config.node2vocab[nodes[i]] != STOP:
                     ast_state, probs = self.decoder.get_ast_logits(node, edge, state)
                     logits[k] = ast_state
@@ -399,3 +400,84 @@ class InsertProposal:
 
             else:
                 state, _ = self.decoder.get_ast_logits(node, edge, state)
+
+    def __get_prob_from_logits(self, curr_prog, initial_state, parent_pos, added_node, added_edge):
+        logits = self.__get_logits_for_add_node(curr_prog, initial_state, parent_pos, added_edge)
+        sorted_logits = np.argsort(-logits)
+
+        if np.where(sorted_logits == added_node.api_num)[0] < self.decoder.top_k:
+            return math.log(self.top_k_prob * 1.0 / self.decoder.top_k)
+        else:
+            return math.log((1 - self.top_k_prob) * 1.0 / (len(logits) - self.decoder.top_k))
+
+    def calculate_ln_prob_of_move(self, curr_prog, initial_state, parent_pos, added_node, added_edge):
+        if added_node.api_name not in {DBRANCH, DLOOP, DEXCEPT}:
+            return self.__get_prob_from_logits(curr_prog, initial_state, parent_pos, added_node, added_edge)
+        else:
+            if added_node.api_name == DBRANCH:
+                cond_node = added_node.child
+                then_node = cond_node.child
+                else_node = cond_node.sibling
+
+                # remove child and siblings from DBranch and then add DBranch node
+                added_node.remove_node(CHILD_EDGE)
+                added_node.remove_node(SIBLING_EDGE)
+                parent_node = self.tree_mod.get_node_in_position(curr_prog, parent_pos)
+                self.tree_mod.create_and_add_node(DBRANCH, parent_node, SIBLING_EDGE)
+
+                # get probability of adding condition node
+                dbranch_pos = self.tree_mod.get_nodes_position(curr_prog, added_node)
+                cond_node.remove_node(CHILD_EDGE)
+                cond_node.remove_node(SIBLING_EDGE)
+                ln_prob = self.__get_prob_from_logits(curr_prog, initial_state, dbranch_pos, cond_node, CHILD_EDGE)
+                added_node.add_node(cond_node, CHILD_EDGE)
+
+                # get probability of adding then node
+                cond_pos = self.tree_mod.get_nodes_position(curr_prog, cond_node)
+                stop_node = then_node.remove_node(SIBLING_EDGE)
+                assert(then_node.child is None)
+                ln_prob += self.__get_prob_from_logits(curr_prog, initial_state, cond_pos, then_node, CHILD_EDGE)
+                cond_node.add_node(then_node, CHILD_EDGE)
+                then_node.add_node(stop_node, SIBLING_EDGE)
+
+                # get probability of adding else node
+                stop_node = else_node.remove_node(SIBLING_EDGE)
+                assert(else_node.child is None)
+                ln_prob += self.__get_prob_from_logits(curr_prog, initial_state, cond_pos, else_node, SIBLING_EDGE)
+                cond_node.add_node(else_node, SIBLING_EDGE)
+                else_node.add_node(stop_node, SIBLING_EDGE)
+
+                return ln_prob
+            else:
+                is_dloop = (added_node.api_name == DLOOP)
+
+                cond_node = added_node.child
+                body_node = cond_node.child
+
+                # remove child from DNode and then add DNode node
+                added_node.remove_node(CHILD_EDGE)
+                assert(added_node.sibling is None)
+                parent_node = self.tree_mod.get_node_in_position(curr_prog, parent_pos)
+                if is_dloop:
+                    self.tree_mod.create_and_add_node(DLOOP, parent_node, SIBLING_EDGE)
+                else:
+                    self.tree_mod.create_and_add_node(DEXCEPT, parent_node, SIBLING_EDGE)
+
+                # get probability of adding condition node
+                dnode_pos = self.tree_mod.get_nodes_position(curr_prog, added_node)
+                cond_node.remove_node(CHILD_EDGE)
+                assert(cond_node.sibling is None)
+                ln_prob = self.__get_prob_from_logits(curr_prog, initial_state, dnode_pos, cond_node, CHILD_EDGE)
+                added_node.add_node(cond_node, CHILD_EDGE)
+
+                # get probability of adding body node
+                cond_pos = self.tree_mod.get_nodes_position(curr_prog, cond_node)
+                stop_node = body_node.remove_node(SIBLING_EDGE)
+                assert (body_node.child is None)
+                ln_prob += self.__get_prob_from_logits(curr_prog, initial_state, cond_pos, body_node, CHILD_EDGE)
+                cond_node.add_node(body_node, CHILD_EDGE)
+                body_node.add_node(stop_node, SIBLING_EDGE)
+
+                return ln_prob
+
+
