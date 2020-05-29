@@ -9,7 +9,7 @@ import random
 import json
 import tensorflow as tf
 
-from mcmc.node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
+from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
 
 
 class DeleteProposal:
@@ -80,7 +80,7 @@ class DeleteProposal:
         """
         # exclude DSubTree node, randint is [a,b] inclusive
         rand_node_pos = random.randint(1, self.curr_prog.length - 1)
-        node = self.tree_mod.get_node_in_position(rand_node_pos)
+        node = self.tree_mod.get_node_in_position(self.curr_prog, rand_node_pos)
 
         # Checks parent edge to prevent deleting half a branch or leave dangling D-nodes
         return node, rand_node_pos

@@ -1,0 +1,162 @@
+
+Running Jupyter Notebook on Docker:
+
+# start a container if you have the container id
+docker start <container_id>
+
+# run an image
+docker run -d -p 8888:8888 <image_name>
+	ex:	docker run -d -p 8888:8888 bayou_c
+
+# check docker containers
+docker ps [-a]
+
+docker exec <container_id>
+
+# open jupyter notebook
+docker exec <container_id> jupyter notebook list
+
+# open bash
+docker exec -it <container_id> bash
+
+# note: within bash you can install require packages using pip install
+
+# another way to get the jupyter url is by checking the logs
+docker logs <docker name>
+
+# stop container
+docker stop <container_id>
+
+
+# Run Jupyter notebook in Docker on AWS EC2 instance:
+# https://www.guru99.com/jupyter-notebook-tutorial.html
+
+
+---------------------------------------------------------------------------------------------------
+
+Basic Docker Commands
+
+# remove a container
+docker rm <container_id>
+
+# show images
+docker images
+
+# remove an image
+docker rmi image_name
+
+# commit a container as an image
+docker commit container_name
+
+# tag a docker image
+docker tag image_id dockerhub_id/image_name
+
+# login to docker
+docker login [--username=<username>]
+
+# push image to docker
+docker push image_name
+
+# pull docker image
+docker pull dockerhub_id/image_name:tag
+
+
+---------------------------------------------------------------------------------------------------
+
+Garuda Commands:
+
+# to login
+ssh mvc1@garuda.cs.rice.edu
+
+# to check which GPUs are in use. Ones not in use don't show up in Processes.
+nvidia-smi
+
+# to copy local file to files in garuda (current location is directory
+# in which local files wished to be copied are in)
+# note that the : is important for the system to know that the remote path is being specified
+scp <filename> mvc1@garuda.cs.rice.edu:/<absolute path to dest dir>
+	ex:	scp data.json mvc1@garuda.cs.rice.edu:/home/mvc1/data
+
+# Run docker container normally but make sure GPU number is specified within code
+docker run --runtime=nvidia --name=<name> -v /home/mvc1:/<dir path>
+	ex: docker run -v ~/work:/home/jovyan/work -d -p 8888:8888 --runtime=nvidia -e GRANT_SUDO=yes  --name=meghana97_bayou jupyter/tensorflow-notebook
+
+	ex: docker run --runtime=nvidia -v ~/model_iterations/nov13:/work  --name=meghana97_bayou -it tensorflow/tensorflow:latest-gpu-py3 bash
+
+	Actual: docker run --runtime=nvidia -v ~/:/all  --name=meghana_bayou -it tensorflow/tensorflow:1.15.2 bash
+
+	# for GPU tensorflow use tensorflow/tensorflow:latest-gpu-py3 bash
+
+# How to specify which GPU to use within python script
+CUDA_VISIBLE_DEVICES=<GPU number>
+
+# To run python script WITHIN docker container
+CUDA_VISIBLE_DEVICES=<GPU number> python3 <script_name>
+
+# to run docker bash with root access
+docker exec -it -u root <container_id> bash
+
+# to give read and write access to all groups, users and others (run within docker container)
+sudo chmod 777 <directory path>
+	ex: sudo chmod 777 ~/work
+
+
+
+---------------------------------------------------------------------------------------------------
+
+Other useful commands
+
+# unzip tar files
+# useful resource: https://linuxize.com/post/how-to-extract-unzip-tar-gz-file/
+tar -xf <filename>
+
+# to move files
+mv <source path> <dest path>
+
+# shut down jupyter notebook server on specific port
+jupyter notebook stop <port number>
+
+# run jupyter notebook from bash with root person
+jupyter notebook --allow-root
+
+# create an alias command in Terminal
+alias <alias_name>='<command>'
+	ex: alias research='cd ~/Documents/GitHub/Jermaine-Research/Research/'
+
+# remove an alias
+unalias <alias_name>
+
+# to fix WARNING: UNPROTECTED PRIVATE KEY FILE error when SSHing into AWS
+chmod 700 <key_name>
+
+# scp file to AWS EC2 instance
+scp -i "<path_to_key>" <source_file_path> ec2-user@<public_dns>:/<dest_path>
+
+# scp all contents in directory to AWS EC2 instance
+scp -i "<path_to_key>" -r <source_dir_path> ec2-user@<public_dns>:/<dest_path>
+
+# scp from EC2 instance to local (run command from local machine)
+scp -i "<path_to_key>" ec2-user@<public_DNS_of_EC@>:/home/ec2-user/work/<path> .
+
+# to fix "ModuleNotFoundError" in docker container, run this is bash before running script
+# run it from the topmost directory in which there's code
+export PYTHONPATH="$PWD"
+
+---------------------------------------------------------------------------------------------------
+
+Research Commands
+
+# install required packages for jovyan/jupyter_tensorflow docker image
+# NOTE: you have to run conda install python-graphviz for test() to work correctly for some reason
+pip install simplejson && pip install ijson && pip install nltk && pip install graphviz && pip install sklearn && conda install python-graphviz
+
+# packages for tensorflow/tensorflow:latest-gpu-py3
+pip install simplejson && pip install ijson && pip install nltk && pip install graphviz && pip install sklearn && pip install matplotlib
+
+# packages for pytorch/pytorch
+pip install simplejson && pip install ijson && pip install nltk && pip install graphviz && pip install sklearn && pip install matplotlib && pip install tensorboardX && pip install pandas
+
+
+
+
+---------------------------------------------------------------------------------------------------

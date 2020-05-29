@@ -158,7 +158,7 @@ if __name__ == '__main__':
                         help='checkpoint model during training here')
     parser.add_argument('--data', type=str, default='../data_extractor/data/' + folder_name + "/",
                         help='load data from here')
-    parser.add_argument('--config', type=str, default='tiny_config.json',
+    parser.add_argument('--config', type=str, default='config.json',
                         help='config file (see description above for help)')
     parser.add_argument('--continue_from', type=str, default=None,
                         help='ignore config options and continue training model checkpointed here')

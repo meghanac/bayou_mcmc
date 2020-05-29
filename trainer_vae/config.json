@@ -7,7 +7,7 @@
     "alpha1": 1.0,
     "alpha2": 1.0,
     "drop_rate": 1.0,
-    "print_step": 100,
+    "print_step": 10000,
     "max_ast_depth": 8,
     "max_fp_depth": 8,
     "max_keywords": 10,

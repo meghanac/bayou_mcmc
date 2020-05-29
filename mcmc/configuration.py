@@ -25,6 +25,7 @@ class Configuration:
         self.max_ast_depth = self.config_obj.max_ast_depth
 
         # Initialize conversion dictionaries
+        self.vocab = self.config_obj.vocab
         self.vocab2node = self.config_obj.vocab.api_dict
         self.node2vocab = dict(zip(self.vocab2node.values(), self.vocab2node.keys()))
         self.rettype2num = self.config_obj.vocab.ret_dict

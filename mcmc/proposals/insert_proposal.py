@@ -9,8 +9,8 @@ import random
 import json
 import tensorflow as tf
 
-from mcmc.node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
-from mcmc.proposals.insertion_proposals import ProposalWithInsertion
+from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
+from proposals.insertion_proposals import ProposalWithInsertion
 
 
 class InsertProposal(ProposalWithInsertion):
@@ -34,31 +34,27 @@ class InsertProposal(ProposalWithInsertion):
 
         # Get a random position in the tree to be the parent of the new node to be added
         rand_node_pos = random.randint(1, curr_prog.length - 1)  # exclude DSubTree node, randint is [a,b] inclusive
-        new_node_parent = self.tree_mod.get_node_in_position(curr_prog, self.max_length, rand_node_pos)
+        new_node_parent = self.tree_mod.get_node_in_position(curr_prog, rand_node_pos)
 
         # Probabilistically choose the node that should appear after selected random parent
-        new_node_idx, prob = self._get_ast_idx(rand_node_pos, SIBLING_EDGE, non_dnode=False)
-        new_node_api = self.config.node2vocab[new_node_idx]
+        new_node, _, prob = self._get_new_node(new_node_parent, SIBLING_EDGE, non_dnode=False)
+
+        if new_node is None:
+            return None
 
         # If a dnode is chosen, grow it out
-        if new_node_api == DBRANCH:
-            new_node, ln_prob = self._grow_dbranch(new_node_parent)
-            prob += ln_prob
-        elif new_node_api == DLOOP:
-            new_node, ln_prob = self._grow_dloop_or_dexcept(new_node_parent, True)
-            prob += ln_prob
-        elif new_node_api == DEXCEPT:
-            new_node, ln_prob = self._grow_dloop_or_dexcept(new_node_parent, False)
-            prob += ln_prob
-        else:
-            # Add node to parent
-            if new_node_parent.sibling is None:
-                new_node = self.tree_mod.create_and_add_node(new_node_api, new_node_parent, SIBLING_EDGE)
-            else:
-                old_sibling_node = new_node_parent.sibling
-                new_node_parent.remove_node(SIBLING_EDGE)
-                new_node = self.tree_mod.create_and_add_node(new_node_api, new_node_parent, SIBLING_EDGE)
-                new_node.add_node(old_sibling_node, SIBLING_EDGE)
+        if new_node.api_name == DBRANCH:
+            ln_prob = self._grow_dbranch(new_node)
+            if ln_prob is not None:
+                prob += ln_prob
+        elif new_node.api_name == DLOOP:
+            ln_prob = self._grow_dloop_or_dexcept(new_node, True)
+            if ln_prob is not None:
+                prob += ln_prob
+        elif new_node.api_name == DEXCEPT:
+            ln_prob = self._grow_dloop_or_dexcept(new_node, False)
+            if ln_prob is not None:
+                prob += ln_prob
 
         # Reset self.curr_prog and self.initial_state
         self.curr_prog = None

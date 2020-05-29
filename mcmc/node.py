@@ -33,10 +33,10 @@ class Node:
         self.api_num = api_num
         self.child = None  # pointer to child node
         self.sibling = None  # pointer to sibling node
-        self.parent = parent  # pointer to parent node
+        self.parent = None  # pointer to parent node
         # self.id = id
         self.length = 1  # Number of nodes in subtree starting at this node (i.e., how many nodes stem out of this node)
-        self.parent_edge = parent_edge
+        self.parent_edge = None
 
         if self.api_name in DNODES:
             self.non_dnode_length = 0
@@ -125,11 +125,36 @@ class Node:
         Deep copy self including entire subtree. Recursively copies sibling and child nodes.
         :return: (Node) deep copy of self
         """
-        new_node = Node(self.api_name, self.api_num, self.parent, self.parent_edge)
+        new_node = Node(self.api_name, self.api_num, None, None)
+        print("check 1", new_node.length)
         if self.sibling is not None:
             new_sibling_node = self.sibling.copy()
+            print("check 2", new_node.length)
+            assert new_sibling_node.length == self.sibling.length, "new sib length: " + str(
+                new_sibling_node.length) + ", orig sib length: " + str(self.sibling.length)
+            print(new_sibling_node.length, self.sibling.length)
+            print(new_node.length, "\n")
             new_node.add_node(new_sibling_node, SIBLING_EDGE)
+            print("check 3", new_node.length)
+            assert self.length == new_node.length, "self length: " + str(self.length) + " new length: " + str(
+                new_node.length)
         if self.child is not None:
             new_child_node = self.child.copy()
+            print("check 4", new_node.length)
+            assert new_child_node.length == self.child.length
             new_node.add_node(new_child_node, CHILD_EDGE)
+            print("check 5", new_node.length)
+            assert self.length == new_node.length, "self length: " + str(self.length) + " new length: " + str(
+                new_node.length)
+        assert self.length == new_node.length, "self length: " + str(self.length) + " new length: " + str(new_node.length)
         return new_node
+
+    def change_api(self, new_api_name, new_api_num):
+        self.api_name = new_api_name
+        self.api_num = new_api_num
+
+    def get_neighbor(self, edge):
+        if edge == SIBLING_EDGE:
+            return self.sibling
+        else:
+            return self.child

@@ -1,26 +1,25 @@
 import argparse
 import math
 import os
-import sys
 import textwrap
 from copy import deepcopy
 import numpy as np
 import random
 import json
 import tensorflow as tf
-
-from trainer_vae.infer import BayesianPredictor
+import sys
+from infer import BayesianPredictor
 from trainer_vae.model import Model
 from trainer_vae.utils import get_var_list
-from mcmc.node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
-from mcmc.utils import print_verbose_tree_info, verbose_node_info
-from mcmc.configuration import Configuration
-from mcmc.tree_modifier import TreeModifier
-from mcmc.proposals.insert_proposal import InsertProposal
-from mcmc.proposals.delete_proposal import DeleteProposal
-from mcmc.proposals.swap_proposal import SwapProposal
-from mcmc.proposals.add_dnode_proposal import AddDnodeProposal
-from mcmc.proposals.replace_proposal import ReplaceProposal
+from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
+from utils import print_verbose_tree_info
+from configuration import Configuration
+from tree_modifier import TreeModifier
+from proposals.insert_proposal import InsertProposal
+from proposals.delete_proposal import DeleteProposal
+from proposals.swap_proposal import SwapProposal
+from proposals.add_dnode_proposal import AddDnodeProposal
+from proposals.replace_proposal import ReplaceProposal
 
 INSERT = 'insert'
 DELETE = 'delete'
@@ -72,15 +71,16 @@ class MCMCProgram:
         self.decoder = None
         self.encoder = None
 
-        self.proposal_probs = {INSERT: 0.25, DELETE: 0.25, SWAP: 0.25, REPLACE: 0.25, ADD_DNODE: 0.0}
-        self.proposals = self.proposal_probs.keys()
+        self.proposal_probs = {INSERT: 0.0, DELETE: 0.0, SWAP: 0.0, REPLACE: 1.0, ADD_DNODE: 0.0}
+        self.proposals = list(self.proposal_probs.keys())
         self.p_probs = [self.proposal_probs[p] for p in self.proposals]
         self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE, ADD_DNODE: DELETE}
-        self.Insert = InsertProposal(self.tree_mod, self.decoder)
-        self.Delete = DeleteProposal(self.tree_mod)
-        self.Swap = SwapProposal(self.tree_mod)
-        self.AddDnode = AddDnodeProposal(self.tree_mod, self.decoder)
-        self.Replace = ReplaceProposal(self.tree_mod, self.decoder)
+
+        self.Insert = None
+        self.Delete = None
+        self.Swap = None
+        self.AddDnode = None
+        self.Replace = None
 
         # Logging  # TODO: change to Logger
         self.accepted = 0
@@ -137,6 +137,13 @@ class MCMCProgram:
         except KeyError:
             print("Formal parameter ", fp, "is not in the vocabulary. Will be skipped")
 
+    def init_proposals(self):
+        self.Insert = InsertProposal(self.tree_mod, self.decoder)
+        self.Delete = DeleteProposal(self.tree_mod)
+        self.Swap = SwapProposal(self.tree_mod)
+        self.AddDnode = AddDnodeProposal(self.tree_mod, self.decoder)
+        self.Replace = ReplaceProposal(self.tree_mod, self.decoder)
+
     def init_program(self, constraints, ret_types, fps):
         """
         Creates initial program that satisfies all given constraints.
@@ -173,6 +180,9 @@ class MCMCProgram:
         # Update probabilities of tree
         self.calculate_probability()
         self.prev_log_prob = self.curr_log_prob
+
+        # Initialize proposals
+        self.init_proposals()
 
     def check_validity(self):
         """
@@ -330,8 +340,12 @@ class MCMCProgram:
         prev_length = self.curr_prog.length
         self.Insert.attempted += 1
 
+        print(self.curr_prog is None)
         # Add node
-        self.curr_prog, added_node, ln_proposal_prob = self.Insert.add_random_node(self.curr_prog, self.initial_state)
+        output = self.Insert.add_random_node(self.curr_prog, self.initial_state)
+        if output is None:
+            return False
+        self.curr_prog, added_node, ln_proposal_prob = output
         ln_reversal_prob = self.Delete.calculate_ln_prob_of_move()
 
         # Calculate probability of new program
@@ -369,15 +383,31 @@ class MCMCProgram:
 
     def replace_proposal(self, verbose):
         # Logging and checks
+        verbose = True
+
         prev_length = self.curr_prog.length
         self.Replace.attempted += 1
 
+        print_verbose_tree_info(self.curr_prog)
+
         # Add node
-        self.curr_prog, new_node, replaced_node, ln_proposal_prob = self.Replace.replace_random_node(self.curr_prog,
+        self.curr_prog, new_node, replaced_node_api, ln_proposal_prob = self.Replace.replace_random_node(self.curr_prog,
                                                                                                      self.initial_state)
-        parent_pos = self.tree_mod.get_nodes_position(self.curr_prog, new_node.parent)
-        ln_reversal_prob = self.Replace.calculate_ln_prob_of_move(self.curr_prog, self.initial_state, parent_pos,
-                                                                  replaced_node, new_node.parent_edge)
+
+
+
+        # If no node was added, return False
+        if new_node is None:
+            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                self.curr_prog.length) + " != prev length: " + str(prev_length)
+            return False
+
+        print_verbose_tree_info(self.curr_prog)
+
+        # Calculate reversal prob
+        new_node_pos = self.tree_mod.get_nodes_position(self.curr_prog, new_node)
+        ln_reversal_prob = self.Replace.calculate_ln_prob_of_move(self.curr_prog, self.initial_state, new_node_pos,
+                                                                  replaced_node_api, new_node.parent_edge)
 
         # Calculate probability of new program
         self.calculate_probability()
@@ -386,18 +416,14 @@ class MCMCProgram:
         if verbose:
             print_verbose_tree_info(self.curr_prog)
 
-        # If no node was added, return False
-        if new_node is None:
-            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
-                self.curr_prog.length) + " != prev length: " + str(prev_length)
-            return False
-
         # Validate current program
         valid = self.validate_and_update_program(REPLACE, ln_proposal_prob, ln_reversal_prob)
 
+        print(new_node.parent)
+
         # Undo move if not valid
         if not valid:
-            self.Replace.undo_replace_random_node(new_node, replaced_node)
+            self.Replace.undo_replace_random_node(new_node, replaced_node_api)
             self.curr_log_prob = self.prev_log_prob
             assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
                 self.curr_prog.length) + " != prev length: " + str(prev_length)
@@ -417,8 +443,14 @@ class MCMCProgram:
         # Delete node
         self.curr_prog, node, parent_node, parent_edge, ln_prob = self.Delete.delete_random_node(self.curr_prog)
         parent_pos = self.tree_mod.get_nodes_position(self.curr_prog, parent_node)
-        ln_reversal_prob = self.Insert.calculate_ln_prob_of_move(self.curr_prog, self.initial_state, parent_pos, node,
-                                                                 parent_edge)
+
+        curr_prog_copy = self.curr_prog.copy()
+        parent_node_copy = self.tree_mod.get_node_in_position(curr_prog_copy, parent_pos)
+        parent_node_copy.add_node(node, parent_edge)
+        node_pos = self.tree_mod.get_nodes_position(curr_prog_copy, node)
+        ln_reversal_prob = self.Insert.calculate_ln_prob_of_move(self.curr_prog, self.initial_state, node_pos,
+                                                                 parent_edge, is_copy=True)
+        parent_node_copy.remove_node(parent_edge)
 
         # Calculate probability of new program
         self.calculate_probability()
@@ -516,8 +548,11 @@ class MCMCProgram:
         Randomly chooses a transformation and transforms the current program if it is accepted.
         :return: (bool) whether current tree was transformed or not
         """
+        print_verbose_tree_info(self.curr_prog)
         assert self.check_validity() is True
 
+        # print(self.proposals)
+        # print(self.p_probs)
         move = np.random.choice(self.proposals, p=self.p_probs)
         print("move:", move)
 
@@ -557,7 +592,6 @@ class MCMCProgram:
         edges = np.array([edges])
         self.initial_state = self.encoder.get_initial_state(nodes, edges, np.array(self.ret_type), np.array(self.fp))
         self.initial_state = np.transpose(np.array(self.initial_state), [1, 0, 2])  # batch_first
-        # encoder.close()
 
         beam_width = 1
         self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
@@ -612,7 +646,7 @@ class MCMCProgram:
         4) Compute the new initial state of the decoder.
         :return:
         """
-        self.transform_tree()
+        self.transform_tree(verbose=True)
         self.update_latent_state_and_decoder_state()
 
         # # Attempt to transform the current program

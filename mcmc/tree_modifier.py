@@ -1,6 +1,6 @@
 import numpy as np
 
-from mcmc.node import START, Node
+from node import START, Node
 
 
 class TreeModifier:
@@ -15,7 +15,8 @@ class TreeModifier:
         :param pos_num: (int) position number of node required. THIS IS ZERO-INDEXED POSITION NUMBER>
         :return: (Node) required node
         """
-        assert pos_num < curr_prog.length, "Position number must be less than total length of program"
+        assert pos_num < curr_prog.length, "Position number: " + str(
+            pos_num) + " must be less than total length of program: " + str(curr_prog.length)
 
         num_explored = 0
         stack = []

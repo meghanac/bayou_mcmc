@@ -9,8 +9,9 @@ import random
 import json
 import tensorflow as tf
 
-from mcmc.node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
-from mcmc.proposals.insertion_proposals import ProposalWithInsertion
+from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
+from proposals.insertion_proposals import ProposalWithInsertion
+from utils import print_verbose_tree_info
 
 
 class ReplaceProposal(ProposalWithInsertion):
@@ -31,56 +32,61 @@ class ReplaceProposal(ProposalWithInsertion):
 
         # Get a random position in the tree to be the parent of the new node to be added
         rand_node_pos = random.randint(1, curr_prog.length - 1)  # exclude DSubTree node, randint is [a,b] inclusive
-        replaced_node = self.tree_mod.get_node_in_position(curr_prog, self.max_length, rand_node_pos)
-
-        # remove node
-        parent = replaced_node.parent
-        parent_edge = replaced_node.parent_edge
-        parent.remove_node(parent_edge)
-        sibling = replaced_node.remove_node(SIBLING_EDGE)
-        child = replaced_node.remove_node(CHILD_EDGE)
+        replaced_node = self.tree_mod.get_node_in_position(curr_prog, rand_node_pos)
+        replaced_node_api = replaced_node.api_name
 
         # Probabilistically choose the node that should appear after selected random parent
-        new_node_idx, prob = self._get_ast_idx(rand_node_pos, SIBLING_EDGE, non_dnode=False)
-        new_node_api = self.config.node2vocab[new_node_idx]
+        new_node, new_node_pos, prob = self._replace_node_api(replaced_node, rand_node_pos, replaced_node.parent_edge)
 
         # If a dnode is chosen, grow it out
-        if new_node_api == DBRANCH:
-            new_node, ln_prob = self._grow_dbranch(parent)
-            prob += ln_prob
-        elif new_node_api == DLOOP:
-            new_node, ln_prob = self._grow_dloop_or_dexcept(parent, True)
-            prob += ln_prob
-        elif new_node_api == DEXCEPT:
-            new_node, ln_prob = self._grow_dloop_or_dexcept(parent, False)
-            prob += ln_prob
-        else:
-            new_node = self.tree_mod.create_and_add_node(new_node_api, parent, parent_edge)
+        if new_node.api_name == DBRANCH:
+            ln_prob = self._grow_dbranch(new_node)
+            if ln_prob is not None:
+                prob += ln_prob
+        elif new_node.api_name == DLOOP:
+            ln_prob = self._grow_dloop_or_dexcept(new_node, True)
+            if ln_prob is not None:
+                prob += ln_prob
+        elif new_node.api_name == DEXCEPT:
+            ln_prob = self._grow_dloop_or_dexcept(new_node, False)
+            if ln_prob is not None:
+                prob += ln_prob
 
-        new_node.add_node(sibling, SIBLING_EDGE)
-        new_node.add_node()
+        print("replace")
+        print_verbose_tree_info(self.curr_prog)
+        print_verbose_tree_info(curr_prog)
 
         # Reset self.curr_prog and self.initial_state
         self.curr_prog = None
         self.initial_state = None
 
-        return curr_prog, new_node, replaced_node, prob
+        return curr_prog, new_node, replaced_node_api, prob
 
-    def undo_replace_random_node(self, new_node, replaced_node):
-        parent = new_node.parent
-        parent_edge = new_node.parent_edge
+    def undo_replace_random_node(self, new_node, replaced_node_api):
+        # remove added children if necessary
+        if new_node.api_name in {DBRANCH, DEXCEPT, DLOOP}:
+            new_node.remove_node(CHILD_EDGE)
 
-        # Remove nodes
-        parent.remove_node(parent_edge)
-        sibling = new_node.remove_node(SIBLING_EDGE)
+        new_node.change_api(replaced_node_api, self.config.vocab2node[replaced_node_api])
 
-        # Add replaced node bac
-        parent.add_node(replaced_node, parent_edge)
-        replaced_node.add_node(sibling, SIBLING_EDGE)
+    def calculate_ln_prob_of_move(self, curr_prog, initial_state, added_pos, replaced_node_api, added_edge):
+        curr_prog_copy = curr_prog.copy()
+        assert curr_prog_copy.length == curr_prog.length, "curr_prog_copy length: " + str(
+            curr_prog_copy.length) + ", curr_prog length: " + str(curr_prog.length)
+        print("curr prog")
+        print_verbose_tree_info(curr_prog)
+        added_node = self.tree_mod.get_node_in_position(curr_prog_copy, added_pos)
 
-    def calculate_ln_prob_of_move(self, curr_prog, initial_state, parent_pos, added_node, added_edge):
-        # remove new_node (node that replaced added_node with added_edge) from parent_pos
-        parent = self.tree_mod.get_node_in_position(curr_prog, parent_pos)
-        parent.remove_node(added_edge)
+        # reconstruct original tree
+        if (added_node.api_name == DBRANCH and replaced_node_api != DBRANCH) or (
+                added_node.api_name == DLOOP and replaced_node_api != DLOOP) or (
+                added_node.api_name == DEXCEPT and replaced_node_api != DEXCEPT):
+            added_node.remove_node(CHILD_EDGE)
+            added_pos = self.tree_mod.get_nodes_position(curr_prog_copy, added_node)
 
-        return super().calculate_ln_prob_of_move(curr_prog, initial_state, parent_pos, added_node, added_edge)
+        added_node.change_api(replaced_node_api, self.config.vocab2node[replaced_node_api])
+        print("curr prog copy")
+        print_verbose_tree_info(curr_prog_copy)
+
+
+        return super().calculate_ln_prob_of_move(curr_prog_copy, initial_state, added_pos, added_edge)

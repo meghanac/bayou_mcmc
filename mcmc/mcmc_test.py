@@ -661,16 +661,17 @@ class MCMCProgramTest(unittest.TestCase):
         test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, STR_BUILD_APP], ["Typeface"],
                                                                              ["String", "int"])
 
-        test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-        test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
 
         # test_prog.prog.max_depth = 15
 
-        num_iter = 10000
+        num_iter = 100
 
+        print(test_prog.prog.curr_prog.length)
         for i in range(num_iter):
             print(i)
             test_prog.prog.mcmc()
@@ -708,8 +709,8 @@ class MCMCProgramWrapper:
         self.prog.init_program(constraints, return_type, formal_params)
 
         self.constraints = self.prog.constraints
-        self.vocab2node = self.prog.vocab2node
-        self.node2vocab = self.prog.node2vocab
+        self.vocab2node = self.prog.config.vocab2node
+        self.node2vocab = self.prog.config.node2vocab
 
         # init nodes, edges and parents
         self.nodes = []
@@ -745,7 +746,7 @@ class MCMCProgramWrapper:
         return self.create_and_add_node(api_name, parent, edge)
 
     def create_and_add_node(self, api_name, parent, edge):
-        node = self.prog.create_and_add_node(api_name, parent, edge)
+        node = self.prog.tree_mod.create_and_add_node(api_name, parent, edge)
         self.update_nodes_and_edges()
         return node
 
@@ -841,7 +842,7 @@ class MCMCProgramWrapper:
 
     def print_summary_logs(self):
         self.update_nodes_and_edges()
-        nodes, edges = self.prog.get_node_names_and_edges()
+        nodes, edges = self.prog.tree_mod.get_node_names_and_edges(self.prog.curr_prog)
         print("\n", "-------------------LOGS:-------------------")
         print("Nodes:", nodes)
         print("Edges:", edges)
