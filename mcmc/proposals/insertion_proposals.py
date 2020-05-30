@@ -392,7 +392,7 @@ class ProposalWithInsertion:
                 assert (cond_node.sibling is None)
                 added_node.add_node(cond_node, CHILD_EDGE)
                 cond_pos = self.tree_mod.get_nodes_position(curr_prog, cond_node)
-                ln_prob = self._get_prob_from_logits(curr_prog, initial_state, cond_pos, cond_node, CHILD_EDGE)
+                ln_prob += self._get_prob_from_logits(curr_prog, initial_state, cond_pos, cond_node, CHILD_EDGE)
 
                 # get probability of adding body node
                 cond_node.add_node(body_node, CHILD_EDGE)

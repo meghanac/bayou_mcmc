@@ -126,27 +126,17 @@ class Node:
         :return: (Node) deep copy of self
         """
         new_node = Node(self.api_name, self.api_num, None, None)
-        print("check 1", new_node.length)
         if self.sibling is not None:
             new_sibling_node = self.sibling.copy()
-            print("check 2", new_node.length)
             assert new_sibling_node.length == self.sibling.length, "new sib length: " + str(
                 new_sibling_node.length) + ", orig sib length: " + str(self.sibling.length)
-            print(new_sibling_node.length, self.sibling.length)
-            print(new_node.length, "\n")
             new_node.add_node(new_sibling_node, SIBLING_EDGE)
-            print("check 3", new_node.length)
-            assert self.length == new_node.length, "self length: " + str(self.length) + " new length: " + str(
-                new_node.length)
         if self.child is not None:
             new_child_node = self.child.copy()
-            print("check 4", new_node.length)
             assert new_child_node.length == self.child.length
             new_node.add_node(new_child_node, CHILD_EDGE)
-            print("check 5", new_node.length)
-            assert self.length == new_node.length, "self length: " + str(self.length) + " new length: " + str(
-                new_node.length)
-        assert self.length == new_node.length, "self length: " + str(self.length) + " new length: " + str(new_node.length)
+        assert self.length == new_node.length, "self length: " + str(self.length) + " new length: " + str(
+            new_node.length)
         return new_node
 
     def change_api(self, new_api_name, new_api_num):

@@ -85,7 +85,7 @@ docker run --runtime=nvidia --name=<name> -v /home/mvc1:/<dir path>
 
 	Actual: docker run --runtime=nvidia -v ~/:/all  --name=meghana_bayou -it tensorflow/tensorflow:1.15.2 bash
 
-	# for GPU tensorflow use tensorflow/tensorflow:latest-gpu-py3 bash
+	# for GPU tensorflow use tensorflow/tensorflow:1.15.2-gpu-py3 bash
 
 # How to specify which GPU to use within python script
 CUDA_VISIBLE_DEVICES=<GPU number>
@@ -151,12 +151,24 @@ Research Commands
 pip install simplejson && pip install ijson && pip install nltk && pip install graphviz && pip install sklearn && conda install python-graphviz
 
 # packages for tensorflow/tensorflow:latest-gpu-py3
-pip install simplejson && pip install ijson && pip install nltk && pip install graphviz && pip install sklearn && pip install matplotlib
+pip install simplejson && pip install ijson && pip install nltk && pip install graphviz && pip install sklearn && pip install matplotlib && pip install networkx
 
 # packages for pytorch/pytorch
 pip install simplejson && pip install ijson && pip install nltk && pip install graphviz && pip install sklearn && pip install matplotlib && pip install tensorboardX && pip install pandas
 
 
 
+
+---------------------------------------------------------------------------------------------------
+
+Setting up Docker on AWS
+
+sudo yum update -y
+
+sudo amazon-linux-extras install docker
+
+sudo service docker start
+
+sudo usermod -a -G docker ec2-user
 
 ---------------------------------------------------------------------------------------------------

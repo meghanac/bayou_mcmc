@@ -394,8 +394,6 @@ class MCMCProgram:
         self.curr_prog, new_node, replaced_node_api, ln_proposal_prob = self.Replace.replace_random_node(self.curr_prog,
                                                                                                      self.initial_state)
 
-
-
         # If no node was added, return False
         if new_node is None:
             assert self.curr_prog.length == prev_length, "Curr prog length: " + str(

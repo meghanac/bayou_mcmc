@@ -7,108 +7,21 @@ from trainer_vae.model import Model
 import numpy as np
 import tensorflow as tf
 
-import unittest.mock as mock
+from test_utils import STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, STR_BUILD_APP, create_base_program, \
+    create_str_buf_base_program, create_eight_node_program, create_dbranch, create_dloop, create_dexcept, \
+    create_all_dtypes_program
 
-# Shorthand for nodes
-STR_BUF = 'java.lang.StringBuffer.StringBuffer()'
-STR_APP = 'java.lang.StringBuffer.append(java.lang.String)'
-READ_LINE = 'java.io.BufferedReader.readLine()'
-CLOSE = 'java.io.InputStream.close()'
-STR_LEN = 'java.lang.String.length()'
-STR_BUILD = 'java.lang.StringBuilder.StringBuilder(int)'
-STR_BUILD_APP = 'java.lang.StringBuilder.append(java.lang.String)'
+import unittest.mock as mock
 
 # SAVED MODEL
 SAVED_MODEL_PATH = '/Users/meghanachilukuri/Documents/GitHub/bayou_mcmc/trainer_vae/save/1k_vocab_constraint_min_3-600000'
 
 
 class MCMCProgramTest(unittest.TestCase):
-    def create_base_program(self, constraints, ret_type, fp):
-        test_prog = MCMCProgramWrapper(SAVED_MODEL_PATH, constraints, ret_type, fp)
-        test_prog.update_nodes_and_edges()
-        expected_nodes = [START]
-        expected_edges = []
-        for i in test_prog.constraints:
-            expected_nodes.append(i)
-            expected_edges.append(False)
-        return test_prog, expected_nodes, expected_edges
-
-    def create_str_buf_base_program(self):
-        return self.create_base_program([STR_BUF, 'abc'], ["void"], ["__delim__"])
-
-    def create_eight_node_program(self):
-        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
-        test_prog.add_to_first_available_node(STR_BUF, SIBLING_EDGE)
-        test_prog.add_to_first_available_node(STR_APP, CHILD_EDGE)
-        test_prog.add_to_first_available_node(READ_LINE, CHILD_EDGE)
-        test_prog.add_to_first_available_node(STR_APP, SIBLING_EDGE)
-        test_prog.add_to_first_available_node(READ_LINE, SIBLING_EDGE)
-        test_prog.add_to_first_available_node(STR_BUF, CHILD_EDGE)
-        test_prog.update_nodes_and_edges()
-        expected_nodes = [START, STR_APP, READ_LINE, STR_BUF, READ_LINE, STR_APP, STR_BUF, STR_BUF]
-        expected_edges = [True, True, True, False, False, False, False]
-
-        self.assertListEqual(test_prog.nodes, expected_nodes, "Nodes must be equal to expected nodes in program.")
-        self.assertListEqual(test_prog.edges, expected_edges, "Edges must be equal to expected nodes in program.")
-
-        return test_prog, expected_nodes, expected_edges
-
-    def create_dbranch(self, test_prog, parent=None):
-        # expected nodes = [DBRANCH, STR_BUF, STR_APP, STOP, READ_LINE, STOP]
-        # expected edges = [CHILD_EDGE, CHILD_EDGE, SIBLING_EDGE, SIBLING_EDGE, SIBLING_EDGE]
-        if parent is None:  # NOTE: must ensure parent is valid on your own
-            dbranch = test_prog.add_to_first_available_node(DBRANCH, SIBLING_EDGE)
-        else:
-            dbranch = test_prog.prog.create_and_add_node(DBRANCH, parent, SIBLING_EDGE)
-        cond = test_prog.prog.create_and_add_node(STR_BUF, dbranch, CHILD_EDGE)
-        then = test_prog.prog.create_and_add_node(STR_APP, cond, CHILD_EDGE)
-        test_prog.prog.create_and_add_node(STOP, then, SIBLING_EDGE)
-        else_node = test_prog.prog.create_and_add_node(READ_LINE, cond, SIBLING_EDGE)
-        test_prog.prog.create_and_add_node(STOP, else_node, SIBLING_EDGE)
-        return test_prog, dbranch
-
-    def create_dloop(self, test_prog, parent=None):
-        # expected nodes = [DLOOP, READ_LINE, CLOSE, STOP]
-        # expected edges = [CHILD_EDGE, CHILD_EDGE, SIBLING_EDGE]
-        if parent is None:
-            dloop = test_prog.add_to_first_available_node(DLOOP, SIBLING_EDGE)
-        else:
-            dloop = test_prog.prog.create_and_add_node(DLOOP, parent, SIBLING_EDGE)
-        cond = test_prog.prog.create_and_add_node(READ_LINE, dloop, CHILD_EDGE)
-        body = test_prog.prog.create_and_add_node(CLOSE, cond, CHILD_EDGE)
-        test_prog.prog.create_and_add_node(STOP, body, SIBLING_EDGE)
-        return test_prog, dloop
-
-    def create_dexcept(self, test_prog, parent=None):
-        # expected nodes = [DEXCEPT, STR_BUF, CLOSE, STOP]
-        # expected edges = [CHILD_EDGE, CHILD_EDGE, SIBLING_EDGE]
-        if parent is None:
-            dexcept = test_prog.add_to_first_available_node(DEXCEPT, SIBLING_EDGE)
-        else:
-            dexcept = test_prog.prog.create_and_add_node(DEXCEPT, parent, SIBLING_EDGE)
-        catch = test_prog.prog.create_and_add_node(STR_BUF, dexcept, CHILD_EDGE)
-        try_node = test_prog.prog.create_and_add_node(CLOSE, catch, CHILD_EDGE)
-        test_prog.prog.create_and_add_node(STOP, try_node, SIBLING_EDGE)
-        return test_prog, dexcept
-
-    def create_all_dtypes_program(self):
-        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
-        dbranch_parent = test_prog.prog.get_node_in_position(1)
-        test_prog, dbranch = self.create_dbranch(test_prog, parent=dbranch_parent)
-        test_prog, dloop = self.create_dloop(test_prog, parent=dbranch)
-        test_prog, dexcept = self.create_dexcept(test_prog, parent=dloop)
-        test_prog.update_nodes_and_edges()
-        expected_nodes = [START, STR_BUF, DBRANCH, STR_BUF, STR_APP, STOP, READ_LINE, STOP, DLOOP, READ_LINE, CLOSE,
-                          STOP, DEXCEPT, STR_BUF, CLOSE]
-        expected_edges = [SIBLING_EDGE, SIBLING_EDGE, CHILD_EDGE, CHILD_EDGE, SIBLING_EDGE, SIBLING_EDGE, SIBLING_EDGE,
-                          SIBLING_EDGE, CHILD_EDGE, CHILD_EDGE, SIBLING_EDGE, SIBLING_EDGE, CHILD_EDGE, CHILD_EDGE]
-        self.assertListEqual(test_prog.nodes, expected_nodes, "Nodes must be equal to expected nodes in program.")
-        self.assertListEqual(test_prog.edges, expected_edges, "Edges must be equal to expected nodes in program.")
-        return test_prog, expected_nodes, expected_edges
 
     def test_init(self):
         # Test basic program
-        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        test_prog, expected_nodes, expected_edges = create_str_buf_base_program(SAVED_MODEL_PATH)
         self.assertListEqual(test_prog.nodes, expected_nodes, "Nodes must be equal to expected nodes in program.")
         self.assertListEqual(test_prog.edges, expected_edges, "Edges must be equal to expected nodes in program.")
         self.assertEqual(test_prog.prog.curr_prog.length, len(expected_nodes))
@@ -118,7 +31,7 @@ class MCMCProgramTest(unittest.TestCase):
         # print(test_prog.prog.curr_log_prob)
 
         # Test 8 node program
-        test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
+        test_prog, expected_nodes, expected_edges = create_eight_node_program(SAVED_MODEL_PATH)
         self.assertListEqual(test_prog.nodes, expected_nodes, "Nodes must be equal to expected nodes in program.")
         self.assertListEqual(test_prog.edges, expected_edges, "Edges must be equal to expected nodes in program.")
         self.assertEqual(test_prog.prog.curr_prog.length, len(expected_nodes))
@@ -128,8 +41,8 @@ class MCMCProgramTest(unittest.TestCase):
         # print(test_prog.prog.curr_log_prob)
 
         # Test program with DBranch
-        test_prog, _, _ = self.create_str_buf_base_program()
-        test_prog, _ = self.create_dbranch(test_prog)
+        test_prog, _, _ = create_str_buf_base_program()
+        test_prog, _ = create_dbranch(test_prog)
         test_prog.update_nodes_and_edges()
         expected_nodes = [START, STR_BUF, DBRANCH, STR_BUF, STR_APP, STOP, READ_LINE]
         expected_edges = [SIBLING_EDGE, SIBLING_EDGE, CHILD_EDGE, CHILD_EDGE, SIBLING_EDGE, SIBLING_EDGE]
@@ -139,8 +52,8 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertEqual(test_prog.prog.curr_prog.non_dnode_length, 4)
 
         # Test program with DLoop
-        test_prog, _, _ = self.create_str_buf_base_program()
-        test_prog, _ = self.create_dloop(test_prog)
+        test_prog, _, _ = create_str_buf_base_program()
+        test_prog, _ = create_dloop(test_prog)
         test_prog.update_nodes_and_edges()
         expected_nodes = [START, STR_BUF, DLOOP, READ_LINE, CLOSE]
         expected_edges = [SIBLING_EDGE, SIBLING_EDGE, CHILD_EDGE, CHILD_EDGE]
@@ -150,8 +63,8 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertEqual(test_prog.prog.curr_prog.non_dnode_length, 3)
 
         # Test program with DExcept
-        test_prog, _, _ = self.create_str_buf_base_program()
-        test_prog, _ = self.create_dexcept(test_prog)
+        test_prog, _, _ = create_str_buf_base_program()
+        test_prog, _ = create_dexcept(test_prog)
         test_prog.update_nodes_and_edges()
         expected_nodes = [START, STR_BUF, DEXCEPT, STR_BUF, CLOSE]
         expected_edges = [SIBLING_EDGE, SIBLING_EDGE, CHILD_EDGE, CHILD_EDGE]
@@ -161,14 +74,14 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertEqual(test_prog.prog.curr_prog.non_dnode_length, 3)
 
         # Test program will all dnodes
-        test_prog, expected_nodes, expected_edges = self.create_all_dtypes_program()
+        test_prog, expected_nodes, expected_edges = create_all_dtypes_program()
         self.assertListEqual(test_prog.nodes, expected_nodes, "Nodes must be equal to expected nodes in program.")
         self.assertListEqual(test_prog.edges, expected_edges, "Edges must be equal to expected nodes in program.")
         self.assertEqual(test_prog.prog.curr_prog.length, len(expected_nodes))
         self.assertEqual(test_prog.prog.curr_prog.non_dnode_length, 8)
 
     def test_create_and_add_node(self):
-        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        test_prog, expected_nodes, expected_edges = create_str_buf_base_program()
 
         # Test adding sibling node
         test_prog.add_to_first_available_node(STR_BUF, SIBLING_EDGE)
@@ -196,7 +109,7 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertEqual(test_prog.prog.curr_prog.length, 4)
 
     def test_get_node_in_position(self):
-        test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
+        test_prog, expected_nodes, expected_edges = create_eight_node_program(SAVED_MODEL_PATH)
 
         self.assertEqual(START, test_prog.prog.get_node_in_position(0).api_name)
         self.assertEqual(STR_APP, test_prog.prog.get_node_in_position(1).api_name)
@@ -209,7 +122,7 @@ class MCMCProgramTest(unittest.TestCase):
 
     def test_get_vector_representation(self):
         # Test non-branched program
-        test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
+        test_prog, expected_nodes, expected_edges = create_eight_node_program(SAVED_MODEL_PATH)
         node_nums = [test_prog.vocab2node[i] for i in expected_nodes]
         exp_node_nums = np.zeros([1, test_prog.prog.max_length], dtype=np.int32)
         exp_edges = np.zeros([1, test_prog.prog.max_length], dtype=np.bool)
@@ -224,7 +137,7 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertListEqual(edges.tolist(), exp_edges, "Edges must be equal to expected nodes in program.")
 
         # Test all dnodes types program
-        test_prog, expected_nodes, expected_edges = self.create_all_dtypes_program()
+        test_prog, expected_nodes, expected_edges = create_all_dtypes_program(SAVED_MODEL_PATH)
         node_nums = [test_prog.vocab2node[i] for i in expected_nodes]
         exp_node_nums = np.zeros([1, test_prog.prog.max_length], dtype=np.int32)
         exp_edges = np.zeros([1, test_prog.prog.max_length], dtype=np.bool)
@@ -244,7 +157,7 @@ class MCMCProgramTest(unittest.TestCase):
     @mock.patch.object(MCMCProgram, 'get_ast_idx')
     @mock.patch.object(random, 'randint')
     def test_add_and_undo_random_node(self, mock_randint, mock_get_ast_idx):
-        test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
+        test_prog, expected_nodes, expected_edges = create_eight_node_program(SAVED_MODEL_PATH)
         mock_get_ast_idx.return_value = test_prog.vocab2node[CLOSE]
         mock_randint.return_value = 5
 
@@ -302,7 +215,7 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertListEqual(test_prog.edges, expected_edges, "Edges must be equal to expected nodes in program.")
         self.assertEqual(test_prog.prog.curr_prog.length, 8)
 
-        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        test_prog, expected_nodes, expected_edges = create_str_buf_base_program(SAVED_MODEL_PATH)
         mock_randint.return_value = 1
         mock_get_ast_idx.return_value = test_prog.vocab2node[DBRANCH]
         dbranch = test_prog.prog.add_random_node()
@@ -314,7 +227,7 @@ class MCMCProgramTest(unittest.TestCase):
 
     @mock.patch.object(random, 'randint')
     def test_delete_and_undo_random_node(self, mock_randint):
-        test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
+        test_prog, expected_nodes, expected_edges = create_eight_node_program(SAVED_MODEL_PATH)
         mock_randint.return_value = 5
 
         # test delete a node
@@ -368,7 +281,7 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertEqual(test_prog.prog.curr_prog.length, 7)
 
     def test_swap_nodes(self):
-        test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
+        test_prog, expected_nodes, expected_edges = create_eight_node_program(SAVED_MODEL_PATH)
         node1 = test_prog.prog.get_node_in_position(1)
         node2 = test_prog.prog.get_node_in_position(6)
         self.assertEqual(node1.api_name, STR_APP)
@@ -408,7 +321,7 @@ class MCMCProgramTest(unittest.TestCase):
 
     @mock.patch.object(random, 'randint')
     def test_check_validity(self, mock_randint):
-        test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
+        test_prog, expected_nodes, expected_edges = create_eight_node_program(SAVED_MODEL_PATH)
         self.assertTrue(test_prog.prog.check_validity())
 
         test_prog.prog.add_constraint(STR_APP)
@@ -425,10 +338,10 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertFalse(test_prog.prog.check_validity())
 
         # All branches valid case
-        test_prog, expected_nodes, expected_edges = self.create_all_dtypes_program()
+        test_prog, expected_nodes, expected_edges = create_all_dtypes_program(SAVED_MODEL_PATH)
         self.assertTrue(test_prog.prog.check_validity())
 
-        test_prog, expected_nodes, expected_edges = self.create_all_dtypes_program()
+        test_prog, expected_nodes, expected_edges = create_all_dtypes_program(SAVED_MODEL_PATH)
         self.assertTrue(test_prog.prog.check_validity())
 
         mock_randint.return_value = 12
@@ -454,7 +367,7 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertFalse(test_prog.prog.check_validity())
 
         # Test DBranch fail
-        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        test_prog, expected_nodes, expected_edges = create_str_buf_base_program(SAVED_MODEL_PATH)
         dbranch = test_prog.add_to_first_available_node(DBRANCH, SIBLING_EDGE)
         self.assertFalse(test_prog.prog.check_validity())
         cond = test_prog.prog.create_and_add_node(DLOOP, dbranch, CHILD_EDGE)
@@ -464,7 +377,7 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertFalse(test_prog.prog.check_validity())
 
         # Test DBranch
-        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        test_prog, expected_nodes, expected_edges = create_str_buf_base_program(SAVED_MODEL_PATH)
         dbranch = test_prog.add_to_first_available_node(DBRANCH, SIBLING_EDGE)
         cond = test_prog.prog.create_and_add_node(STR_BUF, dbranch, CHILD_EDGE)
         self.assertFalse(test_prog.prog.check_validity())
@@ -476,7 +389,7 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertTrue(test_prog.prog.check_validity())
 
         # Test DLoop fail
-        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        test_prog, expected_nodes, expected_edges = create_str_buf_base_program(SAVED_MODEL_PATH)
         dloop = test_prog.add_to_first_available_node(DLOOP, SIBLING_EDGE)
         self.assertFalse(test_prog.prog.check_validity())
         cond = test_prog.prog.create_and_add_node(DEXCEPT, dloop, CHILD_EDGE)
@@ -485,7 +398,7 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertFalse(test_prog.prog.check_validity())
 
         # Test DLoop
-        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        test_prog, expected_nodes, expected_edges = create_str_buf_base_program(SAVED_MODEL_PATH)
         dloop = test_prog.add_to_first_available_node(DLOOP, SIBLING_EDGE)
         self.assertFalse(test_prog.prog.check_validity())
         cond = test_prog.prog.create_and_add_node(STR_BUF, dloop, CHILD_EDGE)
@@ -495,7 +408,7 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertTrue(test_prog.prog.check_validity())
 
         # Test DExcept fail
-        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        test_prog, expected_nodes, expected_edges = create_str_buf_base_program(SAVED_MODEL_PATH)
         dexcept = test_prog.add_to_first_available_node(DEXCEPT, SIBLING_EDGE)
         self.assertFalse(test_prog.prog.check_validity())
         cond = test_prog.prog.create_and_add_node(DBRANCH, dexcept, CHILD_EDGE)
@@ -504,7 +417,7 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertFalse(test_prog.prog.check_validity())
 
         # Test DExcept
-        test_prog, expected_nodes, expected_edges = self.create_str_buf_base_program()
+        test_prog, expected_nodes, expected_edges = create_str_buf_base_program(SAVED_MODEL_PATH)
         dexcept = test_prog.add_to_first_available_node(DEXCEPT, SIBLING_EDGE)
         self.assertFalse(test_prog.prog.check_validity())
         cond = test_prog.prog.create_and_add_node(STR_BUF, dexcept, CHILD_EDGE)
@@ -517,7 +430,7 @@ class MCMCProgramTest(unittest.TestCase):
     @mock.patch.object(MCMCProgram, 'get_ast_idx')
     @mock.patch.object(random, 'randint')
     def test_add_and_swap_node(self, mock_randint, mock_get_ast_idx):
-        test_prog, expected_nodes, expected_edges = self.create_eight_node_program()
+        test_prog, expected_nodes, expected_edges = create_eight_node_program(SAVED_MODEL_PATH)
         mock_get_ast_idx.return_value = test_prog.vocab2node[CLOSE]
         mock_randint.return_value = 5
 
@@ -569,9 +482,9 @@ class MCMCProgramTest(unittest.TestCase):
     @mock.patch.object(MCMCProgram, 'get_ast_idx')
     @mock.patch.object(random, 'choice')
     def test_add_dnode_node(self, mock_rand_choice, mock_get_ast_idx):
-        test_prog, _, _ = self.create_str_buf_base_program()
-        test_prog, dbranch = self.create_dbranch(test_prog)
-        test_prog, dloop = self.create_dloop(test_prog, parent=dbranch)
+        test_prog, _, _ = create_str_buf_base_program(SAVED_MODEL_PATH)
+        test_prog, dbranch = create_dbranch(test_prog)
+        test_prog, dloop = create_dloop(test_prog, parent=dbranch)
         test_prog.update_nodes_and_edges()
         expected_nodes = [START, STR_BUF, DBRANCH, STR_BUF, STR_APP, STOP, READ_LINE, STOP, DLOOP, READ_LINE, CLOSE]
         expected_edges = [SIBLING_EDGE, SIBLING_EDGE, CHILD_EDGE, CHILD_EDGE, SIBLING_EDGE, SIBLING_EDGE, SIBLING_EDGE,
@@ -658,7 +571,7 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertEqual(test_prog.prog.curr_prog.non_dnode_length, 1)
 
     def test_mcmc(self):
-        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, STR_BUILD_APP], ["Typeface"],
+        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, STR_BUILD_APP], ["Typeface"],
                                                                              ["String", "int"])
 
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
@@ -682,7 +595,7 @@ class MCMCProgramTest(unittest.TestCase):
         test_prog.print_summary_logs()
 
     def test_dev(self):
-        test_prog, expected_nodes, expected_edges = self.create_base_program([STR_BUILD, "java.io.ObjectInputStream.defaultReadObject()"], ["void"],
+        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, "java.io.ObjectInputStream.defaultReadObject()"], ["void"],
                                                                              ["String", "int", "ObjectInputStream"])
 
         added_node = test_prog.prog.add_random_node()
@@ -700,167 +613,6 @@ class MCMCProgramTest(unittest.TestCase):
         #     test_prog.prog.mcmc()
         #
         # test_prog.print_summary_logs()
-
-
-class MCMCProgramWrapper:
-    def __init__(self, save_dir, constraints, return_type, formal_params):
-        # init MCMCProgram
-        self.prog = MCMCProgram(save_dir)
-        self.prog.init_program(constraints, return_type, formal_params)
-
-        self.constraints = self.prog.constraints
-        self.vocab2node = self.prog.config.vocab2node
-        self.node2vocab = self.prog.config.node2vocab
-
-        # init nodes, edges and parents
-        self.nodes = []
-        self.edges = []
-        self.parents = []
-        self.update_nodes_and_edges()
-
-    def add_to_first_available_node(self, api_name, edge):
-        curr_node = self.prog.curr_prog
-        stack = []
-        while curr_node is not None:
-            if edge == SIBLING_EDGE and curr_node.sibling is None and curr_node.api_name != STOP:
-                break
-
-            elif edge == CHILD_EDGE and curr_node.child is None and curr_node.api_name != STOP:
-                break
-
-            else:
-                if curr_node.child is not None:
-                    if curr_node.sibling is not None:
-                        stack.append(curr_node.sibling)
-                        curr_node = curr_node.child
-                elif curr_node.sibling is not None:
-                    curr_node = curr_node.sibling
-                else:
-                    if len(stack) > 0:
-                        curr_node = stack.pop()
-                    else:
-                        curr_node = None
-
-        parent = curr_node
-
-        return self.create_and_add_node(api_name, parent, edge)
-
-    def create_and_add_node(self, api_name, parent, edge):
-        node = self.prog.tree_mod.create_and_add_node(api_name, parent, edge)
-        self.update_nodes_and_edges()
-        return node
-
-    def update_nodes_and_edges(self, verbose=False):
-        curr_node = self.prog.curr_prog
-
-        stack = []
-        nodes = []
-        edges = []
-        parents = [None]
-
-        pos_counter = 0
-
-        while curr_node is not None:
-            nodes.append(curr_node.api_name)
-
-            if verbose:
-                self.prog.verbose_node_info(curr_node, pos=pos_counter)
-
-            pos_counter += 1
-
-            if curr_node.api_name != START:
-                edges.append(curr_node.parent_edge)
-                parents.append(curr_node.parent.api_name)
-
-            if curr_node.child is not None:
-                if curr_node.sibling is not None:
-                    stack.append(curr_node.sibling)
-                curr_node = curr_node.child
-            elif curr_node.sibling is not None:
-                curr_node = curr_node.sibling
-            else:
-                if len(stack) > 0:
-                    curr_node = stack.pop()
-                else:
-                    # remove last DSTOP node
-                    if curr_node.api_name == STOP:
-                        curr_node.parent.remove_node(curr_node.parent_edge)
-                        nodes.pop()
-                        edges.pop()
-                        parents.pop()
-                    curr_node = None
-
-        if verbose:
-            print("\n")
-
-        self.nodes = nodes
-        self.edges = edges
-        self.parents = parents
-    #
-    # def verbose_node_info(self, node, pos=None):
-    #     node_info = {"api name": node.api_name, "length": node.length, "api num": node.api_num,
-    #                  "parent edge": node.parent_edge}
-    #
-    #     if pos is not None:
-    #         node_info["position"] = pos
-    #
-    #     if node.parent is not None:
-    #         node_info["parent"] = node.parent.api_name
-    #     else:
-    #         node_info["parent"] = node.parent
-    #
-    #         if node.api_name != 'DSubTree':
-    #             print("WARNING: node does not have a parent", node.api_name)
-    #
-    #     if node.sibling is not None:
-    #         node_info["sibling"] = node.sibling.api_name
-    #
-    #         if node.sibling.parent is None:
-    #             print("WARNING: sibling parent is None for node", node.api_name, "in pos", pos)
-    #             node_info["sibling parent"] = node.sibling.parent
-    #         else:
-    #             node_info["sibling parent"] = node.sibling.parent.api_name
-    #
-    #         node_info["sibling parent edge"] = node.sibling.parent_edge
-    #     else:
-    #         node_info["sibling"] = node.sibling
-    #
-    #     if node.child is not None:
-    #         node_info["child"] = node.child.api_name
-    #
-    #         if node.child.parent is None:
-    #             print("WARNING: child parent is None for node", node.api_name, "in pos", pos)
-    #             node_info["child parent"] = node.child.parent
-    #         else:
-    #             node_info["child parent"] = node.child.parent.api_name
-    #
-    #         node_info["child parent edge"] = node.child.parent_edge
-    #
-    #     print(node_info)
-    #
-    #     return node_info
-
-    def print_summary_logs(self):
-        self.update_nodes_and_edges()
-        nodes, edges = self.prog.tree_mod.get_node_names_and_edges(self.prog.curr_prog)
-        print("\n", "-------------------LOGS:-------------------")
-        print("Nodes:", nodes)
-        print("Edges:", edges)
-        print("Parents:", self.parents)
-        print("Total accepted transformations:", self.prog.accepted)
-        print("Total rejected transformations:", self.prog.rejected)
-        print("Total valid transformations:", self.prog.valid)
-        print("Total invalid transformations:", self.prog.invalid)
-        print("Total attempted add transforms:", self.prog.Insert.attempted)
-        print("Total accepted add transforms:", self.prog.Insert.accepted)
-        print("Total attempted delete transforms:", self.prog.Delete.attempted)
-        print("Total accepted delete transforms:", self.prog.Delete.accepted)
-        print("Total attempted swap transforms:", self.prog.Swap.attempted)
-        print("Total accepted swap transforms:", self.prog.Swap.accepted)
-        print("Total attempted add dnode transforms:", self.prog.AddDnode.attempted)
-        print("Total accepted add dnode transforms:", self.prog.AddDnode.accepted)
-
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -50,7 +50,7 @@ def train(clargs):
     with open(config_file) as f:
         config = read_config(json.load(f))
     reader = Reader(clargs)
-    reader.save_data(clargs.data)  # '../data_extractor/data/1k_vocab_constraint_min_3-600000'
+    reader.save_data(clargs.data)
     loader = Loader(clargs, config)
     model = Model(config)
 
@@ -128,8 +128,6 @@ def train(clargs):
                     analysis_file.write(message)
                     analysis_file.flush()
                     os.fsync(analysis_file.fileno())
-
-
 
             if (i + 1) % config.checkpoint_step == 0:
                 checkpoint_dir = os.path.join(clargs.save, 'model{}.ckpt'.format(i + 1))
