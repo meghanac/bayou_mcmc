@@ -14,7 +14,7 @@ from test_utils import STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, S
 import unittest.mock as mock
 
 # SAVED MODEL
-SAVED_MODEL_PATH = '/Users/meghanachilukuri/Documents/GitHub/bayou_mcmc/trainer_vae/save/1k_vocab_constraint_min_3-600000'
+SAVED_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/1k_vocab_constraint_min_3-600000'
 
 
 class MCMCProgramTest(unittest.TestCase):

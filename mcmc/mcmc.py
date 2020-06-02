@@ -71,7 +71,7 @@ class MCMCProgram:
         self.decoder = None
         self.encoder = None
 
-        self.proposal_probs = {INSERT: 0.0, DELETE: 0.0, SWAP: 0.0, REPLACE: 1.0, ADD_DNODE: 0.0}
+        self.proposal_probs = {INSERT: 0.8, DELETE: 0.2, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0}
         self.proposals = list(self.proposal_probs.keys())
         self.p_probs = [self.proposal_probs[p] for p in self.proposals]
         self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE, ADD_DNODE: DELETE}
@@ -444,7 +444,9 @@ class MCMCProgram:
 
         curr_prog_copy = self.curr_prog.copy()
         parent_node_copy = self.tree_mod.get_node_in_position(curr_prog_copy, parent_pos)
+        parent_node_copy_neighbor = parent_node_copy.get_neighbor(parent_edge)
         parent_node_copy.add_node(node, parent_edge)
+        node.add_node(parent_node_copy_neighbor, parent_edge)
         node_pos = self.tree_mod.get_nodes_position(curr_prog_copy, node)
         ln_reversal_prob = self.Insert.calculate_ln_prob_of_move(self.curr_prog, self.initial_state, node_pos,
                                                                  parent_edge, is_copy=True)

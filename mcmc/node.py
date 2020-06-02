@@ -108,14 +108,16 @@ class Node:
                 old_sibling.parent = None
                 old_sibling.parent_edge = None
                 self.update_length(old_sibling.length, old_sibling.non_dnode_length, 'sub')
+                return old_sibling
 
         elif edge == CHILD_EDGE:
             if self.child is not None:
-                child = self.child
+                old_child = self.child
                 self.child = None
-                child.parent = None
-                child.parent_edge = None
-                self.update_length(child.length, child.non_dnode_length, 'sub')
+                old_child.parent = None
+                old_child.parent_edge = None
+                self.update_length(old_child.length, old_child.non_dnode_length, 'sub')
+                return old_child
 
         else:
             raise ValueError('edge must but a sibling or child edge')
@@ -148,3 +150,10 @@ class Node:
             return self.sibling
         else:
             return self.child
+
+    def insert_in_between_after_self(self, node, edge):
+        neighbors = self.get_neighbor(edge)
+        self.remove_node(edge)
+        self.add_node(node, edge)
+        node.add_node(neighbors, edge)
+        return node

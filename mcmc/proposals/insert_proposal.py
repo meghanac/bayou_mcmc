@@ -18,7 +18,7 @@ class InsertProposal(ProposalWithInsertion):
     def __init__(self, tree_modifier, decoder, top_k_prob=0.95):
         super().__init__(tree_modifier, decoder, top_k_prob)
 
-    def add_random_node(self, curr_prog, initial_state):
+    def add_random_node(self, curr_prog, initial_state, verbose=False):
         """
         Adds a node to a random position in the current program.
         Node is chosen probabilistically based on all the nodes that come before it (DFS).
@@ -37,7 +37,7 @@ class InsertProposal(ProposalWithInsertion):
         new_node_parent = self.tree_mod.get_node_in_position(curr_prog, rand_node_pos)
 
         # Probabilistically choose the node that should appear after selected random parent
-        new_node, _, prob = self._get_new_node(new_node_parent, SIBLING_EDGE, non_dnode=False)
+        new_node, _, prob = self._get_new_node(new_node_parent, SIBLING_EDGE, verbose=verbose)
 
         if new_node is None:
             return None
@@ -48,11 +48,11 @@ class InsertProposal(ProposalWithInsertion):
             if ln_prob is not None:
                 prob += ln_prob
         elif new_node.api_name == DLOOP:
-            ln_prob = self._grow_dloop_or_dexcept(new_node, True)
+            ln_prob = self._grow_dloop_or_dexcept(new_node)
             if ln_prob is not None:
                 prob += ln_prob
         elif new_node.api_name == DEXCEPT:
-            ln_prob = self._grow_dloop_or_dexcept(new_node, False)
+            ln_prob = self._grow_dloop_or_dexcept(new_node)
             if ln_prob is not None:
                 prob += ln_prob
 
@@ -68,16 +68,16 @@ class InsertProposal(ProposalWithInsertion):
         :param added_node: (Node) the node that was added in add_random_node() that is to be removed.
         :return:
         """
-        if added_node.api_name in {DBRANCH, DLOOP, DEXCEPT}:
-            dnode_sibling = added_node.sibling
-            dnode_parent = added_node.parent
-            dnode_parent.remove_node(SIBLING_EDGE)
-            dnode_parent.add_node(dnode_sibling, SIBLING_EDGE)
+        # if added_node.api_name in {DBRANCH, DLOOP, DEXCEPT}:
+        #     dnode_sibling = added_node.sibling
+        #     dnode_parent = added_node.parent
+        #     dnode_parent.remove_node(SIBLING_EDGE)
+        #     dnode_parent.add_node(dnode_sibling, SIBLING_EDGE)
 
         if added_node.sibling is None:
             added_node.parent.remove_node(SIBLING_EDGE)
         else:
             sibling_node = added_node.sibling
             parent_node = added_node.parent
-            added_node.parent.remove_node(SIBLING_EDGE)
+            parent_node.remove_node(SIBLING_EDGE)
             parent_node.add_node(sibling_node, SIBLING_EDGE)

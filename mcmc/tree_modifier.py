@@ -131,7 +131,7 @@ class TreeModifier:
         nodes = [self.config.node2vocab[node] for node in nodes]
         return nodes, edges
 
-    def create_and_add_node(self, api_name, parent, edge):
+    def create_and_add_node(self, api_name, parent, edge, save_neighbors = False):
         """
         Create a new node and add it to the program
         :param api_name: (string) api name of node to be created
@@ -143,9 +143,14 @@ class TreeModifier:
             api_num = self.config.vocab2node[api_name]
             node = Node(api_name, api_num, parent, edge)
 
+            neighbors = None
+            if save_neighbors:
+                neighbors = parent.get_neighbor(edge)
+
             # Update parent according to edge
             if api_name != START:
                 parent.add_node(node, edge)
+                node.add_node(neighbors, edge)
 
             return node
 
