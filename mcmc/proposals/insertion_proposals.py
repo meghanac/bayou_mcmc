@@ -311,6 +311,9 @@ class ProposalWithInsertion:
             assert self.top_k_prob < 1.0, "If top_k_prob = 1.0, then it shouldn't be here"
             return math.log((1 - self.top_k_prob) * 1.0 / (len(logits) - self.decoder.top_k))
 
+    def _get_logits(self, curr_prog, initial_state, added_node_pos, added_node, added_edge):
+        return self._get_logits_for_add_node(curr_prog, initial_state, added_node_pos, added_edge)
+
     def calculate_ln_prob_of_move(self, curr_prog_original, initial_state, added_node_pos, added_edge, is_copy=False):
         if not is_copy:
             curr_prog = curr_prog_original.copy()

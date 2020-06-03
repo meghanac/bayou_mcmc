@@ -69,24 +69,49 @@ class ReplaceProposal(ProposalWithInsertion):
 
         new_node.change_api(replaced_node_api, self.config.vocab2node[replaced_node_api])
 
-    def calculate_ln_prob_of_move(self, curr_prog, initial_state, added_pos, replaced_node_api, added_edge):
-        curr_prog_copy = curr_prog.copy()
-        assert curr_prog_copy.length == curr_prog.length, "curr_prog_copy length: " + str(
-            curr_prog_copy.length) + ", curr_prog length: " + str(curr_prog.length)
-        print("curr prog")
+        return new_node
+
+    # def calculate_ln_prob_of_move(self, curr_prog_original, initial_state, added_pos, replaced_node_api, added_edge, is_copy=False):
+    #     if not is_copy:
+    #         curr_prog = curr_prog_original.copy()
+    #     else:
+    #         curr_prog = curr_prog_original
+    #
+    #     # added_node = self.tree_mod.get_node_in_position(curr_prog, added_pos)
+    #     #
+    #     # # reconstruct original tree
+    #     # if (added_node.api_name == DBRANCH and replaced_node_api != DBRANCH) or (
+    #     #         added_node.api_name == DLOOP and replaced_node_api != DLOOP) or (
+    #     #         added_node.api_name == DEXCEPT and replaced_node_api != DEXCEPT):
+    #     #     added_node.remove_node(CHILD_EDGE)
+    #     #     added_pos = self.tree_mod.get_nodes_position(curr_prog, added_node)
+    #     #
+    #     # added_node.change_api(replaced_node_api, self.config.vocab2node[replaced_node_api])
+    #     # print("curr prog copy")
+    #     # print_verbose_tree_info(curr_prog_copy)
+    #
+    #     # get original
+    #
+    #
+    #     # return super().calculate_ln_prob_of_move(curr_prog_copy, initial_state, added_pos, added_edge)
+
+    def calculate_reversal_ln_prob(self, curr_prog_original, initial_state, added_pos, replaced_node_api, added_edge,
+                                   is_copy=False):
+        if not is_copy:
+            curr_prog = curr_prog_original.copy()
+        else:
+            curr_prog = curr_prog_original
+
+        added_node = self.tree_mod.get_node_in_position(curr_prog, added_pos)
+        old_node = self.undo_replace_random_node(added_node, replaced_node_api)
+
+        print("reversed moved:")
         print_verbose_tree_info(curr_prog)
-        added_node = self.tree_mod.get_node_in_position(curr_prog_copy, added_pos)
 
-        # reconstruct original tree
-        if (added_node.api_name == DBRANCH and replaced_node_api != DBRANCH) or (
-                added_node.api_name == DLOOP and replaced_node_api != DLOOP) or (
-                added_node.api_name == DEXCEPT and replaced_node_api != DEXCEPT):
-            added_node.remove_node(CHILD_EDGE)
-            added_pos = self.tree_mod.get_nodes_position(curr_prog_copy, added_node)
+        return self.calculate_ln_prob_of_move(curr_prog, initial_state, added_pos, added_edge, is_copy=True)
 
-        added_node.change_api(replaced_node_api, self.config.vocab2node[replaced_node_api])
-        print("curr prog copy")
-        print_verbose_tree_info(curr_prog_copy)
+    def _get_prob_from_logits(self, curr_prog, initial_state, added_node_pos, added_node, added_edge):
+        logits = self._get_logits_for_add_node(curr_prog, initial_state, added_node_pos, added_edge)
+        sorted_logits = np.argsort(-logits)
 
 
-        return super().calculate_ln_prob_of_move(curr_prog_copy, initial_state, added_pos, added_edge)

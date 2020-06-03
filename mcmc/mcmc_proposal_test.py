@@ -273,6 +273,133 @@ class ProposalTests(unittest.TestCase):
         print("prob from calc move:", new_ln_prob)
         self.assertEqual(ln_proposal_prob, new_ln_prob)
 
+    @mock.patch.object(random, 'randint')
+    def test_replace_proposal(self, mock_randint):
+        test_prog, _, _ = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, STR_BUILD_APP],
+                                              ["Typeface"],
+                                              ["String", "int"])
+        prog = test_prog.prog
+        curr_prog = test_prog.prog.curr_prog
+        expected_nodes, expected_edges = prog.tree_mod.get_vector_representation(curr_prog)
+        print("prev program")
+        print_verbose_tree_info(curr_prog)
+
+        # Logging and checks
+        prev_length = curr_prog.length
+        print("prev length:", prev_length)
+
+        # Add node
+        for i in range(1, curr_prog.length):
+            print("\ni:", i)
+            mock_randint.return_value = i
+            curr_prog, new_node, replaced_node_api, ln_proposal_prob = prog.Replace.replace_random_node(curr_prog,
+                                                                                                             prog.initial_state)
+
+            # If no node was added, return False
+            if new_node is None:
+                self.assertEqual(curr_prog.length, prev_length, "Curr prog length: " + str(
+                    curr_prog.length) + " != prev length: " + str(prev_length))
+                print("NEW NODE IS NONE")
+                continue
+
+            # Print logs
+            print("\nnew curr program:")
+            print_verbose_tree_info(curr_prog)
+
+            # Calculate reversal prob
+            new_node_pos = prog.tree_mod.get_nodes_position(curr_prog, new_node)
+            ln_reversal_prob = prog.Replace.calculate_reversal_ln_prob(curr_prog, prog.initial_state, new_node_pos,
+                                                                       replaced_node_api, new_node.parent_edge)
+
+            # Calculate probability of new program
+            prog.calculate_probability()
+
+            print("\nprev prob:", prog.prev_log_prob)
+            print("curr prob:", prog.curr_log_prob)
+            print("replace prob:", ln_proposal_prob)
+            print("reversal replace prob:", ln_reversal_prob)
+
+            self.assertEqual(prog.prev_log_prob, ln_reversal_prob)
+            self.assertEqual(prog.curr_log_prob, ln_proposal_prob)
+
+            # Validate current program
+            valid = prog.validate_and_update_program(REPLACE, ln_proposal_prob, ln_reversal_prob)
+
+            print("\nvalid:", valid)
+
+            # Undo move if not valid
+            prog.Replace.undo_replace_random_node(new_node, replaced_node_api)
+            prog.curr_log_prob = prog.prev_log_prob
+            print("after undo move:")
+            print_verbose_tree_info(curr_prog)
+            self.assertEqual(curr_prog.length, prev_length, "Curr prog length: " + str(
+                curr_prog.length) + " != prev length: " + str(prev_length))
+            nodes, edges = prog.tree_mod.get_vector_representation(curr_prog)
+            self.assertListEqual(list(expected_nodes), list(nodes))
+            self.assertListEqual(list(expected_edges), list(edges))
+
+    def test_logits(self):
+        test_prog, _, _ = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, STR_BUILD_APP],
+                                              ["Typeface"],
+                                              ["String", "int"])
+        prog = test_prog.prog
+        curr_prog = test_prog.prog.curr_prog
+        expected_nodes, expected_edges = prog.tree_mod.get_vector_representation(curr_prog)
+        print("prev program")
+        print_verbose_tree_info(curr_prog)
+
+        added_node_pos = 2
+        prog.Insert.curr_prog = curr_prog
+        prog.Insert.initial_state = prog.initial_state
+        added_node = prog.tree_mod.get_node_in_position(curr_prog, added_node_pos)
+
+        logits = prog.Insert._get_logits(curr_prog, prog.initial_state, added_node_pos, added_node, SIBLING_EDGE)
+        logits = logits.reshape(1, logits.shape[0])
+        print(type(logits))
+        print(logits.shape)
+        # # chosen_idx = prog.sess.run([tf.multinomial(logits, 1)], {logits: logits})
+        # logits = logits.reshape(1, logits.shape[0])
+        # vals, idxs = tf.math.top_k(logits, k=prog.decoder.top_k)
+        #
+        # # print(logits.shape)
+        # print(type(vals))
+        # chosen_idx = prog.sess.run(tf.multinomial(vals, 1), {logits: logits})
+        # print(chosen_idx)
+        # print(prog.config.node2vocab[chosen_idx])
+
+        nodes, edges = prog.tree_mod.get_vector_representation(curr_prog)
+        node = np.zeros([1, 1], dtype=np.int32)
+        edge = np.zeros([1, 1], dtype=np.bool)
+        node[0][0] = nodes[0]
+        edge[0][0] = edges[0]
+        # feed = {prog.decoder.edges.name: edge, prog.decoder.nodes.name: node,
+        #         prog.decoder.return_type: ["Typeface"],
+        #         prog.decoder.formal_params: ["String", "int"]}
+
+        feed = {prog.decoder.model.edges.name: edge, prog.decoder.model.nodes.name: node,
+                prog.decoder.model.return_type: [prog.config.rettype2num["Typeface"]],
+                prog.decoder.model.formal_params: [[prog.config.fp2num["int"]]]}
+
+        ast_logits = prog.sess.run(prog.decoder.model.decoder.ast_logits[0], feed)
+        print(ast_logits)
+        print(type(ast_logits))
+        print(ast_logits.shape)
+
+        vals, idxs = tf.math.top_k(logits, k=prog.decoder.top_k)
+        # vals, idxs, chosen_idx = prog.sess.run([vals, idxs, idxs[0][tf.multinomial(vals, 1)[0][0]]], feed)
+        vals, idxs, chosen_idx = prog.sess.run([vals, idxs, idxs[0][tf.multinomial(vals, 1)[0][0]]], {})
+
+        print(vals)
+        print(type(vals))
+        print(idxs)
+        print(type(idxs))
+        print(chosen_idx)
+        print(prog.config.node2vocab[chosen_idx])
+
+        print("\nmultinomial:")
+        idx = prog.sess.run(tf.multinomial(logits, 1)[0][0], {})
+        print(idx)
+        print(prog.config.node2vocab[idx])
 
 if __name__ == '__main__':
     unittest.main()
