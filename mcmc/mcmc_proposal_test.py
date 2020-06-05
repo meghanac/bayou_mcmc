@@ -417,6 +417,11 @@ class ProposalTests(unittest.TestCase):
         print(norm_logs[idx])
         print(sum(norm_logs))
 
+        # TODO: need to figure out if this is how I should sample from the multinomial or not. My logits are sums of
+        #  normalized logits. The sum in unnormalized and hence can be used by tf.multinomial. Need to make sure the
+        #  line below is whats happening in tf.multinomial, which I think is the case.
+        print("np multinomial:", np.argmax(np.random.multinomial(1, norm_logs, size=1)))
+
 
 if __name__ == '__main__':
     unittest.main()
