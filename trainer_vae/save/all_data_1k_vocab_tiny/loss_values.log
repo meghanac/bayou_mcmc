@@ -1,0 +1,27 @@
+Process id is 72
+GPU device is 6
+Amount of data used is 4217280
+	
+0/658950 (epoch 1) loss: 34.186, gen loss: 21.089, ret loss: 6.918, fp loss: 6.174, KL loss: 0.048. 
+Model checkpoint: save/all_data_1k_vocab/model1.ckpt. Average for epoch , loss: 5.391
+Process id is 117
+GPU device is 6
+Amount of data used is 4217280
+	
+0/658950 (epoch 1) loss: 34.180, gen loss: 21.062, ret loss: 6.901, fp loss: 6.210, KL loss: 0.068. 
+Model checkpoint: save/all_data_1k_vocab/model1.ckpt. Average for epoch , loss: 5.510
+100000/658950 (epoch 2) loss: 4.275, gen loss: 1.013, ret loss: 0.170, fp loss: 0.560, KL loss: 25.305. 
+Model checkpoint: save/all_data_1k_vocab/model2.ckpt. Average for epoch , loss: 4.195
+Model checkpoint: save/all_data_1k_vocab/model3.ckpt. Average for epoch , loss: 3.989
+200000/658950 (epoch 4) loss: 3.932, gen loss: 0.839, ret loss: 0.140, fp loss: 0.444, KL loss: 25.087. 
+Model checkpoint: save/all_data_1k_vocab/model4.ckpt. Average for epoch , loss: 3.884
+300000/658950 (epoch 5) loss: 3.821, gen loss: 0.788, ret loss: 0.133, fp loss: 0.407, KL loss: 24.914. 
+Model checkpoint: save/all_data_1k_vocab/model5.ckpt. Average for epoch , loss: 3.813
+Model checkpoint: save/all_data_1k_vocab/model6.ckpt. Average for epoch , loss: 3.777
+400000/658950 (epoch 7) loss: 3.755, gen loss: 0.755, ret loss: 0.131, fp loss: 0.391, KL loss: 24.784. 
+Model checkpoint: save/all_data_1k_vocab/model7.ckpt. Average for epoch , loss: 3.752
+500000/658950 (epoch 8) loss: 3.742, gen loss: 0.747, ret loss: 0.129, fp loss: 0.388, KL loss: 24.781. 
+Model checkpoint: save/all_data_1k_vocab/model8.ckpt. Average for epoch , loss: 3.732
+Model checkpoint: save/all_data_1k_vocab/model9.ckpt. Average for epoch , loss: 3.699
+600000/658950 (epoch 10) loss: 3.689, gen loss: 0.732, ret loss: 0.127, fp loss: 0.368, KL loss: 24.621. 
+Model checkpoint: save/all_data_1k_vocab/model10.ckpt. Average for epoch , loss: 3.686

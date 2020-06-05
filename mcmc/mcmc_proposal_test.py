@@ -27,8 +27,8 @@ class ProposalTests(unittest.TestCase):
     @mock.patch.object(random, 'randint')
     def test_insert_proposal(self, mock_randint):
         test_prog, _, _ = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, STR_BUILD_APP],
-                                                                        ["Typeface"],
-                                                                        ["String", "int"])
+                                              ["Typeface"],
+                                              ["String", "int"])
         prog = test_prog.prog
         curr_prog = test_prog.prog.curr_prog
         prog.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0}
@@ -91,8 +91,8 @@ class ProposalTests(unittest.TestCase):
     def test_insert_proposal_for_dnode(self):
 
         test_prog, _, _ = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, STR_BUILD_APP],
-                                                                        ["Typeface"],
-                                                                        ["String", "int"])
+                                              ["Typeface"],
+                                              ["String", "int"])
         prog = test_prog.prog
         curr_prog = test_prog.prog.curr_prog
         prog.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0}
@@ -297,8 +297,8 @@ class ProposalTests(unittest.TestCase):
         for i in range(1, curr_prog.length):
             print("\ni:", i)
             mock_randint.return_value = i
-            curr_prog, new_node, replaced_node_api, ln_proposal_prob = prog.Replace.replace_random_node(curr_prog,
-                                                                                                             prog.initial_state)
+            curr_prog, new_node, replaced_node_api, ln_proposal_prob = \
+                prog.Replace.replace_random_node(curr_prog, prog.initial_state)
 
             # If no node was added, return False
             if new_node is None:

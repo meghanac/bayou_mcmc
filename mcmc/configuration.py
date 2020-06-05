@@ -6,6 +6,7 @@ MAX_LOOP_NUM = 3
 MAX_BRANCHING_NUM = 3
 MAX_AST_DEPTH = 32
 
+
 class Configuration:
     def __init__(self, save_dir):
         # Initialize model
