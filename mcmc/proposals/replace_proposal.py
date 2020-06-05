@@ -110,8 +110,8 @@ class ReplaceProposal(ProposalWithInsertion):
 
         return self.calculate_ln_prob_of_move(curr_prog, initial_state, added_pos, added_edge, is_copy=True)
 
-    def _get_prob_from_logits(self, curr_prog, initial_state, added_node_pos, added_node, added_edge):
-        logits = self._get_logits_for_add_node(curr_prog, initial_state, added_node_pos, added_edge)
-        sorted_logits = np.argsort(-logits)
+    # def _get_prob_from_logits(self, curr_prog, initial_state, added_node_pos, added_node, added_edge):
+    #     logits = self._get_logits_for_add_node(curr_prog, initial_state, added_node_pos, added_edge)
+    #     sorted_logits = np.argsort(-logits)
 
 

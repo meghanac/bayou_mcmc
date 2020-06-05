@@ -71,7 +71,7 @@ class MCMCProgram:
         self.decoder = None
         self.encoder = None
 
-        self.proposal_probs = {INSERT: 0.8, DELETE: 0.2, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0}
+        self.proposal_probs = {INSERT: 0.0, DELETE: 0.0, SWAP: 0.0, REPLACE: 1.0, ADD_DNODE: 0.0}
         self.proposals = list(self.proposal_probs.keys())
         self.p_probs = [self.proposal_probs[p] for p in self.proposals]
         self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE, ADD_DNODE: DELETE}
@@ -293,7 +293,12 @@ class MCMCProgram:
         :return: (bool)
         """
         # print(math.exp(self.curr_log_prob)/math.exp(self.prev_log_prob))
-        ln_prob_reverse_move = math.log(self.proposal_probs[self.reverse[move]])
+        print(move)
+        print(self.proposal_probs[self.reverse[move]])
+        if self.proposal_probs[self.reverse[move]] != 1.0:
+            ln_prob_reverse_move = math.log(self.proposal_probs[self.reverse[move]])
+        else:
+            ln_prob_reverse_move = 0.0
         ln_prob_move = math.log(self.proposal_probs[move])
         alpha = (ln_prob_reverse_move + ln_reversal_prob + self.curr_log_prob) - (
                 self.prev_log_prob + ln_prob_move + ln_proposal_prob)
@@ -626,6 +631,7 @@ class MCMCProgram:
                     pass
                 else:
                     # add prob of stop node
+                    # logits are normalized with log_softmax
                     state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
                     stop_node = self.config.vocab2node[STOP]
                     curr_prob += ast_prob[0][stop_node]

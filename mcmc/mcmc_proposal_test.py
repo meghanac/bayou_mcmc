@@ -14,7 +14,7 @@ from test_utils import STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, S
     create_str_buf_base_program, create_eight_node_program, create_dbranch, create_dloop, create_dexcept, \
     create_all_dtypes_program, DBRANCH, DLOOP, DEXCEPT, SIBLING_EDGE, CHILD_EDGE
 
-from mcmc import INSERT, DELETE, REPLACE
+from mcmc import INSERT, DELETE, REPLACE, SWAP, ADD_DNODE
 
 from proposals.insertion_proposals import ProposalWithInsertion
 from proposals.insert_proposal import InsertProposal
@@ -31,6 +31,7 @@ class ProposalTests(unittest.TestCase):
                                                                         ["String", "int"])
         prog = test_prog.prog
         curr_prog = test_prog.prog.curr_prog
+        prog.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0}
         expected_nodes, expected_edges = prog.tree_mod.get_vector_representation(curr_prog)
         print("prev program")
         print_verbose_tree_info(curr_prog)
@@ -94,6 +95,7 @@ class ProposalTests(unittest.TestCase):
                                                                         ["String", "int"])
         prog = test_prog.prog
         curr_prog = test_prog.prog.curr_prog
+        prog.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0}
         expected_nodes, expected_edges = prog.tree_mod.get_vector_representation(curr_prog)
         print("prev program")
         print_verbose_tree_info(curr_prog)
@@ -169,6 +171,7 @@ class ProposalTests(unittest.TestCase):
                                               ["String", "int"])
         prog = test_prog.prog
         curr_prog = test_prog.prog.curr_prog
+        prog.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0}
         expected_nodes, expected_edges = prog.tree_mod.get_vector_representation(curr_prog)
         print("prev program")
         print_verbose_tree_info(curr_prog)
@@ -241,6 +244,7 @@ class ProposalTests(unittest.TestCase):
         mock_randint.return_value = pos
         prog = test_prog.prog
         curr_prog = test_prog.prog.curr_prog
+        prog.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0}
         curr_prog, added_node, ln_proposal_prob = prog.Insert.add_random_node(curr_prog, prog.initial_state)
 
         print("\ncurr prog from insert proposal:")
@@ -265,8 +269,8 @@ class ProposalTests(unittest.TestCase):
         new_added_node_pos = new_prog.tree_mod.get_nodes_position(new_curr_prog, new_added_node)
         print("\nnode pos:", new_added_node_pos)
         new_prog.Insert.curr_prog = new_curr_prog
-        new_prog.Insert.initial_state = new_prog.initial_state
-        new_ln_prob = new_prog.Insert.calculate_ln_prob_of_move(new_curr_prog, new_prog.initial_state,
+        new_prog.Insert.initial_state = prog.initial_state
+        new_ln_prob = new_prog.Insert.calculate_ln_prob_of_move(new_curr_prog, prog.initial_state,
                                                                 new_added_node_pos,
                                                                 new_added_node.parent_edge, is_copy=True)
         print("\nprob from insert proposal:", ln_proposal_prob)
@@ -275,12 +279,13 @@ class ProposalTests(unittest.TestCase):
 
     @mock.patch.object(random, 'randint')
     def test_replace_proposal(self, mock_randint):
-        test_prog, _, _ = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, STR_BUILD_APP],
+        test_prog, _, _ = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, STR_LEN],
                                               ["Typeface"],
                                               ["String", "int"])
         prog = test_prog.prog
         curr_prog = test_prog.prog.curr_prog
         expected_nodes, expected_edges = prog.tree_mod.get_vector_representation(curr_prog)
+        prog.proposal_probs = {INSERT: 0.0, DELETE: 0.0, SWAP: 0.0, REPLACE: 1.0, ADD_DNODE: 0.0}
         print("prev program")
         print_verbose_tree_info(curr_prog)
 
@@ -400,6 +405,18 @@ class ProposalTests(unittest.TestCase):
         idx = prog.sess.run(tf.multinomial(logits, 1)[0][0], {})
         print(idx)
         print(prog.config.node2vocab[idx])
+
+        logs = logits.tolist()[0]
+        logs = [math.exp(i) for i in logs]
+        print(logs)
+        print(sum(logs))
+
+        norm_logs = prog.sess.run(tf.nn.log_softmax(logits[0]), {})
+        norm_logs = [math.exp(i) for i in norm_logs]
+        print(norm_logs)
+        print(norm_logs[idx])
+        print(sum(norm_logs))
+
 
 if __name__ == '__main__':
     unittest.main()

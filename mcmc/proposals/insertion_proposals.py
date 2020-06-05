@@ -30,6 +30,10 @@ class ProposalWithInsertion:
         self.attempted = 0
         self.accepted = 0
 
+        self.use_multinomial = True
+
+        self.sess = tf.Session()
+
     def _grow_dbranch(self, dbranch, verbose=False):
         """
         Create full DBranch (DBranch, condition, then, else) from parent node.
@@ -179,14 +183,14 @@ class ProposalWithInsertion:
     def _replace_node_api(self, node, node_pos, parent_edge, verbose=False):
 
         # return self.get_ast_idx_top_k(parent_pos, non_dnode) # multinomial on top k
-        new_node_idx, prob = self._get_ast_idx_random_top_k(node_pos, parent_edge, verbose=verbose)  # randomly choose from top k
+        new_node_idx, prob = self._get_ast_idx(node_pos, parent_edge, verbose=verbose)  # randomly choose from top k
 
         # replace api name
         node.change_api(self.config.node2vocab[new_node_idx], new_node_idx)
 
         return node, node_pos, prob
 
-    def _get_ast_idx_random_top_k(self, empty_node_pos, added_edge, verbose=False):  # TODO: TEST
+    def _get_ast_idx(self, empty_node_pos, added_edge, verbose=False):  # TODO: TEST
         """
         Returns api number (based on vocabulary). Uniform randomly selected from top k based on parent node.
         :param parent_pos: (int) position of parent node in current program (by DFS)
@@ -196,43 +200,29 @@ class ProposalWithInsertion:
         logits = self._get_logits_for_add_node(self.curr_prog, self.initial_state, empty_node_pos, added_edge)
         sorted_logits = np.argsort(-logits)
 
-        # print(sorted_logits)
-        # print(logits[sorted_logits[0]])
-        # print(logits[sorted_logits[1]])
-
-        mu = random.uniform(0, 1)
-        if mu <= self.top_k_prob:
-            rand_idx = random.randint(0, self.decoder.top_k - 1)  # randint is a,b inclusive
-            if verbose:
-                print("topk", [self.config.node2vocab[sorted_logits[i]] for i in range(0, self.decoder.top_k)])
-                print("topk", self.config.node2vocab[sorted_logits[rand_idx]])
-            prob = self.top_k_prob * 1.0 / self.decoder.top_k
-            return sorted_logits[rand_idx], math.log(prob)
-        else:
-            rand_idx = random.randint(self.decoder.top_k, len(sorted_logits) - 1)
-            if verbose:
-                print("-topk", self.config.node2vocab[sorted_logits[rand_idx]])
-            prob = (1 - self.top_k_prob) * 1.0 / (len(logits) - self.decoder.top_k)
-            return sorted_logits[rand_idx], math.log(prob)
-
-    # def __get_ast_idx_top_k(self, parent_pos, added_edge, top_k_prob=0.95):
-    #     logits = self.get_logits_for_add_node(parent_pos, added_edge)
-    #     sorted_logits = np.argsort(-logits)
-    #
-    #     mu = random.uniform(0, 1)
-    #     if mu <= top_k_prob:
-    #         top_k = sorted_logits[:self.decoder.top_k]
-    #         top_k /= np.linalg.norm(top_k)
-    #         # u = random.uniform(0, 1)
-    #         # cum_topk = np.cumsum(top_k)
-    #         # prob = top_k_prob * 1.0 / self.decoder.top_k
-    #         selected = tf.multinomial(top_k)
-    #         return sorted_logits[selected], top_k[selected]
-    #     else:
-    #         not_topk = sorted_logits[self.decoder.top_k:]
-    #         not_topk /= np.linalg.norm(not_topk)
-    #         selected = tf.multinomial(not_topk)
-    #         return sorted_logits[selected], not_topk[selected]
+        if self.use_multinomial:
+            # logits are already normalized from decoder
+            logits = logits.reshape(1, logits.shape[0])
+            idx = self.sess.run(tf.multinomial(logits, 1)[0][0], {})
+            norm_logs = self.sess.run(tf.nn.log_softmax(logits[0]), {})
+            # norm_logs = [math.exp(i) for i in norm_logs]
+            # return idx, norm_logs[idx]/self.curr_prog.length
+            return idx, logits[0][idx]/self.curr_prog.length
+        else:  # randomly select from top_k
+            mu = random.uniform(0, 1)
+            if mu <= self.top_k_prob:
+                rand_idx = random.randint(0, self.decoder.top_k - 1)  # randint is a,b inclusive
+                if verbose:
+                    print("topk", [self.config.node2vocab[sorted_logits[i]] for i in range(0, self.decoder.top_k)])
+                    print("topk", self.config.node2vocab[sorted_logits[rand_idx]])
+                prob = self.top_k_prob * 1.0 / self.decoder.top_k
+                return sorted_logits[rand_idx], math.log(prob)
+            else:
+                rand_idx = random.randint(self.decoder.top_k, len(sorted_logits) - 1)
+                if verbose:
+                    print("-topk", self.config.node2vocab[sorted_logits[rand_idx]])
+                prob = (1 - self.top_k_prob) * 1.0 / (len(logits) - self.decoder.top_k)
+                return sorted_logits[rand_idx], math.log(prob)
 
     def _get_logits_for_add_node(self, curr_prog, initial_state, empty_node_pos, added_edge):
         assert empty_node_pos > 0, "Can't replace DSubTree, empty_node_pos must be > 0"
@@ -245,11 +235,15 @@ class ProposalWithInsertion:
 
         vocab_size = self.config.vocab.api_dict_size
 
+        # stores states and probabilities for each possible added node
+        # node_num: ast_state
+        # extra key in logits is probs_key. probs_key : [logit for each node]
         logits = {}
-
         probs_key = "probs"
 
         preceding_pos = empty_node_pos - 1
+
+        preceding_prob = 0.0
 
         for i in range(curr_prog.length):
             node[0][0] = nodes[i]
@@ -264,10 +258,10 @@ class ProposalWithInsertion:
                 logits[probs_key] = np.zeros(vocab_size)
                 for j in range(len(probs[0])):
                     logits[j] = state
-                    logits[probs_key][j] += probs[0][j]
+                    logits[probs_key][j] += (probs[0][j] + preceding_prob)
 
+            # pass in each node that could be added into decoder
             elif i == empty_node_pos:
-                # pass in each node that could be added into decoder
                 for k in range(vocab_size):
                     node[0][0] = k
                     edge[0][0] = added_edge
@@ -299,17 +293,24 @@ class ProposalWithInsertion:
 
             # pass in nodes up till the node before added node
             else:
-                state, _ = self.decoder.get_ast_logits(node, edge, state)
+                state, probs = self.decoder.get_ast_logits(node, edge, state)
+                preceding_prob += probs[0][nodes[i + 1]]
 
     def _get_prob_from_logits(self, curr_prog, initial_state, added_node_pos, added_node, added_edge):
         logits = self._get_logits_for_add_node(curr_prog, initial_state, added_node_pos, added_edge)
-        sorted_logits = np.argsort(-logits)
 
-        if np.where(sorted_logits == added_node.api_num)[0] < self.decoder.top_k:
-            return math.log(self.top_k_prob * 1.0 / self.decoder.top_k)
+        if self.use_multinomial:
+            logits = logits.reshape(1, logits.shape[0])
+            # print("logits:", logits[0][added_node.api_num]/curr_prog.length)
+            # return norm_logs[added_node.api_num]/curr_prog.length
+            return logits[0][added_node.api_num]/curr_prog.length
         else:
-            assert self.top_k_prob < 1.0, "If top_k_prob = 1.0, then it shouldn't be here"
-            return math.log((1 - self.top_k_prob) * 1.0 / (len(logits) - self.decoder.top_k))
+            sorted_logits = np.argsort(-logits)
+            if np.where(sorted_logits == added_node.api_num)[0] < self.decoder.top_k:
+                return math.log(self.top_k_prob * 1.0 / self.decoder.top_k)
+            else:
+                assert self.top_k_prob < 1.0, "If top_k_prob = 1.0, then it shouldn't be here"
+                return math.log((1 - self.top_k_prob) * 1.0 / (len(logits) - self.decoder.top_k))
 
     def _get_logits(self, curr_prog, initial_state, added_node_pos, added_node, added_edge):
         return self._get_logits_for_add_node(curr_prog, initial_state, added_node_pos, added_edge)
