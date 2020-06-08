@@ -343,6 +343,9 @@ class ProposalTests(unittest.TestCase):
             self.assertListEqual(list(expected_nodes), list(nodes))
             self.assertListEqual(list(expected_edges), list(edges))
 
+    def test_swap_proposal(self):
+        pass
+
     def test_logits(self):
         test_prog, _, _ = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, STR_BUILD_APP],
                                               ["Typeface"],

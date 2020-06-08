@@ -71,7 +71,8 @@ class MCMCProgram:
         self.decoder = None
         self.encoder = None
 
-        self.proposal_probs = {INSERT: 0.0, DELETE: 0.0, SWAP: 0.0, REPLACE: 1.0, ADD_DNODE: 0.0}
+        # self.proposal_probs = {INSERT: 0.3333, DELETE: 0.3333, SWAP: 0.0001, REPLACE: 0.3333, ADD_DNODE: 0.0}
+        self.proposal_probs = {INSERT: 0.3, DELETE: 0.7, SWAP: 0.00, REPLACE: 0.0, ADD_DNODE: 0.0}
         self.proposals = list(self.proposal_probs.keys())
         self.p_probs = [self.proposal_probs[p] for p in self.proposals]
         self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE, ADD_DNODE: DELETE}
@@ -213,6 +214,14 @@ class MCMCProgram:
                 if not (curr_node.sibling is None and curr_node.child is None):
                     return False
 
+            # check child edges
+            if curr_node.parent_edge == CHILD_EDGE:
+                if curr_node.parent.api_name not in {DBRANCH, DLOOP,
+                                                     DEXCEPT} and curr_node.parent.parent.api_name not in {DBRANCH,
+                                                                                                           DLOOP,
+                                                                                                           DEXCEPT}:
+                    return False
+
             # Check that DBranch has the proper form
             if curr_node.api_name == DBRANCH:
                 if curr_node.child is None:
@@ -225,12 +234,10 @@ class MCMCProgram:
                     return False
                 if curr_node.child.child.sibling.api_name != STOP:
                     return False
-                # If this is not the end of program, there should be a DStop node after else node
-                if not (curr_node.sibling is None and len(stack) == 0):
-                    if curr_node.child.sibling.sibling is None:
-                        return False
-                    if curr_node.child.sibling.sibling.api_name != STOP:
-                        return False
+                if curr_node.child.sibling.sibling is None:
+                    return False
+                if curr_node.child.sibling.sibling.api_name != STOP:
+                    return False
 
             # TODO: basically what is happening is that a DExcept gets added to the end of the program so there's no DStop
             # node but then a node gets added onto the catch node and the required DStop node isn't there
@@ -244,12 +251,10 @@ class MCMCProgram:
                     return False
                 if curr_node.child.api_name in DNODES or curr_node.child.child.api_name in DNODES:
                     return False
-                # If this is not the end of program, there should be a DStop node
-                if not (curr_node.sibling is None and len(stack) == 0):
-                    if curr_node.child.child.sibling is None:
-                        return False
-                    if curr_node.child.child.sibling.api_name != STOP:
-                        return False
+                if curr_node.child.child.sibling is None:
+                    return False
+                if curr_node.child.child.sibling.api_name != STOP:
+                    return False
 
             # Choose next node to explore
             if curr_node.child is not None:
@@ -294,14 +299,22 @@ class MCMCProgram:
         """
         # print(math.exp(self.curr_log_prob)/math.exp(self.prev_log_prob))
         print(move)
-        print(self.proposal_probs[self.reverse[move]])
         if self.proposal_probs[self.reverse[move]] != 1.0:
             ln_prob_reverse_move = math.log(self.proposal_probs[self.reverse[move]])
         else:
             ln_prob_reverse_move = 0.0
         ln_prob_move = math.log(self.proposal_probs[move])
-        alpha = (ln_prob_reverse_move + ln_reversal_prob + self.curr_log_prob) - (
+        alpha = (ln_prob_reverse_move + ln_reversal_prob/(self.curr_prog.length - 1) + self.curr_log_prob) - (
                 self.prev_log_prob + ln_prob_move + ln_proposal_prob)
+        print("curr log:", math.exp(self.curr_log_prob))
+        print("prev log:", math.exp(self.prev_log_prob))
+        print("proposal prob:", math.exp(ln_proposal_prob))
+        print("reversal prob:", math.exp(ln_reversal_prob)/(self.curr_prog.length - 1))
+        print("move prob:", self.proposal_probs[move])
+        print("reverse move prob:", self.proposal_probs[self.reverse[move]])
+        print("numerator:", math.exp(ln_prob_reverse_move + ln_reversal_prob + self.curr_log_prob))
+        print("denominator:", math.exp(self.prev_log_prob + ln_prob_move + ln_proposal_prob))
+        print("alpha:", math.exp(alpha))
         mu = math.log(random.uniform(0, 1))
         if mu < alpha:
             self.prev_log_prob = self.curr_log_prob  # TODO: add logging for graph here
@@ -396,8 +409,8 @@ class MCMCProgram:
         print_verbose_tree_info(self.curr_prog)
 
         # Add node
-        self.curr_prog, new_node, replaced_node_api, ln_proposal_prob = self.Replace.replace_random_node(self.curr_prog,
-                                                                                                     self.initial_state)
+        self.curr_prog, new_node, replaced_node_api, ln_proposal_prob = \
+            self.Replace.replace_random_node(self.curr_prog, self.initial_state)
 
         # If no node was added, return False
         if new_node is None:
@@ -422,7 +435,6 @@ class MCMCProgram:
         # Validate current program
         valid = self.validate_and_update_program(REPLACE, ln_proposal_prob, ln_reversal_prob)
 
-        print(new_node.parent)
 
         # Undo move if not valid
         if not valid:
@@ -453,7 +465,7 @@ class MCMCProgram:
         parent_node_copy.add_node(node, parent_edge)
         node.add_node(parent_node_copy_neighbor, parent_edge)
         node_pos = self.tree_mod.get_nodes_position(curr_prog_copy, node)
-        ln_reversal_prob = self.Insert.calculate_ln_prob_of_move(self.curr_prog, self.initial_state, node_pos,
+        ln_reversal_prob = self.Insert.calculate_ln_prob_of_move(curr_prog_copy, self.initial_state, node_pos,
                                                                  parent_edge, is_copy=True)
         parent_node_copy.remove_node(parent_edge)
 

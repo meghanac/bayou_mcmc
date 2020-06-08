@@ -38,7 +38,7 @@ class DeleteProposal:
         self.curr_prog = curr_prog
 
         node, _ = self.__get_deletable_node()
-        assert node.api_name != STOP
+        # assert node.api_name != STOP
         parent_node = node.parent
         parent_edge = node.parent_edge
 
