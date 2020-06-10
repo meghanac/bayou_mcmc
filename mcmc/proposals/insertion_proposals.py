@@ -205,9 +205,10 @@ class ProposalWithInsertion:
             logits = logits.reshape(1, logits.shape[0])
             idx = self.sess.run(tf.multinomial(logits, 1)[0][0], {})
             norm_logs = self.sess.run(tf.nn.log_softmax(logits[0]), {})
+            print("norm logs:", math.exp(sum(norm_logs)))
             # norm_logs = [math.exp(i) for i in norm_logs]
-            # return idx, norm_logs[idx]/self.curr_prog.length
-            return idx, logits[0][idx]/self.curr_prog.length
+            return idx, norm_logs[idx]/self.curr_prog.length
+            # return idx, logits[0][idx]/self.curr_prog.length
         else:  # randomly select from top_k
             mu = random.uniform(0, 1)
             if mu <= self.top_k_prob:
@@ -301,9 +302,11 @@ class ProposalWithInsertion:
 
         if self.use_multinomial:
             logits = logits.reshape(1, logits.shape[0])
+            norm_logs = self.sess.run(tf.nn.log_softmax(logits[0]), {})
+            print("norm logs:", math.exp(sum(norm_logs)))
             # print("logits:", logits[0][added_node.api_num]/curr_prog.length)
-            # return norm_logs[added_node.api_num]/curr_prog.length
-            return logits[0][added_node.api_num]/curr_prog.length
+            return norm_logs[added_node.api_num]/curr_prog.length
+            # return logits[0][added_node.api_num]/curr_prog.length
         else:
             sorted_logits = np.argsort(-logits)
             if np.where(sorted_logits == added_node.api_num)[0] < self.decoder.top_k:
@@ -336,7 +339,7 @@ class ProposalWithInsertion:
 
                 # remove child and siblings from DBranch and then add DBranch node
                 added_node.remove_node(CHILD_EDGE)
-                added_node.remove_node(SIBLING_EDGE)
+                # added_node.remove_node(SIBLING_EDGE)
 
                 # get probability of adding dbranch node
                 dbranch_pos = self.tree_mod.get_nodes_position(curr_prog, added_node)
@@ -374,7 +377,7 @@ class ProposalWithInsertion:
 
                 # remove child from DNode and then find probability of adding dnode
                 added_node.remove_node(CHILD_EDGE)
-                assert (added_node.sibling is None)
+                # assert (added_node.sibling is None)
                 dnode_pos = self.tree_mod.get_nodes_position(curr_prog, added_node)
                 ln_prob = self._get_prob_from_logits(curr_prog, initial_state, dnode_pos, added_node, added_edge)
 

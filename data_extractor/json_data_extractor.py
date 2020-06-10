@@ -494,11 +494,13 @@ def build_graph(sorted_apis, new_data_filename, new_dir_path):
 
     return g, os.path.join(new_dir_path, graph_filename)
 
+
 def load_graph(path):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     d = json.load(open(os.path.join(dir_path, path)))
     g = json_graph.adjacency_graph(d)
     return g
+
 
 def view_graph(path):
     g = load_graph(path)
@@ -695,4 +697,4 @@ def analyze_file(dir_path, filename, vocab_freq_saved=True):
 
 # view_graph("data/delete-6000/delete-6000_api_graph.json")
 
-build_graph_from_json_file("data/all_data_50k_vocab", "all_data_50k_vocab.json")
+# build_graph_from_json_file("data/all_data_50k_vocab", "all_data_50k_vocab.json")

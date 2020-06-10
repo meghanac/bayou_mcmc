@@ -66,6 +66,8 @@ class Reader:
             self.fp_dict = Dictionary()
             self.keyword_dict = Dictionary()
 
+        self.data_points = []
+
         ast_programs, return_types, formal_params = self.read_data(clargs.data + '/constraints.json')
 
         # setup input and target chars/vocab
@@ -112,7 +114,6 @@ class Reader:
         #     mod_list = kw[:len_list]
         #     self.keywords[i, :len_list] = mod_list
 
-
         # self.js_programs = js_programs
         self.save_data(clargs.data)
 
@@ -157,6 +158,8 @@ class Reader:
         random.shuffle(data_points)
         parsed_api_array, return_type_ids, formal_param_ids = zip(*data_points)  # unzip
 
+        self.data_points = data_points
+
         return parsed_api_array, return_type_ids, formal_param_ids
 
     def save_data(self, path):
@@ -180,7 +183,6 @@ class Reader:
 
         # with open(path + '/js_programs.json', 'w') as f:
         #     json.dump({'programs': self.js_programs}, fp=f, indent=2)
-
 
     def read_ast(self, program_ast_js):
         # Read the Program AST to a sequence

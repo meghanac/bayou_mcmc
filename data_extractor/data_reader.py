@@ -46,11 +46,15 @@ HELP = """{}"""
 
 
 class Reader:
-    def __init__(self, clargs, infer=False):
+    def __init__(self, clargs, infer=False, create_database=False, vocab=None):
         self.ast_traverser = AstTraverser()
         self.ast_reader = AstReader()
         self.infer = infer
         self.vocab = argparse.Namespace()
+
+        if self.infer:
+            assert vocab is not None
+            self.vocab = vocab
 
         random.seed(12)
         # read the raw evidences and targets
@@ -112,6 +116,10 @@ class Reader:
             mod_list = kw[:len_list]
             self.keywords[i, :len_list] = mod_list
 
+        self.create_database = create_database
+        if create_database:
+            self.database = {}
+            self.save_prog_database(sz)
 
         # self.js_programs = js_programs
         self.save_data(clargs.data)
@@ -159,6 +167,34 @@ class Reader:
 
         return parsed_api_array, return_type_ids, formal_param_ids, keywords
 
+    def save_prog_database(self, sz):
+        program_ids = {}
+        api_to_prog_ids = {}
+        stored_programs = set([])
+        counter = 0
+        repeat_prog_counter = 0
+
+        for i in range(sz):
+            prog = (self.nodes[i].tolist(), self.edges[i].tolist(), self.return_types[i].tolist(), self.fp_types[i].tolist())
+            # if prog not in stored_programs:
+            prog_id = counter
+            program_ids[prog_id] = prog
+            # stored_programs.add(prog)
+            counter += 1
+
+            for api in self.nodes[i]:
+                if api not in api_to_prog_ids:
+                    api_to_prog_ids[api] = {prog_id}
+                else:
+                    api_to_prog_ids[api].add(prog_id)
+        #     else:
+        #         repeat_prog_counter += 1
+        #
+        # print("Num repeated programs in dataset:", repeat_prog_counter)
+
+        self.database['program_ids'] = program_ids
+        self.database['api_to_prog_ids'] = api_to_prog_ids
+
     def save_data(self, path):
         if not os.path.exists(path):
             os.makedirs(path)
@@ -178,8 +214,15 @@ class Reader:
         with open(os.path.join(path + '/vocab.json'), 'w') as f:
             json.dump(dump_vocab(self.vocab), fp=f, indent=2)
 
+        if self.create_database:
+            self.save_database(path)
+
         # with open(path + '/js_programs.json', 'w') as f:
         #     json.dump({'programs': self.js_programs}, fp=f, indent=2)
+
+    def save_database(self, path):
+        with open(path + '/program_database.pickle', 'wb') as f:
+            pickle.dump(self.database, f)
 
 
     def read_ast(self, program_ast_js):

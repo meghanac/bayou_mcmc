@@ -11,10 +11,14 @@ from test_utils import STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, S
     create_str_buf_base_program, create_eight_node_program, create_dbranch, create_dloop, create_dexcept, \
     create_all_dtypes_program
 
+from mcmc import INSERT, DELETE, REPLACE, SWAP, ADD_DNODE
+
 import unittest.mock as mock
 
 # SAVED MODEL
 SAVED_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/1k_vocab_constraint_min_3-600000'
+
+ALL_DATA_1K_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/all_data_1k_vocab'
 
 
 class MCMCProgramTest(unittest.TestCase):
@@ -571,8 +575,10 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertEqual(test_prog.prog.curr_prog.non_dnode_length, 1)
 
     def test_mcmc(self):
-        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, STR_BUILD_APP], ["Typeface"],
+        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH, ['java.lang.StringBuilder.StringBuilder()', 'java.util.Map<java.lang.String,java.lang.String>.entrySet()'], ["Typeface"],
                                                                              ["String", "int"])
+
+        test_prog.prog.proposal_probs = {INSERT: 0.333, DELETE: 0.334, SWAP: 0.0, REPLACE: 0.333, ADD_DNODE: 0.0}
 
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
@@ -595,7 +601,7 @@ class MCMCProgramTest(unittest.TestCase):
         test_prog.print_summary_logs()
 
     def test_dev(self):
-        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, "java.io.ObjectInputStream.defaultReadObject()"], ["void"],
+        test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_MODEL_PATH, [STR_BUILD, "java.io.ObjectInputStream.defaultReadObject()"], ["void"],
                                                                              ["String", "int", "ObjectInputStream"])
 
         added_node = test_prog.prog.add_random_node()

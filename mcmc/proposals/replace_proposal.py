@@ -52,9 +52,9 @@ class ReplaceProposal(ProposalWithInsertion):
             if ln_prob is not None:
                 prob += ln_prob
 
-        print("replace")
+        print("replace node is pos:", rand_node_pos)
         print_verbose_tree_info(self.curr_prog)
-        print_verbose_tree_info(curr_prog)
+        # print_verbose_tree_info(curr_prog)
 
         # Reset self.curr_prog and self.initial_state
         self.curr_prog = None

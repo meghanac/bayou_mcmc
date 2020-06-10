@@ -19,8 +19,8 @@ class Dictionary:
             self.call_dict['__delim__'] = 0
             self.call_count = 1
         else:
-            self.call_dict = pre_loaded_vocab.vocab
-            self.call_count = pre_loaded_vocab.vocab_size
+            self.call_dict = pre_loaded_vocab
+            self.call_count = len(pre_loaded_vocab.keys())
 
     def conditional_add_node_val(self, node_val):
         if node_val in self.call_dict:

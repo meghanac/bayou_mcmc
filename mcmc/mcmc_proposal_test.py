@@ -277,6 +277,53 @@ class ProposalTests(unittest.TestCase):
         print("prob from calc move:", new_ln_prob)
         self.assertEqual(ln_proposal_prob, new_ln_prob)
 
+    def replace_node(self, prog, curr_prog, prev_length):
+        curr_prog, new_node, replaced_node_api, ln_proposal_prob = \
+            prog.Replace.replace_random_node(curr_prog, prog.initial_state)
+
+        # If no node was added, return False
+        if new_node is None:
+            self.assertEqual(curr_prog.length, prev_length, "Curr prog length: " + str(
+                curr_prog.length) + " != prev length: " + str(prev_length))
+            print("NEW NODE IS NONE")
+            return None, None
+
+        # Print logs
+        print("\nnew curr program:")
+        print_verbose_tree_info(curr_prog)
+
+        # Calculate reversal prob
+        new_node_pos = prog.tree_mod.get_nodes_position(curr_prog, new_node)
+        ln_reversal_prob = prog.Replace.calculate_reversal_ln_prob(curr_prog, prog.initial_state, new_node_pos,
+                                                                   replaced_node_api, new_node.parent_edge)
+
+        # Calculate probability of new program
+        prog.calculate_probability()
+
+        if new_node.api_name == replaced_node_api:
+            self.assertEqual(prog.curr_log_prob, prog.prev_log_prob)
+            self.assertEqual(ln_reversal_prob, ln_proposal_prob)
+
+        print("\nprev prob:", prog.prev_log_prob)
+        print("curr prob:", prog.curr_log_prob)
+        print("replace prob:", ln_proposal_prob)
+        print("reversal replace prob:", ln_reversal_prob)
+
+        print("\nprev prob:", math.exp(prog.prev_log_prob))
+        print("curr prob:", math.exp(prog.curr_log_prob))
+        print("replace prob:", math.exp(ln_proposal_prob))
+        print("reversal replace prob:", math.exp(ln_reversal_prob))
+
+        # self.assertEqual(prog.prev_log_prob, ln_reversal_prob)
+        # self.assertEqual(prog.curr_log_prob, ln_proposal_prob)
+
+        # Validate current program
+        valid = prog.validate_and_update_program(REPLACE, ln_proposal_prob, ln_reversal_prob)
+
+        print("\nvalid:", valid)
+
+        return new_node, replaced_node_api
+
     @mock.patch.object(random, 'randint')
     def test_replace_proposal(self, mock_randint):
         test_prog, _, _ = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, STR_LEN],
@@ -297,40 +344,11 @@ class ProposalTests(unittest.TestCase):
         for i in range(1, curr_prog.length):
             print("\ni:", i)
             mock_randint.return_value = i
-            curr_prog, new_node, replaced_node_api, ln_proposal_prob = \
-                prog.Replace.replace_random_node(curr_prog, prog.initial_state)
 
-            # If no node was added, return False
+            new_node, replaced_node_api = self.replace_node(prog, curr_prog, prev_length)
+
             if new_node is None:
-                self.assertEqual(curr_prog.length, prev_length, "Curr prog length: " + str(
-                    curr_prog.length) + " != prev length: " + str(prev_length))
-                print("NEW NODE IS NONE")
                 continue
-
-            # Print logs
-            print("\nnew curr program:")
-            print_verbose_tree_info(curr_prog)
-
-            # Calculate reversal prob
-            new_node_pos = prog.tree_mod.get_nodes_position(curr_prog, new_node)
-            ln_reversal_prob = prog.Replace.calculate_reversal_ln_prob(curr_prog, prog.initial_state, new_node_pos,
-                                                                       replaced_node_api, new_node.parent_edge)
-
-            # Calculate probability of new program
-            prog.calculate_probability()
-
-            print("\nprev prob:", prog.prev_log_prob)
-            print("curr prob:", prog.curr_log_prob)
-            print("replace prob:", ln_proposal_prob)
-            print("reversal replace prob:", ln_reversal_prob)
-
-            self.assertEqual(prog.prev_log_prob, ln_reversal_prob)
-            self.assertEqual(prog.curr_log_prob, ln_proposal_prob)
-
-            # Validate current program
-            valid = prog.validate_and_update_program(REPLACE, ln_proposal_prob, ln_reversal_prob)
-
-            print("\nvalid:", valid)
 
             # Undo move if not valid
             prog.Replace.undo_replace_random_node(new_node, replaced_node_api)
@@ -342,6 +360,15 @@ class ProposalTests(unittest.TestCase):
             nodes, edges = prog.tree_mod.get_vector_representation(curr_prog)
             self.assertListEqual(list(expected_nodes), list(nodes))
             self.assertListEqual(list(expected_edges), list(edges))
+
+        # Test replacing a node that doesn't belong
+        last_node = prog.tree_mod.get_node_in_position(curr_prog, 2)
+        last_node = prog.tree_mod.create_and_add_node(CLOSE, last_node, SIBLING_EDGE)
+        mock_randint.return_value = 3
+        new_node, replaced_node_api = self.replace_node(prog, curr_prog, curr_prog.length)
+        self.assertIsNotNone(new_node)
+        self.assertIsNotNone(replaced_node_api)
+        self.assertNotEqual(new_node.api_name, replaced_node_api)
 
     def test_swap_proposal(self):
         pass

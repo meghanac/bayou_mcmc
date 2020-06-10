@@ -72,7 +72,7 @@ class MCMCProgram:
         self.encoder = None
 
         # self.proposal_probs = {INSERT: 0.3333, DELETE: 0.3333, SWAP: 0.0001, REPLACE: 0.3333, ADD_DNODE: 0.0}
-        self.proposal_probs = {INSERT: 0.3, DELETE: 0.7, SWAP: 0.00, REPLACE: 0.0, ADD_DNODE: 0.0}
+        self.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.00, REPLACE: 0.0, ADD_DNODE: 0.0}
         self.proposals = list(self.proposal_probs.keys())
         self.p_probs = [self.proposal_probs[p] for p in self.proposals]
         self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE, ADD_DNODE: DELETE}
@@ -304,12 +304,17 @@ class MCMCProgram:
         else:
             ln_prob_reverse_move = 0.0
         ln_prob_move = math.log(self.proposal_probs[move])
-        alpha = (ln_prob_reverse_move + ln_reversal_prob/(self.curr_prog.length - 1) + self.curr_log_prob) - (
+        # alpha = (ln_prob_reverse_move + ln_reversal_prob/(self.curr_prog.length - 1) + self.curr_log_prob) - (
+        #         self.prev_log_prob + ln_prob_move + ln_proposal_prob)
+
+        alpha = (ln_prob_reverse_move + ln_reversal_prob + self.curr_log_prob) - (
                 self.prev_log_prob + ln_prob_move + ln_proposal_prob)
+
         print("curr log:", math.exp(self.curr_log_prob))
         print("prev log:", math.exp(self.prev_log_prob))
         print("proposal prob:", math.exp(ln_proposal_prob))
-        print("reversal prob:", math.exp(ln_reversal_prob)/(self.curr_prog.length - 1))
+        # print("reversal prob:", math.exp(ln_reversal_prob)/(self.curr_prog.length - 1))
+        print("reversal prob:", math.exp(ln_reversal_prob))
         print("move prob:", self.proposal_probs[move])
         print("reverse move prob:", self.proposal_probs[self.reverse[move]])
         print("numerator:", math.exp(ln_prob_reverse_move + ln_reversal_prob + self.curr_log_prob))
@@ -363,7 +368,9 @@ class MCMCProgram:
         output = self.Insert.add_random_node(self.curr_prog, self.initial_state)
         if output is None:
             return False
-        self.curr_prog, added_node, ln_proposal_prob = output
+        curr_prog, added_node, ln_proposal_prob = output
+        assert curr_prog is not None
+        self.curr_prog = curr_prog
         ln_reversal_prob = self.Delete.calculate_ln_prob_of_move()
 
         # Calculate probability of new program
@@ -409,8 +416,11 @@ class MCMCProgram:
         print_verbose_tree_info(self.curr_prog)
 
         # Add node
-        self.curr_prog, new_node, replaced_node_api, ln_proposal_prob = \
+        prog, new_node, replaced_node_api, ln_proposal_prob = \
             self.Replace.replace_random_node(self.curr_prog, self.initial_state)
+
+        if prog is not None:
+            self.curr_prog = prog
 
         # If no node was added, return False
         if new_node is None:
@@ -456,7 +466,12 @@ class MCMCProgram:
         self.Delete.attempted += 1
 
         # Delete node
-        self.curr_prog, node, parent_node, parent_edge, ln_prob = self.Delete.delete_random_node(self.curr_prog)
+        curr_prog, node, parent_node, parent_edge, ln_prob = self.Delete.delete_random_node(self.curr_prog)
+        if curr_prog is None or node is None:
+            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                self.curr_prog.length) + " != prev length: " + str(prev_length)
+            return False
+        self.curr_prog = curr_prog
         parent_pos = self.tree_mod.get_nodes_position(self.curr_prog, parent_node)
 
         curr_prog_copy = self.curr_prog.copy()
@@ -499,7 +514,12 @@ class MCMCProgram:
         self.Swap.attempted += 1
 
         # Swap nodes
-        self.curr_prog, node1, node2, ln_prob = self.Swap.random_swap(self.curr_prog)
+        curr_prog, node1, node2, ln_prob = self.Swap.random_swap(self.curr_prog)
+        if curr_prog is None:
+            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                self.curr_prog.length) + " != prev length: " + str(prev_length)
+            return False
+        self.curr_prog = curr_prog
         reversal_ln_prob = self.Swap.calculate_ln_prob_of_move()
 
         # Calculate probability of new program
