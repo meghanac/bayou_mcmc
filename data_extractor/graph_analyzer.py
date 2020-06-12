@@ -1,3 +1,4 @@
+import itertools
 import pickle
 
 import ijson
@@ -7,10 +8,15 @@ import os
 from networkx.readwrite import json_graph
 import argparse
 import sys
+import numpy as np
+from graphviz import Digraph
 
 from data_reader import Reader
+
+from ast_helper.ast_traverser import AstTraverser
 from data_extractor.utils import read_vocab
 from json_data_extractor import build_graph_from_json_file
+from ast_helper.ast_reader import AstReader
 
 STR_BUF = 'java.lang.StringBuffer.StringBuffer()'
 STR_APP = 'java.lang.StringBuffer.append(java.lang.String)'
@@ -21,6 +27,7 @@ STR_BUILD = 'java.lang.StringBuilder.StringBuilder(int)'
 STR_BUILD_APP = 'java.lang.StringBuilder.append(java.lang.String)'
 LOWERCASE_LOCALE = "java.lang.String.toLowerCase(java.util.Locale)"
 
+DATA_DIR_PATH = os.path.dirname(os.path.realpath(__file__)) + "/data/"
 ALL_DATA_1K_VOCAB = 'all_data_1k_vocab'
 TESTING = 'testing-600'
 NEW_VOCAB = 'new_1k_vocab_min_3-600000'
@@ -28,7 +35,7 @@ NEW_VOCAB = 'new_1k_vocab_min_3-600000'
 
 class GraphAnalyzer:
 
-    def __init__(self, folder_name):
+    def __init__(self, folder_name, save_reader=False, load_reader=False):
         self.dir_path = os.path.dirname(os.path.realpath(__file__)) + "/data/" + folder_name + "/"
         self.folder_name = folder_name
 
@@ -52,12 +59,13 @@ class GraphAnalyzer:
         # if self.clargs.continue_from is None:
         #     self.clargs.continue_from = self.clargs.save
 
+        data_filename = folder_name + ".json"
+
         # Build graph
         if not os.path.exists(os.path.join(self.dir_path, folder_name + "_api_graph.json")):
             vocab_freq_filename = folder_name + "_vocab_freq.json"
             vocab_freq_saved = os.path.exists(os.path.join(self.dir_path, vocab_freq_filename))
             print("vocab_freq_saved:", vocab_freq_saved)
-            data_filename = folder_name + ".json"
             self.g = build_graph_from_json_file(self.dir_path, data_filename, vocab_freq_saved=vocab_freq_saved)
         else:
             d = json.load(open(os.path.join(self.dir_path, folder_name + "_api_graph.json")))
@@ -67,24 +75,33 @@ class GraphAnalyzer:
 
         # Build database
         if not os.path.exists(self.dir_path + "/vocab.json"):
-            reader = Reader(self.clargs, create_database=True)
-            reader.save_data(self.clargs.data)
+            self.reader = Reader(self.clargs, create_database=True)
+            self.reader.save_data(self.clargs.data)
             # Save vocab dictionaries
             with open(os.path.join(self.clargs.data, 'vocab.json')) as f:
                 self.vocab = read_vocab(json.load(f))
 
-        elif os.path.exists(self.dir_path + "/vocab.json") and not os.path.exists(self.dir_path + "/program_database.pickle"):
+        elif os.path.exists(self.dir_path + "/vocab.json") and not os.path.exists(
+                self.dir_path + "/program_database.pickle"):
             # Save vocab dictionaries
             with open(os.path.join(self.clargs.data, 'vocab.json')) as f:
                 self.vocab = read_vocab(json.load(f))
-                print(type(self.vocab))
 
-            reader = Reader(self.clargs, infer=True, create_database=True, vocab=self.vocab)
-            reader.save_database(self.clargs.data)
+            self.reader = Reader(self.clargs, infer=True, create_database=True, vocab=self.vocab)
+            self.reader.save_database(self.clargs.data)
         else:
+            with open(os.path.join(self.clargs.data, 'vocab.json')) as f:
+                self.vocab = read_vocab(json.load(f))
+
             # Save vocab dictionaries
             with open(os.path.join(self.clargs.data, 'vocab.json')) as f:
                 self.vocab = read_vocab(json.load(f))
+
+            if load_reader:
+                with open(self.clargs.data + '/reader.pickle', 'rb') as f:
+                    self.reader = pickle.load(f)
+            else:
+                self.reader = Reader(self.clargs, infer=True, vocab=self.vocab)
 
         self.vocab2node = self.vocab.api_dict
         self.node2vocab = dict(zip(self.vocab2node.values(), self.vocab2node.keys()))
@@ -98,17 +115,41 @@ class GraphAnalyzer:
         # Open database
         with open(self.clargs.data + '/program_database.pickle', 'rb') as f:
             self.database = pickle.load(f)
-        self.program_ids = self.database['program_ids']
+        with open(self.clargs.data + '/ast_apis.pickle', 'rb') as f:
+            [self.nodes, self.edges, self.targets] = pickle.load(f)
+        with open(self.clargs.data + '/return_types.pickle', 'rb') as f:
+            self.return_types = pickle.load(f)
+        with open(self.clargs.data + '/formal_params.pickle', 'rb') as f:
+            [self.fp_types, self.fp_type_targets] = pickle.load(f)
+
+        # self.program_ids = self.database['program_ids']
         self.api_to_prog_ids = self.database['api_to_prog_ids']
         # self.programs_to_ids = self.database['programs_to_ids']
 
+        data_f = open(os.path.join(self.dir_path, data_filename))
+        self.json_asts = ijson.items(data_f, 'programs.item')
+        # self.json_asts = json.load(data_f)
 
+        if save_reader:
+            with open(self.dir_path + '/reader.pickle', 'wb') as f:
+                pickle.dump(self.reader, f)
+                f.close()
+
+        self.ast_reader = AstReader()
+        self.ast_traverser = AstTraverser()
 
     # def build_prog_database(self):
     #     data_path = os.path.join(self.dir_path, self.folder_name + ".json")
     #     data_f = open(data_path, 'rb')
     #
     #     for program in ijson.items(data_f, 'programs.item'):
+
+    def fetch_data(self, prog_id):
+        return self.nodes[prog_id], self.edges[prog_id], self.return_types[prog_id], self.fp_types[prog_id]
+
+    def fetch_data_with_targets(self, prog_id):
+        return self.nodes[prog_id], self.edges[prog_id], self.return_types[prog_id], \
+               self.fp_types[prog_id], self.targets[prog_id], self.fp_type_targets[prog_id]
 
     def get_connected_nodes(self, node):
         print("Node:", node)
@@ -120,20 +161,23 @@ class GraphAnalyzer:
         for i in edges:
             print(i[1], i[2]['weight'])
 
-    def get_program_ids_for_api(self, api):
-        return self.api_to_prog_ids[self.vocab2node[api]]
+    def get_program_ids_for_api(self, api, limit=None):
+        prog_ids = self.api_to_prog_ids[self.vocab2node[api]]
+        if limit is not None and len(prog_ids) > limit:
+            return itertools.islice(prog_ids, limit)
+        return prog_ids
 
-    def get_programs_for_api(self, api):
-        prog_ids = self.get_program_ids_for_api(api)
+    def get_programs_for_api(self, api, limit=None, get_targets=True, get_jsons=False):
+        prog_ids = self.get_program_ids_for_api(api, limit=limit)
         programs = []
 
         for id in list(prog_ids):
-            programs.append(self.get_formatted_program(id))
+            programs.append(self.get_formatted_program(id, get_targets=get_targets, get_jsons=get_jsons))
 
         return programs
 
-    def get_formatted_program(self, prog_id):
-        i = self.program_ids[prog_id]
+    def get_formatted_program(self, prog_id, get_targets=True, get_jsons=False):
+        i = self.fetch_data_with_targets(prog_id)
         nodes = i[0]
         nodes = [self.node2vocab[n] for n in nodes if n != 0]
         # nodes = [self.node2vocab[n] for n in nodes]
@@ -142,37 +186,132 @@ class GraphAnalyzer:
         return_type = self.num2rettype[i[2]]
         formal_params = i[3]
         formal_params = [self.num2fp[fp] for fp in formal_params if fp != 0]
-        return nodes, edges, return_type, formal_params
+        if get_targets:
+            targets = [self.node2vocab[t] for t in i[4] if t != 0]
+            fp_targets = [self.num2fp[fp] for fp in i[5] if fp != 0]
+            if get_jsons:
+                return ("nodes:", nodes), ("edges:", edges), ("targets:", targets), ("return type:", return_type), (
+                    "formal params:", formal_params), ("fp targets:", fp_targets), ("json:", self.get_json_ast(prog_id))
+            else:
+                return ("nodes:", nodes), ("edges:", edges), ("targets:", targets), ("return type:", return_type), (
+                    "formal params:", formal_params), ("fp targets:", fp_targets)
 
-    def get_program_ids_with_multiple_apis(self, apis):
+        if get_jsons:
+            return ("nodes:", nodes), ("edges:", edges), ("return type:", return_type), (
+                "formal params:", formal_params), ("json:", self.get_json_ast(prog_id))
+        else:
+            return ("nodes:", nodes), ("edges:", edges), ("return type:", return_type), (
+                "formal params:", formal_params)
+
+    def get_program_ids_with_multiple_apis(self, apis, limit=None):
         common_programs = self.get_program_ids_for_api(apis[0])
         for api in apis:
             progs = self.get_program_ids_for_api(api)
             common_programs.intersection_update(progs)
 
+        if limit is not None and len(common_programs) > limit:
+            return itertools.islice(common_programs, limit)
+
         return common_programs
 
-    def get_programs_with_multiple_apis(self, apis):
-        prog_ids = self.get_program_ids_with_multiple_apis(apis)
+    def get_programs_with_multiple_apis(self, apis, limit=None, get_targets=True, get_jsons=False):
+        prog_ids = self.get_program_ids_with_multiple_apis(apis, limit=limit)
         programs = []
         for id in prog_ids:
-            programs.append(self.get_formatted_program(id))
+            programs.append(self.get_formatted_program(id, get_targets=get_targets, get_jsons=get_jsons))
         return programs
 
     def print_lists(self, given_list):
         for i in given_list:
-            print(i)
+            for i1 in i:
+                print(i1)
+            print("")
 
+    def get_json_ast(self, prog_id):
+        json_ast = next(itertools.islice(self.json_asts, prog_id, None))
+        # print([i for i in json_ast])
+        return json_ast
+
+    def plot_ast(self, nodes, edges, targets, filename='temporary'):
+        dot = Digraph(comment='Program AST', format='eps')
+        # dot.node(nodes[0], )
+        for i in range(len(nodes)):
+            dot.node(str(i), label=nodes[i])
+            dot.node(str(i+1), label=targets[i])
+            label = 'child' if edges[i] else 'sibling'
+            dot.edge(str(i), str(i+1), label=label, constraint='true', direction='LR')
+            # dfs_id += 1
+
+        dot.render("graph_analysis_outputs/" + filename)
+        return dot
 
     def testing(self):
         self.get_connected_nodes(LOWERCASE_LOCALE)
         # prog_id =
         print("\n\n")
-        self.print_lists(self.get_programs_for_api('java.lang.String.length()'))
+        self.print_lists(self.get_programs_for_api('java.lang.Long.getLong(java.lang.String,long)'))
+        # print(len(self.get_programs_for_api('java.lang.Long.getLong(java.lang.String,long)')))
         print("\n\n")
-        self.print_lists(self.get_programs_with_multiple_apis(['java.lang.String.length()', 'DBranch']))
+        # print(len(self.get_programs_with_multiple_apis(
+        #     ['java.lang.Long.getLong(java.lang.String,long)', 'java.lang.System.currentTimeMillis()'])))
+        self.print_lists(self.get_programs_with_multiple_apis(
+            ['java.lang.Long.getLong(java.lang.String,long)', 'java.lang.System.currentTimeMillis()']))
 
-graph_analyzer = GraphAnalyzer(NEW_VOCAB)
-graph_analyzer.testing()
+    def test_2(self):
+        progs = self.get_programs_for_api('DBranch', limit=1, get_jsons=False)
+        self.print_lists([i for i in progs if i[0][-1] != 'DBranch'])
+        self.plot_ast(progs[0][0][1], progs[0][1][1], progs[0][2][1])
 
+    def plot_path(self, path, filename='temporary'):
+        dot = Digraph(comment='Program AST', format='eps')
 
+        for i in path:
+            label = 'child' if i[1] else 'sibling'
+            dot.edge(str(i[0]), str(i[2]), label=label, constraint='true', direction='LR')
+            # dfs_id += 1
+
+        dot.render("graph_analysis_outputs/" + filename)
+        return dot
+
+    def test_3(self):
+        js = {"ast":{"node": "DSubTree", "_nodes": [{"node": "DBranch", "_cond": [{"node": "DAPICall", "_throws": [], "_returns": "java.lang.String", "_call": "java.lang.System.getenv(java.lang.String)"}], "_else": [], "_then": [{"node": "DAPICall", "_throws": [], "_returns": "java.lang.String", "_call": "java.lang.System.getenv(java.lang.String)"}, {"node": "DAPICall", "_throws": [], "_returns": "java.lang.String", "_call": "java.lang.System.setProperty(java.lang.String,java.lang.String)"}]}]}}
+        self.get_vectors_and_plot(js)
+
+    def get_vectors_and_plot(self, js, filename='temporary'):
+        # print(self.get_json_ast(600000))
+        print(js)
+        ast_node_graph = self.ast_reader.get_ast_from_json(js['ast']['_nodes'])
+        path = self.ast_traverser.depth_first_search(ast_node_graph)
+        print(path)
+        print(self.reader.read_ast(js['ast']))
+        output = self.reader.read_ast(js['ast'])
+        self.plot_path(output, filename=filename)
+        print([i[0] for i in output])
+        print([i[1] for i in output])
+        print([i[2] for i in output])
+        print("")
+
+    # def test_4(self):
+    #     prog_ids = list(self.get_program_ids_for_api('DBranch', limit=10))
+    #     for i in range(10):
+    #         print(i)
+    #         print(prog_ids[i])
+    #         js = self.get_json_ast(prog_ids[i])
+    #         self.get_vectors_and_plot(js, filename=('temp' + str(i)))
+
+    def test_4(self):
+        for i in range(10):
+            print(i)
+            js = self.get_json_ast(i)
+            self.get_vectors_and_plot(js, filename=('temp' + str(i)))
+#
+# def load_graph_analyzer(path):
+#     with open(path, 'rb') as f:
+#         return pickle.load(f)
+
+# graph_analyzer = GraphAnalyzer(TESTING, save_reader=True)
+# graph_analyzer = GraphAnalyzer(TESTING, load_reader=True)
+
+# graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, save_reader=True)
+graph_analyzer = GraphAnalyzer(TESTING, load_reader=True)
+graph_analyzer.test_4()

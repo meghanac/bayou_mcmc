@@ -5,3 +5,4 @@ data_extractor/data/new_1k_vocab_min_3-600000/formal_params.pickle
 *.pickle
 *.gz
 data_extractor/data/other_data/Archive.zip
+/data_extractor/graph_analysis_outputs/

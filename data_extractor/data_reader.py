@@ -168,31 +168,24 @@ class Reader:
         return parsed_api_array, return_type_ids, formal_param_ids, keywords
 
     def save_prog_database(self, sz):
-        program_ids = {}
+        # program_ids = {}
         api_to_prog_ids = {}
         stored_programs = set([])
-        counter = 0
+        # counter = 0
         repeat_prog_counter = 0
 
         for i in range(sz):
-            prog = (self.nodes[i].tolist(), self.edges[i].tolist(), self.return_types[i].tolist(), self.fp_types[i].tolist())
-            # if prog not in stored_programs:
-            prog_id = counter
-            program_ids[prog_id] = prog
-            # stored_programs.add(prog)
-            counter += 1
-
             for api in self.nodes[i]:
                 if api not in api_to_prog_ids:
-                    api_to_prog_ids[api] = {prog_id}
+                    api_to_prog_ids[api] = {i}
                 else:
-                    api_to_prog_ids[api].add(prog_id)
+                    api_to_prog_ids[api].add(i)
         #     else:
         #         repeat_prog_counter += 1
         #
         # print("Num repeated programs in dataset:", repeat_prog_counter)
 
-        self.database['program_ids'] = program_ids
+        # self.database['program_ids'] = program_ids
         self.database['api_to_prog_ids'] = api_to_prog_ids
 
     def save_data(self, path):
