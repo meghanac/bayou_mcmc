@@ -313,5 +313,9 @@ class GraphAnalyzer:
 # graph_analyzer = GraphAnalyzer(TESTING, load_reader=True)
 
 # graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, save_reader=True)
-graph_analyzer = GraphAnalyzer(TESTING, load_reader=True)
-graph_analyzer.test_4()
+graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, load_reader=True)
+progs = graph_analyzer.get_programs_with_multiple_apis(['java.lang.StringBuilder.StringBuilder()',
+                                                        'java.util.Map<java.lang.String,java.lang.String>.entrySet()',
+                                                        '$NOT$java.lang.String.startsWith(java.lang.String)',
+                                                        ], limit=100)
+graph_analyzer.print_lists(progs)

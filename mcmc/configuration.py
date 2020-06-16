@@ -5,7 +5,7 @@ from trainer_vae.utils import read_config
 MAX_LOOP_NUM = 3
 MAX_BRANCHING_NUM = 3
 MAX_AST_DEPTH = 32
-
+TEMP = 'temp'
 
 class Configuration:
     def __init__(self, save_dir):
@@ -27,7 +27,9 @@ class Configuration:
 
         # Initialize conversion dictionaries
         self.vocab = self.config_obj.vocab
+        self.vocab_size = self.config_obj.vocab.api_dict_size
         self.vocab2node = self.config_obj.vocab.api_dict
+        self.vocab2node[TEMP] = -1
         self.node2vocab = dict(zip(self.vocab2node.values(), self.vocab2node.keys()))
         self.rettype2num = self.config_obj.vocab.ret_dict
         self.num2rettype = dict(zip(self.rettype2num.values(), self.rettype2num.keys()))

@@ -574,11 +574,28 @@ class MCMCProgramTest(unittest.TestCase):
         self.assertEqual(test_prog.prog.curr_prog.length, len(expected_nodes))
         self.assertEqual(test_prog.prog.curr_prog.non_dnode_length, 1)
 
-    def test_mcmc(self):
-        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH, ['java.lang.StringBuilder.StringBuilder()', 'java.util.Map<java.lang.String,java.lang.String>.entrySet()'], ["Typeface"],
-                                                                             ["String", "int"])
+    def test_nodes_edges_targets(self):
+        test_prog, expected_nodes, expected_edges = create_str_buf_base_program(SAVED_MODEL_PATH)
+        create_dbranch(test_prog)
+        nodes, edges, targets = test_prog.prog.tree_mod.get_nodes_edges_targets(test_prog.prog.curr_prog)
+        print([test_prog.prog.config.node2vocab[i] for i in nodes[:8]])
+        print(edges[:8])
+        print([test_prog.prog.config.node2vocab[i] for i in targets[:8]])
+        print(nodes)
+        print(edges)
+        print(targets)
 
-        test_prog.prog.proposal_probs = {INSERT: 0.333, DELETE: 0.334, SWAP: 0.0, REPLACE: 0.333, ADD_DNODE: 0.0}
+        # self.assertListEqual(expected_nodes, nodes)
+        # self.assertListEqual(expected_edges, edges)
+
+    def test_mcmc(self):
+        test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_MODEL_PATH,
+                                                                        ['java.lang.StringBuilder.StringBuilder()',
+                                                                         'java.util.Map<java.lang.String,java.lang.String>.entrySet()'],
+                                                                        ["String"],
+                                                                        ['DSubTree', 'Map<String,String>'])
+
+        # test_prog.prog.proposal_probs = {INSERT: 0.333, DELETE: 0.334, SWAP: 0.0, REPLACE: 0.333, ADD_DNODE: 0.0}
 
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
@@ -588,7 +605,7 @@ class MCMCProgramTest(unittest.TestCase):
 
         # test_prog.prog.max_depth = 15
 
-        num_iter = 100
+        num_iter = 200
 
         print(test_prog.prog.curr_prog.length)
         for i in range(num_iter):

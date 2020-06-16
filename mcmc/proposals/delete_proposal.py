@@ -36,6 +36,7 @@ class DeleteProposal:
         """
         # Temporarily save curr_prog
         self.curr_prog = curr_prog
+        curr_prog_length = self.curr_prog.length
 
         node, _ = self.__get_deletable_node()
         # assert node.api_name != STOP
@@ -53,7 +54,9 @@ class DeleteProposal:
         # Reset self.curr_prog
         self.curr_prog = None
 
-        return curr_prog, node, parent_node, parent_edge, self.ln_proposal_dist
+        ln_prob = self.calculate_ln_prob_of_move(curr_prog_length)
+
+        return curr_prog, node, parent_node, parent_edge, ln_prob
 
     def undo_delete_random_node(self, node, parent_node, edge):
         """
@@ -85,5 +88,7 @@ class DeleteProposal:
         # Checks parent edge to prevent deleting half a branch or leave dangling D-nodes
         return node, rand_node_pos
 
-    def calculate_ln_prob_of_move(self):
+    def calculate_ln_prob_of_move(self, curr_prog_length):
+        # return self.ln_proposal_dist - math.log(curr_prog_length)
         return self.ln_proposal_dist
+

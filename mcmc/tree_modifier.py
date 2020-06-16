@@ -2,6 +2,8 @@ import numpy as np
 
 from node import START, Node
 
+from node import SIBLING_EDGE, CHILD_EDGE
+
 
 class TreeModifier:
     def __init__(self, config):
@@ -82,6 +84,44 @@ class TreeModifier:
                     raise ValueError('DFS failed to find given node: ' + node.api_name)
 
         return -1
+
+    def get_nodes_edges_targets(self, curr_prog):
+        """
+                Returns vectors of nodes and edges in the current program that can be fed into the model
+                :return: (list of ints) nodes, (list of bools) edges
+                """
+        stack = []
+        curr_node = curr_prog
+        tree = []
+
+        while curr_node is not None:
+            # Find next node
+            if curr_node.child is not None:
+                if curr_node.sibling is not None:
+                    stack.append((curr_node, SIBLING_EDGE, curr_node.sibling))
+                tree.append((curr_node.api_num, CHILD_EDGE, curr_node.child.api_num))
+                curr_node = curr_node.child
+            elif curr_node.sibling is not None:
+                tree.append((curr_node.api_num, SIBLING_EDGE, curr_node.sibling.api_num))
+                curr_node = curr_node.sibling
+            else:
+                if len(stack) > 0:
+                    last_node, edge, curr_node = stack.pop()
+                    tree.append((last_node.api_num, edge, curr_node.api_num))
+                else:
+                    curr_node = None
+
+        # Fill in blank nodes and take only self.max_length number of nodes in the tree
+        nodes = np.zeros([1, self.max_length], dtype=np.int32)
+        edges = np.zeros([1, self.max_length], dtype=np.bool)
+        targets = np.zeros([1, self.max_length], dtype=np.int32)
+        nodes_dfs, edges_dfs, targets_dfs = zip(*tree)
+        nodes[0, :len(tree)] = nodes_dfs
+        edges[0, :len(edges_dfs)] = edges_dfs
+        targets[0, :len(targets_dfs)] = targets_dfs
+
+        # return nodes[0], edges[0], targets[0]
+        return list(nodes_dfs), list(edges_dfs), list(targets_dfs)
 
     def get_vector_representation(self, curr_prog):
         """

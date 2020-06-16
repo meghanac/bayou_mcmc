@@ -9,11 +9,12 @@ import json
 import tensorflow as tf
 import sys
 from infer import BayesianPredictor
+
 from trainer_vae.model import Model
 from trainer_vae.utils import get_var_list
 from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
 from utils import print_verbose_tree_info
-from configuration import Configuration
+from configuration import Configuration, TEMP
 from tree_modifier import TreeModifier
 from proposals.insert_proposal import InsertProposal
 from proposals.delete_proposal import DeleteProposal
@@ -71,8 +72,8 @@ class MCMCProgram:
         self.decoder = None
         self.encoder = None
 
-        # self.proposal_probs = {INSERT: 0.3333, DELETE: 0.3333, SWAP: 0.0001, REPLACE: 0.3333, ADD_DNODE: 0.0}
-        self.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.00, REPLACE: 0.0, ADD_DNODE: 0.0}
+        self.proposal_probs = {INSERT: 0.3, DELETE: 0.3, SWAP: 0.1, REPLACE: 0.3, ADD_DNODE: 0.0}
+        # self.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.00, REPLACE: 0.0, ADD_DNODE: 0.0}
         self.proposals = list(self.proposal_probs.keys())
         self.p_probs = [self.proposal_probs[p] for p in self.proposals]
         self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE, ADD_DNODE: DELETE}
@@ -300,6 +301,7 @@ class MCMCProgram:
         # print(math.exp(self.curr_log_prob)/math.exp(self.prev_log_prob))
         print(move)
         if self.proposal_probs[self.reverse[move]] != 1.0:
+            print(self.proposal_probs[self.reverse[move]])
             ln_prob_reverse_move = math.log(self.proposal_probs[self.reverse[move]])
         else:
             ln_prob_reverse_move = 0.0
@@ -371,7 +373,7 @@ class MCMCProgram:
         curr_prog, added_node, ln_proposal_prob = output
         assert curr_prog is not None
         self.curr_prog = curr_prog
-        ln_reversal_prob = self.Delete.calculate_ln_prob_of_move()
+        ln_reversal_prob = self.Delete.calculate_ln_prob_of_move(curr_prog.length)
 
         # Calculate probability of new program
         self.calculate_probability()
@@ -465,6 +467,9 @@ class MCMCProgram:
         prev_length = self.curr_prog.length
         self.Delete.attempted += 1
 
+        # # Create a copy of current program
+        # curr_prog_copy = self.curr_prog.copy()
+
         # Delete node
         curr_prog, node, parent_node, parent_edge, ln_prob = self.Delete.delete_random_node(self.curr_prog)
         if curr_prog is None or node is None:
@@ -477,9 +482,16 @@ class MCMCProgram:
         curr_prog_copy = self.curr_prog.copy()
         parent_node_copy = self.tree_mod.get_node_in_position(curr_prog_copy, parent_pos)
         parent_node_copy_neighbor = parent_node_copy.get_neighbor(parent_edge)
-        parent_node_copy.add_node(node, parent_edge)
-        node.add_node(parent_node_copy_neighbor, parent_edge)
-        node_pos = self.tree_mod.get_nodes_position(curr_prog_copy, node)
+        node_copy = node.copy()
+        # node_copy.change_api(TEMP, self.config.vocab2node[TEMP])
+        parent_node_copy.add_node(node_copy, parent_edge)
+        node_copy.add_node(parent_node_copy_neighbor, parent_edge)
+        node_pos = self.tree_mod.get_nodes_position(curr_prog_copy, node_copy)
+
+        print("HEREEERE")
+        print_verbose_tree_info(curr_prog)
+        print_verbose_tree_info(curr_prog_copy)
+
         ln_reversal_prob = self.Insert.calculate_ln_prob_of_move(curr_prog_copy, self.initial_state, node_pos,
                                                                  parent_edge, is_copy=True)
         parent_node_copy.remove_node(parent_edge)
@@ -557,7 +569,7 @@ class MCMCProgram:
 
         # Add dnode
         self.curr_prog, dnode, ln_proposal_prob = self.AddDnode.add_random_dnode(self.curr_prog, self.initial_state)
-        reversal_ln_prob = self.Delete.calculate_ln_prob_of_move()
+        reversal_ln_prob = self.Delete.calculate_ln_prob_of_move(self.curr_prog.length)
 
         # Calculate probability of new program
         self.calculate_probability()
@@ -644,18 +656,54 @@ class MCMCProgram:
         self.initial_state = self.encoder.get_initial_state(nodes, edges, np.array(self.ret_type), np.array(self.fp))
         self.initial_state = np.transpose(np.array(self.initial_state), [1, 0, 2])  # batch_first
 
+    # def calculate_probability(self):
+    #     """
+    #     Calculate probability of current program.
+    #     :return:
+    #     """
+    #     nodes, edges = self.tree_mod.get_vector_representation(self.curr_prog)
+    #     node = np.zeros([self.config.batch_size, self.config.max_ast_depth], dtype=np.int32)
+    #     edge = np.zeros([self.config.batch_size, self.config.max_ast_depth], dtype=np.bool)
+    #     state = self.initial_state
+    #     curr_prob = 0.0
+    #
+    #     for i in range(self.curr_prog.length):
+    #         node[0][0] = nodes[i]
+    #         edge[0][0] = edges[i]
+    #         if i == self.curr_prog.length - 1:
+    #             if self.config.node2vocab[node[0][0]] == STOP:
+    #                 pass
+    #             else:
+    #                 # add prob of stop node
+    #                 # logits are normalized with log_softmax
+    #                 state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
+    #                 stop_node = self.config.vocab2node[STOP]
+    #                 curr_prob += ast_prob[0][stop_node]
+    #         else:
+    #             state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
+    #             curr_prob += ast_prob[0][nodes[i + 1]]
+    #
+    #     self.curr_log_prob = curr_prob / self.curr_prog.length
+    #
+    #     return self.curr_log_prob
+
     def calculate_probability(self):
         """
         Calculate probability of current program.
         :return:
         """
-        nodes, edges = self.tree_mod.get_vector_representation(self.curr_prog)
+        nodes, edges, targets = self.tree_mod.get_nodes_edges_targets(self.curr_prog)
+        print(nodes)
+        print(edges)
+        print(targets)
         node = np.zeros([self.config.batch_size, self.config.max_ast_depth], dtype=np.int32)
         edge = np.zeros([self.config.batch_size, self.config.max_ast_depth], dtype=np.bool)
         state = self.initial_state
         curr_prob = 0.0
 
-        for i in range(self.curr_prog.length):
+        print(self.curr_prog.length)
+
+        for i in range(len(nodes)):
             node[0][0] = nodes[i]
             edge[0][0] = edges[i]
             if i == self.curr_prog.length - 1:
@@ -669,7 +717,7 @@ class MCMCProgram:
                     curr_prob += ast_prob[0][stop_node]
             else:
                 state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
-                curr_prob += ast_prob[0][nodes[i + 1]]
+                curr_prob += ast_prob[0][targets[i]]
 
         self.curr_log_prob = curr_prob / self.curr_prog.length
 
@@ -685,7 +733,8 @@ class MCMCProgram:
         :return:
         """
         self.transform_tree(verbose=True)
-        self.update_latent_state_and_decoder_state()
+        if random.choice([True, False, False, False, False]):
+            self.update_latent_state_and_decoder_state()
 
         # # Attempt to transform the current program
         # if self.transform_tree():

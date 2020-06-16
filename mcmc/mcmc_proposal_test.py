@@ -50,7 +50,7 @@ class ProposalTests(unittest.TestCase):
                 print("OUTPUT IS NONE")
 
             curr_prog, added_node, ln_proposal_prob = output
-            ln_reversal_prob = prog.Delete.calculate_ln_prob_of_move()
+            ln_reversal_prob = prog.Delete.calculate_ln_prob_of_move(curr_prog.length)
 
             # Calculate probability of new program
             prog.calculate_probability()
