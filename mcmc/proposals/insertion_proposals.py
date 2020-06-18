@@ -45,14 +45,14 @@ class ProposalWithInsertion:
 
         # Ensure adding a DBranch won't exceed max depth
         if self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 5 > self.max_length:
-            # remove added dbranch
-            child = dbranch.child
-            sibling = dbranch.sibling
-            parent = dbranch.parent
-            parent_edge = dbranch.parent_edge
-            parent.remove_node(parent_edge)
-            parent.add_node(sibling, SIBLING_EDGE)
-            parent.add_node(child, CHILD_EDGE)
+            # # remove added dbranch
+            # child = dbranch.child
+            # sibling = dbranch.sibling
+            # parent = dbranch.parent
+            # parent_edge = dbranch.parent_edge
+            # parent.remove_node(parent_edge)
+            # parent.add_node(sibling, SIBLING_EDGE)
+            # parent.add_node(child, CHILD_EDGE)
             return None
 
         # Create condition as DBranch child
@@ -82,14 +82,14 @@ class ProposalWithInsertion:
 
         # Ensure adding a DBranch won't exceed max depth
         if self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 3 > self.max_length:
-            # remove added dbranch
-            child = dnode.child
-            sibling = dnode.sibling
-            parent = dnode.parent
-            parent_edge = dnode.parent_edge
-            parent.remove_node(parent_edge)
-            parent.add_node(sibling, SIBLING_EDGE)
-            parent.add_node(child, CHILD_EDGE)
+            # # remove added dbranch
+            # child = dnode.child
+            # sibling = dnode.sibling
+            # parent = dnode.parent
+            # parent_edge = dnode.parent_edge
+            # parent.remove_node(parent_edge)
+            # parent.add_node(sibling, SIBLING_EDGE)
+            # parent.add_node(child, CHILD_EDGE)
             return None
 
         # Create condition as DLoop child
@@ -165,7 +165,7 @@ class ProposalWithInsertion:
     def _get_new_node(self, parent, edge, verbose=False):
         # add empty node
         next_nodes = parent.remove_node(edge)
-        empty_node = self.tree_mod.create_and_add_node(EMPTY, parent, edge)
+        empty_node = self.tree_mod.create_and_add_node(TEMP, parent, edge)
         empty_node.add_node(next_nodes, edge)
         empty_node_pos = self.tree_mod.get_nodes_position(self.curr_prog, empty_node)
 
@@ -183,7 +183,7 @@ class ProposalWithInsertion:
 
     def _replace_node_api(self, node, node_pos, parent_edge, verbose=False):
 
-        node.change_api(EMPTY, self.config.vocab2node[TEMP])
+        node.change_api(TEMP, self.config.vocab2node[TEMP])
 
         # return self.get_ast_idx_top_k(parent_pos, non_dnode) # multinomial on top k
         new_node_idx, prob = self._get_ast_idx(node_pos, parent_edge, verbose=verbose)  # randomly choose from top k
@@ -370,18 +370,20 @@ class ProposalWithInsertion:
                 preceding_prob += probs[0][targets[i]]
 
     def calculate_multinomial_ln_prob(self, logits, api_num, curr_prog):
-        norm_logs = self.sess.run(tf.nn.softmax(logits[0]), {})
-        print("norm logs:", sum(norm_logs))
-        print("api name:", self.config.node2vocab[api_num])
-        print(sorted(norm_logs, reverse=True))
-        print(norm_logs[api_num] / curr_prog.length)
-        print(norm_logs[api_num])
-        print(math.log(norm_logs[api_num] / curr_prog.length))
-        print(math.log(norm_logs[api_num]))
+        norm_logs = self.sess.run(tf.nn.log_softmax(logits[0]), {})
+        # print("norm logs:", sum(norm_logs))
+        # print("api name:", self.config.node2vocab[api_num])
+        # print(sorted(norm_logs, reverse=True))
+        # print(norm_logs[api_num] / curr_prog.length)
+        # print(norm_logs[api_num])
+        # print(math.log(norm_logs[api_num] / curr_prog.length))
+        # print(math.log(norm_logs[api_num]))
+
         # print("logits:", logits[0][added_node.api_num]/curr_prog.length)
         # return math.log(norm_logs[api_num] / curr_prog.length)
-        return math.log(norm_logs[api_num])
+        # return math.log(norm_logs[api_num])
         # return logits[0][added_node.api_num]/curr_prog.length
+        return norm_logs[api_num] - math.log(curr_prog.length)
 
     def _get_prob_from_logits(self, curr_prog, initial_state, added_node_pos, added_node, added_edge):
         added_node_api = added_node.api_name

@@ -43,14 +43,20 @@ class ReplaceProposal(ProposalWithInsertion):
             ln_prob = self._grow_dbranch(new_node)
             if ln_prob is not None:
                 prob += ln_prob
+            else:
+                self.undo_replace_random_node(new_node, replaced_node_api)
         elif new_node.api_name == DLOOP:
             ln_prob = self._grow_dloop_or_dexcept(new_node, True)
             if ln_prob is not None:
                 prob += ln_prob
+            else:
+                self.undo_replace_random_node(new_node, replaced_node_api)
         elif new_node.api_name == DEXCEPT:
             ln_prob = self._grow_dloop_or_dexcept(new_node, False)
             if ln_prob is not None:
                 prob += ln_prob
+            else:
+                self.undo_replace_random_node(new_node, replaced_node_api)
 
         print("replace node is pos:", rand_node_pos)
         print_verbose_tree_info(self.curr_prog)

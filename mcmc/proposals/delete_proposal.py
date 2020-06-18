@@ -54,7 +54,9 @@ class DeleteProposal:
         # Reset self.curr_prog
         self.curr_prog = None
 
-        ln_prob = self.calculate_ln_prob_of_move(curr_prog_length)
+        # ln_prob = self.calculate_ln_prob_of_move(curr_prog_length)
+
+        ln_prob = self.ln_proposal_dist - math.log(curr_prog_length)
 
         return curr_prog, node, parent_node, parent_edge, ln_prob
 

@@ -418,11 +418,18 @@ class MCMCProgram:
         print_verbose_tree_info(self.curr_prog)
 
         # Add node
-        prog, new_node, replaced_node_api, ln_proposal_prob = \
+        output = \
             self.Replace.replace_random_node(self.curr_prog, self.initial_state)
 
-        if prog is not None:
-            self.curr_prog = prog
+        if output is None:
+            return False
+
+        prog, new_node, replaced_node_api, ln_proposal_prob = output
+
+        if prog is None:
+            return False
+
+        self.curr_prog = prog
 
         # If no node was added, return False
         if new_node is None:
@@ -639,6 +646,7 @@ class MCMCProgram:
         edges = edges[:self.config.max_num_api]
         nodes = np.array([nodes])
         edges = np.array([edges])
+        print(self.ret_type)
         self.initial_state = self.encoder.get_initial_state(nodes, edges, np.array(self.ret_type), np.array(self.fp))
         self.initial_state = np.transpose(np.array(self.initial_state), [1, 0, 2])  # batch_first
 
@@ -733,8 +741,8 @@ class MCMCProgram:
         :return:
         """
         self.transform_tree(verbose=True)
-        if random.choice([True, False, False, False, False]):
-            self.update_latent_state_and_decoder_state()
+        # if random.choice([True, False, False, False, False, False, False, False, False, False ]):
+        #     self.update_latent_state_and_decoder_state()
 
         # # Attempt to transform the current program
         # if self.transform_tree():

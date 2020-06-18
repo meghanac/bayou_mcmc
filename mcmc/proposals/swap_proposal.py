@@ -43,7 +43,7 @@ class SwapProposal:
         node2, node2_pos = self.__get_random_node_to_swap(given_list=other_nodes)
 
         if node1 is None or node2 is None:
-            return None, None
+            return None, None, None, None
 
         # swap nodes
         self.__swap_nodes(node1, node2)

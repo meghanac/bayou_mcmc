@@ -47,14 +47,26 @@ class InsertProposal(ProposalWithInsertion):
             ln_prob = self._grow_dbranch(new_node)
             if ln_prob is not None:
                 prob += ln_prob
+            else:
+                # remove dbranch
+                self.undo_add_random_node(new_node)
+                return None
         elif new_node.api_name == DLOOP:
             ln_prob = self._grow_dloop_or_dexcept(new_node)
             if ln_prob is not None:
                 prob += ln_prob
+            else:
+                # remove dloop
+                self.undo_add_random_node(new_node)
+                return None
         elif new_node.api_name == DEXCEPT:
             ln_prob = self._grow_dloop_or_dexcept(new_node)
             if ln_prob is not None:
                 prob += ln_prob
+            else:
+                # remove dexcept
+                self.undo_add_random_node(new_node)
+                return None
 
         # Reset self.curr_prog and self.initial_state
         self.curr_prog = None
@@ -68,12 +80,6 @@ class InsertProposal(ProposalWithInsertion):
         :param added_node: (Node) the node that was added in add_random_node() that is to be removed.
         :return:
         """
-        # if added_node.api_name in {DBRANCH, DLOOP, DEXCEPT}:
-        #     dnode_sibling = added_node.sibling
-        #     dnode_parent = added_node.parent
-        #     dnode_parent.remove_node(SIBLING_EDGE)
-        #     dnode_parent.add_node(dnode_sibling, SIBLING_EDGE)
-
         if added_node.sibling is None:
             added_node.parent.remove_node(SIBLING_EDGE)
         else:
@@ -81,3 +87,7 @@ class InsertProposal(ProposalWithInsertion):
             parent_node = added_node.parent
             parent_node.remove_node(SIBLING_EDGE)
             parent_node.add_node(sibling_node, SIBLING_EDGE)
+
+        # parent_edge = added_node.parent_edge
+        # parent = added_node.parent
+        # parent.remove_node(parent_edge, save_neighbors=True)

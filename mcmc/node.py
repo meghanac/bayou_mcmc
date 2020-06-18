@@ -95,6 +95,8 @@ class Node:
             else:
                 raise ValueError('edge must be SIBLING_EDGE or CHILD_EDGE')
 
+        return node
+
     def remove_node(self, edge):
         """
         Removes node specified by edge. Removes the entire subtree that stems from the node to be removed.

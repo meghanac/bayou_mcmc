@@ -593,7 +593,7 @@ class MCMCProgramTest(unittest.TestCase):
                                                                         ['java.lang.StringBuilder.StringBuilder()',
                                                                          'java.util.Map<java.lang.String,java.lang.String>.entrySet()'],
                                                                         ["String"],
-                                                                        ['DSubTree', 'Map<String,String>'])
+                                                                        ['DSubTree', 'Map<String,String>', 'String'])
 
         # test_prog.prog.proposal_probs = {INSERT: 0.333, DELETE: 0.334, SWAP: 0.0, REPLACE: 0.333, ADD_DNODE: 0.0}
 
