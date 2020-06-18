@@ -34,6 +34,7 @@ MAX_AST_DEPTH = 32
 MAX_FP_DEPTH = 8
 MAX_KEYWORDS = 10
 
+
 class TooLongPathError(Exception):
     pass
 
@@ -43,6 +44,10 @@ class InvalidSketchError(Exception):
 
 
 HELP = """{}"""
+
+API_TO_PROG_IDS = 'api_to_prog_ids'
+RT_TO_PROG_IDS = 'rt_to_prog_ids'
+FP_TO_PROG_IDS = 'fp_to_prog_ids'
 
 
 class Reader:
@@ -170,23 +175,47 @@ class Reader:
     def save_prog_database(self, sz):
         # program_ids = {}
         api_to_prog_ids = {}
+        rt_to_prog_ids = {}
+        fp_to_prog_ids = {}
         stored_programs = set([])
         # counter = 0
         repeat_prog_counter = 0
 
         for i in range(sz):
+            # add apis
             for api in self.nodes[i]:
                 if api not in api_to_prog_ids:
                     api_to_prog_ids[api] = {i}
                 else:
                     api_to_prog_ids[api].add(i)
-        #     else:
-        #         repeat_prog_counter += 1
-        #
-        # print("Num repeated programs in dataset:", repeat_prog_counter)
+            for api in self.targets[i]:
+                if api not in api_to_prog_ids:
+                    api_to_prog_ids[api] = {i}
+                else:
+                    api_to_prog_ids[api].add(i)
+
+            # add return types
+            if self.return_types[i] in rt_to_prog_ids:
+                rt_to_prog_ids[self.return_types[i]].add(i)
+            else:
+                rt_to_prog_ids[self.return_types[i]] = {i}
+
+            # add formal parameters
+            for fp in self.fp_types[i]:  # TODO: should I  + self.fp_type_targets[i]?
+                if fp in fp_to_prog_ids:
+                    fp_to_prog_ids[fp].add(i)
+                else:
+                    fp_to_prog_ids[fp] = {i}
+
+        # # freeze sets
+        # api_to_prog_ids = dict([(api, frozenset(progs)) for api, progs in api_to_prog_ids.items()])
+        # rt_to_prog_ids = dict([(rt, frozenset(progs)) for rt, progs in rt_to_prog_ids.items()])
+        # fp_to_prog_ids = dict([(fp, frozenset(progs)) for fp, progs in fp_to_prog_ids.items()])
 
         # self.database['program_ids'] = program_ids
-        self.database['api_to_prog_ids'] = api_to_prog_ids
+        self.database[API_TO_PROG_IDS] = api_to_prog_ids
+        self.database[RT_TO_PROG_IDS] = rt_to_prog_ids
+        self.database[FP_TO_PROG_IDS] = fp_to_prog_ids
 
     def save_data(self, path):
         if not os.path.exists(path):

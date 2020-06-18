@@ -110,7 +110,7 @@ class GraphAnalyzer:
         self.fp2num = self.vocab.fp_dict
         self.num2fp = dict(zip(self.fp2num.values(), self.fp2num.keys()))
 
-        print("Built database\n")
+        print("Loaded Reader\n")
 
         # Open database
         with open(self.clargs.data + '/program_database.pickle', 'rb') as f:
@@ -124,7 +124,10 @@ class GraphAnalyzer:
 
         # self.program_ids = self.database['program_ids']
         self.api_to_prog_ids = self.database['api_to_prog_ids']
-        # self.programs_to_ids = self.database['programs_to_ids']
+        self.rt_to_prog_ids = self.database['rt_to_prog_ids']
+        self.fp_to_prog_ids = self.database['fp_to_prog_ids']
+
+        print("Built Database\n")
 
         data_f = open(os.path.join(self.dir_path, data_filename))
         self.json_asts = ijson.items(data_f, 'programs.item')
@@ -134,6 +137,7 @@ class GraphAnalyzer:
             with open(self.dir_path + '/reader.pickle', 'wb') as f:
                 pickle.dump(self.reader, f)
                 f.close()
+            print("Saved Reader\n")
 
         self.ast_reader = AstReader()
         self.ast_traverser = AstTraverser()
@@ -162,13 +166,19 @@ class GraphAnalyzer:
             print(i[1], i[2]['weight'])
 
     def get_program_ids_for_api(self, api, limit=None):
-        prog_ids = self.api_to_prog_ids[self.vocab2node[api]]
+        try:
+            prog_ids = self.api_to_prog_ids[self.vocab2node[api]].copy()
+        except KeyError:
+            return {}
         if limit is not None and len(prog_ids) > limit:
             return itertools.islice(prog_ids, limit)
         return prog_ids
 
-    def get_programs_for_api(self, api, limit=None, get_targets=True, get_jsons=False):
-        prog_ids = self.get_program_ids_for_api(api, limit=limit)
+    def get_programs_for_api(self, api, input_prog_ids=None, limit=None, get_targets=True, get_jsons=False):
+        if input_prog_ids is None:
+            prog_ids = self.get_program_ids_for_api(api, limit=limit)
+        else:
+            prog_ids = input_prog_ids
         programs = []
 
         for id in list(prog_ids):
@@ -203,23 +213,40 @@ class GraphAnalyzer:
             return ("nodes:", nodes), ("edges:", edges), ("return type:", return_type), (
                 "formal params:", formal_params)
 
-    def get_program_ids_with_multiple_apis(self, apis, limit=None):
+    def get_program_ids_with_multiple_apis(self, apis, limit=None, exclude=None):
         common_programs = self.get_program_ids_for_api(apis[0])
         for api in apis:
             progs = self.get_program_ids_for_api(api)
             common_programs.intersection_update(progs)
 
+        if exclude is not None:
+            for e in exclude:
+                apis_copy = apis.copy()
+                apis_copy.append(e)
+                e_progs = self.get_program_ids_with_multiple_apis(apis_copy)
+                common_programs -= e_progs
+
         if limit is not None and len(common_programs) > limit:
+            print("Total number of results:", len(common_programs))
             return itertools.islice(common_programs, limit)
 
         return common_programs
 
-    def get_programs_with_multiple_apis(self, apis, limit=None, get_targets=True, get_jsons=False):
-        prog_ids = self.get_program_ids_with_multiple_apis(apis, limit=limit)
+    def get_programs_with_multiple_apis(self, apis, limit=None, get_targets=True, get_jsons=False, exclude=None):
+        prog_ids = self.get_program_ids_with_multiple_apis(apis, limit=limit, exclude=exclude)
         programs = []
         for id in prog_ids:
             programs.append(self.get_formatted_program(id, get_targets=get_targets, get_jsons=get_jsons))
+        print("Total number of outputted results:", len(programs), "\n")
         return programs
+
+    def print_programs_from_ids(self, prog_ids, limit=None):
+        prog_ids = list(prog_ids)
+        prog_ids = [self.get_formatted_program(i) for i in prog_ids]
+        if limit is not None:
+            prog_ids = prog_ids[:limit]
+        print("\n")
+        self.print_lists(prog_ids)
 
     def print_lists(self, given_list):
         for i in given_list:
@@ -245,6 +272,78 @@ class GraphAnalyzer:
         dot.render("graph_analysis_outputs/" + filename)
         return dot
 
+    def get_vectors_and_plot(self, js, filename='temporary'):
+        # print(self.get_json_ast(600000))
+        print(js)
+        ast_node_graph = self.ast_reader.get_ast_from_json(js['ast']['_nodes'])
+        path = self.ast_traverser.depth_first_search(ast_node_graph)
+        print(path)
+        print(self.reader.read_ast(js['ast']))
+        output = self.reader.read_ast(js['ast'])
+        self.plot_path(output, filename=filename)
+        print([i[0] for i in output])
+        print([i[1] for i in output])
+        print([i[2] for i in output])
+        print("")
+
+    def plot_path(self, path, filename='temporary'):
+        dot = Digraph(comment='Program AST', format='eps')
+
+        for i in path:
+            label = 'child' if i[1] else 'sibling'
+            dot.edge(str(i[0]), str(i[2]), label=label, constraint='true', direction='LR')
+            # dfs_id += 1
+
+        dot.render("graph_analysis_outputs/" + filename)
+        return dot
+
+    def print_summary_stats(self, prog_ids):
+        APIS = 'apis'
+        RT = 'return_types'
+        FP = 'fp'
+        prog_ids = list(prog_ids)
+        stats = {APIS: {}, RT: {}, FP: {}}
+
+        # compile data
+        for i in prog_ids:
+            apis = list(set(self.nodes[i]).union(set(self.targets[i])))
+            for api in apis:
+                if api in stats[APIS]:
+                    stats[APIS][api] += 1
+                else:
+                    stats[APIS][api] = 1
+            if self.return_types[i] in stats[RT]:
+                stats[RT][self.return_types[i]] += 1
+            else:
+                stats[RT][self.return_types[i]] = 1
+            for fp in self.fp_types[i]:
+                if fp in stats[FP]:
+                    stats[FP][fp] += 1
+                else:
+                    stats[FP][fp] = 1
+
+        # remove __delim__
+        try:
+            stats[APIS].pop(0)
+            stats[FP].pop(0)
+            stats[RT].pop(0)
+        except KeyError:
+            pass
+
+        def take_count(e):
+            return e[1]
+
+        # print stats
+        print("\n-----------------\n", APIS, ":")
+        for i in sorted(stats[APIS].items(), key=take_count, reverse=True):
+            print(self.node2vocab[i[0]], "\t", str(i[1]))
+        print("\n-----------------\n", RT, ":")
+        for i in sorted(stats[RT].items(), key=take_count, reverse=True):
+            print(self.num2rettype[i[0]], "\t", str(i[1]))
+        print("\n-----------------\n", FP, ":")
+        for i in sorted(stats[FP].items(), key=take_count, reverse=True):
+            print(self.num2fp[i[0]], "\t", str(i[1]))
+
     def testing(self):
         self.get_connected_nodes(LOWERCASE_LOCALE)
         # prog_id =
@@ -262,34 +361,11 @@ class GraphAnalyzer:
         self.print_lists([i for i in progs if i[0][-1] != 'DBranch'])
         self.plot_ast(progs[0][0][1], progs[0][1][1], progs[0][2][1])
 
-    def plot_path(self, path, filename='temporary'):
-        dot = Digraph(comment='Program AST', format='eps')
-
-        for i in path:
-            label = 'child' if i[1] else 'sibling'
-            dot.edge(str(i[0]), str(i[2]), label=label, constraint='true', direction='LR')
-            # dfs_id += 1
-
-        dot.render("graph_analysis_outputs/" + filename)
-        return dot
-
     def test_3(self):
         js = {"ast":{"node": "DSubTree", "_nodes": [{"node": "DBranch", "_cond": [{"node": "DAPICall", "_throws": [], "_returns": "java.lang.String", "_call": "java.lang.System.getenv(java.lang.String)"}], "_else": [], "_then": [{"node": "DAPICall", "_throws": [], "_returns": "java.lang.String", "_call": "java.lang.System.getenv(java.lang.String)"}, {"node": "DAPICall", "_throws": [], "_returns": "java.lang.String", "_call": "java.lang.System.setProperty(java.lang.String,java.lang.String)"}]}]}}
         self.get_vectors_and_plot(js)
 
-    def get_vectors_and_plot(self, js, filename='temporary'):
-        # print(self.get_json_ast(600000))
-        print(js)
-        ast_node_graph = self.ast_reader.get_ast_from_json(js['ast']['_nodes'])
-        path = self.ast_traverser.depth_first_search(ast_node_graph)
-        print(path)
-        print(self.reader.read_ast(js['ast']))
-        output = self.reader.read_ast(js['ast'])
-        self.plot_path(output, filename=filename)
-        print([i[0] for i in output])
-        print([i[1] for i in output])
-        print([i[2] for i in output])
-        print("")
+
 
     # def test_4(self):
     #     prog_ids = list(self.get_program_ids_for_api('DBranch', limit=10))
@@ -314,8 +390,10 @@ class GraphAnalyzer:
 
 # graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, save_reader=True)
 graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, load_reader=True)
-progs = graph_analyzer.get_programs_with_multiple_apis(['java.lang.StringBuilder.StringBuilder()',
-                                                        'java.util.Map<java.lang.String,java.lang.String>.entrySet()',
-                                                        '$NOT$java.lang.String.startsWith(java.lang.String)',
-                                                        ], limit=100)
-graph_analyzer.print_lists(progs)
+prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
+
+'java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>(int)'
+
+                                                        ])
+graph_analyzer.print_summary_stats(prog_ids)
+graph_analyzer.print_programs_from_ids(prog_ids, limit=20)
