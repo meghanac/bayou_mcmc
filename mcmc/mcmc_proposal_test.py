@@ -14,7 +14,7 @@ from test_utils import STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, S
     create_str_buf_base_program, create_eight_node_program, create_dbranch, create_dloop, create_dexcept, \
     create_all_dtypes_program, DBRANCH, DLOOP, DEXCEPT, SIBLING_EDGE, CHILD_EDGE
 
-from mcmc import INSERT, DELETE, REPLACE, SWAP, ADD_DNODE
+from mcmc import INSERT, DELETE, REPLACE, SWAP, ADD_DNODE, MCMCProgram
 
 from proposals.insertion_proposals import ProposalWithInsertion
 from proposals.insert_proposal import InsertProposal
@@ -24,8 +24,9 @@ SAVED_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/1k_vocab
 
 
 class ProposalTests(unittest.TestCase):
+    @mock.patch.object(MCMCProgram, 'accept_or_reject')
     @mock.patch.object(random, 'randint')
-    def test_insert_proposal(self, mock_randint):
+    def test_insert_proposal(self, mock_accept_reject, mock_randint):
         test_prog, _, _ = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, STR_BUILD_APP],
                                               ["Typeface"],
                                               ["String", "int"])
@@ -35,10 +36,14 @@ class ProposalTests(unittest.TestCase):
         expected_nodes, expected_edges = prog.tree_mod.get_vector_representation(curr_prog)
         print("prev program")
         print_verbose_tree_info(curr_prog)
+        orig_prob = prog.curr_log_prob
+        print("original probability:", math.exp(prog.curr_log_prob))
 
         # Logging and checks
         prev_length = curr_prog.length
         print("prev length:", prev_length)
+
+        mock_accept_reject.return_value = True
 
         # Add node
         for i in range(1, curr_prog.length):
@@ -82,6 +87,8 @@ class ProposalTests(unittest.TestCase):
             prog.curr_log_prob = prog.prev_log_prob
             print("after undo move:")
             print_verbose_tree_info(curr_prog)
+            self.assertEqual(prog.curr_log_prob, orig_prob,
+                             "curr: " + str(math.exp(prog.curr_log_prob)) + " orig: " + str(math.exp(orig_prob)))
             self.assertEqual(curr_prog.length, prev_length, "Curr prog length: " + str(
                 curr_prog.length) + " != prev length: " + str(prev_length))
             nodes, edges = prog.tree_mod.get_vector_representation(curr_prog)

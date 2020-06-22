@@ -14,7 +14,7 @@ from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT
 
 class SwapProposal:
 
-    def __init__(self, tree_modifier):
+    def __init__(self, tree_modifier, verbose=False, debug=False):
         self.config = tree_modifier.config
         self.tree_mod = tree_modifier
         self.max_num_api = self.config.max_num_api
@@ -26,6 +26,8 @@ class SwapProposal:
         # Logging
         self.attempted = 0
         self.accepted = 0
+        self.verbose = verbose or debug
+        self.debug = debug
 
     def random_swap(self, curr_prog):
         """

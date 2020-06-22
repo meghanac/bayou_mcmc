@@ -42,7 +42,7 @@ class MCMCProgram:
 
     """
 
-    def __init__(self, save_dir):
+    def __init__(self, save_dir, verbose=False, debug=False):
         """
         Initialize program
         :param save_dir: (string) path to directory in which saved model checkpoints are in
@@ -72,7 +72,7 @@ class MCMCProgram:
         self.decoder = None
         self.encoder = None
 
-        self.proposal_probs = {INSERT: 0.3, DELETE: 0.3, SWAP: 0.1, REPLACE: 0.3, ADD_DNODE: 0.0}
+        self.proposal_probs = {INSERT: 0.5, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0}
         # self.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.00, REPLACE: 0.0, ADD_DNODE: 0.0}
         self.proposals = list(self.proposal_probs.keys())
         self.p_probs = [self.proposal_probs[p] for p in self.proposals]
@@ -89,6 +89,10 @@ class MCMCProgram:
         self.rejected = 0
         self.valid = 0
         self.invalid = 0
+
+        # Whether to print logs
+        self.debug = debug
+        self.verbose = (verbose or debug)
 
     def restore(self, save):
         """
@@ -140,11 +144,11 @@ class MCMCProgram:
             print("Formal parameter ", fp, "is not in the vocabulary. Will be skipped")
 
     def init_proposals(self):
-        self.Insert = InsertProposal(self.tree_mod, self.decoder)
-        self.Delete = DeleteProposal(self.tree_mod)
-        self.Swap = SwapProposal(self.tree_mod)
-        self.AddDnode = AddDnodeProposal(self.tree_mod, self.decoder)
-        self.Replace = ReplaceProposal(self.tree_mod, self.decoder)
+        self.Insert = InsertProposal(self.tree_mod, self.decoder, self.sess, verbose=self.verbose, debug=self.debug)
+        self.Delete = DeleteProposal(self.tree_mod, verbose=self.verbose, debug=self.debug)
+        self.Swap = SwapProposal(self.tree_mod, verbose=self.verbose, debug=self.debug)
+        # self.AddDnode = AddDnodeProposal(self.tree_mod, self.decoder)
+        self.Replace = ReplaceProposal(self.tree_mod, self.decoder, self.sess, verbose=self.verbose, debug=self.debug)
 
     def init_program(self, constraints, ret_types, fps):
         """
@@ -177,7 +181,8 @@ class MCMCProgram:
             last_node = node
 
         # Initialize model states
-        self.get_initial_decoder_state()
+        # self.get_initial_decoder_state()
+        self.get_random_initial_state()
 
         # Update probabilities of tree
         self.calculate_probability()
@@ -298,31 +303,30 @@ class MCMCProgram:
         Calculates whether to accept or reject current program based on Metropolis Hastings algorithm.
         :return: (bool)
         """
-        # print(math.exp(self.curr_log_prob)/math.exp(self.prev_log_prob))
-        print(move)
         if self.proposal_probs[self.reverse[move]] != 1.0:
-            print(self.proposal_probs[self.reverse[move]])
             ln_prob_reverse_move = math.log(self.proposal_probs[self.reverse[move]])
         else:
             ln_prob_reverse_move = 0.0
         ln_prob_move = math.log(self.proposal_probs[move])
-        # alpha = (ln_prob_reverse_move + ln_reversal_prob/(self.curr_prog.length - 1) + self.curr_log_prob) - (
-        #         self.prev_log_prob + ln_prob_move + ln_proposal_prob)
 
+        # Calculate acceptance ratio
         alpha = (ln_prob_reverse_move + ln_reversal_prob + self.curr_log_prob) - (
                 self.prev_log_prob + ln_prob_move + ln_proposal_prob)
-
-        print("curr log:", math.exp(self.curr_log_prob))
-        print("prev log:", math.exp(self.prev_log_prob))
-        print("proposal prob:", math.exp(ln_proposal_prob))
-        # print("reversal prob:", math.exp(ln_reversal_prob)/(self.curr_prog.length - 1))
-        print("reversal prob:", math.exp(ln_reversal_prob))
-        print("move prob:", self.proposal_probs[move])
-        print("reverse move prob:", self.proposal_probs[self.reverse[move]])
-        print("numerator:", math.exp(ln_prob_reverse_move + ln_reversal_prob + self.curr_log_prob))
-        print("denominator:", math.exp(self.prev_log_prob + ln_prob_move + ln_proposal_prob))
-        print("alpha:", math.exp(alpha))
         mu = math.log(random.uniform(0, 1))
+
+        if self.verbose:
+            print("accept or reject move:", move)
+            print("curr log:", math.exp(self.curr_log_prob))
+            print("prev log:", math.exp(self.prev_log_prob))
+            print("proposal prob:", math.exp(ln_proposal_prob))
+            print("reversal prob:", math.exp(ln_reversal_prob))
+            print("move prob:", self.proposal_probs[move])
+            print("reverse move prob:", self.proposal_probs[self.reverse[move]])
+            print("numerator:", math.exp(ln_prob_reverse_move + ln_reversal_prob + self.curr_log_prob))
+            print("denominator:", math.exp(self.prev_log_prob + ln_prob_move + ln_proposal_prob))
+            print("alpha:", math.exp(alpha))
+            print("mu:", math.exp(mu))
+
         if mu < alpha:
             self.prev_log_prob = self.curr_log_prob  # TODO: add logging for graph here
             self.accepted += 1
@@ -360,12 +364,16 @@ class MCMCProgram:
                 "Curr prog length: " + str(self.curr_prog.length) + ", prev length: " + str(
                     prev_length) + ", deleted node length: " + str(node.length)
 
-    def insert_proposal(self, verbose):
+    def insert_proposal(self):
         # Logging and checks
         prev_length = self.curr_prog.length
         self.Insert.attempted += 1
 
-        print(self.curr_prog is None)
+        if self.verbose:
+            print("\nADD")
+            print("old program:")
+            print_verbose_tree_info(self.curr_prog)
+
         # Add node
         output = self.Insert.add_random_node(self.curr_prog, self.initial_state)
         if output is None:
@@ -373,13 +381,16 @@ class MCMCProgram:
         curr_prog, added_node, ln_proposal_prob = output
         assert curr_prog is not None
         self.curr_prog = curr_prog
+
+        # Calculate reversal probability
         ln_reversal_prob = self.Delete.calculate_ln_prob_of_move(curr_prog.length)
 
         # Calculate probability of new program
         self.calculate_probability()
 
         # Print logs
-        if verbose:
+        if self.verbose:
+            print("\nnew program:")
             print_verbose_tree_info(self.curr_prog)
 
         # If no node was added, return False
@@ -408,14 +419,15 @@ class MCMCProgram:
         # successful
         return True
 
-    def replace_proposal(self, verbose):
+    def replace_proposal(self):
         # Logging and checks
-        verbose = True
-
         prev_length = self.curr_prog.length
         self.Replace.attempted += 1
 
-        print_verbose_tree_info(self.curr_prog)
+        if self.verbose:
+            print("\nREPLACE")
+            print("old program:")
+            print_verbose_tree_info(self.curr_prog)
 
         # Add node
         output = \
@@ -423,37 +435,30 @@ class MCMCProgram:
 
         if output is None:
             return False
-
         prog, new_node, replaced_node_api, ln_proposal_prob = output
 
-        if prog is None:
-            return False
-
-        self.curr_prog = prog
-
         # If no node was added, return False
-        if new_node is None:
+        if new_node is None or prog is None:
             assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
                 self.curr_prog.length) + " != prev length: " + str(prev_length)
             return False
-
-        print_verbose_tree_info(self.curr_prog)
+        self.curr_prog = prog
 
         # Calculate reversal prob
         new_node_pos = self.tree_mod.get_nodes_position(self.curr_prog, new_node)
-        ln_reversal_prob = self.Replace.calculate_ln_prob_of_move(self.curr_prog, self.initial_state, new_node_pos,
-                                                                  replaced_node_api, new_node.parent_edge)
+        ln_reversal_prob = self.Replace.calculate_reversal_ln_prob(self.curr_prog, self.initial_state, new_node_pos,
+                                                                   replaced_node_api, new_node.parent_edge)
 
         # Calculate probability of new program
         self.calculate_probability()
 
         # Print logs
-        if verbose:
+        if self.verbose:
+            print("new program:")
             print_verbose_tree_info(self.curr_prog)
 
         # Validate current program
         valid = self.validate_and_update_program(REPLACE, ln_proposal_prob, ln_reversal_prob)
-
 
         # Undo move if not valid
         if not valid:
@@ -469,13 +474,10 @@ class MCMCProgram:
         # Logging
         self.Replace.accepted += 1
 
-    def delete_proposal(self, verbose):
+    def delete_proposal(self):
         # Logging and checks
         prev_length = self.curr_prog.length
         self.Delete.attempted += 1
-
-        # # Create a copy of current program
-        # curr_prog_copy = self.curr_prog.copy()
 
         # Delete node
         curr_prog, node, parent_node, parent_edge, ln_prob = self.Delete.delete_random_node(self.curr_prog)
@@ -486,29 +488,29 @@ class MCMCProgram:
         self.curr_prog = curr_prog
         parent_pos = self.tree_mod.get_nodes_position(self.curr_prog, parent_node)
 
+        # Calculate probability of reverse move
         curr_prog_copy = self.curr_prog.copy()
         parent_node_copy = self.tree_mod.get_node_in_position(curr_prog_copy, parent_pos)
         parent_node_copy_neighbor = parent_node_copy.get_neighbor(parent_edge)
         node_copy = node.copy()
-        # node_copy.change_api(TEMP, self.config.vocab2node[TEMP])
         parent_node_copy.add_node(node_copy, parent_edge)
         node_copy.add_node(parent_node_copy_neighbor, parent_edge)
         node_pos = self.tree_mod.get_nodes_position(curr_prog_copy, node_copy)
-
-        print("HEREEERE")
-        print_verbose_tree_info(curr_prog)
-        print_verbose_tree_info(curr_prog_copy)
-
         ln_reversal_prob = self.Insert.calculate_ln_prob_of_move(curr_prog_copy, self.initial_state, node_pos,
                                                                  parent_edge, is_copy=True)
-        parent_node_copy.remove_node(parent_edge)
+        # parent_node_copy.remove_node(parent_edge)
 
         # Calculate probability of new program
         self.calculate_probability()
 
         # Print logs
-        if verbose:
+        if self.verbose:
+            print("\nDELETE")
+            print("old program:")
+            print_verbose_tree_info(curr_prog_copy)
+            print("new program:")
             print_verbose_tree_info(self.curr_prog)
+
 
         # Undo move if not valid
         if not self.validate_and_update_program(DELETE, ln_prob, ln_reversal_prob):
@@ -527,10 +529,15 @@ class MCMCProgram:
         # successful
         return True
 
-    def swap_proposal(self, verbose):
+    def swap_proposal(self):
         # Logging and checks
         prev_length = self.curr_prog.length
         self.Swap.attempted += 1
+
+        if self.verbose:
+            print("\nSWAP")
+            print("old program:")
+            print_verbose_tree_info(self.curr_prog)
 
         # Swap nodes
         curr_prog, node1, node2, ln_prob = self.Swap.random_swap(self.curr_prog)
@@ -538,21 +545,25 @@ class MCMCProgram:
             assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
                 self.curr_prog.length) + " != prev length: " + str(prev_length)
             return False
+        # Undo move if invalid
+        if node1 is None or node2 is None:
+            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                self.curr_prog.length) + " != prev length: " + str(prev_length)
+            return False
         self.curr_prog = curr_prog
+
+        # Calculate probability of reversal
         reversal_ln_prob = self.Swap.calculate_ln_prob_of_move()
 
         # Calculate probability of new program
         self.calculate_probability()
 
         # Print logs
-        if verbose:
+        if self.verbose:
+            print("new program:")
             print_verbose_tree_info(self.curr_prog)
 
-        # Undo move if invalid
-        if node1 is None or node2 is None:
-            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
-                self.curr_prog.length) + " != prev length: " + str(prev_length)
-            return False
+        # Undo move if not valid
         if not self.validate_and_update_program(SWAP, ln_prob, reversal_ln_prob):
             self.Swap.undo_swap_nodes(node1, node2)
             self.curr_log_prob = self.prev_log_prob
@@ -570,62 +581,67 @@ class MCMCProgram:
         # successful
         return True
 
-    def add_dnode_proposal(self, verbose):
-        # Logging and checks
-        self.AddDnode.attempted += 1
+    # TODO: UNCOMMENT AFTER UPATING CODE
+    # def add_dnode_proposal(self, verbose):
+    #     # Logging and checks
+    #     self.AddDnode.attempted += 1
+    #
+    #     # Add dnode
+    #     self.curr_prog, dnode, ln_proposal_prob = self.AddDnode.add_random_dnode(self.curr_prog, self.initial_state)
+    #     reversal_ln_prob = self.Delete.calculate_ln_prob_of_move(self.curr_prog.length)
+    #
+    #     # Calculate probability of new program
+    #     self.calculate_probability()
+    #
+    #     # Print logs
+    #     if verbose:
+    #         print_verbose_tree_info(self.curr_prog)
+    #
+    #     # If not valid, return False
+    #     if dnode is None:
+    #         return False
+    #     if not self.validate_and_update_program(ADD_DNODE, ln_proposal_prob, reversal_ln_prob):
+    #         self.AddDnode.undo_add_random_dnode(dnode)
+    #         self.curr_log_prob = self.prev_log_prob
+    #         return False
+    #
+    #     # Logging
+    #     self.AddDnode.accepted += 1
+    #
+    #     # successful
+    #     return True
 
-        # Add dnode
-        self.curr_prog, dnode, ln_proposal_prob = self.AddDnode.add_random_dnode(self.curr_prog, self.initial_state)
-        reversal_ln_prob = self.Delete.calculate_ln_prob_of_move(self.curr_prog.length)
-
-        # Calculate probability of new program
-        self.calculate_probability()
-
-        # Print logs
-        if verbose:
-            print_verbose_tree_info(self.curr_prog)
-
-        # If not valid, return False
-        if dnode is None:
-            return False
-        if not self.validate_and_update_program(ADD_DNODE, ln_proposal_prob, reversal_ln_prob):
-            self.AddDnode.undo_add_random_dnode(dnode)
-            self.curr_log_prob = self.prev_log_prob
-            return False
-
-        # Logging
-        self.AddDnode.accepted += 1
-
-        # successful
-        return True
-
-    def transform_tree(self, verbose=False):
+    def transform_tree(self):
         """
         Randomly chooses a transformation and transforms the current program if it is accepted.
         :return: (bool) whether current tree was transformed or not
         """
-        print_verbose_tree_info(self.curr_prog)
         assert self.check_validity() is True
 
-        # print(self.proposals)
-        # print(self.p_probs)
         move = np.random.choice(self.proposals, p=self.p_probs)
-        print("move:", move)
 
         if move == INSERT:
-            return self.insert_proposal(verbose)
+            return self.insert_proposal()
         elif move == DELETE:
-            return self.delete_proposal(verbose)
+            return self.delete_proposal()
         elif move == SWAP:
-            return self.swap_proposal(verbose)
+            return self.swap_proposal()
         elif move == ADD_DNODE:
-            return self.add_dnode_proposal(verbose)
+            pass
+            # return self.add_dnode_proposal(verbose)
         elif move == REPLACE:  # TODO: add this
-            return self.replace_proposal(verbose)
+            return self.replace_proposal()
         else:
             raise ValueError('move not defined')  # TODO: remove once tested
 
     def get_random_initial_state(self):
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                         description=textwrap.dedent(""))
+        parser.add_argument('--continue_from', type=str, default=self.config.save_dir,
+                            help='ignore config options and continue training model checkpointed here')
+        clargs = parser.parse_args()
+        beam_width = 1
+        self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
         self.initial_state = self.decoder.get_random_initial_state()
 
     def get_initial_decoder_state(self):
@@ -646,7 +662,7 @@ class MCMCProgram:
         edges = edges[:self.config.max_num_api]
         nodes = np.array([nodes])
         edges = np.array([edges])
-        print(self.ret_type)
+
         self.initial_state = self.encoder.get_initial_state(nodes, edges, np.array(self.ret_type), np.array(self.fp))
         self.initial_state = np.transpose(np.array(self.initial_state), [1, 0, 2])  # batch_first
 
@@ -701,33 +717,30 @@ class MCMCProgram:
         :return:
         """
         nodes, edges, targets = self.tree_mod.get_nodes_edges_targets(self.curr_prog)
-        print(nodes)
-        print(edges)
-        print(targets)
         node = np.zeros([self.config.batch_size, self.config.max_ast_depth], dtype=np.int32)
         edge = np.zeros([self.config.batch_size, self.config.max_ast_depth], dtype=np.bool)
         state = self.initial_state
         curr_prob = 0.0
 
-        print(self.curr_prog.length)
-
         for i in range(len(nodes)):
             node[0][0] = nodes[i]
             edge[0][0] = edges[i]
-            if i == self.curr_prog.length - 1:
-                if self.config.node2vocab[node[0][0]] == STOP:
-                    pass
-                else:
-                    # add prob of stop node
-                    # logits are normalized with log_softmax
-                    state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
-                    stop_node = self.config.vocab2node[STOP]
-                    curr_prob += ast_prob[0][stop_node]
-            else:
-                state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
-                curr_prob += ast_prob[0][targets[i]]
+            # logits are normalized with log_softmax
+            state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
+            curr_prob += ast_prob[0][targets[i]]
 
-        self.curr_log_prob = curr_prob / self.curr_prog.length
+        self.curr_log_prob = curr_prob
+        # self.curr_log_prob = curr_prob - math.log(self.curr_prog.length)
+
+        if self.verbose:
+            print(nodes)
+            print(edges)
+            print(targets)
+            print(curr_prob)
+
+        if self.debug:
+            print("COULD BE:", math.exp(self.curr_log_prob - math.log(self.curr_prog.length)))
+            print("NOW:", math.exp(self.curr_log_prob))
 
         return self.curr_log_prob
 
@@ -740,7 +753,8 @@ class MCMCProgram:
         4) Compute the new initial state of the decoder.
         :return:
         """
-        self.transform_tree(verbose=True)
+        self.transform_tree()
+        # self.update_latent_state_and_decoder_state()
         # if random.choice([True, False, False, False, False, False, False, False, False, False ]):
         #     self.update_latent_state_and_decoder_state()
 

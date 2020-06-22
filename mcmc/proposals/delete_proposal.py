@@ -14,7 +14,7 @@ from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT
 
 class DeleteProposal:
 
-    def __init__(self, tree_modifier):
+    def __init__(self, tree_modifier, verbose=False, debug=False):
         self.config = tree_modifier.config
         self.tree_mod = tree_modifier
         self.max_num_api = self.config.max_num_api
@@ -27,6 +27,8 @@ class DeleteProposal:
         # Logging
         self.attempted = 0
         self.accepted = 0
+        self.verbose = verbose or debug
+        self.debug = debug
 
     def delete_random_node(self, curr_prog):
         """
@@ -36,7 +38,7 @@ class DeleteProposal:
         """
         # Temporarily save curr_prog
         self.curr_prog = curr_prog
-        curr_prog_length = self.curr_prog.length
+        orig_prog_length = self.curr_prog.length
 
         node, _ = self.__get_deletable_node()
         # assert node.api_name != STOP
@@ -54,9 +56,8 @@ class DeleteProposal:
         # Reset self.curr_prog
         self.curr_prog = None
 
-        # ln_prob = self.calculate_ln_prob_of_move(curr_prog_length)
-
-        ln_prob = self.ln_proposal_dist - math.log(curr_prog_length)
+        ln_prob = self.calculate_ln_prob_of_move(orig_prog_length)
+        # ln_prob = self.ln_proposal_dist - math.log(curr_prog_length)
 
         return curr_prog, node, parent_node, parent_edge, ln_prob
 
@@ -91,6 +92,6 @@ class DeleteProposal:
         return node, rand_node_pos
 
     def calculate_ln_prob_of_move(self, curr_prog_length):
-        # return self.ln_proposal_dist - math.log(curr_prog_length)
-        return self.ln_proposal_dist
+        return self.ln_proposal_dist - math.log(curr_prog_length)
+        # return self.ln_proposal_dist
 

@@ -15,10 +15,10 @@ from proposals.insertion_proposals import ProposalWithInsertion
 
 class InsertProposal(ProposalWithInsertion):
 
-    def __init__(self, tree_modifier, decoder, top_k_prob=0.95):
-        super().__init__(tree_modifier, decoder, top_k_prob)
+    def __init__(self, tree_modifier, decoder, tf_session, top_k_prob=0.95, verbose=False, debug=False):
+        super().__init__(tree_modifier, decoder, tf_session, top_k_prob, verbose=verbose, debug=debug)
 
-    def add_random_node(self, curr_prog, initial_state, verbose=False):
+    def add_random_node(self, curr_prog, initial_state):
         """
         Adds a node to a random position in the current program.
         Node is chosen probabilistically based on all the nodes that come before it (DFS).
@@ -37,7 +37,7 @@ class InsertProposal(ProposalWithInsertion):
         new_node_parent = self.tree_mod.get_node_in_position(curr_prog, rand_node_pos)
 
         # Probabilistically choose the node that should appear after selected random parent
-        new_node, _, prob = self._get_new_node(new_node_parent, SIBLING_EDGE, verbose=verbose)
+        new_node, _, prob = self._get_new_node(new_node_parent, SIBLING_EDGE, verbose=self.debug)
 
         if new_node is None:
             return None

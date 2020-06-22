@@ -15,7 +15,7 @@ from configuration import TEMP
 
 
 class ProposalWithInsertion:
-    def __init__(self, tree_modifier, decoder, top_k_prob=0.95):
+    def __init__(self, tree_modifier, decoder, tf_session, top_k_prob=0.95, verbose=False, debug=False):
         self.decoder = decoder
         self.config = tree_modifier.config
         self.tree_mod = tree_modifier
@@ -30,10 +30,12 @@ class ProposalWithInsertion:
         # Logging
         self.attempted = 0
         self.accepted = 0
+        self.verbose = (verbose or debug)
+        self.debug = debug
 
         self.use_multinomial = True
 
-        self.sess = tf.Session()
+        self.sess = tf_session
 
     def _grow_dbranch(self, dbranch, verbose=False):
         """
@@ -45,14 +47,6 @@ class ProposalWithInsertion:
 
         # Ensure adding a DBranch won't exceed max depth
         if self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 5 > self.max_length:
-            # # remove added dbranch
-            # child = dbranch.child
-            # sibling = dbranch.sibling
-            # parent = dbranch.parent
-            # parent_edge = dbranch.parent_edge
-            # parent.remove_node(parent_edge)
-            # parent.add_node(sibling, SIBLING_EDGE)
-            # parent.add_node(child, CHILD_EDGE)
             return None
 
         # Create condition as DBranch child
@@ -82,14 +76,6 @@ class ProposalWithInsertion:
 
         # Ensure adding a DBranch won't exceed max depth
         if self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 3 > self.max_length:
-            # # remove added dbranch
-            # child = dnode.child
-            # sibling = dnode.sibling
-            # parent = dnode.parent
-            # parent_edge = dnode.parent_edge
-            # parent.remove_node(parent_edge)
-            # parent.add_node(sibling, SIBLING_EDGE)
-            # parent.add_node(child, CHILD_EDGE)
             return None
 
         # Create condition as DLoop child
@@ -163,6 +149,9 @@ class ProposalWithInsertion:
                     selectable_node_exists_in_program = True
 
     def _get_new_node(self, parent, edge, verbose=False):
+        # save original tree length
+        orig_length = self.curr_prog.length
+
         # add empty node
         next_nodes = parent.remove_node(edge)
         empty_node = self.tree_mod.create_and_add_node(TEMP, parent, edge)
@@ -179,7 +168,12 @@ class ProposalWithInsertion:
         if verbose:
             print("empty node api name:", empty_node.api_name, "empty node pos:", empty_node_pos)
 
-        return self._replace_node_api(empty_node, empty_node_pos, edge, verbose=verbose)
+        node, node_pos, prob = self._replace_node_api(empty_node, empty_node_pos, edge, verbose=verbose)
+
+        # calculate probability of move
+        prob -= math.log(orig_length)
+
+        return node, node_pos, prob
 
     def _replace_node_api(self, node, node_pos, parent_edge, verbose=False):
 
@@ -200,6 +194,7 @@ class ProposalWithInsertion:
         :return: (int) number of api in vocabulary
         """
 
+
         logits = self._get_logits_for_add_node(self.curr_prog, self.initial_state, empty_node_pos, added_edge)
         sorted_logits = np.argsort(-logits)
 
@@ -207,9 +202,7 @@ class ProposalWithInsertion:
             # logits are already normalized from decoder
             logits = logits.reshape(1, logits.shape[0])
             idx = self.sess.run(tf.multinomial(logits, 1)[0][0], {})
-            ln_prob = self.calculate_multinomial_ln_prob(logits, idx, self.curr_prog)
-            # print("norm logs:", math.exp(sum(norm_logs)))
-            # norm_logs = [math.exp(i) for i in norm_logs]
+            ln_prob = self.calculate_multinomial_ln_prob(logits, idx)
             return idx, ln_prob
             # return idx, logits[0][idx]/self.curr_prog.length
         else:  # randomly select from top_k
@@ -369,7 +362,7 @@ class ProposalWithInsertion:
                 state, probs = self.decoder.get_ast_logits(node, edge, state)
                 preceding_prob += probs[0][targets[i]]
 
-    def calculate_multinomial_ln_prob(self, logits, api_num, curr_prog):
+    def calculate_multinomial_ln_prob(self, logits, api_num):
         norm_logs = self.sess.run(tf.nn.log_softmax(logits[0]), {})
         # print("norm logs:", sum(norm_logs))
         # print("api name:", self.config.node2vocab[api_num])
@@ -383,7 +376,10 @@ class ProposalWithInsertion:
         # return math.log(norm_logs[api_num] / curr_prog.length)
         # return math.log(norm_logs[api_num])
         # return logits[0][added_node.api_num]/curr_prog.length
-        return norm_logs[api_num] - math.log(curr_prog.length)
+
+        return norm_logs[api_num]
+
+        # return norm_logs[api_num]
 
     def _get_prob_from_logits(self, curr_prog, initial_state, added_node_pos, added_node, added_edge):
         added_node_api = added_node.api_name
@@ -393,7 +389,7 @@ class ProposalWithInsertion:
 
         if self.use_multinomial:
             logits = logits.reshape(1, logits.shape[0])
-            return self.calculate_multinomial_ln_prob(logits, added_node.api_num, curr_prog)
+            return self.calculate_multinomial_ln_prob(logits, added_node.api_num)
         else:
             sorted_logits = np.argsort(-logits)
             if np.where(sorted_logits == added_node.api_num)[0] < self.decoder.top_k:

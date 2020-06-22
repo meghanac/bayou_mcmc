@@ -392,8 +392,8 @@ class GraphAnalyzer:
 graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, load_reader=True)
 prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
 
-'java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>(int)'
 
+ 'java.lang.StringBuilder.StringBuilder()', 'java.lang.Double.Double(double)'
                                                         ])
 graph_analyzer.print_summary_stats(prog_ids)
 graph_analyzer.print_programs_from_ids(prog_ids, limit=20)

@@ -605,10 +605,11 @@ class MCMCProgramTest(unittest.TestCase):
 
         # test_prog.prog.max_depth = 15
 
-        num_iter = 200
+        num_iter = 150
 
         print(test_prog.prog.curr_prog.length)
         for i in range(num_iter):
+            print("\n\n---------------")
             print(i)
             test_prog.prog.mcmc()
             # if i % 1 == 0:

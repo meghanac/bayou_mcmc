@@ -97,7 +97,7 @@ def create_all_dtypes_program(saved_model_path):
 class MCMCProgramWrapper:
     def __init__(self, save_dir, constraints, return_type, formal_params):
         # init MCMCProgram
-        self.prog = MCMCProgram(save_dir)
+        self.prog = MCMCProgram(save_dir, debug=True)
         self.prog.init_program(constraints, return_type, formal_params)
 
         self.constraints = self.prog.constraints
@@ -206,5 +206,5 @@ class MCMCProgramWrapper:
         print("Total accepted delete transforms:", self.prog.Delete.accepted)
         print("Total attempted swap transforms:", self.prog.Swap.attempted)
         print("Total accepted swap transforms:", self.prog.Swap.accepted)
-        print("Total attempted add dnode transforms:", self.prog.AddDnode.attempted)
-        print("Total accepted add dnode transforms:", self.prog.AddDnode.accepted)
+        # print("Total attempted add dnode transforms:", self.prog.AddDnode.attempted)
+        # print("Total accepted add dnode transforms:", self.prog.AddDnode.accepted)

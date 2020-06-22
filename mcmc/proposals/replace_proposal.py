@@ -16,8 +16,8 @@ from utils import print_verbose_tree_info
 
 class ReplaceProposal(ProposalWithInsertion):
 
-    def __init__(self, tree_modifier, decoder):
-        super().__init__(tree_modifier, decoder)
+    def __init__(self, tree_modifier, decoder, tf_session, verbose=False, debug=False):
+        super().__init__(tree_modifier, decoder, tf_session, verbose=verbose, debug=debug)
         self.top_k_prob = 1
         # self.ln_proposal_dist = 0
 
@@ -37,6 +37,9 @@ class ReplaceProposal(ProposalWithInsertion):
 
         # Probabilistically choose the node that should appear after selected random parent
         new_node, new_node_pos, prob = self._replace_node_api(replaced_node, rand_node_pos, replaced_node.parent_edge)
+
+        # Calculate prob of move
+        prob -= math.log(self.curr_prog.length)
 
         # If a dnode is chosen, grow it out
         if new_node.api_name == DBRANCH:
@@ -114,7 +117,12 @@ class ReplaceProposal(ProposalWithInsertion):
         print("reversed moved:")
         print_verbose_tree_info(curr_prog)
 
-        return self.calculate_ln_prob_of_move(curr_prog, initial_state, added_pos, added_edge, is_copy=True)
+        prob = self.calculate_ln_prob_of_move(curr_prog, initial_state, added_pos, added_edge, is_copy=True)
+
+        # Calculate prob of move
+        prob -= math.log(curr_prog.length)
+
+        return prob
 
     # def _get_prob_from_logits(self, curr_prog, initial_state, added_node_pos, added_node, added_edge):
     #     logits = self._get_logits_for_add_node(curr_prog, initial_state, added_node_pos, added_edge)
