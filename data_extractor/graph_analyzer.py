@@ -254,10 +254,11 @@ class GraphAnalyzer:
                 print(i1)
             print("")
 
-    def get_json_ast(self, prog_id):
-        json_ast = next(itertools.islice(self.json_asts, prog_id, None))
-        # print([i for i in json_ast])
-        return json_ast
+    # TODO: this doesn't work because the nodes/edges/etc. are shuffled at the end of Reader
+    # def get_json_ast(self, prog_id):
+    #     json_ast = next(itertools.islice(self.json_asts, prog_id, None))
+    #     # print([i for i in json_ast])
+    #     return json_ast
 
     def plot_ast(self, nodes, edges, targets, filename='temporary'):
         dot = Digraph(comment='Program AST', format='eps')
@@ -392,8 +393,7 @@ class GraphAnalyzer:
 graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, load_reader=True)
 prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
 
-
- 'java.lang.StringBuilder.StringBuilder()', 'java.lang.Double.Double(double)'
+'java.lang.StringBuilder.append(java.lang.Object)', 'java.lang.StringBuilder.StringBuilder()', 'java.io.FileInputStream.FileInputStream(java.lang.String)'
                                                         ])
 graph_analyzer.print_summary_stats(prog_ids)
 graph_analyzer.print_programs_from_ids(prog_ids, limit=20)

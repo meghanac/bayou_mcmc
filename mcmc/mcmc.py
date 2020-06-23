@@ -640,6 +640,7 @@ class MCMCProgram:
         parser.add_argument('--continue_from', type=str, default=self.config.save_dir,
                             help='ignore config options and continue training model checkpointed here')
         clargs = parser.parse_args()
+        self.get_initial_decoder_state()
         beam_width = 1
         self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
         self.initial_state = self.decoder.get_random_initial_state()
@@ -754,6 +755,7 @@ class MCMCProgram:
         :return:
         """
         self.transform_tree()
+        # self.initial_state = self.decoder.get_random_initial_state()
         # self.update_latent_state_and_decoder_state()
         # if random.choice([True, False, False, False, False, False, False, False, False, False ]):
         #     self.update_latent_state_and_decoder_state()

@@ -597,15 +597,15 @@ class MCMCProgramTest(unittest.TestCase):
 
         # test_prog.prog.proposal_probs = {INSERT: 0.333, DELETE: 0.334, SWAP: 0.0, REPLACE: 0.333, ADD_DNODE: 0.0}
 
-        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
-        # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
+        # test_prog.add_to_first_available_node('java.awt.image.BufferedImage.getWidth(java.awt.image.ImageObserver)', SIBLING_EDGE)
+        # test_prog.add_to_first_available_node('java.util.logging.Logger.setResourceBundle(java.util.logging.LogRecord)', SIBLING_EDGE)
+        # test_prog.add_to_first_available_node('java.util.ArrayList<E>.ensureCapacity(int)', SIBLING_EDGE)
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
 
         # test_prog.prog.max_depth = 15
 
-        num_iter = 150
+        num_iter = 1000
 
         print(test_prog.prog.curr_prog.length)
         for i in range(num_iter):
