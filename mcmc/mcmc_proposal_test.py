@@ -118,7 +118,7 @@ class ProposalTests(unittest.TestCase):
         prog.Insert.curr_prog = curr_prog
         prog.Insert.initial_state = prog.initial_state
 
-        insertion_class = ProposalWithInsertion(prog.tree_mod, prog.decoder)
+        insertion_class = ProposalWithInsertion(prog.tree_mod, prog.decoder, tf.Session())
         insertion_class.curr_prog = curr_prog
         insertion_class.initial_state = prog.initial_state
 
