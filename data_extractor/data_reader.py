@@ -75,7 +75,7 @@ class Reader:
             self.fp_dict = Dictionary()
             self.keyword_dict = Dictionary()
 
-        ast_programs, return_types, formal_params, keywords = self.read_data(clargs.data + clargs.folder_name + ".json")
+        ast_programs, return_types, formal_params, keywords = self.read_data(clargs.data + clargs.data_filename + ".json")
 
         # setup input and target chars/vocab
         if not self.infer:

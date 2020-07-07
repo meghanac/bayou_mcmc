@@ -49,8 +49,8 @@ def train(clargs):
 
     with open(config_file) as f:
         config = read_config(json.load(f))
-    reader = Reader(clargs)
-    reader.save_data(clargs.data)
+    # reader = Reader(clargs)
+    # reader.save_data(clargs.data)
     loader = Loader(clargs, config)
     model = Model(config)
 
@@ -147,14 +147,15 @@ def train(clargs):
 
 # %%
 if __name__ == '__main__':
-    folder_name = 'testing-600'
+    folder_name = 'all_data_1k_vocab_0.5_KL_beta'
+    data_folder_name = 'all_data_1k_vocab'
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=textwrap.dedent(HELP))
     parser.add_argument('--python_recursion_limit', type=int, default=10000,
                         help='set recursion limit for the Python interpreter')
     parser.add_argument('--save', type=str, default='save/' + folder_name + "/",
                         help='checkpoint model during training here')
-    parser.add_argument('--data', type=str, default='../data_extractor/data/' + folder_name + "/",
+    parser.add_argument('--data', type=str, default='../data_extractor/data/' + data_folder_name + "/",
                         help='load data from here')
     parser.add_argument('--config', type=str, default='config.json',
                         help='config file (see description above for help)')
@@ -169,6 +170,7 @@ if __name__ == '__main__':
     if not os.path.exists(clargs_.save + '/plots'):
         os.makedirs(clargs_.save + '/plots')
     clargs_.folder_name = folder_name
+    clargs_.data_filename = data_folder_name
     sys.setrecursionlimit(clargs_.python_recursion_limit)
     if clargs_.config and clargs_.continue_from:
         parser.error('Do not provide --config if you are continuing from checkpointed model')

@@ -3,7 +3,7 @@
     "batch_size": 64,
     "num_epochs": 100,
     "learning_rate": 0.001,
-    "beta": 0.1,
+    "beta": 0.5,
     "alpha1": 1.0,
     "alpha2": 1.0,
     "drop_rate": 1.0,
