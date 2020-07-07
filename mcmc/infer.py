@@ -97,7 +97,17 @@ class BayesianPredictor(object):
         initial_state = self.sess.run(self.model.initial_state,
                                       feed_dict={self.model.latent_state: latent_state})
         initial_state = np.transpose(np.array(initial_state), [1, 0, 2])  # batch-first
-        return initial_state
+        return initial_state, latent_state
+
+    def update_random_initial_state(self, latent_state):
+        # Gaussian proposal distribution as implemented in https://jellis18.github.io/post/2018-01-02-mcmc-part1/
+        sigma = 0.1
+        latent_state = latent_state + np.random.normal(loc=0., scale=1.,
+                                              size=(self.config.batch_size, self.config.latent_size)) * sigma
+        initial_state = self.sess.run(self.model.initial_state,
+                                      feed_dict={self.model.latent_state: latent_state})
+        initial_state = np.transpose(np.array(initial_state), [1, 0, 2])  # batch-first
+        return initial_state, latent_state
 
     def get_next_ast_state_top_k(self, ast_node, ast_edge, ast_state):
         feed = {self.model.nodes.name: np.array(ast_node, dtype=np.int32),
