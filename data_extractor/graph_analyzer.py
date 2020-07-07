@@ -1,8 +1,9 @@
 import itertools
 import pickle
+import math
 
 import ijson
-import networkx
+import networkx as nx
 import json
 import os
 from networkx.readwrite import json_graph
@@ -18,6 +19,9 @@ from data_extractor.utils import read_vocab
 from json_data_extractor import build_graph_from_json_file
 from ast_helper.ast_reader import AstReader
 
+from mcmc.test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
+    MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
+
 STR_BUF = 'java.lang.StringBuffer.StringBuffer()'
 STR_APP = 'java.lang.StringBuffer.append(java.lang.String)'
 READ_LINE = 'java.io.BufferedReader.readLine()'
@@ -32,6 +36,13 @@ ALL_DATA_1K_VOCAB = 'all_data_1k_vocab'
 TESTING = 'testing-600'
 NEW_VOCAB = 'new_1k_vocab_min_3-600000'
 
+APIS = 'apis'
+RT = 'return_types'
+FP = 'fp'
+
+TOP = 'top'
+MID = 'mid'
+LOW = 'low'
 
 class GraphAnalyzer:
 
@@ -186,6 +197,9 @@ class GraphAnalyzer:
 
         return programs
 
+    def get_json_ast(self, prog_id):
+        return None
+
     def get_formatted_program(self, prog_id, get_targets=True, get_jsons=False):
         i = self.fetch_data_with_targets(prog_id)
         nodes = i[0]
@@ -298,7 +312,7 @@ class GraphAnalyzer:
         dot.render("graph_analysis_outputs/" + filename)
         return dot
 
-    def print_summary_stats(self, prog_ids):
+    def get_cooccurrence_stats(self, prog_ids):
         APIS = 'apis'
         RT = 'return_types'
         FP = 'fp'
@@ -331,19 +345,141 @@ class GraphAnalyzer:
         except KeyError:
             pass
 
+        return stats
+
+    def get_sorted_stats(self, stats):
         def take_count(e):
             return e[1]
+        sorted_apis = sorted(stats[APIS].items(), key=take_count, reverse=True)
+        sorted_rt = sorted(stats[RT].items(), key=take_count, reverse=True)
+        sorted_fp = sorted(stats[FP].items(), key=take_count, reverse=True)
+
+        return sorted_apis, sorted_rt, sorted_fp
+
+    def print_summary_stats(self, prog_ids):
+
+        sorted_apis, sorted_rt, sorted_fp = self.get_sorted_stats(self.get_cooccurrence_stats(prog_ids))
 
         # print stats
         print("\n-----------------\n", APIS, ":")
-        for i in sorted(stats[APIS].items(), key=take_count, reverse=True):
+        for i in sorted_apis:
             print(self.node2vocab[i[0]], "\t", str(i[1]))
         print("\n-----------------\n", RT, ":")
-        for i in sorted(stats[RT].items(), key=take_count, reverse=True):
+        for i in sorted_rt:
             print(self.num2rettype[i[0]], "\t", str(i[1]))
         print("\n-----------------\n", FP, ":")
-        for i in sorted(stats[FP].items(), key=take_count, reverse=True):
+        for i in sorted_fp:
             print(self.num2fp[i[0]], "\t", str(i[1]))
+
+    def get_k_cooccurring_apis_rt_fp(self, api, level, k=1):
+        if level not in {'top', 'mid', 'low'}:
+            raise ValueError("level must be 'top' 'mid' or 'low'")
+
+        if type(api) == list:
+            stats = self.get_cooccurrence_stats(self.get_program_ids_with_multiple_apis(api))
+        elif type(api) == str:
+            stats = self.get_cooccurrence_stats(self.get_program_ids_for_api(api))
+        else:
+            raise ValueError("api type must be list or string")
+
+        sorted_apis, sorted_rt, sorted_fp = self.get_sorted_stats(stats)
+
+        api_k = min(len(sorted_apis), k)
+        rt_k = min(len(sorted_rt), k)
+        fp_k = min(len(sorted_fp), k)
+
+        if level == 'top':
+            apis = [i[0] for i in sorted_apis[:api_k]]
+            rt = [i[0] for i in sorted_rt[:rt_k]]
+            fp = [i[0] for i in sorted_fp[:fp_k]]
+
+        elif level == 'mid':
+            api_diff = math.floor((len(sorted_apis) - api_k)/2)
+            apis = [i[0] for i in sorted_apis[api_diff:api_diff+k]]
+            rt_diff = (len(sorted_rt) - rt_k)/2
+            rt = [i[0] for i in sorted_rt[rt_diff:rt_diff+k]]
+            fp_diff = (len(sorted_fp) - fp_k)/2
+            fp = [i[0] for i in sorted_fp[fp_diff:fp_diff+k]]
+
+        else:
+            apis = [i[0] for i in sorted_apis[-api_k:]]
+            rt = [i[0] for i in sorted_rt[-rt_k:]]
+            fp = [i[0] for i in sorted_fp[-fp_k:]]
+
+        assert len(apis) == api_k, "apis: " + str(apis) + " api_k: " + str(api_k)
+        assert len(rt) == rt_k, "rt: " + str(rt) + " rt_k: " + str(rt_k)
+        assert len(fp) == fp_k, "fp: " + str(fp) + " fp_k: " + str(fp_k)
+
+        return apis, rt, fp
+
+    def get_top_k_rt_fp(self, apis, k=np.inf):
+        rt = []
+        fp = []
+        for api in apis:
+            prog_ids = self.get_program_ids_for_api(api)
+            stats = self.get_cooccurrence_stats(prog_ids)
+            # self.print_summary_stats(prog_ids)
+            _, sorted_rt, sorted_fp = self.get_sorted_stats(stats)
+            total_rt = sum([i[1] for i in sorted_rt])
+            total_fp = sum([i[1] for i in sorted_fp])
+            sorted_rt = [(i[0], 1.0 * i[1] / total_rt) for i in sorted_rt]
+            sorted_fp = [(i[0], 1.0 * i[1] / total_fp) for i in sorted_fp]
+            rt.append(sorted_rt)
+            fp.append(sorted_fp)
+
+        # flatten and reduce lists
+        rt = [item for elem in rt for item in elem]
+        fp = [item for elem in fp for item in elem]
+
+        def reduce(items):
+            reduced = []
+            keys = list(set([i[0] for i in items]))
+            for key in keys:
+                item_value = 0.0
+                for item in items:
+                    if key == item[0]:
+                        item_value += item[1]
+                reduced.append((key, item_value))
+            return reduced
+
+        rt = reduce(rt)
+        fp = reduce(fp)
+
+        # sort lists
+        rt = sorted(rt, key=lambda x: x[1], reverse=True)
+        fp = sorted(fp, key=lambda x: x[1], reverse=True)
+
+        rt_k = min(k, len(rt))
+        fp_k = min(k, len(fp))
+
+        return rt[:rt_k], fp[:fp_k]
+
+    def get_disjoint_api(self, api, level, k=1):
+        if level not in {'top', 'mid', 'low'}:
+            raise ValueError("level must be 'top' 'mid' or 'low'")
+        orig_k = k
+        disjoint_nodes = self.g.nodes() - self.g.neighbors(api) - {api}
+        node_attr = nx.get_node_attributes(self.g, 'frequency')
+
+        def sort_by_freq(node):
+            return node_attr[node]
+
+        sorted_dj_nodes = sorted(disjoint_nodes, key=sort_by_freq, reverse=True)
+
+        k = min(k, len(sorted_dj_nodes))
+        if level == TOP:
+            selected = sorted_dj_nodes[:k]
+        elif level == MID:
+            idx = max(math.floor(len(sorted_dj_nodes)/2 - k/2), 0)
+            selected = sorted_dj_nodes[idx:idx+k]
+        elif level == LOW:
+            selected = sorted_dj_nodes[-k:]
+        else:
+            raise ValueError("level must be 'top', 'mid', or 'low'")
+
+        assert len(selected) == orig_k
+
+        return [(api, node_attr[api]) for api in selected]
 
     def testing(self):
         self.get_connected_nodes(LOWERCASE_LOCALE)
@@ -367,6 +503,30 @@ class GraphAnalyzer:
         self.get_vectors_and_plot(js)
 
 
+    def test_4(self):
+        levels = [MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS]
+        for level in levels:
+            pairs = {}
+            for api in level:
+                pairs[api] = {}
+                pairs[api][TOP] = self.get_disjoint_api(api, level='top', k=5)
+                pairs[api][MID] = self.get_disjoint_api(api, level='mid', k=5)
+                pairs[api][LOW] = self.get_disjoint_api(api, level='low', k=5)
+            print(pairs)
+
+            # print("\n\n", api)
+            # print(self.get_disjoint_api(api, level='top', k=5))
+            # print(self.get_disjoint_api(api, level='mid', k=5))
+            # print(self.get_disjoint_api(api, level='low', k=5))
+
+    def test_5(self):
+        apis = [UNCOMMON_APIS[0], UNCOMMON_DISJOINT_PAIRS[UNCOMMON_APIS[0]][MID][0][0]]
+        print(apis)
+        rt, fp = self.get_top_k_rt_fp(apis)
+        rt = [(self.num2rettype[i[0]], i[1]) for i in rt]
+        fp = [(self.num2fp[i[0]], i[1]) for i in fp]
+        print(rt)
+        print(fp)
 
     # def test_4(self):
     #     prog_ids = list(self.get_program_ids_for_api('DBranch', limit=10))
@@ -376,11 +536,11 @@ class GraphAnalyzer:
     #         js = self.get_json_ast(prog_ids[i])
     #         self.get_vectors_and_plot(js, filename=('temp' + str(i)))
 
-    def test_4(self):
-        for i in range(10):
-            print(i)
-            js = self.get_json_ast(i)
-            self.get_vectors_and_plot(js, filename=('temp' + str(i)))
+    # def test_4(self):
+    #     for i in range(10):
+    #         print(i)
+    #         js = self.get_json_ast(i)
+    #         self.get_vectors_and_plot(js, filename=('temp' + str(i)))
 #
 # def load_graph_analyzer(path):
 #     with open(path, 'rb') as f:
@@ -391,9 +551,22 @@ class GraphAnalyzer:
 
 # graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, save_reader=True)
 graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, load_reader=True)
-prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
+graph_analyzer.test_5()
 
-'java.lang.StringBuilder.append(java.lang.Object)', 'java.lang.StringBuilder.StringBuilder()', 'java.io.FileInputStream.FileInputStream(java.lang.String)'
-                                                        ])
-graph_analyzer.print_summary_stats(prog_ids)
-graph_analyzer.print_programs_from_ids(prog_ids, limit=20)
+
+
+# prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
+#
+#
+#                 '$NOT$javax.swing.JTable.isRowSelected(int)'
+#                                                         ])
+# graph_analyzer.print_summary_stats(prog_ids)
+# prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
+#
+#
+#                 'java.util.Map<java.lang.String,byte[]>.hashCode()'
+#                                                         ])
+# graph_analyzer.print_summary_stats(prog_ids)
+# prog_ids = graph_analyzer.get_program_ids_with_multiple_apis((['java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String)']))
+# graph_analyzer.print_summary_stats(prog_ids)
+# graph_analyzer.print_programs_from_ids(prog_ids, limit=20)

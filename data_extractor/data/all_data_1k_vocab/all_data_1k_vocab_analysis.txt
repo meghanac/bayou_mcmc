@@ -4,7 +4,7 @@ Vocabulary size limit: 1000
 Actual vocabulary size: 1000
 Number of programs in new dataset: 4217285
 
-Program Length Frequency (In Order of Most-Least Frequent) (Excludes 'DBranch', 'DLoop' and 'DExcept'):
+Program Length Frequency (In Order of Most-Least Frequent) (Excludes 'DBranch', 'DLoop', and 'DExcept'):
 	 program length of 1: 2833013 (67.1762%)
 	 program length of 2: 769666 (18.2503%)
 	 program length of 3: 297245 (7.0483%)

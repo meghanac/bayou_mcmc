@@ -24,6 +24,8 @@ class Configuration:
 
         self.batch_size = self.config_obj.batch_size
         self.max_ast_depth = self.config_obj.max_ast_depth
+        self.latent_size = self.config_obj.latent_size
+        self.decoder = self.config_obj.decoder
 
         # Initialize conversion dictionaries
         self.vocab = self.config_obj.vocab
