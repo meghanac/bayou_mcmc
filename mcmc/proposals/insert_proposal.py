@@ -42,44 +42,50 @@ class InsertProposal(ProposalWithInsertion):
         if new_node is None:
             return None
 
+        added_stop_node = False
         # If a dnode is chosen, grow it out
         if new_node.api_name == DBRANCH:
-            ln_prob = self._grow_dbranch(new_node)
+            ln_prob, added_stop_node = self._grow_dbranch(new_node)
             if ln_prob is not None:
                 prob += ln_prob
             else:
                 # remove dbranch
-                self.undo_add_random_node(new_node)
+                self.undo_add_random_node(new_node, added_stop_node)
                 return None
         elif new_node.api_name == DLOOP:
-            ln_prob = self._grow_dloop_or_dexcept(new_node)
+            ln_prob, added_stop_node = self._grow_dloop_or_dexcept(new_node)
             if ln_prob is not None:
                 prob += ln_prob
             else:
                 # remove dloop
-                self.undo_add_random_node(new_node)
+                self.undo_add_random_node(new_node, added_stop_node)
                 return None
         elif new_node.api_name == DEXCEPT:
-            ln_prob = self._grow_dloop_or_dexcept(new_node)
+            ln_prob, added_stop_node = self._grow_dloop_or_dexcept(new_node)
             if ln_prob is not None:
                 prob += ln_prob
             else:
                 # remove dexcept
-                self.undo_add_random_node(new_node)
+                self.undo_add_random_node(new_node, added_stop_node)
                 return None
 
         # Reset self.curr_prog and self.initial_state
         self.curr_prog = None
         self.initial_state = None
 
-        return curr_prog, new_node, prob
+        return curr_prog, new_node, prob, added_stop_node
 
-    def undo_add_random_node(self, added_node):
+    def undo_add_random_node(self, added_node, added_stop_node):
         """
         Undoes add_random_node() and returns current program to state it was in before the given node was added.
         :param added_node: (Node) the node that was added in add_random_node() that is to be removed.
         :return:
         """
+
+        if added_node.api_name in {DBRANCH, DLOOP, DEXCEPT} and added_stop_node:
+            assert added_node.sibling.api_name == STOP, "added_stop_node is True but sibling is not stop node"
+            added_node.remove_node(SIBLING_EDGE)
+
         if added_node.sibling is None:
             added_node.parent.remove_node(SIBLING_EDGE)
         else:

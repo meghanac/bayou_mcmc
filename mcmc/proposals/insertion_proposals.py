@@ -37,7 +37,7 @@ class ProposalWithInsertion:
 
         self.sess = tf_session
 
-    def _grow_dbranch(self, dbranch, verbose=False):
+    def _grow_dbranch(self, dbranch):
         """
         Create full DBranch (DBranch, condition, then, else) from parent node.
         :param parent: (Node) parent of DBranch
@@ -47,26 +47,43 @@ class ProposalWithInsertion:
 
         # Ensure adding a DBranch won't exceed max depth
         if self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 5 > self.max_length:
-            return None
+            return None, None
 
         # Create condition as DBranch child
-        condition, cond_pos, prob = self._get_new_node(dbranch, CHILD_EDGE, verbose=verbose)
+        condition, cond_pos, prob = self._get_new_node(dbranch, CHILD_EDGE, verbose=self.debug)
         assert cond_pos > 0, "Error: Condition node position couldn't be found"
         ln_prob += prob
 
-        # Add then api as child to condition node
-        then_node, _, prob = self._get_new_node(condition, CHILD_EDGE, verbose=verbose)
-        self.tree_mod.create_and_add_node(STOP, then_node, SIBLING_EDGE)
-        ln_prob += prob
+        # # Add then api as child to condition node
+        # then_node, _, prob = self._get_new_node(condition, CHILD_EDGE, verbose=verbose)
+        # self.tree_mod.create_and_add_node(STOP, then_node, SIBLING_EDGE)
+        # ln_prob += prob
+        #
+        # # Add else api as sibling to condition node
+        # else_node, else_pos, prob = self._get_new_node(condition, SIBLING_EDGE, verbose=verbose)
+        # self.tree_mod.create_and_add_node(STOP, else_node, SIBLING_EDGE)
+        # ln_prob += prob
 
-        # Add else api as sibling to condition node
-        else_node, else_pos, prob = self._get_new_node(condition, SIBLING_EDGE, verbose=verbose)
-        self.tree_mod.create_and_add_node(STOP, else_node, SIBLING_EDGE)
-        ln_prob += prob
+        for edge in [CHILD_EDGE, SIBLING_EDGE]:
+            parent_node = condition
+            counter = 0
+            while parent_node.api_name != STOP and counter < 3:
+                # Add then api as child to condition node
+                parent_node, _, prob = self._get_new_node(parent_node, edge, verbose=self.debug)
+                ln_prob += prob
+                counter +=1
 
-        return ln_prob
+            if parent_node.api_name != STOP:
+                self.tree_mod.create_and_add_node(STOP, parent_node, SIBLING_EDGE)
 
-    def _grow_dloop_or_dexcept(self, dnode, verbose=False):
+        added_stop_node = False
+        if dbranch.sibling is None:
+            self.tree_mod.create_and_add_node(STOP, dbranch, SIBLING_EDGE)
+            added_stop_node = True
+
+        return ln_prob, added_stop_node
+
+    def _grow_dloop_or_dexcept(self, dnode):
         """
         Create full DLoop (DLoop, condition, body) from parent node
         :param parent: (Node) parent of DLoop
@@ -76,19 +93,33 @@ class ProposalWithInsertion:
 
         # Ensure adding a DBranch won't exceed max depth
         if self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 3 > self.max_length:
-            return None
+            return None, None
 
-        # Create condition as DLoop child
-        condition, cond_pos, prob = self._get_new_node(dnode, CHILD_EDGE, verbose=verbose)
-        assert cond_pos > 0, "Error: Condition node position couldn't be found"
-        ln_prob += prob
+        parent_node = dnode
+        counter = 0
+        while parent_node.api_name != STOP and counter < 2:
+            parent_node, cond_pos, prob = self._get_new_node(parent_node, CHILD_EDGE, verbose=self.debug)
+            ln_prob += prob
+            counter += 1
+        if parent_node.api_name != STOP:
+            self.tree_mod.create_and_add_node(STOP, parent_node, SIBLING_EDGE)
 
-        # Add body api as child to condition node
-        then_node, _, prob = self._get_new_node(condition, CHILD_EDGE, verbose=verbose)
-        self.tree_mod.create_and_add_node(STOP, then_node, SIBLING_EDGE)
-        ln_prob += prob
+        # # Create condition as DLoop child
+        # condition, cond_pos, prob = self._get_new_node(dnode, CHILD_EDGE, verbose=verbose)
+        # assert cond_pos > 0, "Error: Condition node position couldn't be found"
+        # ln_prob += prob
+        #
+        # # Add body api as child to condition node
+        # then_node, _, prob = self._get_new_node(condition, CHILD_EDGE, verbose=verbose)
+        # self.tree_mod.create_and_add_node(STOP, then_node, SIBLING_EDGE)
+        # ln_prob += prob
 
-        return ln_prob
+        added_stop_node = False
+        if dnode.sibling is None:
+            self.tree_mod.create_and_add_node(STOP, dnode, SIBLING_EDGE)
+            added_stop_node = True
+
+        return ln_prob, added_stop_node
 
     def _get_valid_random_node(self, given_list=None):
         """
@@ -168,7 +199,7 @@ class ProposalWithInsertion:
         if verbose:
             print("empty node api name:", empty_node.api_name, "empty node pos:", empty_node_pos)
 
-        node, node_pos, prob = self._replace_node_api(empty_node, empty_node_pos, edge, verbose=verbose)
+        node, node_pos, prob = self._replace_node_api(empty_node, empty_node_pos, edge, verbose=self.debug)
 
         # calculate probability of move
         prob -= math.log(orig_length)

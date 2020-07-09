@@ -67,6 +67,7 @@ class MCMCProgram:
         self.prev_log_prob = -0.0
 
         self.initial_state = None
+        self.latent_state = None
         self.ret_type = []
         self.fp = [[]]
         self.decoder = None
@@ -181,8 +182,8 @@ class MCMCProgram:
             last_node = node
 
         # Initialize model states
-        # self.get_initial_decoder_state()
-        self.get_random_initial_state()
+        self.get_initial_decoder_state()
+        # self.get_random_initial_state()
 
         # Update probabilities of tree
         self.calculate_probability()
@@ -218,7 +219,8 @@ class MCMCProgram:
             # Check that DStop does not have any nodes after it
             if curr_node.api_name == STOP:
                 if not (curr_node.sibling is None and curr_node.child is None):
-                    return False
+                    if curr_node.parent.api_name != DBRANCH:
+                        return False
 
             # check child edges
             if curr_node.parent_edge == CHILD_EDGE:
@@ -235,15 +237,17 @@ class MCMCProgram:
                 if curr_node.child.child is None or curr_node.child.sibling is None \
                         or curr_node.child.child.sibling is None:
                     return False
-                if curr_node.child.api_name in DNODES or curr_node.child.child.api_name in DNODES \
-                        or curr_node.child.sibling.api_name in DNODES:
+                if curr_node.child.api_name in (DNODES - {STOP}) or curr_node.child.child.api_name in (DNODES - {STOP}) \
+                        or curr_node.child.sibling.api_name in (DNODES - {STOP}):
                     return False
-                if curr_node.child.child.sibling.api_name != STOP:
+                if curr_node.sibling is None:
                     return False
-                if curr_node.child.sibling.sibling is None:
-                    return False
-                if curr_node.child.sibling.sibling.api_name != STOP:
-                    return False
+                # if curr_node.child.child.sibling.api_name != STOP:
+                #     return False
+                # if curr_node.child.sibling.sibling is None:
+                #     return False
+                # if curr_node.child.sibling.sibling.api_name != STOP:
+                #     return False
 
             # TODO: basically what is happening is that a DExcept gets added to the end of the program so there's no DStop
             # node but then a node gets added onto the catch node and the required DStop node isn't there
@@ -255,12 +259,14 @@ class MCMCProgram:
                     return False
                 if curr_node.child.child is None or curr_node.child.sibling is not None:
                     return False
-                if curr_node.child.api_name in DNODES or curr_node.child.child.api_name in DNODES:
+                if curr_node.child.api_name in (DNODES - {STOP}) or curr_node.child.child.api_name in (DNODES - {STOP}):
                     return False
-                if curr_node.child.child.sibling is None:
+                if curr_node.sibling is None:
                     return False
-                if curr_node.child.child.sibling.api_name != STOP:
-                    return False
+                # if curr_node.child.child.sibling is None:
+                #     return False
+                # if curr_node.child.child.sibling.api_name != STOP:
+                #     return False
 
             # Choose next node to explore
             if curr_node.child is not None:
@@ -378,7 +384,7 @@ class MCMCProgram:
         output = self.Insert.add_random_node(self.curr_prog, self.initial_state)
         if output is None:
             return False
-        curr_prog, added_node, ln_proposal_prob = output
+        curr_prog, added_node, ln_proposal_prob, added_stop_node = output
         assert curr_prog is not None
         self.curr_prog = curr_prog
 
@@ -404,7 +410,7 @@ class MCMCProgram:
 
         # Undo move if not valid
         if not valid:
-            self.Insert.undo_add_random_node(added_node)
+            self.Insert.undo_add_random_node(added_node, added_stop_node) # TODO: think about this
             self.curr_log_prob = self.prev_log_prob
             assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
                 self.curr_prog.length) + " != prev length: " + str(prev_length)
@@ -435,7 +441,7 @@ class MCMCProgram:
 
         if output is None:
             return False
-        prog, new_node, replaced_node_api, ln_proposal_prob = output
+        prog, new_node, replaced_node_api, ln_proposal_prob, old_child, added_stop_node = output
 
         # If no node was added, return False
         if new_node is None or prog is None:
@@ -447,7 +453,7 @@ class MCMCProgram:
         # Calculate reversal prob
         new_node_pos = self.tree_mod.get_nodes_position(self.curr_prog, new_node)
         ln_reversal_prob = self.Replace.calculate_reversal_ln_prob(self.curr_prog, self.initial_state, new_node_pos,
-                                                                   replaced_node_api, new_node.parent_edge)
+                                                                   replaced_node_api, new_node.parent_edge, old_child, added_stop_node)
 
         # Calculate probability of new program
         self.calculate_probability()
@@ -462,7 +468,7 @@ class MCMCProgram:
 
         # Undo move if not valid
         if not valid:
-            self.Replace.undo_replace_random_node(new_node, replaced_node_api)
+            self.Replace.undo_replace_random_node(new_node, replaced_node_api, old_child, added_stop_node)
             self.curr_log_prob = self.prev_log_prob
             assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
                 self.curr_prog.length) + " != prev length: " + str(prev_length)
@@ -478,6 +484,10 @@ class MCMCProgram:
         # Logging and checks
         prev_length = self.curr_prog.length
         self.Delete.attempted += 1
+
+        # Cannot delete any nodes if it will result in a tree with just DSubtree
+        if prev_length <= 2:
+            return False
 
         # Delete node
         curr_prog, node, parent_node, parent_edge, ln_prob = self.Delete.delete_random_node(self.curr_prog)
@@ -634,6 +644,10 @@ class MCMCProgram:
         else:
             raise ValueError('move not defined')  # TODO: remove once tested
 
+    def update_random_intial_state(self):
+        self.initial_state, self.latent_state = self.decoder.update_random_initial_state(self.latent_state)
+
+
     def get_random_initial_state(self):
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                          description=textwrap.dedent(""))
@@ -643,7 +657,7 @@ class MCMCProgram:
         self.get_initial_decoder_state()
         beam_width = 1
         self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
-        self.initial_state = self.decoder.get_random_initial_state()
+        self.initial_state, self.latent_state = self.decoder.get_random_initial_state()
 
     def get_initial_decoder_state(self):
         """
@@ -755,6 +769,9 @@ class MCMCProgram:
         :return:
         """
         self.transform_tree()
+        self.update_latent_state_and_decoder_state()
+        # self.update_random_intial_state()
+
         # self.initial_state = self.decoder.get_random_initial_state()
         # self.update_latent_state_and_decoder_state()
         # if random.choice([True, False, False, False, False, False, False, False, False, False ]):

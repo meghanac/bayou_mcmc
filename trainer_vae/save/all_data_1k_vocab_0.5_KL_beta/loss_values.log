@@ -1,5 +1,0 @@
-Process id is 6808
-GPU device is 6
-Amount of data used is 4217280
-	
-0/6589500 (epoch 1) loss: 34.213, gen loss: 21.055, ret loss: 6.948, fp loss: 6.170, KL loss: 0.080. 

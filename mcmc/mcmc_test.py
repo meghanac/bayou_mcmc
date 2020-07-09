@@ -589,16 +589,21 @@ class MCMCProgramTest(unittest.TestCase):
         # self.assertListEqual(expected_edges, edges)
 
     def test_mcmc(self):
-        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH,
-                                                                        ['java.lang.StringBuilder.StringBuilder()',
-                                                                         'java.util.Map<java.lang.String,java.lang.String>.entrySet()'],
-                                                                        ["String"],
-                                                                        ['DSubTree', 'Map<String,String>', 'String'])
+        # test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH,
+        #                                                                 ['java.lang.StringBuilder.StringBuilder()',
+        #                                                                  'java.util.Map<java.lang.String,java.lang.String>.entrySet()'],
+        #                                                                 ["String"],
+        #                                                                 ['DSubTree', 'Map<String,String>', 'String'])
 
         # test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH,
         #                                                                 [STR_BUF],
         #                                                                 ['String'],
         #                                                                 ['DSubTree', 'String'])
+
+        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH,
+                                                                        ['java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', 'java.lang.StringBuilder.append(long)'],
+                                                                        ['__UDT__'],
+                                                                        ['DSubTree', 'String'])
 
         # test_prog.prog.proposal_probs = {INSERT: 0.333, DELETE: 0.334, SWAP: 0.0, REPLACE: 0.333, ADD_DNODE: 0.0}
 

@@ -41,42 +41,56 @@ class ReplaceProposal(ProposalWithInsertion):
         # Calculate prob of move
         prob -= math.log(self.curr_prog.length)
 
+        old_child = None
+        added_stop_node = False
+        # if a dbranch, dloop or dexcept is getting replaced, remove child nodes
+        if replaced_node_api in {DBRANCH, DLOOP, DEXCEPT}:
+            old_child = new_node.remove_node(CHILD_EDGE)
+
         # If a dnode is chosen, grow it out
         if new_node.api_name == DBRANCH:
-            ln_prob = self._grow_dbranch(new_node)
+            ln_prob, added_stop_node = self._grow_dbranch(new_node)
             if ln_prob is not None:
                 prob += ln_prob
             else:
-                self.undo_replace_random_node(new_node, replaced_node_api)
+                self.undo_replace_random_node(new_node, replaced_node_api, old_child, added_stop_node)
         elif new_node.api_name == DLOOP:
-            ln_prob = self._grow_dloop_or_dexcept(new_node, True)
+            ln_prob, added_stop_node = self._grow_dloop_or_dexcept(new_node)
             if ln_prob is not None:
                 prob += ln_prob
             else:
-                self.undo_replace_random_node(new_node, replaced_node_api)
+                self.undo_replace_random_node(new_node, replaced_node_api, old_child, added_stop_node)
         elif new_node.api_name == DEXCEPT:
-            ln_prob = self._grow_dloop_or_dexcept(new_node, False)
+            ln_prob, added_stop_node = self._grow_dloop_or_dexcept(new_node)
             if ln_prob is not None:
                 prob += ln_prob
             else:
-                self.undo_replace_random_node(new_node, replaced_node_api)
+                self.undo_replace_random_node(new_node, replaced_node_api, old_child, added_stop_node)
 
-        print("replace node is pos:", rand_node_pos)
-        print_verbose_tree_info(self.curr_prog)
+        # print("replace node is pos:", rand_node_pos)
+        # print_verbose_tree_info(self.curr_prog)
         # print_verbose_tree_info(curr_prog)
 
         # Reset self.curr_prog and self.initial_state
         self.curr_prog = None
         self.initial_state = None
 
-        return curr_prog, new_node, replaced_node_api, prob
+        return curr_prog, new_node, replaced_node_api, prob, old_child, added_stop_node
 
-    def undo_replace_random_node(self, new_node, replaced_node_api):
+    def undo_replace_random_node(self, new_node, replaced_node_api, old_child, added_stop_node):
         # remove added children if necessary
         if new_node.api_name in {DBRANCH, DEXCEPT, DLOOP}:
             new_node.remove_node(CHILD_EDGE)
+            if added_stop_node:
+                if new_node.sibling.api_name == STOP:
+                    new_node.remove_node(SIBLING_EDGE)
+                else:
+                    raise ValueError("added_stop_node is True but sibling is not stop node")
 
         new_node.change_api(replaced_node_api, self.config.vocab2node[replaced_node_api])
+
+        if old_child is not None:
+            new_node.add_node(old_child, CHILD_EDGE)
 
         return new_node
 
@@ -105,14 +119,14 @@ class ReplaceProposal(ProposalWithInsertion):
     #     # return super().calculate_ln_prob_of_move(curr_prog_copy, initial_state, added_pos, added_edge)
 
     def calculate_reversal_ln_prob(self, curr_prog_original, initial_state, added_pos, replaced_node_api, added_edge,
-                                   is_copy=False):
+                                   old_child, added_stop_node, is_copy=False):
         if not is_copy:
             curr_prog = curr_prog_original.copy()
         else:
             curr_prog = curr_prog_original
 
         added_node = self.tree_mod.get_node_in_position(curr_prog, added_pos)
-        old_node = self.undo_replace_random_node(added_node, replaced_node_api)
+        old_node = self.undo_replace_random_node(added_node, replaced_node_api, old_child, added_stop_node)
 
         print("reversed moved:")
         print_verbose_tree_info(curr_prog)

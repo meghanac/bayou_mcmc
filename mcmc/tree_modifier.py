@@ -99,6 +99,10 @@ class TreeModifier:
             if curr_node.child is not None:
                 if curr_node.sibling is not None:
                     stack.append((curr_node, SIBLING_EDGE, curr_node.sibling))
+                # else:
+                #     if curr_node.api_name in {'DBranch', 'DLoop', 'DExcept'}:
+                #         stop_node = Node('DStop', self.config.vocab2node['DStop'], None, SIBLING_EDGE)
+                #         stack.append((curr_node, SIBLING_EDGE, stop_node))
                 tree.append((curr_node.api_num, CHILD_EDGE, curr_node.child.api_num))
                 curr_node = curr_node.child
             elif curr_node.sibling is not None:

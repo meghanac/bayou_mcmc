@@ -550,6 +550,8 @@ class GraphAnalyzer:
 # graph_analyzer = GraphAnalyzer(TESTING, load_reader=True)
 
 # graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, save_reader=True)
+
+
 graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, load_reader=True)
 graph_analyzer.test_5()
 
@@ -567,6 +569,8 @@ graph_analyzer.test_5()
 #                 'java.util.Map<java.lang.String,byte[]>.hashCode()'
 #                                                         ])
 # graph_analyzer.print_summary_stats(prog_ids)
-# prog_ids = graph_analyzer.get_program_ids_with_multiple_apis((['java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String)']))
+
+# prog_ids = graph_analyzer.get_program_ids_with_multiple_apis(
+#     ['DExcept', 'java.lang.Throwable.printStackTrace()', 'java.io.FileReader.FileReader(java.io.File)'])
 # graph_analyzer.print_summary_stats(prog_ids)
 # graph_analyzer.print_programs_from_ids(prog_ids, limit=20)
