@@ -432,7 +432,8 @@ class ProposalWithInsertion:
     def _get_logits(self, curr_prog, initial_state, added_node_pos, added_node, added_edge):
         return self._get_logits_for_add_node(curr_prog, initial_state, added_node_pos, added_edge)
 
-    def calculate_ln_prob_of_move(self, curr_prog_original, initial_state, added_node_pos, added_edge, is_copy=False):
+    def calculate_ln_prob_of_move(self, curr_prog_original, initial_state, added_node_pos, added_edge, prev_length,
+                                  is_copy=False):
         if not is_copy:
             curr_prog = curr_prog_original.copy()
         else:
@@ -441,7 +442,8 @@ class ProposalWithInsertion:
         added_node = self.tree_mod.get_node_in_position(curr_prog, added_node_pos)
 
         if added_node.api_name not in {DBRANCH, DLOOP, DEXCEPT}:
-            return self._get_prob_from_logits(curr_prog, initial_state, added_node_pos, added_node, added_edge)
+            ln_prob = self._get_prob_from_logits(curr_prog, initial_state, added_node_pos, added_node, added_edge)
+            return ln_prob - math.log(prev_length)
         else:
             if added_node.api_name == DBRANCH:
                 cond_node = added_node.child
@@ -458,7 +460,7 @@ class ProposalWithInsertion:
                 # get probability of adding dbranch node
                 dbranch_pos = self.tree_mod.get_nodes_position(curr_prog, added_node)
                 ln_prob = self._get_prob_from_logits(curr_prog, initial_state, dbranch_pos, added_node, added_edge)
-
+                ln_prob -= math.log(prev_length)
                 # get probability of adding condition node
                 cond_node.remove_node(CHILD_EDGE)
                 cond_node.remove_node(SIBLING_EDGE)

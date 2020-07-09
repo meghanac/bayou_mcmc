@@ -18,6 +18,7 @@ from mcmc import INSERT, DELETE, REPLACE, SWAP, ADD_DNODE, MCMCProgram
 
 from proposals.insertion_proposals import ProposalWithInsertion
 from proposals.insert_proposal import InsertProposal
+from configuration import TEMP
 
 # SAVED MODEL
 SAVED_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/1k_vocab_constraint_min_3-600000'
@@ -54,7 +55,7 @@ class ProposalTests(unittest.TestCase):
             if output is None:
                 print("OUTPUT IS NONE")
 
-            curr_prog, added_node, ln_proposal_prob = output
+            curr_prog, added_node, ln_proposal_prob, added_stop_node = output
             ln_reversal_prob = prog.Delete.calculate_ln_prob_of_move(curr_prog.length)
 
             # Calculate probability of new program
@@ -83,7 +84,7 @@ class ProposalTests(unittest.TestCase):
                 prog.check_insert(added_node, prev_length)
 
             # Undo move
-            prog.Insert.undo_add_random_node(added_node)
+            prog.Insert.undo_add_random_node(added_node, added_stop_node)
             prog.curr_log_prob = prog.prev_log_prob
             print("after undo move:")
             print_verbose_tree_info(curr_prog)
@@ -134,11 +135,11 @@ class ProposalTests(unittest.TestCase):
                 self.assertIsNotNone(dnode)
 
                 if DNODE == DBRANCH:
-                    insertion_class._grow_dbranch(dnode, verbose=True)
+                    _, added_stop_node = insertion_class._grow_dbranch(dnode)
                 elif DNODE == DLOOP:
-                    insertion_class._grow_dloop_or_dexcept(dnode, verbose=True)
+                    _, added_stop_node = insertion_class._grow_dloop_or_dexcept(dnode)
                 else:
-                    insertion_class._grow_dloop_or_dexcept(dnode, verbose=True)
+                    _, added_stop_node = insertion_class._grow_dloop_or_dexcept(dnode)
 
                 # Calculate probability of new program
                 prog.calculate_probability()
@@ -161,7 +162,7 @@ class ProposalTests(unittest.TestCase):
                     prog.check_insert(dnode, prev_length)
 
                 # Undo move
-                prog.Insert.undo_add_random_node(dnode)
+                prog.Insert.undo_add_random_node(dnode, added_stop_node)
                 prog.curr_log_prob = prog.prev_log_prob
                 print("after undo move:")
                 print_verbose_tree_info(curr_prog)
@@ -207,7 +208,7 @@ class ProposalTests(unittest.TestCase):
             self.assertListEqual(list(expected_edges), list(edges_copy))
 
             ln_reversal_prob = prog.Insert.calculate_ln_prob_of_move(curr_prog_copy, prog.initial_state, node_pos,
-                                                                     parent_edge, is_copy=True)
+                                                                     parent_edge, prev_length, is_copy=True)
             parent_node_copy.remove_node(parent_edge)
 
             # Calculate probability of new program
@@ -252,7 +253,8 @@ class ProposalTests(unittest.TestCase):
         prog = test_prog.prog
         curr_prog = test_prog.prog.curr_prog
         prog.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0}
-        curr_prog, added_node, ln_proposal_prob = prog.Insert.add_random_node(curr_prog, prog.initial_state)
+        prev_length = curr_prog.length
+        curr_prog, added_node, ln_proposal_prob, added_stop_node = prog.Insert.add_random_node(curr_prog, prog.initial_state)
 
         print("\ncurr prog from insert proposal:")
         print_verbose_tree_info(curr_prog)
@@ -279,13 +281,13 @@ class ProposalTests(unittest.TestCase):
         new_prog.Insert.initial_state = prog.initial_state
         new_ln_prob = new_prog.Insert.calculate_ln_prob_of_move(new_curr_prog, prog.initial_state,
                                                                 new_added_node_pos,
-                                                                new_added_node.parent_edge, is_copy=True)
+                                                                new_added_node.parent_edge, prev_length, is_copy=True)
         print("\nprob from insert proposal:", ln_proposal_prob)
         print("prob from calc move:", new_ln_prob)
         self.assertEqual(ln_proposal_prob, new_ln_prob)
 
     def replace_node(self, prog, curr_prog, prev_length):
-        curr_prog, new_node, replaced_node_api, ln_proposal_prob = \
+        curr_prog, new_node, replaced_node_api, ln_proposal_prob, old_child, added_stop_node = \
             prog.Replace.replace_random_node(curr_prog, prog.initial_state)
 
         # If no node was added, return False
@@ -302,7 +304,8 @@ class ProposalTests(unittest.TestCase):
         # Calculate reversal prob
         new_node_pos = prog.tree_mod.get_nodes_position(curr_prog, new_node)
         ln_reversal_prob = prog.Replace.calculate_reversal_ln_prob(curr_prog, prog.initial_state, new_node_pos,
-                                                                   replaced_node_api, new_node.parent_edge)
+                                                                   replaced_node_api, new_node.parent_edge, old_child,
+                                                                   added_stop_node, )
 
         # Calculate probability of new program
         prog.calculate_probability()
@@ -329,7 +332,7 @@ class ProposalTests(unittest.TestCase):
 
         print("\nvalid:", valid)
 
-        return new_node, replaced_node_api
+        return new_node, replaced_node_api, old_child, added_stop_node
 
     @mock.patch.object(random, 'randint')
     def test_replace_proposal(self, mock_randint):
@@ -352,13 +355,13 @@ class ProposalTests(unittest.TestCase):
             print("\ni:", i)
             mock_randint.return_value = i
 
-            new_node, replaced_node_api = self.replace_node(prog, curr_prog, prev_length)
+            new_node, replaced_node_api, old_child, added_stop_node = self.replace_node(prog, curr_prog, prev_length)
 
             if new_node is None:
                 continue
 
             # Undo move if not valid
-            prog.Replace.undo_replace_random_node(new_node, replaced_node_api)
+            prog.Replace.undo_replace_random_node(new_node, replaced_node_api, old_child, added_stop_node)
             prog.curr_log_prob = prog.prev_log_prob
             print("after undo move:")
             print_verbose_tree_info(curr_prog)
@@ -372,7 +375,7 @@ class ProposalTests(unittest.TestCase):
         last_node = prog.tree_mod.get_node_in_position(curr_prog, 2)
         last_node = prog.tree_mod.create_and_add_node(CLOSE, last_node, SIBLING_EDGE)
         mock_randint.return_value = 3
-        new_node, replaced_node_api = self.replace_node(prog, curr_prog, curr_prog.length)
+        new_node, replaced_node_api, old_child, added_stop_node = self.replace_node(prog, curr_prog, curr_prog.length)
         self.assertIsNotNone(new_node)
         self.assertIsNotNone(replaced_node_api)
         self.assertNotEqual(new_node.api_name, replaced_node_api)
@@ -394,6 +397,8 @@ class ProposalTests(unittest.TestCase):
         prog.Insert.curr_prog = curr_prog
         prog.Insert.initial_state = prog.initial_state
         added_node = prog.tree_mod.get_node_in_position(curr_prog, added_node_pos)
+        added_node_api = added_node.api_name
+        added_node.change_api(TEMP, test_prog.prog.config.vocab2node[TEMP])
 
         logits = prog.Insert._get_logits(curr_prog, prog.initial_state, added_node_pos, added_node, SIBLING_EDGE)
         logits = logits.reshape(1, logits.shape[0])

@@ -507,7 +507,7 @@ class MCMCProgram:
         node_copy.add_node(parent_node_copy_neighbor, parent_edge)
         node_pos = self.tree_mod.get_nodes_position(curr_prog_copy, node_copy)
         ln_reversal_prob = self.Insert.calculate_ln_prob_of_move(curr_prog_copy, self.initial_state, node_pos,
-                                                                 parent_edge, is_copy=True)
+                                                                 parent_edge, prev_length, is_copy=True)
         # parent_node_copy.remove_node(parent_edge)
 
         # Calculate probability of new program
@@ -683,8 +683,6 @@ class MCMCProgram:
 
         beam_width = 1
         self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
-
-        # self.initial_state = self.decoder.get_random_initial_state()
 
     def update_latent_state_and_decoder_state(self):
         nodes, edges = self.tree_mod.get_vector_representation(self.curr_prog)
