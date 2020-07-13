@@ -615,7 +615,7 @@ class MCMCProgramTest(unittest.TestCase):
 
         # test_prog.prog.max_depth = 15
 
-        num_iter = 1000
+        num_iter = 330
 
         print(test_prog.prog.curr_prog.length)
         for i in range(num_iter):

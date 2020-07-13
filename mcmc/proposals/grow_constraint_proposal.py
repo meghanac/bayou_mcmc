@@ -13,13 +13,14 @@ from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT
 from proposals.insertion_proposals import ProposalWithInsertion
 from utils import print_verbose_tree_info
 
+MAX_INSERTIONS = 3
 
 class GrowConstraintProposal(ProposalWithInsertion):
 
     def __init__(self, tree_modifier, decoder, tf_session, verbose=False, debug=False):
         super().__init__(tree_modifier, decoder, tf_session, verbose=verbose, debug=debug)
 
-    def grow_constraint(self, curr_prog, initial_state, constraint_node):
+    def grow_constraint(self, curr_prog, initial_state, constraint_node, num_constraints):
         # Temporarily save curr_prog and initial_state
         self.curr_prog = curr_prog
         self.initial_state = initial_state
@@ -27,80 +28,88 @@ class GrowConstraintProposal(ProposalWithInsertion):
         # if tree not at max AST depth, can add a node
         if curr_prog.non_dnode_length >= self.max_num_api or curr_prog.length >= self.max_length:
             return None
-        max_insertions = 3
-        num_insertions = random.randint(1, max_insertions)
+        num_insertions = random.randint(1, MAX_INSERTIONS)
 
-        parent_node = constraint_node
-        counter = 0
-        prob = 0
+        prob = -num_constraints
+        first_node = None
+        last_node = constraint_node
+        num_sibling_nodes_added = 0
         for i in range(num_insertions):
             # Probabilistically choose the node that should appear after selected random parent
-            new_node, _, ln_prob = self._get_new_node(parent_node, SIBLING_EDGE, verbose=self.debug)
+            new_node, _, ln_prob = self._get_new_node(last_node, SIBLING_EDGE, verbose=self.debug, grow_new_subtree=True)
 
             if new_node is None:
-                if parent_node == constraint_node:
+                if last_node == constraint_node:
                     return None
                 else:
-                    return curr_prog, parent_node, prob
+                    return curr_prog, first_node, last_node, prob, num_sibling_nodes_added
+
+            if i == 0:
+                first_node = new_node
+
+            # if Stop node was added, end adding nodes
+            if new_node.api_name == STOP:
+                # remove stop node
+                if new_node.sibling is None:
+                    # add probability
+                    prob += ln_prob
+                    last_node = new_node
+                    num_sibling_nodes_added += 1
+                else:
+                    new_node.parent.remove_node_save_siblings()
+                break
 
             # add probability
             prob += ln_prob
+            last_node = new_node
+            num_sibling_nodes_added += 1
 
             # If a dnode is chosen, grow it out
-            if new_node.api_name == DBRANCH:
-                ln_prob = self._grow_dbranch(new_node)
-                if ln_prob is not None:
-                    prob += ln_prob
-                    break
+            if new_node.api_name in {DBRANCH, DLOOP, DEXCEPT}:
+                if new_node.api_name == DBRANCH:
+                    ln_prob, added_stop_node = self._grow_dbranch(new_node)
                 else:
-                    # remove dbranch
-                    self.undo_grow_constraint(new_node)
-                    if parent_node == constraint_node:
-                        return None
-                    else:
-                        return curr_prog, parent_node, prob
-            elif new_node.api_name == DLOOP:
-                ln_prob = self._grow_dloop_or_dexcept(new_node)
-                if ln_prob is not None:
-                    prob += ln_prob
-                    break
-                else:
-                    # remove dloop
-                    self.undo_grow_constraint(new_node)
-                    if parent_node == constraint_node:
-                        return None
-                    else:
-                        return curr_prog, parent_node, prob
-            elif new_node.api_name == DEXCEPT:
-                ln_prob = self._grow_dloop_or_dexcept(new_node)
-                if ln_prob is not None:
-                    prob += ln_prob
-                    break
-                else:
-                    # remove dexcept
-                    self.undo_grow_constraint(new_node)
-                    if parent_node == constraint_node:
-                        return None
-                    else:
-                        return curr_prog, parent_node, prob
+                    ln_prob, added_stop_node = self._grow_dloop_or_dexcept(new_node)
 
-            counter += 1
-            parent_node = new_node
+                if ln_prob is not None:
+                    prob += ln_prob
+                    if added_stop_node:
+                        return curr_prog, first_node, new_node.sibling, prob, num_sibling_nodes_added + 1
+                    else:
+                        return curr_prog, first_node, new_node, prob, num_sibling_nodes_added
+                else:
+                    # remove dnode
+                    new_node.parent.remove_node_save_siblings()
+                    if last_node == constraint_node:
+                        return None
+                    else:
+                        if first_node == None:
+                            return curr_prog, first_node, first_node, prob, 0
+                        else:
+                            return curr_prog, first_node, last_node, prob, num_sibling_nodes_added - 1
 
         # Reset self.curr_prog and self.initial_state
         self.curr_prog = None
         self.initial_state = None
 
-        return curr_prog, constraint_node.sibling, prob
+        if first_node is None:
+            last_node = None
 
-    def undo_grown_constraint(self, added_node):
-        if added_node.api_name in {DBRANCH, DLOOP, DEXCEPT} and added_node.sibling.api_name == STOP:
-            added_node.remove_node(SIBLING_EDGE)
+        return curr_prog, first_node, last_node, prob, num_sibling_nodes_added
 
-        if added_node.sibling is None:
-            added_node.parent.remove_node(SIBLING_EDGE)
+    def undo_grown_constraint(self, first_added_node, last_added_node):
+        if first_added_node is None and last_added_node is None:
+            return
+
+        parent_node = first_added_node.parent
+
+        if first_added_node == last_added_node:
+            parent_node.remove_node_save_siblings()
+            return
         else:
-            sibling_node = added_node.sibling
-            parent_node = added_node.parent
-            parent_node.remove_node(SIBLING_EDGE)
-            parent_node.add_node(sibling_node, SIBLING_EDGE)
+            for i in range(MAX_INSERTIONS):
+                removed_node = parent_node.remove_node_save_siblings()
+                if removed_node == last_added_node:
+                    return
+            raise ValueError("Error: could not undo grown constraint")
+

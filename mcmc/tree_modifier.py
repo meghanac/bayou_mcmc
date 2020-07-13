@@ -10,6 +10,27 @@ class TreeModifier:
         self.config = config
         self.max_length = self.config.max_length
 
+    def get_node_with_api(self, curr_prog, api):
+        stack = []
+        curr_node = curr_prog
+
+        while curr_node is not None:
+            if curr_node.api_name == api:
+                return curr_node
+
+            # Update curr_node
+            if curr_node.child is not None:
+                if curr_node.sibling is not None:
+                    stack.append(curr_node.sibling)
+                curr_node = curr_node.child
+            elif curr_node.sibling is not None:
+                curr_node = curr_node.sibling
+            else:
+                if len(stack) > 0:
+                    curr_node = stack.pop()
+                else:
+                    raise ValueError('DFS failed to find node with api: ' + api)
+
     def get_node_in_position(self, curr_prog, pos_num):
         """
         Get Node object for node in given position. Position number is determined by DFS, with child edges taking
@@ -101,7 +122,7 @@ class TreeModifier:
                     stack.append((curr_node, SIBLING_EDGE, curr_node.sibling))
                 # else:
                 #     if curr_node.api_name in {'DBranch', 'DLoop', 'DExcept'}:
-                #         stop_node = Node('DStop', self.config.vocab2node['DStop'], None, SIBLING_EDGE)
+                #         stop_node = Node('DStop', self.config.vocab2node['DStop'])
                 #         stack.append((curr_node, SIBLING_EDGE, stop_node))
                 tree.append((curr_node.api_num, CHILD_EDGE, curr_node.child.api_num))
                 curr_node = curr_node.child
@@ -185,7 +206,7 @@ class TreeModifier:
         """
         try:
             api_num = self.config.vocab2node[api_name]
-            node = Node(api_name, api_num, parent, edge)
+            node = Node(api_name, api_num)
 
             neighbors = None
             if save_neighbors:

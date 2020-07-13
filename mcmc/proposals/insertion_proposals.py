@@ -179,7 +179,7 @@ class ProposalWithInsertion:
                 else:
                     selectable_node_exists_in_program = True
 
-    def _get_new_node(self, parent, edge, verbose=False):
+    def _get_new_node(self, parent, edge, verbose=False, grow_new_subtree=False):
         # save original tree length
         orig_length = self.curr_prog.length
 
@@ -199,26 +199,26 @@ class ProposalWithInsertion:
         if verbose:
             print("empty node api name:", empty_node.api_name, "empty node pos:", empty_node_pos)
 
-        node, node_pos, prob = self._replace_node_api(empty_node, empty_node_pos, edge, verbose=self.debug)
+        node, node_pos, prob = self._replace_node_api(empty_node, empty_node_pos, edge, verbose=self.debug, grow_new_subtree=grow_new_subtree)
 
         # calculate probability of move
         prob -= math.log(orig_length)
 
         return node, node_pos, prob
 
-    def _replace_node_api(self, node, node_pos, parent_edge, verbose=False):
+    def _replace_node_api(self, node, node_pos, parent_edge, verbose=False, grow_new_subtree=False):
 
         node.change_api(TEMP, self.config.vocab2node[TEMP])
 
         # return self.get_ast_idx_top_k(parent_pos, non_dnode) # multinomial on top k
-        new_node_idx, prob = self._get_ast_idx(node_pos, parent_edge, verbose=verbose)  # randomly choose from top k
+        new_node_idx, prob = self._get_ast_idx(node_pos, parent_edge, verbose=verbose, grow_new_subtree=grow_new_subtree)  # randomly choose from top k
 
         # replace api name
         node.change_api(self.config.node2vocab[new_node_idx], new_node_idx)
 
         return node, node_pos, prob
 
-    def _get_ast_idx(self, empty_node_pos, added_edge, verbose=False):  # TODO: TEST
+    def _get_ast_idx(self, empty_node_pos, added_edge, verbose=False, grow_new_subtree=False):  # TODO: TEST
         """
         Returns api number (based on vocabulary). Uniform randomly selected from top k based on parent node.
         :param parent_pos: (int) position of parent node in current program (by DFS)
@@ -226,7 +226,7 @@ class ProposalWithInsertion:
         """
 
 
-        logits = self._get_logits_for_add_node(self.curr_prog, self.initial_state, empty_node_pos, added_edge)
+        logits = self._get_logits_for_add_node(self.curr_prog, self.initial_state, empty_node_pos, added_edge, grow_new_subtree=grow_new_subtree)
         sorted_logits = np.argsort(-logits)
 
         if self.use_multinomial:
@@ -324,7 +324,7 @@ class ProposalWithInsertion:
     #     #             state, probs = self.decoder.get_ast_logits(node, edge, state)
     #     #             preceding_prob += probs[0][nodes[i + 1]]
 
-    def _get_logits_for_add_node(self, curr_prog, initial_state, empty_node_pos, added_edge):
+    def _get_logits_for_add_node(self, curr_prog, initial_state, empty_node_pos, added_edge, grow_new_subtree=False):
         assert empty_node_pos > 0, "Can't replace DSubTree, empty_node_pos must be > 0"
 
         state = initial_state
@@ -375,7 +375,7 @@ class ProposalWithInsertion:
                     logits[j] = state
                     logits[probs_key][j] += (probs[0][j] + preceding_prob)
 
-                if i == len(nodes) - 1:
+                if grow_new_subtree or i == len(nodes) - 1:
                     return logits[probs_key]
 
             elif preceding_pos < i <= len(nodes) - 1:

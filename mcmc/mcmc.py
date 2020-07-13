@@ -21,12 +21,14 @@ from proposals.delete_proposal import DeleteProposal
 from proposals.swap_proposal import SwapProposal
 from proposals.add_dnode_proposal import AddDnodeProposal
 from proposals.replace_proposal import ReplaceProposal
+from proposals.grow_constraint_proposal import GrowConstraintProposal
 
 INSERT = 'insert'
 DELETE = 'delete'
 SWAP = 'swap'
 REPLACE = 'replace'
 ADD_DNODE = 'add_dnode'
+GROW_CONST = 'grow_constraint'
 
 
 class TooLongLoopingException(Exception):
@@ -73,17 +75,19 @@ class MCMCProgram:
         self.decoder = None
         self.encoder = None
 
-        self.proposal_probs = {INSERT: 0.5, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0}
+        # self.proposal_probs = {INSERT: 0.5, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.0}
         # self.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.00, REPLACE: 0.0, ADD_DNODE: 0.0}
+        self.proposal_probs = {INSERT: 0.1, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.4}
         self.proposals = list(self.proposal_probs.keys())
         self.p_probs = [self.proposal_probs[p] for p in self.proposals]
-        self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE, ADD_DNODE: DELETE}
+        self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE, ADD_DNODE: DELETE, GROW_CONST:DELETE}
 
         self.Insert = None
         self.Delete = None
         self.Swap = None
         self.AddDnode = None
         self.Replace = None
+        self.GrowConstraint = None
 
         # Logging  # TODO: change to Logger
         self.accepted = 0
@@ -150,6 +154,8 @@ class MCMCProgram:
         self.Swap = SwapProposal(self.tree_mod, verbose=self.verbose, debug=self.debug)
         # self.AddDnode = AddDnodeProposal(self.tree_mod, self.decoder)
         self.Replace = ReplaceProposal(self.tree_mod, self.decoder, self.sess, verbose=self.verbose, debug=self.debug)
+        self.GrowConstraint = GrowConstraintProposal(self.tree_mod, self.decoder, self.sess, verbose=self.verbose,
+                                                     debug=self.debug)
 
     def init_program(self, constraints, ret_types, fps):
         """
@@ -591,6 +597,69 @@ class MCMCProgram:
         # successful
         return True
 
+    def grow_constraint_proposal(self):
+        # Logging and checks
+        prev_length = self.curr_prog.length
+        self.GrowConstraint.attempted += 1
+
+        if self.verbose:
+            print("\nGROW CONSTRAINT")
+            print("old program:")
+            print_verbose_tree_info(self.curr_prog)
+
+        api = random.choice(self.constraints)
+        constraint_node = self.tree_mod.get_node_with_api(self.curr_prog, api)
+
+        output = self.GrowConstraint.grow_constraint(self.curr_prog, self.initial_state, constraint_node,
+                                                     len(self.constraints))
+
+        if output is None:
+            return False
+
+        curr_prog, first_added_node, last_added_node, ln_proposal_prob, num_sibling_nodes_added = output
+
+        if first_added_node is None or last_added_node is None or num_sibling_nodes_added == 0:
+            return False
+
+        ln_reversal_prob = 0.0
+        total_nodes_added = first_added_node.length - last_added_node.length + 1
+        curr_length = self.curr_prog.length
+        curr_node = first_added_node
+        for _ in range(num_sibling_nodes_added):
+            # probability of choosing curr_node to delete
+            ln_reversal_prob += self.Delete.calculate_ln_prob_of_move(curr_length)
+
+            # calculate the length of the remaining tree once deleting curr_node
+            child_length = 0
+            if curr_node.child is not None:
+                child_length = curr_node.child.length
+            curr_length -= 1 + child_length
+
+            # update curr_node to next added node
+            curr_node = first_added_node.sibling
+
+        # Calculate probability of new program
+        self.calculate_probability()
+
+        # Print logs
+        if self.verbose:
+            print("new program:")
+            print_verbose_tree_info(self.curr_prog)
+
+        # Undo move if not valid
+        if not self.validate_and_update_program(GROW_CONST, ln_proposal_prob, ln_reversal_prob):
+            self.GrowConstraint.undo_grown_constraint(first_added_node, last_added_node)  # TODO: think about this
+            self.curr_log_prob = self.prev_log_prob
+            assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
+                self.curr_prog.length) + " != prev length: " + str(prev_length)
+            return False
+
+        # Logging
+        self.GrowConstraint.accepted += 1
+
+        # successful
+        return True
+
     # TODO: UNCOMMENT AFTER UPATING CODE
     # def add_dnode_proposal(self, verbose):
     #     # Logging and checks
@@ -639,8 +708,10 @@ class MCMCProgram:
         elif move == ADD_DNODE:
             pass
             # return self.add_dnode_proposal(verbose)
-        elif move == REPLACE:  # TODO: add this
+        elif move == REPLACE:
             return self.replace_proposal()
+        elif move == GROW_CONST:
+            return self.grow_constraint_proposal()
         else:
             raise ValueError('move not defined')  # TODO: remove once tested
 

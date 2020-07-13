@@ -553,16 +553,16 @@ class GraphAnalyzer:
 
 
 graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, load_reader=True)
-graph_analyzer.test_5()
+# graph_analyzer.test_5()
 
 
 
-# prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
-#
-#
-#                 '$NOT$javax.swing.JTable.isRowSelected(int)'
-#                                                         ])
-# graph_analyzer.print_summary_stats(prog_ids)
+prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
+
+
+'java.io.ByteArrayInputStream.ByteArrayInputStream(byte[])', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()'
+                                                        ])
+graph_analyzer.print_summary_stats(prog_ids)
 # prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
 #
 #
@@ -573,4 +573,4 @@ graph_analyzer.test_5()
 # prog_ids = graph_analyzer.get_program_ids_with_multiple_apis(
 #     ['DExcept', 'java.lang.Throwable.printStackTrace()', 'java.io.FileReader.FileReader(java.io.File)'])
 # graph_analyzer.print_summary_stats(prog_ids)
-# graph_analyzer.print_programs_from_ids(prog_ids, limit=20)
+graph_analyzer.print_programs_from_ids(prog_ids, limit=20)

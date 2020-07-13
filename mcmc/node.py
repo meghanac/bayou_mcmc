@@ -21,7 +21,7 @@ class Node:
     DStop nodes may not have a sibling or a child node.
     """
 
-    def __init__(self, api_name, api_num, parent, parent_edge):
+    def __init__(self, api_name, api_num):
         """
         :param id: [DEPRECATED] (int) unique id for Node object
         :param api_name: (string) name of the api
@@ -129,7 +129,7 @@ class Node:
         Deep copy self including entire subtree. Recursively copies sibling and child nodes.
         :return: (Node) deep copy of self
         """
-        new_node = Node(self.api_name, self.api_num, None, None)
+        new_node = Node(self.api_name, self.api_num)
         if self.sibling is not None:
             new_sibling_node = self.sibling.copy()
             assert new_sibling_node.length == self.sibling.length, "new sib length: " + str(
@@ -159,3 +159,11 @@ class Node:
         self.add_node(node, edge)
         node.add_node(neighbors, edge)
         return node
+
+    def remove_node_save_siblings(self):
+        edge = SIBLING_EDGE
+        node_to_remove = self.get_neighbor(edge)
+        siblings = node_to_remove.remove_node(edge)
+        self.remove_node(edge)
+        self.add_node(siblings, edge)
+        return node_to_remove

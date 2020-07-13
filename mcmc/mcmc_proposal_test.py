@@ -14,7 +14,7 @@ from test_utils import STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, S
     create_str_buf_base_program, create_eight_node_program, create_dbranch, create_dloop, create_dexcept, \
     create_all_dtypes_program, DBRANCH, DLOOP, DEXCEPT, SIBLING_EDGE, CHILD_EDGE
 
-from mcmc import INSERT, DELETE, REPLACE, SWAP, ADD_DNODE, MCMCProgram
+from mcmc import INSERT, DELETE, REPLACE, SWAP, ADD_DNODE, GROW_CONST, MCMCProgram
 
 from proposals.insertion_proposals import ProposalWithInsertion
 from proposals.insert_proposal import InsertProposal
@@ -254,7 +254,8 @@ class ProposalTests(unittest.TestCase):
         curr_prog = test_prog.prog.curr_prog
         prog.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0}
         prev_length = curr_prog.length
-        curr_prog, added_node, ln_proposal_prob, added_stop_node = prog.Insert.add_random_node(curr_prog, prog.initial_state)
+        curr_prog, added_node, ln_proposal_prob, added_stop_node = prog.Insert.add_random_node(curr_prog,
+                                                                                               prog.initial_state)
 
         print("\ncurr prog from insert proposal:")
         print_verbose_tree_info(curr_prog)
@@ -379,6 +380,50 @@ class ProposalTests(unittest.TestCase):
         self.assertIsNotNone(new_node)
         self.assertIsNotNone(replaced_node_api)
         self.assertNotEqual(new_node.api_name, replaced_node_api)
+
+    @mock.patch.object(random, 'randint')
+    def test_grow_constraint_proposal(self, mock_randint):
+        test_prog, _, _ = create_base_program(SAVED_MODEL_PATH, [STR_BUILD, STR_LEN],
+                                              ["Typeface"],
+                                              ["String", "int"])
+        prog = test_prog.prog
+        curr_prog = test_prog.prog.curr_prog
+        curr_prog_copy = curr_prog.copy()
+        expected_nodes, expected_edges = prog.tree_mod.get_vector_representation(curr_prog)
+        prog.proposal_probs = {INSERT: 0.0, DELETE: 0.00001, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0,
+                               GROW_CONST: 0.99999}
+        print("prev program")
+        print_verbose_tree_info(curr_prog)
+
+        # Logging and checks
+        prev_length = curr_prog.length
+        print("prev length:", prev_length)
+
+        # Add node
+        for i in range(1, curr_prog.length):
+            print("\ni:", i)
+            mock_randint.return_value = 3
+
+            constraint_node = prog.tree_mod.get_node_in_position(curr_prog, i)
+
+            output = prog.GrowConstraint.grow_constraint(curr_prog, prog.initial_state, constraint_node,
+                                                         len(prog.constraints))
+
+            new_curr_prog, first_added_node, last_added_node, ln_proposal_prob, num_sibling_nodes_added = output
+
+            print("new program:")
+            print_verbose_tree_info(new_curr_prog)
+
+            # Undo move if not valid
+            prog.GrowConstraint.undo_grown_constraint(first_added_node, last_added_node)
+            prog.curr_log_prob = prog.prev_log_prob
+            print("after undo move:")
+            print_verbose_tree_info(curr_prog)
+            self.assertEqual(curr_prog.length, prev_length, "Curr prog length: " + str(
+                curr_prog.length) + " != prev length: " + str(prev_length))
+            nodes, edges = prog.tree_mod.get_vector_representation(curr_prog)
+            self.assertListEqual(list(expected_nodes), list(nodes))
+            self.assertListEqual(list(expected_edges), list(edges))
 
     def test_swap_proposal(self):
         pass
