@@ -191,11 +191,13 @@ class MCMCProgramWrapper:
 
     def print_summary_logs(self):
         self.update_nodes_and_edges()
-        nodes, edges = self.prog.tree_mod.get_node_names_and_edges(self.prog.curr_prog)
+        nodes, edges, targets = self.prog.tree_mod.get_nodes_edges_targets(self.prog.curr_prog)
         print("\n", "-------------------LOGS:-------------------")
-        print("Nodes:", nodes)
+        print("Nodes:", [self.node2vocab[i] for i in nodes])
         print("Edges:", edges)
-        print("Parents:", self.parents)
+        print("Targets:", [self.node2vocab[i] for i in targets])
+        print("Formal Parameters:", [self.prog.config.num2fp[i] for i in self.prog.fp[0]])
+        print("Return Types:", [self.prog.config.num2rettype[i] for i in self.prog.ret_type])
         print("Total accepted transformations:", self.prog.accepted)
         print("Total rejected transformations:", self.prog.rejected)
         print("Total valid transformations:", self.prog.valid)
@@ -206,5 +208,6 @@ class MCMCProgramWrapper:
         print("Total accepted delete transforms:", self.prog.Delete.accepted)
         print("Total attempted swap transforms:", self.prog.Swap.attempted)
         print("Total accepted swap transforms:", self.prog.Swap.accepted)
+        print("Posterior Distribution:", self.prog.posterior_dist)
         # print("Total attempted add dnode transforms:", self.prog.AddDnode.attempted)
         # print("Total accepted add dnode transforms:", self.prog.AddDnode.accepted)

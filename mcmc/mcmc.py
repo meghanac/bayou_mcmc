@@ -95,6 +95,8 @@ class MCMCProgram:
         self.valid = 0
         self.invalid = 0
 
+        self.posterior_dist = {}
+
         # Whether to print logs
         self.debug = debug
         self.verbose = (verbose or debug)
@@ -839,6 +841,12 @@ class MCMCProgram:
         """
         self.transform_tree()
         self.update_latent_state_and_decoder_state()
+        prog = self.tree_mod.get_nodes_edges_targets(self.curr_prog)
+        if prog in self.posterior_dist:
+            self.posterior_dist[prog] += 1
+        else:
+            self.posterior_dist[prog] = 1
+
         # self.update_random_intial_state()
 
         # self.initial_state = self.decoder.get_random_initial_state()

@@ -146,7 +146,8 @@ class TreeModifier:
         targets[0, :len(targets_dfs)] = targets_dfs
 
         # return nodes[0], edges[0], targets[0]
-        return list(nodes_dfs), list(edges_dfs), list(targets_dfs)
+        # return list(nodes_dfs), list(edges_dfs), list(targets_dfs)
+        return tuple(nodes_dfs), tuple(edges_dfs), tuple(targets_dfs)
 
     def get_vector_representation(self, curr_prog):
         """
