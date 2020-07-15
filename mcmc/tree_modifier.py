@@ -106,7 +106,7 @@ class TreeModifier:
 
         return -1
 
-    def get_nodes_edges_targets(self, curr_prog):
+    def get_nodes_edges_targets(self, curr_prog, verbose=False):
         """
                 Returns vectors of nodes and edges in the current program that can be fed into the model
                 :return: (list of ints) nodes, (list of bools) edges
@@ -145,8 +145,11 @@ class TreeModifier:
         edges[0, :len(edges_dfs)] = edges_dfs
         targets[0, :len(targets_dfs)] = targets_dfs
 
-        # return nodes[0], edges[0], targets[0]
-        # return list(nodes_dfs), list(edges_dfs), list(targets_dfs)
+        if verbose:
+            print(nodes_dfs)
+            print(edges_dfs)
+            print(targets_dfs)
+
         return tuple(nodes_dfs), tuple(edges_dfs), tuple(targets_dfs)
 
     def get_vector_representation(self, curr_prog):

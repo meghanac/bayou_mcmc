@@ -1,3 +1,5 @@
+import os
+
 from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
 from mcmc import MCMCProgram
 
@@ -10,8 +12,8 @@ STR_LEN = 'java.lang.String.length()'
 STR_BUILD = 'java.lang.StringBuilder.StringBuilder(int)'
 STR_BUILD_APP = 'java.lang.StringBuilder.append(java.lang.String)'
 
-def create_base_program(saved_model_path, constraints, ret_type, fp):
-    test_prog = MCMCProgramWrapper(saved_model_path, constraints, ret_type, fp)
+def create_base_program(saved_model_path, constraints, ret_type, fp, debug=False, verbose=False):
+    test_prog = MCMCProgramWrapper(saved_model_path, constraints, ret_type, fp, debug=debug, verbose=verbose)
     test_prog.update_nodes_and_edges()
     expected_nodes = [START]
     expected_edges = []
@@ -95,9 +97,9 @@ def create_all_dtypes_program(saved_model_path):
 
 
 class MCMCProgramWrapper:
-    def __init__(self, save_dir, constraints, return_type, formal_params):
+    def __init__(self, save_dir, constraints, return_type, formal_params, debug=True, verbose=True):
         # init MCMCProgram
-        self.prog = MCMCProgram(save_dir, debug=True)
+        self.prog = MCMCProgram(save_dir, debug=debug, verbose=verbose)
         self.prog.init_program(constraints, return_type, formal_params)
 
         self.constraints = self.prog.constraints
@@ -188,6 +190,40 @@ class MCMCProgramWrapper:
         self.nodes = nodes
         self.edges = edges
         self.parents = parents
+
+    def save_summary_logs(self, logs_f):
+        self.update_nodes_and_edges()
+        nodes, edges, targets = self.prog.tree_mod.get_nodes_edges_targets(self.prog.curr_prog)
+        logs_f.write("\n\n\n-----------------------------------------------------------------------------")
+        logs_f.write("\nConstraints: " + str(self.prog.constraints))
+        logs_f.write("\nNodes:" + str([self.node2vocab[i] for i in nodes]))
+        logs_f.write("\nEdges:" + str(edges))
+        logs_f.write("\nTargets:" + str([self.node2vocab[i] for i in targets]))
+        logs_f.write("\nFormal Parameters:" + str([self.prog.config.num2fp[i] for i in self.prog.fp[0]]))
+        logs_f.write("\nReturn Types:" + str([self.prog.config.num2rettype[i] for i in self.prog.ret_type]))
+        logs_f.write("\nTotal accepted transformations:" + str(self.prog.accepted))
+        logs_f.write("\nTotal rejected transformations:" + str(self.prog.rejected))
+        logs_f.write("\nTotal valid transformations:" + str(self.prog.valid))
+        logs_f.write("\nTotal invalid transformations:" + str(self.prog.invalid))
+        logs_f.write("\nTotal attempted add transforms:" + str(self.prog.Insert.attempted))
+        logs_f.write("\nTotal accepted add transforms:" + str(self.prog.Insert.accepted))
+        logs_f.write("\nTotal attempted delete transforms:" + str(self.prog.Delete.attempted))
+        logs_f.write("\nTotal accepted delete transforms:" + str(self.prog.Delete.accepted))
+        logs_f.write("\nTotal attempted swap transforms:" + str(self.prog.Swap.attempted))
+        logs_f.write("\nTotal accepted swap transforms:" + str(self.prog.Swap.accepted))
+        logs_f.write("\nPosterior Distribution:")
+
+        posterior = {}
+        for prog in self.prog.posterior_dist.keys():
+            str_prog = [[self.prog.config.node2vocab[i] for i in prog[0]], prog[1],
+                        [self.prog.config.node2vocab[i] for i in prog[2]]]
+            str_prog = (tuple(str_prog[0]), tuple(str_prog[1]), tuple(str_prog[2]))
+            posterior[str_prog] = self.prog.posterior_dist[prog]
+
+            logs_f.write('\n\t' + str(str_prog[0]))
+            logs_f.write('\n\t' + str(str_prog[1]))
+            logs_f.write('\n\t' + str(str_prog[2]))
+            logs_f.write('\n\t' + str(self.prog.posterior_dist[prog]) + '\n')
 
     def print_summary_logs(self):
         self.update_nodes_and_edges()

@@ -328,10 +328,7 @@ class ProposalWithInsertion:
         assert empty_node_pos > 0, "Can't replace DSubTree, empty_node_pos must be > 0"
 
         state = initial_state
-        nodes, edges, targets = self.tree_mod.get_nodes_edges_targets(curr_prog)
-        print(nodes)
-        print(edges)
-        print(targets)
+        nodes, edges, targets = self.tree_mod.get_nodes_edges_targets(curr_prog, verbose=self.verbose)
         preceding_pos = targets.index(self.config.vocab2node[TEMP])
         # print(empty_node_pos)
 

@@ -305,7 +305,8 @@ class MCMCProgram:
         :return: (bool) whether to accept or reject current program
         """
         valid = self.check_validity()
-        print("valid:", valid)
+        if self.verbose:
+            print("valid:", valid)
         if valid:
             self.valid += 1
             return self.accept_or_reject(move, ln_proposal_prob, ln_reversal_prob)
@@ -619,14 +620,16 @@ class MCMCProgram:
                                                      len(self.constraints))
 
         if output is None:
-            print("output is none")
+            if self.debug:
+                print("output is none")
             return False
 
         curr_prog, first_added_node, last_added_node, ln_proposal_prob, num_sibling_nodes_added = output
 
         if first_added_node is None or last_added_node is None or num_sibling_nodes_added == 0:
-            print("no nodes were added")
-            print_verbose_tree_info(self.curr_prog)
+            if self.debug:
+                print("no nodes were added")
+                print_verbose_tree_info(self.curr_prog)
             return False
 
         ln_reversal_prob = 0.0

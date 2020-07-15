@@ -119,7 +119,7 @@ class ReplaceProposal(ProposalWithInsertion):
     #     # return super().calculate_ln_prob_of_move(curr_prog_copy, initial_state, added_pos, added_edge)
 
     def calculate_reversal_ln_prob(self, curr_prog_original, initial_state, added_pos, replaced_node_api, added_edge,
-                                   old_child, added_stop_node, is_copy=False):
+                                   old_child, added_stop_node, is_copy=False, debug=False):
         if not is_copy:
             curr_prog = curr_prog_original.copy()
         else:
@@ -129,8 +129,9 @@ class ReplaceProposal(ProposalWithInsertion):
         added_node = self.tree_mod.get_node_in_position(curr_prog, added_pos)
         old_node = self.undo_replace_random_node(added_node, replaced_node_api, old_child, added_stop_node)
 
-        print("reversed moved:")
-        print_verbose_tree_info(curr_prog)
+        if debug:
+            print("reversed moved:")
+            print_verbose_tree_info(curr_prog)
 
         prob = self.calculate_ln_prob_of_move(curr_prog, initial_state, added_pos, added_edge, prev_length, is_copy=True)
 

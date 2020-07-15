@@ -107,13 +107,9 @@ class GrowConstraintProposal(ProposalWithInsertion):
         if first_added_node is None and last_added_node is None:
             return
 
-        print("first:", first_added_node.api_name)
-        print("last:", last_added_node.api_name)
-
         parent_node = first_added_node.parent
 
         if first_added_node == last_added_node:
-            print("last == first")
             parent_node.remove_node_save_siblings()
             return
         else:

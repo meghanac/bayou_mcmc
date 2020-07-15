@@ -1,4 +1,6 @@
 import math
+import datetime
+import os
 import random
 import unittest
 from mcmc import Node, MCMCProgram, SIBLING_EDGE, CHILD_EDGE, START, STOP, DBRANCH, DLOOP, DEXCEPT
@@ -666,24 +668,48 @@ class MCMCProgramTest(unittest.TestCase):
         # test_prog.print_summary_logs()
 
     def test_pairs(self):
-        for api in UNCOMMON_APIS:
-            constraints = [api, UNCOMMON_DISJOINT_PAIRS[api][MID][0][0]]
-            print("\n\n\nconstraints:", constraints)
-            NEW_VOCAB = 'new_1k_vocab_min_3-600000'
-            graph_analyzer = GraphAnalyzer(NEW_VOCAB, load_reader=True)
-            rt, fp = graph_analyzer.get_top_k_rt_fp(constraints)
-            rt = [graph_analyzer.num2rettype[rt[0][0]]]
-            fp = [graph_analyzer.num2fp[fp[0][0]], graph_analyzer.num2fp[fp[1][0]]]
-            test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH,  constraints, rt, fp)
+        api_lists = [MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS]
+        NEW_VOCAB = 'new_1k_vocab_min_3-600000'
+        graph_analyzer = GraphAnalyzer(NEW_VOCAB, load_reader=True)
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        filename = 'all_disjoint_pairs_test.txt'
+        file_path = dir_path + "/lofi_testing/" + filename
+        logs_f = open(os.path.join(file_path), 'w+')
+        logs_f.write("\nModel: " + NEW_VOCAB)
+        logs_f.write("\nDate: " + str(datetime.datetime.now()))
+        num_iter = 330
+        logs_f.write("\nNumber of MCMC Steps: " + str(num_iter))
+        logs_f.flush()
+        for api_list in api_lists:
+            for api in api_list:
+                for level in [TOP, MID, LOW]:
+                    if api_list == MOST_COMMON_APIS:
+                        disjoint_pair = MOST_COMMON_DISJOINT_PAIRS
+                    elif api_list == MID_COMMON_APIS:
+                        disjoint_pair = MID_COMMON_DISJOINT_PAIRS
+                    elif api_list == UNCOMMON_APIS:
+                        disjoint_pair = UNCOMMON_DISJOINT_PAIRS
+                    else:
+                        raise ValueError("api_list must be MOST, MID or UNCOMMON")
+                    constraints = [api, disjoint_pair[api][level][0][0]]
+                    # print("\n\n\n-------------------------\nconstraints:", constraints)
+                    rt, fp = graph_analyzer.get_top_k_rt_fp(constraints)
+                    rt = [graph_analyzer.num2rettype[rt[0][0]]]
+                    fp = [graph_analyzer.num2fp[fp[0][0]], graph_analyzer.num2fp[fp[1][0]]]
+                    test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH, constraints, rt, fp,
+                                                                                    debug=False, verbose=False)
+                    test_prog.prog.debug = False
+                    test_prog.prog.verbose = False
 
-            num_iter = 330
+                    for i in range(num_iter):
+                        if i % 100 == 0:
+                            print("i:", str(i))
+                        test_prog.prog.mcmc()
 
-            for i in range(num_iter):
-                print("\n\n---------------")
-                print(i)
-                test_prog.prog.mcmc()
+                    test_prog.print_summary_logs()
+                    test_prog.save_summary_logs(logs_f)
+                    logs_f.flush()
 
-            test_prog.print_summary_logs()
 
 if __name__ == '__main__':
     unittest.main()

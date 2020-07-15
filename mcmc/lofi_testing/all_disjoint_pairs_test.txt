@@ -1,0 +1,4 @@
+
+Model: new_1k_vocab_min_3-600000
+Date: 2020-07-15 15:57:18.771454
+Number of MCMC Steps: 330
