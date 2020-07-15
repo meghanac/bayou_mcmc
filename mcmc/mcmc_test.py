@@ -11,7 +11,16 @@ from test_utils import STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, S
     create_str_buf_base_program, create_eight_node_program, create_dbranch, create_dloop, create_dexcept, \
     create_all_dtypes_program
 
-from mcmc import INSERT, DELETE, REPLACE, SWAP, ADD_DNODE
+from mcmc import INSERT, DELETE, REPLACE, SWAP, ADD_DNODE, GROW_CONST
+
+from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
+    MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
+
+from data_extractor.graph_analyzer import GraphAnalyzer
+
+TOP = 'top'
+MID = 'mid'
+LOW = 'low'
 
 import unittest.mock as mock
 
@@ -19,6 +28,8 @@ import unittest.mock as mock
 SAVED_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/1k_vocab_constraint_min_3-600000'
 
 ALL_DATA_1K_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/all_data_1k_vocab'
+
+ALL_DATA_1K_05_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/all_data_1k_vocab_0.5_KL_beta'
 
 
 class MCMCProgramTest(unittest.TestCase):
@@ -600,12 +611,12 @@ class MCMCProgramTest(unittest.TestCase):
         #                                                                 ['String'],
         #                                                                 ['DSubTree', 'String'])
 
-        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH,
+        test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_05_MODEL_PATH,
                                                                         ['java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', 'java.lang.StringBuilder.append(long)'],
                                                                         ['__UDT__'],
                                                                         ['DSubTree', 'String'])
 
-        # test_prog.prog.proposal_probs = {INSERT: 0.333, DELETE: 0.334, SWAP: 0.0, REPLACE: 0.333, ADD_DNODE: 0.0}
+        # test_prog.prog.proposal_probs = {INSERT: 0.05, DELETE: 0.05, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0, GROW_CONST: 0.9}
 
         # test_prog.add_to_first_available_node('java.awt.image.BufferedImage.getWidth(java.awt.image.ImageObserver)', SIBLING_EDGE)
         # test_prog.add_to_first_available_node('java.util.logging.Logger.setResourceBundle(java.util.logging.LogRecord)', SIBLING_EDGE)
@@ -614,6 +625,9 @@ class MCMCProgramTest(unittest.TestCase):
         # test_prog.add_to_first_available_node(STR_BUILD, SIBLING_EDGE)
 
         # test_prog.prog.max_depth = 15
+
+        last_node = test_prog.prog.tree_mod.get_node_with_api(test_prog.prog.curr_prog, 'java.lang.StringBuilder.append(long)')
+        test_prog.prog.tree_mod.create_and_add_node(STOP, last_node, SIBLING_EDGE)
 
         num_iter = 330
 
@@ -647,6 +661,26 @@ class MCMCProgramTest(unittest.TestCase):
         #     test_prog.prog.mcmc()
         #
         # test_prog.print_summary_logs()
+
+    def test_pairs(self):
+        for api in UNCOMMON_APIS:
+            constraints = [api, UNCOMMON_DISJOINT_PAIRS[api][MID][0][0]]
+            print("\n\n\nconstraints:", constraints)
+            NEW_VOCAB = 'new_1k_vocab_min_3-600000'
+            graph_analyzer = GraphAnalyzer(NEW_VOCAB, load_reader=True)
+            rt, fp = graph_analyzer.get_top_k_rt_fp(constraints)
+            rt = [graph_analyzer.num2rettype[rt[0][0]]]
+            fp = [graph_analyzer.num2fp[fp[0][0]], graph_analyzer.num2fp[fp[1][0]]]
+            test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH,  constraints, rt, fp)
+
+            num_iter = 330
+
+            for i in range(num_iter):
+                print("\n\n---------------")
+                print(i)
+                test_prog.prog.mcmc()
+
+            test_prog.print_summary_logs()
 
 if __name__ == '__main__':
     unittest.main()

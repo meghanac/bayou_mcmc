@@ -193,6 +193,7 @@ class MCMCProgramWrapper:
         self.update_nodes_and_edges()
         nodes, edges, targets = self.prog.tree_mod.get_nodes_edges_targets(self.prog.curr_prog)
         print("\n", "-------------------LOGS:-------------------")
+        print("Constraints:", self.prog.constraints)
         print("Nodes:", [self.node2vocab[i] for i in nodes])
         print("Edges:", edges)
         print("Targets:", [self.node2vocab[i] for i in targets])
@@ -208,6 +209,20 @@ class MCMCProgramWrapper:
         print("Total accepted delete transforms:", self.prog.Delete.accepted)
         print("Total attempted swap transforms:", self.prog.Swap.attempted)
         print("Total accepted swap transforms:", self.prog.Swap.accepted)
-        print("Posterior Distribution:", self.prog.posterior_dist)
+        print("Posterior Distribution:")
+
+        posterior = {}
+        for prog in self.prog.posterior_dist.keys():
+            str_prog = [[self.prog.config.node2vocab[i] for i in prog[0]], prog[1], [self.prog.config.node2vocab[i] for i in prog[2]]]
+            str_prog = (tuple(str_prog[0]), tuple(str_prog[1]), tuple(str_prog[2]))
+            posterior[str_prog] = self.prog.posterior_dist[prog]
+
+            print('\t', str_prog[0])
+            print('\t', str_prog[1])
+            print('\t', str_prog[2])
+            print('\t', self.prog.posterior_dist[prog], '\n')
+
+
+
         # print("Total attempted add dnode transforms:", self.prog.AddDnode.attempted)
         # print("Total accepted add dnode transforms:", self.prog.AddDnode.accepted)

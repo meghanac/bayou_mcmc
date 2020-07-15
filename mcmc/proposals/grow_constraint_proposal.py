@@ -13,7 +13,7 @@ from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT
 from proposals.insertion_proposals import ProposalWithInsertion
 from utils import print_verbose_tree_info
 
-MAX_INSERTIONS = 3
+MAX_INSERTIONS = 5
 
 class GrowConstraintProposal(ProposalWithInsertion):
 
@@ -44,9 +44,6 @@ class GrowConstraintProposal(ProposalWithInsertion):
                 else:
                     return curr_prog, first_node, last_node, prob, num_sibling_nodes_added
 
-            if i == 0:
-                first_node = new_node
-
             # if Stop node was added, end adding nodes
             if new_node.api_name == STOP:
                 # remove stop node
@@ -59,11 +56,6 @@ class GrowConstraintProposal(ProposalWithInsertion):
                     new_node.parent.remove_node_save_siblings()
                 break
 
-            # add probability
-            prob += ln_prob
-            last_node = new_node
-            num_sibling_nodes_added += 1
-
             # If a dnode is chosen, grow it out
             if new_node.api_name in {DBRANCH, DLOOP, DEXCEPT}:
                 if new_node.api_name == DBRANCH:
@@ -72,21 +64,33 @@ class GrowConstraintProposal(ProposalWithInsertion):
                     ln_prob, added_stop_node = self._grow_dloop_or_dexcept(new_node)
 
                 if ln_prob is not None:
+                    # add probability
                     prob += ln_prob
+                    last_node = new_node
+                    num_sibling_nodes_added += 1
+                    if i == 0:
+                        first_node = new_node
                     if added_stop_node:
                         return curr_prog, first_node, new_node.sibling, prob, num_sibling_nodes_added + 1
                     else:
-                        return curr_prog, first_node, new_node, prob, num_sibling_nodes_added
+                        return curr_prog, first_node, last_node, prob, num_sibling_nodes_added
                 else:
                     # remove dnode
                     new_node.parent.remove_node_save_siblings()
                     if last_node == constraint_node:
                         return None
                     else:
-                        if first_node == None:
+                        if first_node is None:
                             return curr_prog, first_node, first_node, prob, 0
                         else:
-                            return curr_prog, first_node, last_node, prob, num_sibling_nodes_added - 1
+                            return curr_prog, first_node, last_node, prob, num_sibling_nodes_added
+
+            # add probability
+            prob += ln_prob
+            last_node = new_node
+            num_sibling_nodes_added += 1
+            if i == 0:
+                first_node = new_node
 
         # Reset self.curr_prog and self.initial_state
         self.curr_prog = None
@@ -101,9 +105,13 @@ class GrowConstraintProposal(ProposalWithInsertion):
         if first_added_node is None and last_added_node is None:
             return
 
+        print("first:", first_added_node.api_name)
+        print("last:", last_added_node.api_name)
+
         parent_node = first_added_node.parent
 
         if first_added_node == last_added_node:
+            print("last == first")
             parent_node.remove_node_save_siblings()
             return
         else:

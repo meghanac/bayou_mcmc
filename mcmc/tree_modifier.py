@@ -197,9 +197,10 @@ class TreeModifier:
         nodes = [self.config.node2vocab[node] for node in nodes]
         return nodes, edges
 
-    def create_and_add_node(self, api_name, parent, edge, save_neighbors = False):
+    def create_and_add_node(self, api_name, parent, edge, save_neighbors=False):
         """
         Create a new node and add it to the program
+        :param save_neighbors:
         :param api_name: (string) api name of node to be created
         :param parent: (Node) parent of node to be created
         :param edge: (bool- SIBLING_EDGE or CHILD_EDGE) relation of node to be created to parent node

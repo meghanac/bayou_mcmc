@@ -77,7 +77,8 @@ class MCMCProgram:
 
         # self.proposal_probs = {INSERT: 0.5, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.0}
         # self.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.00, REPLACE: 0.0, ADD_DNODE: 0.0}
-        self.proposal_probs = {INSERT: 0.1, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.4}
+        # self.proposal_probs = {INSERT: 0.1, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.4}
+        self.proposal_probs = {INSERT: 0.05, DELETE: 0.05, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0, GROW_CONST: 0.9}
         self.proposals = list(self.proposal_probs.keys())
         self.p_probs = [self.proposal_probs[p] for p in self.proposals]
         self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE, ADD_DNODE: DELETE, GROW_CONST:DELETE}
@@ -839,13 +840,22 @@ class MCMCProgram:
         4) Compute the new initial state of the decoder.
         :return:
         """
-        self.transform_tree()
-        self.update_latent_state_and_decoder_state()
-        prog = self.tree_mod.get_nodes_edges_targets(self.curr_prog)
-        if prog in self.posterior_dist:
-            self.posterior_dist[prog] += 1
+        curr_prog = self.tree_mod.get_nodes_edges_targets(self.curr_prog)
+        transformed = self.transform_tree()
+
+        # make sure all undos work correctly
+        new_prog = self.tree_mod.get_nodes_edges_targets(self.curr_prog)
+        if transformed:
+            assert new_prog != curr_prog, "Program was transformed but actually remained the same."
         else:
-            self.posterior_dist[prog] = 1
+            assert  new_prog == curr_prog, "Program was not transformed yet somehow changed."
+
+        self.update_latent_state_and_decoder_state()
+
+        if new_prog in self.posterior_dist:
+            self.posterior_dist[new_prog] += 1
+        else:
+            self.posterior_dist[new_prog] = 1
 
         # self.update_random_intial_state()
 
