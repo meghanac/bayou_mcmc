@@ -161,6 +161,10 @@ if __name__ == '__main__':
                         help='config file (see description above for help)')
     parser.add_argument('--continue_from', type=str, default=None,
                         help='ignore config options and continue training model checkpointed here')
+    # parser.add_argument('--config', type=str, default=None,
+    #                     help='config file (see description above for help)')
+    # parser.add_argument('--continue_from', type=str, default='save/' + folder_name + '/',
+    #                     help='ignore config options and continue training model checkpointed here')
     parser.add_argument('--topK', type=int, default=10,
                         help='plot only the top-k labels')
     parser.add_argument('--filename', type=str, help='name of data file and dir name')

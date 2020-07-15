@@ -13,7 +13,7 @@ from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT
 from proposals.insertion_proposals import ProposalWithInsertion
 from utils import print_verbose_tree_info
 
-MAX_INSERTIONS = 5
+MAX_INSERTIONS = 3
 
 class GrowConstraintProposal(ProposalWithInsertion):
 
@@ -52,6 +52,8 @@ class GrowConstraintProposal(ProposalWithInsertion):
                     prob += ln_prob
                     last_node = new_node
                     num_sibling_nodes_added += 1
+                    if i == 0:
+                        first_node = new_node
                 else:
                     new_node.parent.remove_node_save_siblings()
                 break

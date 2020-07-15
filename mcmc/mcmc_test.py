@@ -31,6 +31,8 @@ ALL_DATA_1K_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/al
 
 ALL_DATA_1K_05_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/all_data_1k_vocab_0.5_KL_beta'
 
+ALL_DATA_1K_025_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/all_data_1k_vocab_0.25_KL_beta'
+
 
 class MCMCProgramTest(unittest.TestCase):
 
@@ -611,8 +613,9 @@ class MCMCProgramTest(unittest.TestCase):
         #                                                                 ['String'],
         #                                                                 ['DSubTree', 'String'])
 
-        test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_05_MODEL_PATH,
-                                                                        ['java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', 'java.lang.StringBuilder.append(long)'],
+        test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_025_MODEL_PATH,
+                                                                        ['java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()',
+                                                                         'java.lang.StringBuilder.append(long)'],
                                                                         ['__UDT__'],
                                                                         ['DSubTree', 'String'])
 
@@ -626,8 +629,8 @@ class MCMCProgramTest(unittest.TestCase):
 
         # test_prog.prog.max_depth = 15
 
-        last_node = test_prog.prog.tree_mod.get_node_with_api(test_prog.prog.curr_prog, 'java.lang.StringBuilder.append(long)')
-        test_prog.prog.tree_mod.create_and_add_node(STOP, last_node, SIBLING_EDGE)
+        # last_node = test_prog.prog.tree_mod.get_node_with_api(test_prog.prog.curr_prog, 'java.lang.StringBuilder.append(long)')
+        # test_prog.prog.tree_mod.create_and_add_node(STOP, last_node, SIBLING_EDGE)
 
         num_iter = 330
 

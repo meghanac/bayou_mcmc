@@ -1,7 +1,6 @@
 import itertools
 import pickle
 import math
-
 import ijson
 import networkx as nx
 import json
@@ -12,14 +11,14 @@ import sys
 import numpy as np
 from graphviz import Digraph
 
-from data_reader import Reader
+from data_extractor.data_reader import Reader
 
 from ast_helper.ast_traverser import AstTraverser
 from data_extractor.utils import read_vocab
-from json_data_extractor import build_graph_from_json_file
+from data_extractor.json_data_extractor import build_graph_from_json_file
 from ast_helper.ast_reader import AstReader
 
-from mcmc.test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
+from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
     MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
 
 STR_BUF = 'java.lang.StringBuffer.StringBuffer()'
@@ -62,6 +61,7 @@ class GraphAnalyzer:
         # parser.add_argument('--filename', type=str, help='name of data file and dir name')
         self.clargs = parser.parse_args()
         self.clargs.folder_name = folder_name
+        self.clargs.data_filename = folder_name
 
         # if self.clargs.config and self.clargs.continue_from:
         #     parser.error('Do not provide --config if you are continuing from checkpointed model')
@@ -480,97 +480,3 @@ class GraphAnalyzer:
         assert len(selected) == orig_k
 
         return [(api, node_attr[api]) for api in selected]
-
-    def testing(self):
-        self.get_connected_nodes(LOWERCASE_LOCALE)
-        # prog_id =
-        print("\n\n")
-        self.print_lists(self.get_programs_for_api('java.lang.Long.getLong(java.lang.String,long)'))
-        # print(len(self.get_programs_for_api('java.lang.Long.getLong(java.lang.String,long)')))
-        print("\n\n")
-        # print(len(self.get_programs_with_multiple_apis(
-        #     ['java.lang.Long.getLong(java.lang.String,long)', 'java.lang.System.currentTimeMillis()'])))
-        self.print_lists(self.get_programs_with_multiple_apis(
-            ['java.lang.Long.getLong(java.lang.String,long)', 'java.lang.System.currentTimeMillis()']))
-
-    def test_2(self):
-        progs = self.get_programs_for_api('DBranch', limit=1, get_jsons=False)
-        self.print_lists([i for i in progs if i[0][-1] != 'DBranch'])
-        self.plot_ast(progs[0][0][1], progs[0][1][1], progs[0][2][1])
-
-    def test_3(self):
-        js = {"ast":{"node": "DSubTree", "_nodes": [{"node": "DBranch", "_cond": [{"node": "DAPICall", "_throws": [], "_returns": "java.lang.String", "_call": "java.lang.System.getenv(java.lang.String)"}], "_else": [], "_then": [{"node": "DAPICall", "_throws": [], "_returns": "java.lang.String", "_call": "java.lang.System.getenv(java.lang.String)"}, {"node": "DAPICall", "_throws": [], "_returns": "java.lang.String", "_call": "java.lang.System.setProperty(java.lang.String,java.lang.String)"}]}]}}
-        self.get_vectors_and_plot(js)
-
-
-    def test_4(self):
-        levels = [MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS]
-        for level in levels:
-            pairs = {}
-            for api in level:
-                pairs[api] = {}
-                pairs[api][TOP] = self.get_disjoint_api(api, level='top', k=5)
-                pairs[api][MID] = self.get_disjoint_api(api, level='mid', k=5)
-                pairs[api][LOW] = self.get_disjoint_api(api, level='low', k=5)
-            print(pairs)
-
-            # print("\n\n", api)
-            # print(self.get_disjoint_api(api, level='top', k=5))
-            # print(self.get_disjoint_api(api, level='mid', k=5))
-            # print(self.get_disjoint_api(api, level='low', k=5))
-
-    def test_5(self):
-        apis = [UNCOMMON_APIS[0], UNCOMMON_DISJOINT_PAIRS[UNCOMMON_APIS[0]][MID][0][0]]
-        print(apis)
-        rt, fp = self.get_top_k_rt_fp(apis)
-        rt = [(self.num2rettype[i[0]], i[1]) for i in rt]
-        fp = [(self.num2fp[i[0]], i[1]) for i in fp]
-        print(rt)
-        print(fp)
-
-    # def test_4(self):
-    #     prog_ids = list(self.get_program_ids_for_api('DBranch', limit=10))
-    #     for i in range(10):
-    #         print(i)
-    #         print(prog_ids[i])
-    #         js = self.get_json_ast(prog_ids[i])
-    #         self.get_vectors_and_plot(js, filename=('temp' + str(i)))
-
-    # def test_4(self):
-    #     for i in range(10):
-    #         print(i)
-    #         js = self.get_json_ast(i)
-    #         self.get_vectors_and_plot(js, filename=('temp' + str(i)))
-#
-# def load_graph_analyzer(path):
-#     with open(path, 'rb') as f:
-#         return pickle.load(f)
-
-# graph_analyzer = GraphAnalyzer(TESTING, save_reader=True)
-# graph_analyzer = GraphAnalyzer(TESTING, load_reader=True)
-
-# graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, save_reader=True)
-
-
-graph_analyzer = GraphAnalyzer(ALL_DATA_1K_VOCAB, load_reader=True)
-# graph_analyzer.test_5()
-
-
-
-prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
-
-
-'java.io.ByteArrayInputStream.ByteArrayInputStream(byte[])', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()'
-                                                        ])
-graph_analyzer.print_summary_stats(prog_ids)
-# prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
-#
-#
-#                 'java.util.Map<java.lang.String,byte[]>.hashCode()'
-#                                                         ])
-# graph_analyzer.print_summary_stats(prog_ids)
-
-# prog_ids = graph_analyzer.get_program_ids_with_multiple_apis(
-#     ['DExcept', 'java.lang.Throwable.printStackTrace()', 'java.io.FileReader.FileReader(java.io.File)'])
-# graph_analyzer.print_summary_stats(prog_ids)
-graph_analyzer.print_programs_from_ids(prog_ids, limit=20)

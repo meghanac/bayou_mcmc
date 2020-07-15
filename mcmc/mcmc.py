@@ -77,8 +77,8 @@ class MCMCProgram:
 
         # self.proposal_probs = {INSERT: 0.5, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.0}
         # self.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.00, REPLACE: 0.0, ADD_DNODE: 0.0}
-        # self.proposal_probs = {INSERT: 0.1, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.4}
-        self.proposal_probs = {INSERT: 0.05, DELETE: 0.05, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0, GROW_CONST: 0.9}
+        self.proposal_probs = {INSERT: 0.1, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.4}
+        # self.proposal_probs = {INSERT: 0.05, DELETE: 0.05, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0, GROW_CONST: 0.9}
         self.proposals = list(self.proposal_probs.keys())
         self.p_probs = [self.proposal_probs[p] for p in self.proposals]
         self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE, ADD_DNODE: DELETE, GROW_CONST:DELETE}
@@ -489,6 +489,8 @@ class MCMCProgram:
         # Logging
         self.Replace.accepted += 1
 
+        return True
+
     def delete_proposal(self):
         # Logging and checks
         prev_length = self.curr_prog.length
@@ -617,11 +619,14 @@ class MCMCProgram:
                                                      len(self.constraints))
 
         if output is None:
+            print("output is none")
             return False
 
         curr_prog, first_added_node, last_added_node, ln_proposal_prob, num_sibling_nodes_added = output
 
         if first_added_node is None or last_added_node is None or num_sibling_nodes_added == 0:
+            print("no nodes were added")
+            print_verbose_tree_info(self.curr_prog)
             return False
 
         ln_reversal_prob = 0.0
@@ -845,10 +850,10 @@ class MCMCProgram:
 
         # make sure all undos work correctly
         new_prog = self.tree_mod.get_nodes_edges_targets(self.curr_prog)
-        if transformed:
-            assert new_prog != curr_prog, "Program was transformed but actually remained the same."
-        else:
-            assert  new_prog == curr_prog, "Program was not transformed yet somehow changed."
+        if not transformed:
+            if new_prog != curr_prog:
+                print_verbose_tree_info(self.curr_prog)
+            assert new_prog == curr_prog, "Program was not transformed yet somehow changed."
 
         self.update_latent_state_and_decoder_state()
 
