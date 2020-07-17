@@ -612,3 +612,28 @@ UNCOMMON_DISJOINT_PAIRS = {
             ('java.util.List<pythagoras.d.CrossingHelper.Edge>.remove(java.lang.Object)', 1),
             ('java.util.List<com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder>.add(com.mediaportal.ampdroid.database.SqliteAnnotationsHelper.AccessHolder)', 1)]}
 }
+
+
+COMPREHENSIVE_LIST = [
+    ['java.util.ArrayList<Tau_E>.ArrayList()'], ['java.lang.String.equals(java.lang.Object)'], ['java.lang.Throwable.printStackTrace()'],  # most occurring apis
+    ['java.sql.PreparedStatement.execute()'], ['$NOT$java.lang.String.matches(java.lang.String)'], ['java.text.NumberFormat.format(double)'],  # mid occurring apis
+    ['java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()'], ['java.util.Map<java.lang.String,byte[]>.hashCode()'], ['java.util.List<com.google.logging.v2.UntypedSinkName>.size()'],  # least occurring apis
+]
+
+ONE_OF_EACH = [
+    ['java.util.ArrayList<Tau_E>.ArrayList()'],  # top occurring api
+    ['java.sql.PreparedStatement.execute()'],  # mid occurring api
+    ['java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()'],  # least occurring api
+    ['java.lang.String.length()', 'java.lang.String.substring(int,int)'],  # high-high joint pair
+    ['java.lang.String.length()', 'java.io.BufferedWriter.newLine()'],  # high-mid joint pair
+    ['java.lang.String.length()', 'javax.swing.JPanel.JPanel()'],  # high-low joint pair
+    ['java.lang.StringBuilder.append(long)', 'java.lang.String.valueOf(long)'],  # mid-mid joint pair
+    ['java.lang.StringBuilder.append(long)', 'java.lang.Thread.sleep(long)'],  # mid-low joint pair
+    ['java.util.Map<java.lang.String,byte[]>.hashCode()', ],  # low-low joint pair
+    ['java.lang.String.length()', 'java.lang.Thread.join()'],  # high-high disjoint pair
+    ['java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)'],  # high-mid disjoint pair
+    ['java.lang.String.length()', '$NOT$javax.swing.JTable.isRowSelected(int)'],  # high-low disjoint pair
+    ['java.lang.StringBuilder.append(long)', 'java.util.Calendar.set(int,int)'],  # mid-mid disjoint pair
+    ['java.lang.StringBuilder.append(long)', 'java.util.Map<java.lang.String,byte[]>.hashCode()'],  # mid-low disjoint pair
+    ['java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])'],  # low-low disjoint pair
+]

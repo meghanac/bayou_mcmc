@@ -77,7 +77,7 @@ class MCMCProgram:
 
         # self.proposal_probs = {INSERT: 0.5, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.0}
         # self.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.00, REPLACE: 0.0, ADD_DNODE: 0.0}
-        self.proposal_probs = {INSERT: 0.1, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.4}
+        self.proposal_probs = {INSERT: 0.3, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.2}
         # self.proposal_probs = {INSERT: 0.05, DELETE: 0.05, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0, GROW_CONST: 0.9}
         self.proposals = list(self.proposal_probs.keys())
         self.p_probs = [self.proposal_probs[p] for p in self.proposals]

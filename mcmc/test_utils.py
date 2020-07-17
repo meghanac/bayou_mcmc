@@ -249,7 +249,8 @@ class MCMCProgramWrapper:
 
         posterior = {}
         for prog in self.prog.posterior_dist.keys():
-            str_prog = [[self.prog.config.node2vocab[i] for i in prog[0]], prog[1], [self.prog.config.node2vocab[i] for i in prog[2]]]
+            str_prog = [[self.prog.config.node2vocab[i] for i in prog[0]], prog[1],
+                        [self.prog.config.node2vocab[i] for i in prog[2]]]
             str_prog = (tuple(str_prog[0]), tuple(str_prog[1]), tuple(str_prog[2]))
             posterior[str_prog] = self.prog.posterior_dist[prog]
 

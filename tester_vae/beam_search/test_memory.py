@@ -38,8 +38,9 @@ def test_memory(_clargs):
     for i in range(20):
         nodes, edges, targets, \
                 ret_type, fp_type, fp_type_targets, _ = loader.next_batch()
-        print(ret_type)
-        print(fp_type)
+        # print(ret_type)
+        # print(fp_type)
+        # print(nodes.shape)
         psi = encoder.get_initial_state(nodes, edges, ret_type, fp_type)
         psi_ = np.transpose(np.array(psi), [1, 0, 2])  # batch_first
         psis.extend(psi_)
@@ -47,7 +48,7 @@ def test_memory(_clargs):
     encoder.close()
 
     # print(psis)
-    print(apis)
+    # print(apis)
 
     beam_width = 20
     decoder = BayesianPredictor(_clargs.continue_from, depth='change', batch_size=beam_width)
@@ -80,9 +81,9 @@ if __name__ == '__main__':
                                      description=textwrap.dedent(HELP))
     parser.add_argument('--python_recursion_limit', type=int, default=10000,
                         help='set recursion limit for the Python interpreter')
-    parser.add_argument('--continue_from', type=str, default='../../trainer_vae/save/',
+    parser.add_argument('--continue_from', type=str, default='../../trainer_vae/save/1k_vocab_constraint_min_3-600000/',
                         help='ignore config options and continue training model checkpointed here')
-    parser.add_argument('--data', default='../../data_extractor/data')
+    parser.add_argument('--data', default='../../data_extractor/data/1k_vocab_constraint_min_3-600000/')
     clargs = parser.parse_args()
     sys.setrecursionlimit(clargs.python_recursion_limit)
 

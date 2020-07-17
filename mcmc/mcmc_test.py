@@ -1,9 +1,15 @@
+import argparse
 import math
 import datetime
 import os
 import random
+import sys
 import unittest
+
+from ast_helper.beam_searcher.program_beam_searcher import ProgramBeamSearcher
+from data_extractor.data_loader import Loader
 from mcmc import Node, MCMCProgram, SIBLING_EDGE, CHILD_EDGE, START, STOP, DBRANCH, DLOOP, DEXCEPT
+from trainer_vae.infer import BayesianPredictor
 from trainer_vae.model import Model
 
 import numpy as np
@@ -636,7 +642,7 @@ class MCMCProgramTest(unittest.TestCase):
 
         num_iter = 330
 
-        print(test_prog.prog.curr_prog.length)
+        # print(test_prog.prog.curr_prog.length)
         for i in range(num_iter):
             print("\n\n---------------")
             print(i)
@@ -648,24 +654,48 @@ class MCMCProgramTest(unittest.TestCase):
         test_prog.print_summary_logs()
 
     def test_dev(self):
-        test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_MODEL_PATH, [STR_BUILD, "java.io.ObjectInputStream.defaultReadObject()"], ["void"],
-                                                                             ["String", "int", "ObjectInputStream"])
+        constraints = [STR_BUILD, "java.io.ObjectInputStream.defaultReadObject()"]
+        initial_state, test_prog, rt, fp = self.test_vae_beam_search(constraints, beam_width=1)
 
-        added_node = test_prog.prog.add_random_node()
-        #
+        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH, constraints, rt, fp,
+                                                                        debug=False, verbose=False)
+
+        # print(initial_state.shape)
+        # print(test_prog.prog.initial_state.shape)
+
+        test_prog.prog.initial_state = initial_state
+
+
         # test_prog.prog.undo_add_random_node(added_node)
 
         # test_prog.prog.get_random_initial_state()
         #
         # test_prog.prog.add_random_node()
 
-        # num_iter = 10000
-        #
-        # for i in range(num_iter):
-        #     print(i)
-        #     test_prog.prog.mcmc()
-        #
-        # test_prog.print_summary_logs()
+        num_iter = 100
+
+        for i in range(num_iter):
+            print(i)
+            test_prog.prog.mcmc()
+
+        test_prog.print_summary_logs()
+
+    def test_individual_pair(self):
+        constraints = [STR_APP]
+        num_iter = 330
+        NEW_VOCAB = 'new_1k_vocab_min_3-600000'
+        graph_analyzer = GraphAnalyzer(NEW_VOCAB, load_reader=True)
+        rt, fp = graph_analyzer.get_top_k_rt_fp(constraints)
+        rt = [graph_analyzer.num2rettype[rt[0][0]]]
+        fp = [graph_analyzer.num2fp[fp[0][0]], graph_analyzer.num2fp[fp[1][0]]]
+        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH, constraints, rt, fp,
+                                                                        debug=False, verbose=False)
+        for i in range(num_iter):
+            if i % 100 == 0:
+                print("i:", str(i))
+            test_prog.prog.mcmc()
+
+        test_prog.print_summary_logs()
 
     def test_pairs(self):
         api_lists = [MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS]
@@ -674,7 +704,7 @@ class MCMCProgramTest(unittest.TestCase):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         filename = 'all_disjoint_pairs_test.txt'
         file_path = dir_path + "/lofi_testing/" + filename
-        logs_f = open(os.path.join(file_path), 'w+')
+        logs_f = open(os.path.join(file_path), 'a+')
         logs_f.write("\nModel: " + NEW_VOCAB)
         logs_f.write("\nDate: " + str(datetime.datetime.now()))
         num_iter = 330
@@ -709,6 +739,97 @@ class MCMCProgramTest(unittest.TestCase):
                     test_prog.print_summary_logs()
                     test_prog.save_summary_logs(logs_f)
                     logs_f.flush()
+
+    def test_vae_beam_search(self, constraints=None, beam_width=20):
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter)
+        parser.add_argument('--python_recursion_limit', type=int, default=10000,
+                            help='set recursion limit for the Python interpreter')
+        parser.add_argument('--continue_from', type=str,
+                            default='../trainer_vae/save/1k_vocab_constraint_min_3-600000/',
+                            help='ignore config options and continue training model checkpointed here')
+        parser.add_argument('--data', default='../data_extractor/data/new_1k_vocab_constraint_min_3-600000/')
+        clargs = parser.parse_args()
+        sys.setrecursionlimit(clargs.python_recursion_limit)
+
+        size = beam_width
+
+        encoder = BayesianPredictor(clargs.continue_from, batch_size=size)
+
+        if constraints is None:
+            constraints = [STR_BUILD, "java.io.ObjectInputStream.defaultReadObject()"]
+        NEW_VOCAB = 'new_1k_vocab_min_3-600000'
+        graph_analyzer = GraphAnalyzer(NEW_VOCAB, load_reader=True)
+        rt, fp = graph_analyzer.get_top_k_rt_fp(constraints)
+        rt = [graph_analyzer.num2rettype[rt[0][0]]]
+        fp = [graph_analyzer.num2fp[fp[0][0]], graph_analyzer.num2fp[fp[1][0]]]
+        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH, constraints, rt, fp,
+                                                                        debug=False, verbose=False)
+
+        nodes, edges = test_prog.prog.tree_mod.get_vector_representation(test_prog.prog.curr_prog)
+        nodes = nodes[:test_prog.prog.config.max_num_api]
+        edges = edges[:test_prog.prog.config.max_num_api]
+        nodes = np.array([nodes])
+        edges = np.array([edges])
+
+        input_nodes = np.zeros([size, 8])
+        input_edges = np.zeros([size, 8])
+        input_nodes[0] = nodes
+        input_edges[0] = edges
+        input_rt = np.zeros([size])
+        input_rt[0] = test_prog.prog.ret_type[0]
+        input_fp = np.zeros([size, 8])
+        input_fp[0] = np.array(test_prog.prog.fp)
+
+        psi = encoder.get_initial_state(input_nodes, input_edges, input_rt.T, input_fp)
+
+        # psi = encoder.get_initial_state(nodes, edges, np.array(test_prog.prog.ret_type), np.array(test_prog.prog.fp))
+        psi_ = np.transpose(np.array(psi), [1, 0, 2])  # batch_first
+        encoder.close()
+
+        predictor = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
+        searcher = ProgramBeamSearcher(predictor)
+        ast_paths, fp_paths, ret_types = searcher.beam_search(initial_state=psi_)
+        print(' ========== AST ==========')
+        for i, ast_path in enumerate(ast_paths):
+            print(ast_path)
+
+        print(' ========== Fp ==========')
+        for i, fp_path in enumerate(fp_paths):
+            print(fp_path)
+
+        print(' ========== Return Type ==========')
+        print(ret_types)
+
+        predictor.close()
+
+        return psi_, test_prog, rt, fp
+
+
+
+        # beam_width = 20
+        # decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
+        # program_beam_searcher = ProgramBeamSearcher(decoder)
+        #
+        # for i in range(10):
+        #     for node in apis[i]:
+        #         print(decoder.config.vocab.chars_api[node], end=',')
+        #     print('')
+        #     temp = [psis[i] for _ in range(decoder.config.batch_size)]
+        #     ast_paths, fp_paths, ret_types = program_beam_searcher.beam_search(initial_state=temp)
+        #
+        #     print(' ========== AST ==========')
+        #     for ast_path in ast_paths:
+        #         print(ast_path)
+        #
+        #     print(' ========== Fp ==========')
+        #     for fp_path in fp_paths:
+        #         print(fp_path)
+        #
+        #     print(' ========== Return Type ==========')
+        #     print(ret_types)
+        #
+        #     print('\n\n\n\n')
+        # decoder.close()
 
 
 if __name__ == '__main__':

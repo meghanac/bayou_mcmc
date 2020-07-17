@@ -1,0 +1,184 @@
+
+Model: new_1k_vocab_min_3-600000
+Date: 2020-07-16 15:47:12.948141
+Number of MCMC Steps: 330
+Proposal Probabilities: {INSERT: 0.3, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.2}
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)']
+Nodes:['DSubTree', 'java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)', 'java.lang.Long.toString(long)']
+Edges:(False, False, False, False)
+Targets:['java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)', 'java.lang.Long.toString(long)', 'java.io.RandomAccessFile.writeInt(int)']
+Formal Parameters:['DSubTree', 'String', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['void']
+Total accepted transformations:11
+Total rejected transformations:241
+Total valid transformations:252
+Total invalid transformations:78
+Total attempted add transforms:88
+Total accepted add transforms:3
+Total attempted delete transforms:67
+Total accepted delete transforms:0
+Total attempted swap transforms:33
+Total accepted swap transforms:0
+Posterior Distribution:
+	('DSubTree', 'java.lang.String.length()')
+	(False, False)
+	('java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)')
+	21
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)')
+	(False, False, False)
+	('java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)', 'java.lang.Long.toString(long)')
+	3
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)', 'java.lang.Long.toString(long)')
+	(False, False, False, False)
+	('java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)', 'java.lang.Long.toString(long)', 'DStop')
+	63
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)', 'java.lang.Long.toString(long)', 'java.io.RandomAccessFile.writeBytes(java.lang.String)')
+	(False, False, False, False, False)
+	('java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)', 'java.lang.Long.toString(long)', 'java.io.RandomAccessFile.writeBytes(java.lang.String)', 'DStop')
+	65
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)', 'java.lang.Long.toString(long)', 'java.io.RandomAccessFile.writeInt(int)')
+	(False, False, False, False, False)
+	('java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)', 'java.lang.Long.toString(long)', 'java.io.RandomAccessFile.writeInt(int)', 'DStop')
+	178
+
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.lang.String.length()', '$NOT$javax.swing.JTable.isRowSelected(int)']
+Nodes:['DSubTree', 'java.lang.String.length()', 'java.io.File.getName()']
+Edges:(False, False, False)
+Targets:['java.lang.String.length()', 'java.io.File.getName()', '$NOT$javax.swing.JTable.isRowSelected(int)']
+Formal Parameters:['DSubTree', 'String', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['void']
+Total accepted transformations:16
+Total rejected transformations:171
+Total valid transformations:187
+Total invalid transformations:122
+Total attempted add transforms:99
+Total accepted add transforms:2
+Total attempted delete transforms:60
+Total accepted delete transforms:3
+Total attempted swap transforms:39
+Total accepted swap transforms:0
+Posterior Distribution:
+	('DSubTree', 'java.lang.String.length()')
+	(False, False)
+	('java.lang.String.length()', '$NOT$javax.swing.JTable.isRowSelected(int)')
+	1
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.File.getName()')
+	(False, False, False)
+	('java.lang.String.length()', 'java.io.File.getName()', '$NOT$javax.swing.JTable.isRowSelected(int)')
+	66
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.File.getName()', '$NOT$javax.swing.JTable.isRowSelected(int)')
+	(False, False, False, False)
+	('java.lang.String.length()', 'java.io.File.getName()', '$NOT$javax.swing.JTable.isRowSelected(int)', 'DStop')
+	263
+
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.lang.StringBuilder.append(long)', 'java.util.Calendar.set(int,int)']
+Nodes:['DSubTree', 'java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()', 'java.util.Calendar.add(int,int)', 'java.util.Locale.getDefault()', 'java.util.Calendar.getTime()']
+Edges:(False, False, False, False, False, False, False, False, False, False)
+Targets:['java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()', 'java.util.Calendar.add(int,int)', 'java.util.Locale.getDefault()', 'java.util.Calendar.getTime()', 'java.text.DateFormat.format(java.util.Date)']
+Formal Parameters:['DSubTree', 'int', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['String']
+Total accepted transformations:14
+Total rejected transformations:246
+Total valid transformations:260
+Total invalid transformations:55
+Total attempted add transforms:93
+Total accepted add transforms:5
+Total attempted delete transforms:70
+Total accepted delete transforms:1
+Total attempted swap transforms:34
+Total accepted swap transforms:2
+Posterior Distribution:
+	('DSubTree', 'java.lang.StringBuilder.append(long)')
+	(False, False)
+	('java.lang.StringBuilder.append(long)', 'java.util.Calendar.set(int,int)')
+	3
+
+	('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.util.Calendar.set(int,int)')
+	(False, False, False)
+	('java.lang.StringBuilder.append(long)', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()')
+	2
+
+	('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.set(int,int)')
+	(False, False, False, False)
+	('java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()')
+	176
+
+	('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)')
+	(False, False, False, False, False)
+	('java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()')
+	33
+
+	('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()')
+	(False, False, False, False, False, False)
+	('java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()', 'java.lang.StringBuilder.toString()')
+	1
+
+	('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()')
+	(False, False, False, False, False, False, False)
+	('java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()', 'java.lang.StringBuilder.toString()')
+	73
+
+	('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)')
+	(False, False, False, False, False, False)
+	('java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()')
+	1
+
+	('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()')
+	(False, False, False, False, False, False, False)
+	('java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()', 'java.text.DateFormat.format(java.util.Date)')
+	14
+
+	('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()', 'java.util.Calendar.add(int,int)', 'java.util.Locale.getDefault()', 'java.util.Calendar.getTime()')
+	(False, False, False, False, False, False, False, False, False, False)
+	('java.lang.StringBuilder.append(long)', 'java.text.SimpleDateFormat.SimpleDateFormat(java.lang.String,java.util.Locale)', 'java.util.Calendar.getTime()', 'java.util.Calendar.getTime()', 'java.util.Calendar.set(int,int)', 'java.util.Calendar.getTime()', 'java.util.Calendar.add(int,int)', 'java.util.Locale.getDefault()', 'java.util.Calendar.getTime()', 'java.text.DateFormat.format(java.util.Date)')
+	27
+
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.lang.StringBuilder.append(long)', 'java.util.Map<java.lang.String,byte[]>.hashCode()']
+Nodes:['DSubTree', 'java.lang.StringBuilder.append(long)', 'java.lang.StringBuilder.append(java.lang.String)', 'java.util.Map<java.lang.String,byte[]>.hashCode()']
+Edges:(False, False, False, False)
+Targets:['java.lang.StringBuilder.append(long)', 'java.lang.StringBuilder.append(java.lang.String)', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.security.AccessController.doPrivileged(java.security.PrivilegedAction)']
+Formal Parameters:['DSubTree', '__UDT__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['String']
+Total accepted transformations:5
+Total rejected transformations:243
+Total valid transformations:248
+Total invalid transformations:80
+Total attempted add transforms:105
+Total accepted add transforms:3
+Total attempted delete transforms:57
+Total accepted delete transforms:0
+Total attempted swap transforms:23
+Total accepted swap transforms:0
+Posterior Distribution:
+	('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.util.Map<java.lang.String,byte[]>.hashCode()')
+	(False, False, False)
+	('java.lang.StringBuilder.append(long)', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.security.AccessController.doPrivileged(java.security.PrivilegedAction)')
+	1
+
+	('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.lang.StringBuilder.append(java.lang.String)', 'java.util.Map<java.lang.String,byte[]>.hashCode()')
+	(False, False, False, False)
+	('java.lang.StringBuilder.append(long)', 'java.lang.StringBuilder.append(java.lang.String)', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.security.AccessController.doPrivileged(java.security.PrivilegedAction)')
+	39
+
+	('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.lang.StringBuilder.append(java.lang.String)', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.security.AccessController.doPrivileged(java.security.PrivilegedAction)')
+	(False, False, False, False, False)
+	('java.lang.StringBuilder.append(long)', 'java.lang.StringBuilder.append(java.lang.String)', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.security.AccessController.doPrivileged(java.security.PrivilegedAction)', 'DStop')
+	290

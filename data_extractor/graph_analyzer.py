@@ -396,9 +396,9 @@ class GraphAnalyzer:
         elif level == 'mid':
             api_diff = math.floor((len(sorted_apis) - api_k)/2)
             apis = [i[0] for i in sorted_apis[api_diff:api_diff+k]]
-            rt_diff = (len(sorted_rt) - rt_k)/2
+            rt_diff = math.floor((len(sorted_rt) - rt_k)/2)
             rt = [i[0] for i in sorted_rt[rt_diff:rt_diff+k]]
-            fp_diff = (len(sorted_fp) - fp_k)/2
+            fp_diff = math.floor((len(sorted_fp) - fp_k)/2)
             fp = [i[0] for i in sorted_fp[fp_diff:fp_diff+k]]
 
         else:

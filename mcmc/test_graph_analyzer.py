@@ -74,6 +74,14 @@ class TestGraphAnalyzer(unittest.TestCase):
         ])
         graph_analyzer.print_summary_stats(prog_ids)
 
+    def test_get_cooccurring_apis(self, data_path=ALL_DATA_1K_VOCAB):
+        graph_analyzer = GraphAnalyzer(data_path, load_reader=True)
+
+        api = 'java.util.Map<java.lang.String,byte[]>.hashCode()'
+        apis, rt, fp = graph_analyzer.get_k_cooccurring_apis_rt_fp(api, 'low', k=10)
+
+        print([graph_analyzer.node2vocab[api] for api in apis])
+
     # def test_4_1(self):
     #     prog_ids = list(self.get_program_ids_for_api('DBranch', limit=10))
     #     for i in range(10):

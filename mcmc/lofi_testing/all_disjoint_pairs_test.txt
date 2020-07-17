@@ -2,3 +2,404 @@
 Model: new_1k_vocab_min_3-600000
 Date: 2020-07-15 15:57:18.771454
 Number of MCMC Steps: 330
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)']
+Nodes:['DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)']
+Edges:(False, False, False)
+Targets:['java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)', 'java.util.logging.Logger.getLogger(java.lang.String)']
+Formal Parameters:['DSubTree', '__UDT__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['void']
+Total accepted transformations:29
+Total rejected transformations:221
+Total valid transformations:250
+Total invalid transformations:77
+Total attempted add transforms:26
+Total accepted add transforms:0
+Total attempted delete transforms:74
+Total accepted delete transforms:2
+Total attempted swap transforms:24
+Total accepted swap transforms:0
+Posterior Distribution:
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)')
+	(False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)', 'DStop')
+	38
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)', 'java.util.logging.Logger.getLogger(java.lang.String)')
+	(False, False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)', 'java.util.logging.Logger.getLogger(java.lang.String)', 'DStop')
+	154
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)', 'javax.swing.JOptionPane.showMessageDialog(java.awt.Component,java.lang.Object,java.lang.String,int)')
+	(False, False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)', 'javax.swing.JOptionPane.showMessageDialog(java.awt.Component,java.lang.Object,java.lang.String,int)', 'DStop')
+	98
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)')
+	(False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)', 'javax.swing.JOptionPane.showMessageDialog(java.awt.Component,java.lang.Object,java.lang.String,int)')
+	35
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)')
+	(False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)', 'java.lang.Thread.sleep(long)')
+	1
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()')
+	(False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.io.OutputStream.write(byte[],int,int)')
+	4
+
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.util.ArrayList<Tau_E>.ArrayList()', 'java.awt.geom.AffineTransform.getShearY()']
+Nodes:['DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.awt.geom.AffineTransform.getShearY()']
+Edges:(False, False, False)
+Targets:['java.util.ArrayList<Tau_E>.ArrayList()', 'java.awt.geom.AffineTransform.getShearY()', 'java.lang.Double.compare(double,double)']
+Formal Parameters:['DSubTree', 'int', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['void']
+Total accepted transformations:7
+Total rejected transformations:258
+Total valid transformations:265
+Total invalid transformations:65
+Total attempted add transforms:29
+Total accepted add transforms:0
+Total attempted delete transforms:73
+Total accepted delete transforms:2
+Total attempted swap transforms:35
+Total accepted swap transforms:0
+Posterior Distribution:
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.awt.geom.AffineTransform.getShearY()', '$NOT$java.lang.String.equals(java.lang.Object)')
+	(False, False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.awt.geom.AffineTransform.getShearY()', '$NOT$java.lang.String.equals(java.lang.Object)', 'DStop')
+	1
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.awt.geom.AffineTransform.getShearY()')
+	(False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.awt.geom.AffineTransform.getShearY()', '$NOT$java.lang.String.equals(java.lang.Object)')
+	13
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()')
+	(False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.awt.geom.AffineTransform.getShearY()')
+	2
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.awt.geom.AffineTransform.getShearY()', 'java.lang.Double.compare(double,double)')
+	(False, False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.awt.geom.AffineTransform.getShearY()', 'java.lang.Double.compare(double,double)', 'DStop')
+	314
+
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.util.ArrayList<Tau_E>.ArrayList()', 'java.util.Map<java.lang.String,byte[]>.hashCode()']
+Nodes:['DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()']
+Edges:(False, False)
+Targets:['java.util.ArrayList<Tau_E>.ArrayList()', 'java.util.Map<java.lang.String,byte[]>.hashCode()']
+Formal Parameters:['DSubTree', '__UDT__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['String']
+Total accepted transformations:7
+Total rejected transformations:236
+Total valid transformations:243
+Total invalid transformations:87
+Total attempted add transforms:30
+Total accepted add transforms:1
+Total attempted delete transforms:62
+Total accepted delete transforms:1
+Total attempted swap transforms:37
+Total accepted swap transforms:0
+Posterior Distribution:
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()')
+	(False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.util.Map<java.lang.String,byte[]>.hashCode()')
+	49
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.util.Map<java.lang.String,byte[]>.hashCode()')
+	(False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.Throwable.printStackTrace()')
+	281
+
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.lang.String.equals(java.lang.Object)', 'javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String)']
+Nodes:['DSubTree', 'java.lang.String.equals(java.lang.Object)', 'javax.xml.stream.XMLStreamWriter.getPrefix(java.lang.String)', 'javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String)']
+Edges:(False, False, False, False)
+Targets:['java.lang.String.equals(java.lang.Object)', 'javax.xml.stream.XMLStreamWriter.getPrefix(java.lang.String)', 'javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String)', 'javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String)']
+Formal Parameters:['DSubTree', 'javax.xml.stream.XMLStreamWriter', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['java.lang.String']
+Total accepted transformations:9
+Total rejected transformations:181
+Total valid transformations:190
+Total invalid transformations:53
+Total attempted add transforms:32
+Total accepted add transforms:2
+Total attempted delete transforms:66
+Total accepted delete transforms:0
+Total attempted swap transforms:35
+Total accepted swap transforms:0
+Posterior Distribution:
+	('DSubTree', 'java.lang.String.equals(java.lang.Object)')
+	(False, False)
+	('java.lang.String.equals(java.lang.Object)', 'javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String)')
+	1
+
+	('DSubTree', 'java.lang.String.equals(java.lang.Object)', 'javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String)')
+	(False, False, False)
+	('java.lang.String.equals(java.lang.Object)', 'javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String)', 'DStop')
+	5
+
+	('DSubTree', 'java.lang.String.equals(java.lang.Object)', 'javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String)', 'javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String)')
+	(False, False, False, False)
+	('java.lang.String.equals(java.lang.Object)', 'javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String)', 'javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String)', 'DStop')
+	62
+
+	('DSubTree', 'java.lang.String.equals(java.lang.Object)', 'javax.xml.stream.XMLStreamWriter.getPrefix(java.lang.String)', 'javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String)', 'javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String)')
+	(False, False, False, False, False)
+	('java.lang.String.equals(java.lang.Object)', 'javax.xml.stream.XMLStreamWriter.getPrefix(java.lang.String)', 'javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String)', 'javax.xml.stream.XMLStreamWriter.setPrefix(java.lang.String,java.lang.String)', 'DStop')
+	262
+
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.lang.String.equals(java.lang.Object)', 'java.awt.Polygon.contains(double,double)']
+Nodes:['DSubTree', 'java.lang.String.equals(java.lang.Object)', 'java.awt.Polygon.contains(double,double)', 'javax.swing.SwingUtilities.invokeLater(java.lang.Runnable)']
+Edges:(False, False, False, False)
+Targets:['java.lang.String.equals(java.lang.Object)', 'java.awt.Polygon.contains(double,double)', 'javax.swing.SwingUtilities.invokeLater(java.lang.Runnable)', 'javax.swing.SwingUtilities.invokeLater(java.lang.Runnable)']
+Formal Parameters:['DSubTree', 'Point2D', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['boolean']
+Total accepted transformations:2
+Total rejected transformations:288
+Total valid transformations:290
+Total invalid transformations:40
+Total attempted add transforms:31
+Total accepted add transforms:0
+Total attempted delete transforms:64
+Total accepted delete transforms:0
+Total attempted swap transforms:31
+Total accepted swap transforms:0
+Posterior Distribution:
+	('DSubTree', 'java.lang.String.equals(java.lang.Object)')
+	(False, False)
+	('java.lang.String.equals(java.lang.Object)', 'java.awt.Polygon.contains(double,double)')
+	1
+
+	('DSubTree', 'java.lang.String.equals(java.lang.Object)', 'java.awt.Polygon.contains(double,double)', 'javax.swing.SwingUtilities.invokeLater(java.lang.Runnable)')
+	(False, False, False, False)
+	('java.lang.String.equals(java.lang.Object)', 'java.awt.Polygon.contains(double,double)', 'javax.swing.SwingUtilities.invokeLater(java.lang.Runnable)', 'DStop')
+	19
+
+	('DSubTree', 'java.lang.String.equals(java.lang.Object)', 'java.awt.Polygon.contains(double,double)', 'javax.swing.SwingUtilities.invokeLater(java.lang.Runnable)', 'javax.swing.SwingUtilities.invokeLater(java.lang.Runnable)')
+	(False, False, False, False, False)
+	('java.lang.String.equals(java.lang.Object)', 'java.awt.Polygon.contains(double,double)', 'javax.swing.SwingUtilities.invokeLater(java.lang.Runnable)', 'javax.swing.SwingUtilities.invokeLater(java.lang.Runnable)', 'DStop')
+	310
+
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()']
+Nodes:['DSubTree', 'java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()']
+Edges:(False, False, False, False, False, False, False, False)
+Targets:['java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()']
+Formal Parameters:['DSubTree', '__UDT__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['List<String>']
+Total accepted transformations:6
+Total rejected transformations:94
+Total valid transformations:100
+Total invalid transformations:17
+Total attempted add transforms:38
+Total accepted add transforms:1
+Total attempted delete transforms:66
+Total accepted delete transforms:0
+Total attempted swap transforms:43
+Total accepted swap transforms:0
+Posterior Distribution:
+	('DSubTree', 'java.lang.String.equals(java.lang.Object)')
+	(False, False)
+	('java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()')
+	2
+
+	('DSubTree', 'java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()')
+	(False, False, False)
+	('java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()', 'DStop')
+	5
+
+	('DSubTree', 'java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()')
+	(False, False, False, False)
+	('java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'DStop')
+	2
+
+	('DSubTree', 'java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()')
+	(False, False, False, False, False)
+	('java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'DStop')
+	1
+
+	('DSubTree', 'java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()')
+	(False, False, False, False, False, False)
+	('java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'DStop')
+	2
+
+	('DSubTree', 'java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()')
+	(False, False, False, False, False, False, False, False, False)
+	('java.lang.String.equals(java.lang.Object)', 'java.util.List<com.google.logging.v2.UntypedSinkName>.size()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'java.util.TreeSet<java.lang.String>.TreeSet<String>()', 'DStop')
+	318
+
+
+
+ -------------------LOGS:-------------------
+Constraints: ['java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)']
+Nodes: ['DSubTree', 'java.util.Random.nextLong()', 'java.lang.String.format(java.lang.String,java.lang.Object[])']
+Edges: (False, False, False)
+Targets: ['java.util.Random.nextLong()', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'javax.swing.JLabel.setText(java.lang.String)']
+Formal Parameters: ['DSubTree', 'int', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['void']
+Total accepted transformations: 18
+Total rejected transformations: 139
+Total valid transformations: 157
+Total invalid transformations: 91
+Total attempted add transforms: 25
+Total accepted add transforms: 1
+Total attempted delete transforms: 70
+Total accepted delete transforms: 5
+Total attempted swap transforms: 30
+Total accepted swap transforms: 0
+Posterior Distribution:
+	 ('DSubTree', 'java.util.Random.nextLong()')
+	 (False, False)
+	 ('java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)')
+	 10
+
+	 ('DSubTree', 'java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)')
+	 (False, False, False)
+	 ('java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)', 'DStop')
+	 15
+
+	 ('DSubTree', 'java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)', 'DExcept', 'java.lang.Throwable.getMessage()', '$NOT$java.util.Set<java.lang.String>.contains(java.lang.Object)', 'DExcept')
+	 (False, False, False, True, True, False, False)
+	 ('java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)', 'DExcept', 'java.lang.Throwable.getMessage()', '$NOT$java.util.Set<java.lang.String>.contains(java.lang.Object)', 'DStop', 'DStop')
+	 22
+
+	 ('DSubTree', 'java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.awt.Font.Font(java.lang.String,int,int)', 'DExcept')
+	 (False, False, False, True, True, False, False)
+	 ('java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.awt.Font.Font(java.lang.String,int,int)', 'DStop', 'DStop')
+	 13
+
+	 ('DSubTree', 'java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)', 'DExcept', 'java.awt.Font.Font(java.lang.String,int,int)', 'java.lang.Thread.sleep(long)', 'DExcept')
+	 (False, False, False, True, True, False, False)
+	 ('java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)', 'DExcept', 'java.awt.Font.Font(java.lang.String,int,int)', 'java.lang.Thread.sleep(long)', 'DStop', 'DStop')
+	 18
+
+	 ('DSubTree', 'java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)', 'DExcept', 'java.awt.Font.Font(java.lang.String,int,int)', 'DExcept')
+	 (False, False, False, True, True, False)
+	 ('java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)', 'DExcept', 'java.awt.Font.Font(java.lang.String,int,int)', 'java.lang.Thread.sleep(long)', 'DStop')
+	 118
+
+	 ('DSubTree', 'java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.lang.Integer.toString(int)', 'DExcept')
+	 (False, False, False, True, True, False, False)
+	 ('java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.lang.Integer.toString(int)', 'DStop', 'DStop')
+	 1
+
+	 ('DSubTree', 'java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.lang.Thread.sleep(long)', 'DExcept')
+	 (False, False, False, True, True, False, False)
+	 ('java.util.Random.nextLong()', 'javax.swing.JLabel.setText(java.lang.String)', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.lang.Thread.sleep(long)', 'DStop', 'DStop')
+	 28
+
+	 ('DSubTree', 'java.util.Random.nextLong()', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'javax.swing.JLabel.setText(java.lang.String)')
+	 (False, False, False, False)
+	 ('java.util.Random.nextLong()', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'javax.swing.JLabel.setText(java.lang.String)', 'DStop')
+	 98
+
+	 ('DSubTree', 'java.util.Random.nextLong()', 'java.lang.String.format(java.lang.String,java.lang.Object[])')
+	 (False, False, False)
+	 ('java.util.Random.nextLong()', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'javax.swing.JLabel.setText(java.lang.String)')
+	 7
+
+
+
+
+ -------------------LOGS:-------------------
+Constraints: ['java.util.SortedMap<java.lang.String,java.nio.charset.Charset>.values()', 'java.util.Map<java.lang.String,byte[]>.hashCode()']
+Nodes: ['DSubTree', 'java.util.SortedMap<java.lang.String,java.nio.charset.Charset>.values()', 'java.io.StringWriter.StringWriter(int)']
+Edges: (False, False, False)
+Targets: ['java.util.SortedMap<java.lang.String,java.nio.charset.Charset>.values()', 'java.io.StringWriter.StringWriter(int)', 'java.util.Map<java.lang.String,byte[]>.hashCode()']
+Formal Parameters: ['DSubTree', '__UDT__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['String']
+Total accepted transformations: 9
+Total rejected transformations: 177
+Total valid transformations: 186
+Total invalid transformations: 132
+Total attempted add transforms: 103
+Total accepted add transforms: 3
+Total attempted delete transforms: 66
+Total accepted delete transforms: 2
+Total attempted swap transforms: 21
+Total accepted swap transforms: 0
+Posterior Distribution:
+	 ('DSubTree', 'java.util.SortedMap<java.lang.String,java.nio.charset.Charset>.values()')
+	 (False, False)
+	 ('java.util.SortedMap<java.lang.String,java.nio.charset.Charset>.values()', 'java.util.Map<java.lang.String,byte[]>.hashCode()')
+	 4
+
+	 ('DSubTree', 'java.util.SortedMap<java.lang.String,java.nio.charset.Charset>.values()', 'java.io.StringWriter.StringWriter(int)')
+	 (False, False, False)
+	 ('java.util.SortedMap<java.lang.String,java.nio.charset.Charset>.values()', 'java.io.StringWriter.StringWriter(int)', 'java.util.Map<java.lang.String,byte[]>.hashCode()')
+	 179
+
+	 ('DSubTree', 'java.util.SortedMap<java.lang.String,java.nio.charset.Charset>.values()', 'java.io.StringWriter.StringWriter(int)', 'java.util.Map<java.lang.String,byte[]>.hashCode()')
+	 (False, False, False, False)
+	 ('java.util.SortedMap<java.lang.String,java.nio.charset.Charset>.values()', 'java.io.StringWriter.StringWriter(int)', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'DStop')
+	 147
+
+
+
+
+ -------------------LOGS:-------------------
+Constraints: ['java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', 'java.lang.StringBuilder.append(long)']
+Nodes: ['DSubTree', 'java.lang.StringBuilder.append(long)', 'java.lang.String.isEmpty()', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()']
+Edges: (False, False, False, False)
+Targets: ['java.lang.StringBuilder.append(long)', 'java.lang.String.isEmpty()', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', '$NOT$java.util.HashSet<java.lang.String>.add(java.lang.String)']
+Formal Parameters: ['DSubTree', 'String', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['__UDT__']
+Total accepted transformations: 7
+Total rejected transformations: 167
+Total valid transformations: 174
+Total invalid transformations: 90
+Total attempted add transforms: 34
+Total accepted add transforms: 0
+Total attempted delete transforms: 61
+Total accepted delete transforms: 1
+Total attempted swap transforms: 30
+Total accepted swap transforms: 1
+Posterior Distribution:
+	 ('DSubTree', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()')
+	 (False, False)
+	 ('java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', 'java.lang.StringBuilder.append(long)')
+	 8
+
+	 ('DSubTree', 'java.lang.StringBuilder.append(long)')
+	 (False, False)
+	 ('java.lang.StringBuilder.append(long)', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()')
+	 1
+
+	 ('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()')
+	 (False, False, False)
+	 ('java.lang.StringBuilder.append(long)', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', 'DStop')
+	 81
+
+	 ('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', '$NOT$java.util.HashSet<java.lang.String>.add(java.lang.String)')
+	 (False, False, False, False)
+	 ('java.lang.StringBuilder.append(long)', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', '$NOT$java.util.HashSet<java.lang.String>.add(java.lang.String)', 'DStop')
+	 33
+
+	 ('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.lang.String.isEmpty()', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', '$NOT$java.util.HashSet<java.lang.String>.add(java.lang.String)')
+	 (False, False, False, False, False)
+	 ('java.lang.StringBuilder.append(long)', 'java.lang.String.isEmpty()', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', '$NOT$java.util.HashSet<java.lang.String>.add(java.lang.String)', 'DStop')
+	 70
+
+	 ('DSubTree', 'java.lang.StringBuilder.append(long)', 'java.lang.String.isEmpty()', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()')
+	 (False, False, False, False)
+	 ('java.lang.StringBuilder.append(long)', 'java.lang.String.isEmpty()', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', '$NOT$java.util.HashSet<java.lang.String>.add(java.lang.String)')
+	 137

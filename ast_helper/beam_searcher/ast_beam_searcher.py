@@ -33,17 +33,17 @@ class TreeBeamSearcher:
         return
 
     def beam_search(self, initial_state=None):
-
+        # print("init state:", initial_state.shape)
         if initial_state is None:
             initial_state = self.infer_model.get_random_initial_state()
-
+        # print(self.beam_width)
+        # print(len(initial_state))
         candies = [Candidate(initial_state[k]) for k in range(self.beam_width)]
         candies[0].log_probabilty = -0.0  # However only 0-th seed is used
-
+        # print(len(candies))
         i = 0
         while True:
             # states was batch_size * LSTM_Decoder_state_size
-            print(i)
             candies = self.get_next_output_with_fan_out(candies)
 
             if self.check_for_all_STOP(candies):  # branch_stack and last_item
@@ -67,23 +67,21 @@ class TreeBeamSearcher:
     def get_next_output_with_fan_out(self, candies):
 
         topK = len(candies)
+        # print("topk:", topK)
+        # print(len(candies))
+        # print(len(candies[0]))
 
         last_item = [[self.infer_model.config.vocab.api_dict[candy.last_item]] for candy in candies]
-        print("last item:", [candy.last_item for candy in candies])
+        # print("last item:", [candy.last_item for candy in candies])
         last_edge = [[candy.last_edge] for candy in candies]
         states = [candy.state for candy in candies]
         states = np.transpose(np.array(states), [1, 0, 2])
-
-        # print("last item size:", np.array(last_item).shape)
-        # print("last edge size:", np.array(last_edge).shape)
-        # print("batch size:", self.infer_model.config.batch_size)
+        # states = np.array(states)
 
         states, beam_ids, beam_ln_probs = self.infer_model.get_next_ast_state(last_item, last_edge,
                                                                               states)
         # states = states[0]
         next_nodes = [[self.infer_model.config.vocab.chars_api[idx] for idx in beam] for beam in beam_ids]
-
-        print("next nodes:", next_nodes)
 
         # states is still topK * LSTM_Decoder_state_size
         # next_node is topK * topK
@@ -93,9 +91,9 @@ class TreeBeamSearcher:
         log_probabilty = np.array([candy.log_probabilty for candy in candies])
         length = np.array([candy.length for candy in candies])
 
-        print("beam ln probs:", beam_ln_probs)
-        print("log probabilities:", log_probabilty)
-        print("probs:", [math.exp(i) for i in log_probabilty])
+        # print("beam ln probs:", beam_ln_probs)
+        # print("log probabilities:", log_probabilty)
+        # print("probs:", [math.exp(i) for i in log_probabilty])
 
         for i in range(topK):
             if candies[i].rolling == False:
@@ -112,14 +110,16 @@ class TreeBeamSearcher:
 
         new_probs = log_probabilty[:, None] + beam_ln_probs
 
-        print("new probs:", new_probs)
+        # print("new probs:", new_probs)
 
         len_norm_probs = new_probs / np.power(length[:, None], 1.0)
 
-        print("len norm probs:", len_norm_probs)
+        # print("len norm probs:", len_norm_probs)
 
         rows, cols = np.unravel_index(np.argsort(len_norm_probs, axis=None)[::-1], new_probs.shape)
         rows, cols = rows[:topK], cols[:topK]
+        # print(rows)
+        # print(cols)
 
         # rows mean which of the original candidate was finally selected
         new_candies = []
@@ -129,8 +129,12 @@ class TreeBeamSearcher:
                 new_candy.state = [states[l][row] for l in range(len(states))]
                 new_candy.log_probabilty = new_probs[row][col]
                 new_candy.length += 1
-
+                # print("row:", row)
+                # print("col:", col)
+                # print(len(next_nodes))
+                # print(len(next_nodes[0]))
                 value2add = next_nodes[row][col]
+                # value2add = next_nodes[0][0]
                 node2add = Node({"node": "DAPICall", "_call": value2add})
                 if new_candy.last_edge == SIBLING_EDGE:
                     new_candy.tree_currNode = new_candy.tree_currNode.add_and_progress_sibling_node(node2add)
