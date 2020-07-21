@@ -3,7 +3,7 @@ Model: new_1k_vocab_min_3-600000
 Date: 2020-07-16 15:47:12.948141
 Number of MCMC Steps: 330
 Proposal Probabilities: {INSERT: 0.3, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.2}
-
+Grow Constraint grow_new_subtree=False
 
 -----------------------------------------------------------------------------
 Constraints: ['java.lang.String.length()', 'java.io.RandomAccessFile.seek(long)']
@@ -182,3 +182,446 @@ Posterior Distribution:
 	(False, False, False, False, False)
 	('java.lang.StringBuilder.append(long)', 'java.lang.StringBuilder.append(java.lang.String)', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.security.AccessController.doPrivileged(java.security.PrivilegedAction)', 'DStop')
 	290
+
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])']
+Nodes:['DSubTree', 'java.lang.String.String(byte[])', 'java.util.Map<java.lang.String,byte[]>.hashCode()']
+Edges:(False, False, False)
+Targets:['java.lang.String.String(byte[])', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])']
+Formal Parameters:['DSubTree', '__UDT__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['String']
+Total accepted transformations:21
+Total rejected transformations:244
+Total valid transformations:265
+Total invalid transformations:65
+Total attempted add transforms:90
+Total accepted add transforms:2
+Total attempted delete transforms:56
+Total accepted delete transforms:5
+Total attempted swap transforms:37
+Total accepted swap transforms:2
+Posterior Distribution:
+	('DSubTree', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])')
+	(False, False, False)
+	('java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])', 'java.lang.Throwable.printStackTrace()')
+	5
+
+	('DSubTree', 'java.util.Map<java.lang.String,byte[]>.hashCode()')
+	(False, False)
+	('java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])')
+	12
+
+	('DSubTree', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])')
+	(False, False, False)
+	('java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])', 'java.lang.String.String(byte[])')
+	120
+
+	('DSubTree', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])', 'java.lang.String.String(byte[])')
+	(False, False, False, False)
+	('java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])', 'java.lang.String.String(byte[])', 'DStop')
+	43
+
+	('DSubTree', 'java.lang.String.String(byte[])', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])')
+	(False, False, False, False)
+	('java.lang.String.String(byte[])', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])', 'DStop')
+	40
+
+	('DSubTree', 'java.lang.String.String(byte[])', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])', 'java.lang.String.String(byte[])')
+	(False, False, False, False, False)
+	('java.lang.String.String(byte[])', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])', 'java.lang.String.String(byte[])', 'DStop')
+	1
+
+	('DSubTree', 'java.lang.String.String(byte[])', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])')
+	(False, False, False, False)
+	('java.lang.String.String(byte[])', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])', 'java.lang.String.String(byte[])')
+	10
+
+	('DSubTree', 'java.lang.String.String(byte[])', 'java.util.Map<java.lang.String,byte[]>.hashCode()')
+	(False, False, False)
+	('java.lang.String.String(byte[])', 'java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])')
+	99
+
+Model: new_1k_vocab_min_3-600000
+Date: 2020-07-18 15:35:43.847129
+Number of MCMC Steps: 330
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.util.ArrayList<Tau_E>.ArrayList()']
+Nodes:['DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()']
+Edges:(False, False, False, False, False, False, False)
+Targets:['java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()']
+Formal Parameters:['DSubTree', '__UDT__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['__UDT__']
+Total accepted transformations:49
+Total rejected transformations:168
+Total valid transformations:217
+Total invalid transformations:43
+Total attempted add transforms:108
+Total accepted add transforms:12
+Total attempted delete transforms:69
+Total accepted delete transforms:9
+Total attempted swap transforms:29
+Total accepted swap transforms:4
+Posterior Distribution:
+	('DSubTree',)
+	(False,)
+	('java.util.ArrayList<Tau_E>.ArrayList()',)
+	2
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.util.List.size()', 'DExcept')
+	(False, False, True, True, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.util.List.size()', 'DStop', 'DStop')
+	10
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'DExcept')
+	(False, False, True, True, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.util.List.size()', 'DStop')
+	16
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'DExcept')
+	(False, False, True, True, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.util.List.size()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)')
+	41
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()')
+	(False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)')
+	11
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)')
+	(False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)', 'DStop')
+	3
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)', 'java.lang.Throwable.toString()')
+	(False, False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)', 'java.lang.Throwable.toString()', 'DStop')
+	7
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)')
+	(False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)', 'java.lang.Throwable.toString()')
+	6
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()')
+	(False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)')
+	11
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)')
+	(False, False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)', 'DStop')
+	49
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()')
+	(False, False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)')
+	3
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)')
+	(False, False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)', 'java.lang.Throwable.toString()')
+	2
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()')
+	(False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()')
+	6
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()')
+	(False, False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'DStop')
+	29
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()')
+	(False, False, False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'DStop')
+	10
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()')
+	(False, False, False, False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'DStop')
+	8
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()')
+	(False, False, False, False, False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'DStop')
+	16
+
+	('DSubTree', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()')
+	(False, False, False, False, False, False, False, False)
+	('java.util.ArrayList<Tau_E>.ArrayList()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.toString()', 'DStop')
+	100
+
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.sql.PreparedStatement.execute()']
+Nodes:['DSubTree', 'java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()']
+Edges:(False, False, True, True)
+Targets:['java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.sql.PreparedStatement.execute()']
+Formal Parameters:['DSubTree', 'String', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['void']
+Total accepted transformations:69
+Total rejected transformations:153
+Total valid transformations:222
+Total invalid transformations:104
+Total attempted add transforms:95
+Total accepted add transforms:5
+Total attempted delete transforms:69
+Total accepted delete transforms:6
+Total attempted swap transforms:25
+Total accepted swap transforms:3
+Posterior Distribution:
+	('DSubTree',)
+	(False,)
+	('java.sql.PreparedStatement.execute()',)
+	5
+
+	('DSubTree', 'java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.lang.Thread.sleep(long)', 'DExcept')
+	(False, False, True, True, False, False)
+	('java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.lang.Thread.sleep(long)', 'DStop', 'DStop')
+	22
+
+	('DSubTree', 'java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.util.Collections.sort(java.util.List)', 'DExcept')
+	(False, False, True, True, False, False)
+	('java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.util.Collections.sort(java.util.List)', 'DStop', 'DStop')
+	9
+
+	('DSubTree', 'java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.sql.PreparedStatement.execute()', 'DExcept')
+	(False, False, True, True, False, False)
+	('java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.sql.PreparedStatement.execute()', 'DStop', 'DStop')
+	164
+
+	('DSubTree', 'java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'DExcept')
+	(False, False, True, True, False)
+	('java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.sql.PreparedStatement.execute()', 'DStop')
+	40
+
+	('DSubTree', 'java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.sql.PreparedStatement.execute()', 'DExcept')
+	(False, False, True, True, False, False)
+	('java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.sql.PreparedStatement.execute()', 'java.sql.Statement.close()', 'DStop')
+	29
+
+	('DSubTree', 'java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.sql.PreparedStatement.execute()', 'java.sql.Statement.close()', 'DExcept')
+	(False, False, True, True, False, False, False)
+	('java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.sql.PreparedStatement.execute()', 'java.sql.Statement.close()', 'DStop', 'DStop')
+	12
+
+	('DSubTree', 'java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.lang.Thread.Thread(java.lang.Runnable)', 'DExcept')
+	(False, False, True, True, False, False)
+	('java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.lang.Thread.Thread(java.lang.Runnable)', 'DStop', 'DStop')
+	5
+
+	('DSubTree', 'java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'DExcept')
+	(False, False, True, True, False)
+	('java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.lang.Thread.Thread(java.lang.Runnable)', 'DStop')
+	1
+
+	('DSubTree', 'java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.lang.Thread.Thread(java.lang.Runnable)', 'DExcept')
+	(False, False, True, True, False, False)
+	('java.sql.PreparedStatement.execute()', 'DExcept', 'java.lang.Throwable.getMessage()', 'java.lang.Thread.Thread(java.lang.Runnable)', 'java.lang.Long.parseLong(java.lang.String)', 'DStop')
+	43
+
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()']
+Nodes:['DSubTree']
+Edges:(False,)
+Targets:['java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()']
+Formal Parameters:['DSubTree', 'String', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['__UDT__']
+Total accepted transformations:25
+Total rejected transformations:184
+Total valid transformations:209
+Total invalid transformations:58
+Total attempted add transforms:90
+Total accepted add transforms:5
+Total attempted delete transforms:76
+Total accepted delete transforms:8
+Total attempted swap transforms:36
+Total accepted swap transforms:0
+Posterior Distribution:
+	('DSubTree',)
+	(False,)
+	('java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()',)
+	186
+
+	('DSubTree', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()')
+	(False, False)
+	('java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', 'java.io.ByteArrayInputStream.ByteArrayInputStream(byte[])')
+	29
+
+	('DSubTree', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', 'java.io.ByteArrayInputStream.ByteArrayInputStream(byte[])')
+	(False, False, False)
+	('java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', 'java.io.ByteArrayInputStream.ByteArrayInputStream(byte[])', 'java.util.ArrayList<javax.xml.transform.Source>.add(javax.xml.transform.Source)')
+	60
+
+	('DSubTree', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', 'java.io.ByteArrayInputStream.ByteArrayInputStream(byte[])', 'java.util.ArrayList<javax.xml.transform.Source>.add(javax.xml.transform.Source)')
+	(False, False, False, False)
+	('java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', 'java.io.ByteArrayInputStream.ByteArrayInputStream(byte[])', 'java.util.ArrayList<javax.xml.transform.Source>.add(javax.xml.transform.Source)', 'DStop')
+	44
+
+	('DSubTree', 'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()')
+	(False, False)
+	('java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', 'java.util.ArrayList<javax.xml.transform.Source>.add(javax.xml.transform.Source)')
+	11
+
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.lang.String.length()', 'java.lang.String.substring(int,int)']
+Nodes:['DSubTree', 'java.lang.String.length()', 'java.lang.String.substring(int,int)', 'DExcept', 'java.lang.Throwable.printStackTrace()']
+Edges:(False, False, False, True, True)
+Targets:['java.lang.String.length()', 'java.lang.String.substring(int,int)', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.lang.Integer.parseInt(java.lang.String)']
+Formal Parameters:['DSubTree', 'String', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['String']
+Total accepted transformations:68
+Total rejected transformations:129
+Total valid transformations:197
+Total invalid transformations:92
+Total attempted add transforms:95
+Total accepted add transforms:7
+Total attempted delete transforms:65
+Total accepted delete transforms:7
+Total attempted swap transforms:31
+Total accepted swap transforms:1
+Posterior Distribution:
+	('DSubTree', 'java.lang.String.length()')
+	(False, False)
+	('java.lang.String.length()', 'java.lang.String.substring(int,int)')
+	23
+
+	('DSubTree', 'java.lang.String.length()', 'java.lang.String.substring(int,int)')
+	(False, False, False)
+	('java.lang.String.length()', 'java.lang.String.substring(int,int)', 'java.lang.String.substring(int)')
+	10
+
+	('DSubTree', 'java.lang.String.length()', 'java.lang.String.substring(int,int)', 'java.lang.String.substring(int)')
+	(False, False, False, False)
+	('java.lang.String.length()', 'java.lang.String.substring(int,int)', 'java.lang.String.substring(int)', 'DStop')
+	10
+
+	('DSubTree', 'java.lang.String.length()', 'java.lang.String.substring(int,int)', 'java.lang.String.length()')
+	(False, False, False, False)
+	('java.lang.String.length()', 'java.lang.String.substring(int,int)', 'java.lang.String.length()', 'DStop')
+	21
+
+	('DSubTree', 'java.lang.String.length()', 'java.lang.String.substring(int,int)', 'java.lang.String.length()', 'java.lang.String.substring(int,int)')
+	(False, False, False, False, False)
+	('java.lang.String.length()', 'java.lang.String.substring(int,int)', 'java.lang.String.length()', 'java.lang.String.substring(int,int)', 'DStop')
+	20
+
+	('DSubTree', 'java.lang.String.length()', 'java.lang.String.substring(int,int)', 'java.lang.String.length()')
+	(False, False, False, False)
+	('java.lang.String.length()', 'java.lang.String.substring(int,int)', 'java.lang.String.length()', 'java.lang.String.substring(int,int)')
+	13
+
+	('DSubTree', 'java.lang.String.length()', 'java.lang.String.substring(int,int)')
+	(False, False, False)
+	('java.lang.String.length()', 'java.lang.String.substring(int,int)', 'java.lang.String.length()')
+	16
+
+	('DSubTree', 'java.lang.String.length()', 'java.lang.String.substring(int,int)', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.util.List<java.lang.String>.get(int)', 'DExcept')
+	(False, False, False, True, True, False, False)
+	('java.lang.String.length()', 'java.lang.String.substring(int,int)', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.util.List<java.lang.String>.get(int)', 'DStop', 'DStop')
+	83
+
+	('DSubTree', 'java.lang.String.length()', 'java.lang.String.substring(int,int)', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'DExcept')
+	(False, False, False, True, True, False)
+	('java.lang.String.length()', 'java.lang.String.substring(int,int)', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.util.List<java.lang.String>.get(int)', 'DStop')
+	29
+
+	('DSubTree', 'java.lang.String.length()', 'java.lang.String.substring(int,int)', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.util.List<java.lang.String>.get(int)', 'java.lang.Integer.parseInt(java.lang.String)', 'DExcept')
+	(False, False, False, True, True, False, False, False)
+	('java.lang.String.length()', 'java.lang.String.substring(int,int)', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.util.List<java.lang.String>.get(int)', 'java.lang.Integer.parseInt(java.lang.String)', 'DStop', 'DStop')
+	13
+
+	('DSubTree', 'java.lang.String.length()', 'java.lang.String.substring(int,int)', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.lang.Integer.parseInt(java.lang.String)', 'DExcept')
+	(False, False, False, True, True, False, False)
+	('java.lang.String.length()', 'java.lang.String.substring(int,int)', 'DExcept', 'java.lang.Throwable.printStackTrace()', 'java.lang.Integer.parseInt(java.lang.String)', 'DStop', 'DStop')
+	92
+
+
+
+-----------------------------------------------------------------------------
+Constraints: ['java.lang.String.length()', 'java.io.BufferedWriter.newLine()']
+Nodes:['DSubTree', 'java.lang.String.length()', 'java.io.BufferedWriter.newLine()']
+Edges:(False, False, False)
+Targets:['java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.io.Writer.write(java.lang.String)']
+Formal Parameters:['DSubTree', 'String', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types:['void']
+Total accepted transformations:24
+Total rejected transformations:216
+Total valid transformations:240
+Total invalid transformations:82
+Total attempted add transforms:89
+Total accepted add transforms:5
+Total attempted delete transforms:76
+Total accepted delete transforms:7
+Total attempted swap transforms:31
+Total accepted swap transforms:0
+Posterior Distribution:
+	('DSubTree', 'java.lang.String.length()')
+	(False, False)
+	('java.lang.String.length()', 'java.io.BufferedWriter.newLine()')
+	29
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.BufferedWriter.newLine()')
+	(False, False, False)
+	('java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.awt.Component.repaint()')
+	13
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.awt.Component.repaint()')
+	(False, False, False, False)
+	('java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.awt.Component.repaint()', 'DStop')
+	5
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.lang.String.valueOf(char)', 'java.awt.Component.repaint()')
+	(False, False, False, False, False)
+	('java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.lang.String.valueOf(char)', 'java.awt.Component.repaint()', 'DStop')
+	4
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.lang.String.valueOf(char)')
+	(False, False, False, False)
+	('java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.lang.String.valueOf(char)', 'java.awt.Component.repaint()')
+	77
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.BufferedWriter.newLine()')
+	(False, False, False)
+	('java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.lang.String.valueOf(char)')
+	4
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.BufferedWriter.newLine()')
+	(False, False, False)
+	('java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.lang.String.valueOf(int)')
+	87
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.lang.String.valueOf(int)')
+	(False, False, False, False)
+	('java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.lang.String.valueOf(int)', 'DStop')
+	29
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.lang.String.valueOf(int)', 'java.lang.Thread.sleep(long)')
+	(False, False, False, False, False)
+	('java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.lang.String.valueOf(int)', 'java.lang.Thread.sleep(long)', 'DStop')
+	26
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.lang.String.valueOf(int)')
+	(False, False, False, False)
+	('java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.lang.String.valueOf(int)', 'java.lang.Thread.sleep(long)')
+	5
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.BufferedWriter.newLine()')
+	(False, False, False)
+	('java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.io.Writer.write(java.lang.String)')
+	43
+
+	('DSubTree', 'java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.io.Writer.write(java.lang.String)')
+	(False, False, False, False)
+	('java.lang.String.length()', 'java.io.BufferedWriter.newLine()', 'java.io.Writer.write(java.lang.String)', 'java.io.BufferedWriter.newLine()')
+	8

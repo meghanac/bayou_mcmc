@@ -53,7 +53,7 @@ logs_f.write("\nDate: " + str(datetime.datetime.now()))
 num_iter = 330
 logs_f.write("\nNumber of MCMC Steps: " + str(num_iter))
 logs_f.flush()
-for constraints in ONE_OF_EACH[10:15]:
+for constraints in ONE_OF_EACH[:5]:
     rt, fp = graph_analyzer.get_top_k_rt_fp(constraints)
     rt = [graph_analyzer.num2rettype[rt[0][0]]]
     fp = [graph_analyzer.num2fp[fp[0][0]], graph_analyzer.num2fp[fp[1][0]]]

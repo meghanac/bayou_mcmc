@@ -66,13 +66,14 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_prog_ids(self, data_path=ALL_DATA_1K_VOCAB):
         graph_analyzer = GraphAnalyzer(data_path, load_reader=True)
         prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
-            'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()', 'java.lang.String.isEmpty()'
+            'java.util.Random.nextLong()', 'java.io.InputStream.close()'
                                                                 ])
         graph_analyzer.print_summary_stats(prog_ids)
-        prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
-            'java.lang.StringBuilder.append(long)', 'java.lang.String.isEmpty()'
-        ])
-        graph_analyzer.print_summary_stats(prog_ids)
+        graph_analyzer.print_programs_from_ids(prog_ids, limit=20)
+        # prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
+        #     'java.lang.StringBuilder.append(long)', 'java.lang.String.isEmpty()'
+        # ])
+        # graph_analyzer.print_summary_stats(prog_ids)
 
     def test_get_cooccurring_apis(self, data_path=ALL_DATA_1K_VOCAB):
         graph_analyzer = GraphAnalyzer(data_path, load_reader=True)

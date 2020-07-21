@@ -621,11 +621,13 @@ class MCMCProgramTest(unittest.TestCase):
         #                                                                 ['String'],
         #                                                                 ['DSubTree', 'String'])
 
-        test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_025_MODEL_PATH,
+        test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_05_MODEL_PATH,
                                                                         ['java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()',
                                                                          'java.lang.StringBuilder.append(long)'],
                                                                         ['__UDT__'],
                                                                         ['DSubTree', 'String'])
+
+        test_prog.prog.verbose = True
 
         # test_prog.prog.proposal_probs = {INSERT: 0.05, DELETE: 0.05, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0, GROW_CONST: 0.9}
 
@@ -654,7 +656,7 @@ class MCMCProgramTest(unittest.TestCase):
         test_prog.print_summary_logs()
 
     def test_dev(self):
-        constraints = [STR_BUILD, "java.io.ObjectInputStream.defaultReadObject()"]
+        constraints = ['java.lang.String.length()', 'java.io.BufferedWriter.newLine()']
         initial_state, test_prog, rt, fp = self.test_vae_beam_search(constraints, beam_width=1)
 
         test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH, constraints, rt, fp,
@@ -740,7 +742,7 @@ class MCMCProgramTest(unittest.TestCase):
                     test_prog.save_summary_logs(logs_f)
                     logs_f.flush()
 
-    def test_vae_beam_search(self, constraints=None, beam_width=20):
+    def test_vae_beam_search(self, constraints=None, beam_width=5):
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter)
         parser.add_argument('--python_recursion_limit', type=int, default=10000,
                             help='set recursion limit for the Python interpreter')
@@ -756,7 +758,7 @@ class MCMCProgramTest(unittest.TestCase):
         encoder = BayesianPredictor(clargs.continue_from, batch_size=size)
 
         if constraints is None:
-            constraints = [STR_BUILD, "java.io.ObjectInputStream.defaultReadObject()"]
+            constraints = ['java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])']
         NEW_VOCAB = 'new_1k_vocab_min_3-600000'
         graph_analyzer = GraphAnalyzer(NEW_VOCAB, load_reader=True)
         rt, fp = graph_analyzer.get_top_k_rt_fp(constraints)
@@ -803,33 +805,6 @@ class MCMCProgramTest(unittest.TestCase):
         predictor.close()
 
         return psi_, test_prog, rt, fp
-
-
-
-        # beam_width = 20
-        # decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
-        # program_beam_searcher = ProgramBeamSearcher(decoder)
-        #
-        # for i in range(10):
-        #     for node in apis[i]:
-        #         print(decoder.config.vocab.chars_api[node], end=',')
-        #     print('')
-        #     temp = [psis[i] for _ in range(decoder.config.batch_size)]
-        #     ast_paths, fp_paths, ret_types = program_beam_searcher.beam_search(initial_state=temp)
-        #
-        #     print(' ========== AST ==========')
-        #     for ast_path in ast_paths:
-        #         print(ast_path)
-        #
-        #     print(' ========== Fp ==========')
-        #     for fp_path in fp_paths:
-        #         print(fp_path)
-        #
-        #     print(' ========== Return Type ==========')
-        #     print(ret_types)
-        #
-        #     print('\n\n\n\n')
-        # decoder.close()
 
 
 if __name__ == '__main__':

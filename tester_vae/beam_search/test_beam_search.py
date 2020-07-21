@@ -56,7 +56,7 @@ if __name__ == '__main__':
                                      description=textwrap.dedent(HELP))
     parser.add_argument('--python_recursion_limit', type=int, default=10000,
                         help='set recursion limit for the Python interpreter')
-    parser.add_argument('--continue_from', type=str, default='../../trainer_vae/save/1k_vocab_constraint_min_3-600000/',
+    parser.add_argument('--continue_from', type=str, default='../../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta/',
                         help='ignore config options and continue training model checkpointed here')
     parser.add_argument('--saver', type=str, default='plots/beam_search/')
 

@@ -38,8 +38,8 @@ def main(clargs):
     for i in range(1000):
         nodes, edges, targets, \
                 ret_type, fp_type, fp_type_targets, _ = loader.next_batch()
-        print("nodes", nodes)
-        print("edges", edges)
+        # print("nodes", nodes)
+        # print("edges", edges)
         psi = predictor.get_latent_state(nodes, edges, ret_type, fp_type)
         psis.extend(psi)
 
@@ -49,7 +49,7 @@ def main(clargs):
 
     print('API Call Jaccard Calculations')
     jac_api_matrix, jac_api_vector = helper(psis, apis, num_centroids=num_centroids)
-    # plotter(jac_api_matrix, jac_api_vector, name='api_jaccard')
+    plotter(jac_api_matrix, jac_api_vector, name='api_jaccard')
 
     return
 
@@ -80,10 +80,10 @@ def from_call(callnode):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--continue_from', type=str, default='../../trainer_vae/save/1k_datapoints_1k_vocab',
+    parser.add_argument('--continue_from', type=str, default='../../trainer_vae/save/1k_vocab_constraint_min_3-600000',
                         help='directory to load model from')
     parser.add_argument('--top', type=int, default=10,
                         help='plot only the top-k labels')
-    parser.add_argument('--data', default='../../data_extractor/data')
+    parser.add_argument('--data', default='../../data_extractor/data/1k_vocab_constraint_min_3-600000')
     clargs = parser.parse_args()
     main(clargs)
