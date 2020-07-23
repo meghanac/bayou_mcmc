@@ -621,11 +621,20 @@ class MCMCProgramTest(unittest.TestCase):
         #                                                                 ['String'],
         #                                                                 ['DSubTree', 'String'])
 
+        # test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_05_MODEL_PATH,
+        #                                                                 ['java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()',
+        #                                                                  'java.lang.StringBuilder.append(long)'],
+        #                                                                 ['__UDT__'],
+        #                                                                 ['DSubTree', 'String'])
+
         test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_05_MODEL_PATH,
-                                                                        ['java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()',
-                                                                         'java.lang.StringBuilder.append(long)'],
-                                                                        ['__UDT__'],
-                                                                        ['DSubTree', 'String'])
+                                                                        ['java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)',
+                                                                            'java.io.ByteArrayOutputStream.ByteArrayOutputStream()',
+                                                                            ],
+                                                                        ['byte[]'],
+                                                                        ['DSubTree', 'InputStream '])
+
+
 
         test_prog.prog.verbose = True
 

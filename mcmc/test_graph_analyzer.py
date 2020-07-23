@@ -1,6 +1,7 @@
 import unittest
 from data_extractor.graph_analyzer import GraphAnalyzer, STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, \
-    STR_BUILD_APP, LOWERCASE_LOCALE, DATA_DIR_PATH, ALL_DATA_1K_VOCAB, TESTING, NEW_VOCAB, APIS, RT, FP, TOP, MID, LOW
+    STR_BUILD_APP, LOWERCASE_LOCALE, DATA_DIR_PATH, ALL_DATA_1K_VOCAB, TESTING, NEW_VOCAB, APIS, RT, FP, TOP, MID, \
+    LOW
 from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
     MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
 
@@ -66,7 +67,8 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_prog_ids(self, data_path=ALL_DATA_1K_VOCAB):
         graph_analyzer = GraphAnalyzer(data_path, load_reader=True)
         prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
-            'java.util.Random.nextLong()', 'java.io.InputStream.close()'
+            'java.io.OutputStream.write(byte[])', 'java.util.Random.Random(long)'
+
                                                                 ])
         graph_analyzer.print_summary_stats(prog_ids)
         graph_analyzer.print_programs_from_ids(prog_ids, limit=20)
@@ -82,6 +84,70 @@ class TestGraphAnalyzer(unittest.TestCase):
         apis, rt, fp = graph_analyzer.get_k_cooccurring_apis_rt_fp(api, 'low', k=10)
 
         print([graph_analyzer.node2vocab[api] for api in apis])
+
+    def test_unique_test_data_api_pairs(self, data_path=ALL_DATA_1K_VOCAB):
+        test_ga = GraphAnalyzer(data_path, test=True, load_reader=True)
+        train_ga = GraphAnalyzer(data_path, load_reader=True)
+
+        unique_pairs = {}
+        checked_pairs = {}
+        counter = 0
+        for api in test_ga.api_to_prog_ids.keys():
+            prog_ids = list(test_ga.api_to_prog_ids[api])
+            api_name = test_ga.node2vocab[api]
+            checked_pairs[api_name] = set([])
+            if api_name in {'DSubTree', '__delim__', 'DStop', 'DBranch', 'DLoop', 'DExcept'}:
+                continue
+            nodes = []
+            for prog in prog_ids:
+                nodes.extend(test_ga.nodes[prog].tolist())
+                nodes.extend(test_ga.targets[prog].tolist())
+                nodes = list(set(nodes))
+            cooccurring_apis = [test_ga.node2vocab[api] for api in nodes]
+            cooccurring_apis = set(cooccurring_apis)
+            cooccurring_apis -= {'DSubTree', '__delim__', 'DStop', 'DBranch', 'DLoop', 'DExcept'}
+            cooccurring_apis = list(cooccurring_apis)
+            for api2 in cooccurring_apis:
+                if api_name != api2 and api2 != 'DSubTree' and api2 not in checked_pairs[api_name]:
+                    if api2 in checked_pairs and api_name in checked_pairs[api2]:
+                        continue
+                    print(api_name)
+                    print(api2)
+                    checked_pairs[api_name].add(api2)
+                    cooccurring_prog_ids = train_ga.get_programs_with_multiple_apis([api_name, api2], limit=1)
+                    if len(cooccurring_prog_ids) == 0:
+                        counter += 1
+                        print(counter)
+                        if api_name in unique_pairs:
+                            unique_pairs[api_name].add(api2)
+                        else:
+                            unique_pairs[api_name] = {api2}
+
+
+        unique_pairs_set = set([])
+        for api in unique_pairs.keys():
+            apis = list(unique_pairs[api])
+            for api2 in apis:
+                if (api2, api) not in unique_pairs_set:
+                    unique_pairs_set.add((api, api2))
+
+        print(len(unique_pairs_set))
+        print(unique_pairs_set)
+
+        return unique_pairs_set
+
+    def test_get_progs_for_unique_pairs(self, data_path=ALL_DATA_1K_VOCAB):
+        unique_pairs = self.test_unique_test_data_api_pairs(data_path=data_path)
+        unique_pairs = list(unique_pairs)
+        test_ga = GraphAnalyzer(data_path, test=True, load_reader=True)
+        for pair in unique_pairs:
+            print('\n', pair)
+            prog_ids = test_ga.get_program_ids_with_multiple_apis(list(pair))
+            print(prog_ids)
+            test_ga.print_summary_stats(prog_ids)
+            programs = test_ga.get_programs_with_multiple_apis(list(pair), get_targets=True)
+            test_ga.print_lists(programs)
+
 
     # def test_4_1(self):
     #     prog_ids = list(self.get_program_ids_for_api('DBranch', limit=10))

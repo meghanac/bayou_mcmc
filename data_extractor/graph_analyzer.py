@@ -45,8 +45,11 @@ LOW = 'low'
 
 class GraphAnalyzer:
 
-    def __init__(self, folder_name, save_reader=False, load_reader=False):
-        self.dir_path = os.path.dirname(os.path.realpath(__file__)) + "/data/" + folder_name + "/"
+    def __init__(self, folder_name, test=False, save_reader=False, load_reader=False):
+        if test:
+            self.dir_path = os.path.dirname(os.path.realpath(__file__)) + "/data/" + folder_name + "/test_set/"
+        else:
+            self.dir_path = os.path.dirname(os.path.realpath(__file__)) + "/data/" + folder_name + "/"
         self.folder_name = folder_name
 
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -61,7 +64,11 @@ class GraphAnalyzer:
         # parser.add_argument('--filename', type=str, help='name of data file and dir name')
         self.clargs = parser.parse_args()
         self.clargs.folder_name = folder_name
-        self.clargs.data_filename = folder_name
+
+        if test:
+            self.clargs.data_filename = folder_name + "_test"
+        else:
+            self.clargs.data_filename = folder_name
 
         # if self.clargs.config and self.clargs.continue_from:
         #     parser.error('Do not provide --config if you are continuing from checkpointed model')
@@ -70,7 +77,7 @@ class GraphAnalyzer:
         # if self.clargs.continue_from is None:
         #     self.clargs.continue_from = self.clargs.save
 
-        data_filename = folder_name + ".json"
+        data_filename = self.clargs.data_filename + ".json"
 
         # Build graph
         if not os.path.exists(os.path.join(self.dir_path, folder_name + "_api_graph.json")):

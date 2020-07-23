@@ -157,7 +157,7 @@ class MCMCProgram:
         self.Swap = SwapProposal(self.tree_mod, verbose=self.verbose, debug=self.debug)
         # self.AddDnode = AddDnodeProposal(self.tree_mod, self.decoder)
         self.Replace = ReplaceProposal(self.tree_mod, self.decoder, self.sess, verbose=self.verbose, debug=self.debug)
-        self.GrowConstraint = GrowConstraintProposal(self.tree_mod, self.decoder, self.sess, verbose=self.verbose,
+        self.GrowConstraint = GrowConstraintProposal(self.tree_mod, self.decoder, self.sess, False, verbose=self.verbose,
                                                      debug=self.debug)
 
     def init_program(self, constraints, ret_types, fps):

@@ -1,0 +1,73 @@
+Model: new_1k_vocab_min_3-600000
+Date: 2020-07-16 15:47:12.948141
+Number of MCMC Steps: 330
+Proposal Probabilities: {INSERT: 0.3, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.2}
+Grow Constraint grow_new_subtree=False
+
+-------------------LOGS:-------------------
+Constraints: ['java.util.Random.Random(long)', 'java.io.OutputStream.write(byte[])']
+Nodes: ['DSubTree', 'java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.lang.String.getBytes()', 'java.io.OutputStream.write(byte[])', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(byte[])']
+Edges: (False, False, False, False, False, False, False, False, False)
+Targets: ['java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.lang.String.getBytes()', 'java.io.OutputStream.write(byte[])', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(byte[])', 'java.io.OutputStream.close()']
+Formal Parameters: ['DSubTree', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['void']
+Total accepted transformations: 20
+Total rejected transformations: 215
+Total valid transformations: 235
+Total invalid transformations: 64
+Total attempted add transforms: 75
+Total accepted add transforms: 4
+Total attempted delete transforms: 100
+Total accepted delete transforms: 4
+Total attempted swap transforms: 29
+Total accepted swap transforms: 0
+Posterior Distribution:
+	 ('DSubTree', 'java.util.Random.Random(long)')
+	 (False, False)
+	 ('java.util.Random.Random(long)', 'java.io.OutputStream.write(byte[])')
+	 [7, -12.598365783691406]
+
+	 ('DSubTree', 'java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])')
+	 (False, False, False)
+	 ('java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(byte[])')
+	 [9, -10.319591999053955]
+
+	 ('DSubTree', 'java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(byte[])')
+	 (False, False, False, False)
+	 ('java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(byte[])', 'java.io.OutputStream.close()')
+	 [7, -6.905668959021568]
+
+	 ('DSubTree', 'java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(byte[])')
+	 (False, False, False, False, False)
+	 ('java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(byte[])', 'java.io.OutputStream.close()')
+	 [7, -5.2772380113601685]
+
+	 ('DSubTree', 'java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)')
+	 (False, False, False, False)
+	 ('java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(byte[])')
+	 [65, -4.7865253537893295]
+
+	 ('DSubTree', 'java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(byte[])')
+	 (False, False, False, False, False)
+	 ('java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(byte[])', 'DStop')
+	 [36, -7.700161554850638]
+
+	 ('DSubTree', 'java.util.Random.Random(long)', 'java.util.Random.nextLong()', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(byte[])')
+	 (False, False, False, False, False, False)
+	 ('java.util.Random.Random(long)', 'java.util.Random.nextLong()', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(byte[])', 'DStop')
+	 [150, -8.451991945505142]
+
+	 ('DSubTree', 'java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(byte[])', 'java.io.OutputStream.close()')
+	 (False, False, False, False, False, False)
+	 ('java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(byte[])', 'java.io.OutputStream.close()', 'DStop')
+	 [7, -10.35401351004839]
+
+	 ('DSubTree', 'java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.lang.String.getBytes()', 'java.io.OutputStream.write(byte[])')
+	 (False, False, False, False, False, False)
+	 ('java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.lang.String.getBytes()', 'java.io.OutputStream.write(byte[])', 'java.io.OutputStream.close()')
+	 [11, -5.7255421206355095]
+
+	 ('DSubTree', 'java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.lang.String.getBytes()', 'java.io.OutputStream.write(byte[])', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(byte[])')
+	 (False, False, False, False, False, False, False, False, False)
+	 ('java.util.Random.Random(long)', 'java.util.Random.nextBytes(byte[])', 'java.io.OutputStream.write(int)', 'java.lang.String.getBytes()', 'java.io.OutputStream.write(byte[])', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(int)', 'java.io.OutputStream.write(byte[])', 'java.io.OutputStream.close()')
+	 [31, -14.900267200078815]

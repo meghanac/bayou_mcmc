@@ -15,10 +15,12 @@ from utils import print_verbose_tree_info
 
 MAX_INSERTIONS = 3
 
+
 class GrowConstraintProposal(ProposalWithInsertion):
 
-    def __init__(self, tree_modifier, decoder, tf_session, verbose=False, debug=False):
+    def __init__(self, tree_modifier, decoder, tf_session, grow_new_subtree, verbose=False, debug=False):
         super().__init__(tree_modifier, decoder, tf_session, verbose=verbose, debug=debug)
+        self.grow_new_subtree = grow_new_subtree
 
     def grow_constraint(self, curr_prog, initial_state, constraint_node, num_constraints):
         # Temporarily save curr_prog and initial_state
@@ -36,7 +38,8 @@ class GrowConstraintProposal(ProposalWithInsertion):
         num_sibling_nodes_added = 0
         for i in range(num_insertions):
             # Probabilistically choose the node that should appear after selected random parent
-            new_node, _, ln_prob = self._get_new_node(last_node, SIBLING_EDGE, verbose=self.debug, grow_new_subtree=True)
+            new_node, _, ln_prob = self._get_new_node(last_node, SIBLING_EDGE, verbose=self.debug,
+                                                      grow_new_subtree=self.grow_new_subtree)
 
             if new_node is None:
                 if last_node == constraint_node:
@@ -118,4 +121,3 @@ class GrowConstraintProposal(ProposalWithInsertion):
                 if removed_node == last_added_node:
                     return
             raise ValueError("Error: could not undo grown constraint")
-

@@ -1,0 +1,1512 @@
+Process id is 84
+GPU device is 6
+Amount of data used is 4217280
+	
+0/6589500 (epoch 1) loss: 34.275, gen loss: 21.209, ret loss: 6.905, fp loss: 6.128, KL loss: 0.066. 
+10000/6589500 (epoch 1) loss: 12.857, gen loss: 5.893, ret loss: 1.246, fp loss: 2.612, KL loss: 6.212. 
+20000/6589500 (epoch 1) loss: 12.064, gen loss: 4.936, ret loss: 1.091, fp loss: 2.331, KL loss: 7.412. 
+30000/6589500 (epoch 1) loss: 11.669, gen loss: 4.472, ret loss: 1.014, fp loss: 2.184, KL loss: 7.999. 
+40000/6589500 (epoch 1) loss: 11.433, gen loss: 4.200, ret loss: 0.968, fp loss: 2.092, KL loss: 8.347. 
+50000/6589500 (epoch 1) loss: 11.268, gen loss: 4.017, ret loss: 0.935, fp loss: 2.025, KL loss: 8.581. 
+60000/6589500 (epoch 1) loss: 11.148, gen loss: 3.883, ret loss: 0.912, fp loss: 1.978, KL loss: 8.750. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model1.ckpt. Average for epoch , loss: 11.088
+70000/6589500 (epoch 2) loss: 10.460, gen loss: 3.149, ret loss: 0.779, fp loss: 1.699, KL loss: 9.666. 
+80000/6589500 (epoch 2) loss: 10.443, gen loss: 3.127, ret loss: 0.774, fp loss: 1.693, KL loss: 9.698. 
+90000/6589500 (epoch 2) loss: 10.422, gen loss: 3.109, ret loss: 0.770, fp loss: 1.684, KL loss: 9.718. 
+100000/6589500 (epoch 2) loss: 10.402, gen loss: 3.090, ret loss: 0.767, fp loss: 1.677, KL loss: 9.736. 
+110000/6589500 (epoch 2) loss: 10.387, gen loss: 3.077, ret loss: 0.764, fp loss: 1.670, KL loss: 9.752. 
+120000/6589500 (epoch 2) loss: 10.374, gen loss: 3.066, ret loss: 0.762, fp loss: 1.662, KL loss: 9.768. 
+130000/6589500 (epoch 2) loss: 10.363, gen loss: 3.055, ret loss: 0.759, fp loss: 1.657, KL loss: 9.782. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model2.ckpt. Average for epoch , loss: 10.360
+140000/6589500 (epoch 3) loss: 10.270, gen loss: 2.977, ret loss: 0.740, fp loss: 1.618, KL loss: 9.868. 
+150000/6589500 (epoch 3) loss: 10.267, gen loss: 2.970, ret loss: 0.740, fp loss: 1.613, KL loss: 9.887. 
+160000/6589500 (epoch 3) loss: 10.255, gen loss: 2.960, ret loss: 0.738, fp loss: 1.612, KL loss: 9.890. 
+170000/6589500 (epoch 3) loss: 10.250, gen loss: 2.954, ret loss: 0.737, fp loss: 1.609, KL loss: 9.900. 
+180000/6589500 (epoch 3) loss: 10.243, gen loss: 2.950, ret loss: 0.736, fp loss: 1.604, KL loss: 9.906. 
+190000/6589500 (epoch 3) loss: 10.239, gen loss: 2.946, ret loss: 0.735, fp loss: 1.602, KL loss: 9.912. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model3.ckpt. Average for epoch , loss: 10.233
+200000/6589500 (epoch 4) loss: 10.187, gen loss: 2.907, ret loss: 0.724, fp loss: 1.578, KL loss: 9.956. 
+210000/6589500 (epoch 4) loss: 10.184, gen loss: 2.904, ret loss: 0.721, fp loss: 1.578, KL loss: 9.963. 
+220000/6589500 (epoch 4) loss: 10.180, gen loss: 2.898, ret loss: 0.721, fp loss: 1.576, KL loss: 9.970. 
+230000/6589500 (epoch 4) loss: 10.173, gen loss: 2.890, ret loss: 0.721, fp loss: 1.575, KL loss: 9.971. 
+240000/6589500 (epoch 4) loss: 10.171, gen loss: 2.889, ret loss: 0.721, fp loss: 1.574, KL loss: 9.976. 
+250000/6589500 (epoch 4) loss: 10.167, gen loss: 2.886, ret loss: 0.721, fp loss: 1.570, KL loss: 9.980. 
+260000/6589500 (epoch 4) loss: 10.166, gen loss: 2.883, ret loss: 0.720, fp loss: 1.569, KL loss: 9.986. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model4.ckpt. Average for epoch , loss: 10.164
+270000/6589500 (epoch 5) loss: 10.133, gen loss: 2.860, ret loss: 0.715, fp loss: 1.553, KL loss: 10.009. 
+280000/6589500 (epoch 5) loss: 10.133, gen loss: 2.856, ret loss: 0.714, fp loss: 1.550, KL loss: 10.026. 
+290000/6589500 (epoch 5) loss: 10.132, gen loss: 2.852, ret loss: 0.714, fp loss: 1.553, KL loss: 10.026. 
+300000/6589500 (epoch 5) loss: 10.130, gen loss: 2.850, ret loss: 0.714, fp loss: 1.552, KL loss: 10.029. 
+310000/6589500 (epoch 5) loss: 10.128, gen loss: 2.849, ret loss: 0.714, fp loss: 1.550, KL loss: 10.031. 
+320000/6589500 (epoch 5) loss: 10.128, gen loss: 2.848, ret loss: 0.714, fp loss: 1.549, KL loss: 10.035. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model5.ckpt. Average for epoch , loss: 10.125
+330000/6589500 (epoch 6) loss: 10.083, gen loss: 2.823, ret loss: 0.712, fp loss: 1.531, KL loss: 10.035. 
+340000/6589500 (epoch 6) loss: 10.111, gen loss: 2.834, ret loss: 0.708, fp loss: 1.537, KL loss: 10.063. 
+350000/6589500 (epoch 6) loss: 10.111, gen loss: 2.832, ret loss: 0.709, fp loss: 1.536, KL loss: 10.068. 
+360000/6589500 (epoch 6) loss: 10.100, gen loss: 2.824, ret loss: 0.708, fp loss: 1.536, KL loss: 10.064. 
+370000/6589500 (epoch 6) loss: 10.102, gen loss: 2.824, ret loss: 0.708, fp loss: 1.536, KL loss: 10.068. 
+380000/6589500 (epoch 6) loss: 10.099, gen loss: 2.823, ret loss: 0.708, fp loss: 1.533, KL loss: 10.069. 
+390000/6589500 (epoch 6) loss: 10.100, gen loss: 2.822, ret loss: 0.708, fp loss: 1.534, KL loss: 10.073. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model6.ckpt. Average for epoch , loss: 10.099
+400000/6589500 (epoch 7) loss: 10.076, gen loss: 2.810, ret loss: 0.701, fp loss: 1.523, KL loss: 10.084. 
+410000/6589500 (epoch 7) loss: 10.082, gen loss: 2.811, ret loss: 0.703, fp loss: 1.525, KL loss: 10.087. 
+420000/6589500 (epoch 7) loss: 10.081, gen loss: 2.809, ret loss: 0.703, fp loss: 1.524, KL loss: 10.091. 
+430000/6589500 (epoch 7) loss: 10.079, gen loss: 2.805, ret loss: 0.703, fp loss: 1.525, KL loss: 10.093. 
+440000/6589500 (epoch 7) loss: 10.080, gen loss: 2.805, ret loss: 0.703, fp loss: 1.525, KL loss: 10.095. 
+450000/6589500 (epoch 7) loss: 10.079, gen loss: 2.805, ret loss: 0.703, fp loss: 1.523, KL loss: 10.096. 
+Process id is 39
+GPU device is 6
+Amount of data used is 4217280
+	
+0/6589500 (epoch 1) loss: 9.609, gen loss: 2.432, ret loss: 0.990, fp loss: 1.307, KL loss: 9.760. 
+10000/6589500 (epoch 1) loss: 10.107, gen loss: 2.815, ret loss: 0.719, fp loss: 1.538, KL loss: 10.069. 
+20000/6589500 (epoch 1) loss: 10.096, gen loss: 2.811, ret loss: 0.715, fp loss: 1.533, KL loss: 10.073. 
+30000/6589500 (epoch 1) loss: 10.088, gen loss: 2.805, ret loss: 0.712, fp loss: 1.532, KL loss: 10.075. 
+40000/6589500 (epoch 1) loss: 10.088, gen loss: 2.806, ret loss: 0.711, fp loss: 1.531, KL loss: 10.080. 
+50000/6589500 (epoch 1) loss: 10.086, gen loss: 2.806, ret loss: 0.710, fp loss: 1.528, KL loss: 10.084. 
+60000/6589500 (epoch 1) loss: 10.086, gen loss: 2.805, ret loss: 0.709, fp loss: 1.528, KL loss: 10.087. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model1.ckpt. Average for epoch , loss: 10.084
+70000/6589500 (epoch 2) loss: 10.061, gen loss: 2.794, ret loss: 0.700, fp loss: 1.516, KL loss: 10.102. 
+80000/6589500 (epoch 2) loss: 10.070, gen loss: 2.794, ret loss: 0.701, fp loss: 1.518, KL loss: 10.113. 
+90000/6589500 (epoch 2) loss: 10.065, gen loss: 2.792, ret loss: 0.700, fp loss: 1.518, KL loss: 10.111. 
+100000/6589500 (epoch 2) loss: 10.064, gen loss: 2.789, ret loss: 0.701, fp loss: 1.518, KL loss: 10.112. 
+110000/6589500 (epoch 2) loss: 10.065, gen loss: 2.790, ret loss: 0.701, fp loss: 1.518, KL loss: 10.112. 
+120000/6589500 (epoch 2) loss: 10.065, gen loss: 2.791, ret loss: 0.701, fp loss: 1.516, KL loss: 10.113. 
+130000/6589500 (epoch 2) loss: 10.065, gen loss: 2.791, ret loss: 0.701, fp loss: 1.516, KL loss: 10.114. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model2.ckpt. Average for epoch , loss: 10.064
+140000/6589500 (epoch 3) loss: 10.051, gen loss: 2.784, ret loss: 0.696, fp loss: 1.507, KL loss: 10.126. 
+150000/6589500 (epoch 3) loss: 10.055, gen loss: 2.784, ret loss: 0.695, fp loss: 1.507, KL loss: 10.137. 
+160000/6589500 (epoch 3) loss: 10.051, gen loss: 2.779, ret loss: 0.696, fp loss: 1.509, KL loss: 10.134. 
+170000/6589500 (epoch 3) loss: 10.053, gen loss: 2.780, ret loss: 0.696, fp loss: 1.510, KL loss: 10.135. 
+180000/6589500 (epoch 3) loss: 10.051, gen loss: 2.781, ret loss: 0.696, fp loss: 1.508, KL loss: 10.132. 
+190000/6589500 (epoch 3) loss: 10.053, gen loss: 2.781, ret loss: 0.697, fp loss: 1.509, KL loss: 10.133. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model3.ckpt. Average for epoch , loss: 10.051
+200000/6589500 (epoch 4) loss: 10.048, gen loss: 2.775, ret loss: 0.694, fp loss: 1.502, KL loss: 10.153. 
+210000/6589500 (epoch 4) loss: 10.051, gen loss: 2.777, ret loss: 0.695, fp loss: 1.502, KL loss: 10.154. 
+220000/6589500 (epoch 4) loss: 10.048, gen loss: 2.775, ret loss: 0.695, fp loss: 1.503, KL loss: 10.150. 
+230000/6589500 (epoch 4) loss: 10.042, gen loss: 2.770, ret loss: 0.695, fp loss: 1.503, KL loss: 10.146. 
+240000/6589500 (epoch 4) loss: 10.044, gen loss: 2.772, ret loss: 0.695, fp loss: 1.504, KL loss: 10.147. 
+250000/6589500 (epoch 4) loss: 10.042, gen loss: 2.772, ret loss: 0.695, fp loss: 1.502, KL loss: 10.147. 
+260000/6589500 (epoch 4) loss: 10.044, gen loss: 2.772, ret loss: 0.695, fp loss: 1.502, KL loss: 10.149. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model4.ckpt. Average for epoch , loss: 10.043
+270000/6589500 (epoch 5) loss: 10.029, gen loss: 2.764, ret loss: 0.693, fp loss: 1.497, KL loss: 10.151. 
+280000/6589500 (epoch 5) loss: 10.030, gen loss: 2.765, ret loss: 0.693, fp loss: 1.495, KL loss: 10.155. 
+290000/6589500 (epoch 5) loss: 10.031, gen loss: 2.764, ret loss: 0.693, fp loss: 1.498, KL loss: 10.153. 
+300000/6589500 (epoch 5) loss: 10.031, gen loss: 2.763, ret loss: 0.693, fp loss: 1.498, KL loss: 10.155. 
+310000/6589500 (epoch 5) loss: 10.032, gen loss: 2.764, ret loss: 0.693, fp loss: 1.497, KL loss: 10.156. 
+320000/6589500 (epoch 5) loss: 10.033, gen loss: 2.765, ret loss: 0.693, fp loss: 1.497, KL loss: 10.157. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model5.ckpt. Average for epoch , loss: 10.033
+330000/6589500 (epoch 6) loss: 10.011, gen loss: 2.744, ret loss: 0.692, fp loss: 1.491, KL loss: 10.169. 
+340000/6589500 (epoch 6) loss: 10.036, gen loss: 2.765, ret loss: 0.692, fp loss: 1.495, KL loss: 10.168. 
+350000/6589500 (epoch 6) loss: 10.035, gen loss: 2.763, ret loss: 0.692, fp loss: 1.496, KL loss: 10.169. 
+360000/6589500 (epoch 6) loss: 10.029, gen loss: 2.758, ret loss: 0.691, fp loss: 1.496, KL loss: 10.168. 
+370000/6589500 (epoch 6) loss: 10.032, gen loss: 2.760, ret loss: 0.692, fp loss: 1.496, KL loss: 10.168. 
+380000/6589500 (epoch 6) loss: 10.030, gen loss: 2.759, ret loss: 0.692, fp loss: 1.494, KL loss: 10.169. 
+390000/6589500 (epoch 6) loss: 10.031, gen loss: 2.759, ret loss: 0.693, fp loss: 1.495, KL loss: 10.169. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model6.ckpt. Average for epoch , loss: 10.029
+400000/6589500 (epoch 7) loss: 10.009, gen loss: 2.756, ret loss: 0.692, fp loss: 1.487, KL loss: 10.148. 
+410000/6589500 (epoch 7) loss: 10.024, gen loss: 2.759, ret loss: 0.691, fp loss: 1.490, KL loss: 10.167. 
+420000/6589500 (epoch 7) loss: 10.021, gen loss: 2.759, ret loss: 0.690, fp loss: 1.490, KL loss: 10.164. 
+430000/6589500 (epoch 7) loss: 10.018, gen loss: 2.755, ret loss: 0.690, fp loss: 1.491, KL loss: 10.164. 
+440000/6589500 (epoch 7) loss: 10.020, gen loss: 2.756, ret loss: 0.691, fp loss: 1.491, KL loss: 10.164. 
+450000/6589500 (epoch 7) loss: 10.021, gen loss: 2.757, ret loss: 0.691, fp loss: 1.490, KL loss: 10.166. 
+460000/6589500 (epoch 7) loss: 10.022, gen loss: 2.757, ret loss: 0.691, fp loss: 1.490, KL loss: 10.167. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model7.ckpt. Average for epoch , loss: 10.022
+470000/6589500 (epoch 8) loss: 10.013, gen loss: 2.754, ret loss: 0.690, fp loss: 1.486, KL loss: 10.165. 
+480000/6589500 (epoch 8) loss: 10.019, gen loss: 2.756, ret loss: 0.689, fp loss: 1.488, KL loss: 10.170. 
+490000/6589500 (epoch 8) loss: 10.015, gen loss: 2.752, ret loss: 0.690, fp loss: 1.490, KL loss: 10.168. 
+500000/6589500 (epoch 8) loss: 10.018, gen loss: 2.754, ret loss: 0.690, fp loss: 1.490, KL loss: 10.169. 
+510000/6589500 (epoch 8) loss: 10.017, gen loss: 2.754, ret loss: 0.690, fp loss: 1.488, KL loss: 10.169. 
+520000/6589500 (epoch 8) loss: 10.019, gen loss: 2.755, ret loss: 0.691, fp loss: 1.489, KL loss: 10.171. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model8.ckpt. Average for epoch , loss: 10.018
+530000/6589500 (epoch 9) loss: 10.011, gen loss: 2.750, ret loss: 0.686, fp loss: 1.477, KL loss: 10.197. 
+540000/6589500 (epoch 9) loss: 10.022, gen loss: 2.758, ret loss: 0.687, fp loss: 1.486, KL loss: 10.181. 
+550000/6589500 (epoch 9) loss: 10.016, gen loss: 2.754, ret loss: 0.688, fp loss: 1.486, KL loss: 10.177. 
+560000/6589500 (epoch 9) loss: 10.012, gen loss: 2.749, ret loss: 0.688, fp loss: 1.486, KL loss: 10.178. 
+570000/6589500 (epoch 9) loss: 10.013, gen loss: 2.750, ret loss: 0.688, fp loss: 1.487, KL loss: 10.177. 
+580000/6589500 (epoch 9) loss: 10.013, gen loss: 2.751, ret loss: 0.689, fp loss: 1.485, KL loss: 10.176. 
+590000/6589500 (epoch 9) loss: 10.015, gen loss: 2.752, ret loss: 0.689, fp loss: 1.486, KL loss: 10.178. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model9.ckpt. Average for epoch , loss: 10.015
+600000/6589500 (epoch 10) loss: 10.012, gen loss: 2.753, ret loss: 0.688, fp loss: 1.480, KL loss: 10.181. 
+610000/6589500 (epoch 10) loss: 10.013, gen loss: 2.753, ret loss: 0.687, fp loss: 1.480, KL loss: 10.182. 
+620000/6589500 (epoch 10) loss: 10.012, gen loss: 2.751, ret loss: 0.687, fp loss: 1.483, KL loss: 10.180. 
+630000/6589500 (epoch 10) loss: 10.014, gen loss: 2.751, ret loss: 0.688, fp loss: 1.484, KL loss: 10.182. 
+640000/6589500 (epoch 10) loss: 10.013, gen loss: 2.751, ret loss: 0.688, fp loss: 1.482, KL loss: 10.182. 
+650000/6589500 (epoch 10) loss: 10.014, gen loss: 2.752, ret loss: 0.689, fp loss: 1.482, KL loss: 10.182. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model10.ckpt. Average for epoch , loss: 10.013
+660000/6589500 (epoch 11) loss: 10.011, gen loss: 2.749, ret loss: 0.686, fp loss: 1.476, KL loss: 10.199. 
+670000/6589500 (epoch 11) loss: 10.008, gen loss: 2.751, ret loss: 0.686, fp loss: 1.480, KL loss: 10.181. 
+680000/6589500 (epoch 11) loss: 10.008, gen loss: 2.751, ret loss: 0.686, fp loss: 1.481, KL loss: 10.180. 
+690000/6589500 (epoch 11) loss: 10.005, gen loss: 2.746, ret loss: 0.686, fp loss: 1.482, KL loss: 10.180. 
+700000/6589500 (epoch 11) loss: 10.009, gen loss: 2.749, ret loss: 0.687, fp loss: 1.483, KL loss: 10.180. 
+710000/6589500 (epoch 11) loss: 10.009, gen loss: 2.750, ret loss: 0.688, fp loss: 1.482, KL loss: 10.179. 
+720000/6589500 (epoch 11) loss: 10.012, gen loss: 2.751, ret loss: 0.688, fp loss: 1.482, KL loss: 10.182. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model11.ckpt. Average for epoch , loss: 10.011
+730000/6589500 (epoch 12) loss: 9.995, gen loss: 2.748, ret loss: 0.685, fp loss: 1.476, KL loss: 10.171. 
+740000/6589500 (epoch 12) loss: 10.007, gen loss: 2.750, ret loss: 0.686, fp loss: 1.480, KL loss: 10.183. 
+750000/6589500 (epoch 12) loss: 10.008, gen loss: 2.748, ret loss: 0.686, fp loss: 1.481, KL loss: 10.186. 
+760000/6589500 (epoch 12) loss: 10.007, gen loss: 2.746, ret loss: 0.687, fp loss: 1.481, KL loss: 10.187. 
+770000/6589500 (epoch 12) loss: 10.009, gen loss: 2.748, ret loss: 0.687, fp loss: 1.481, KL loss: 10.186. 
+780000/6589500 (epoch 12) loss: 10.009, gen loss: 2.748, ret loss: 0.687, fp loss: 1.480, KL loss: 10.187. 
+790000/6589500 (epoch 12) loss: 10.010, gen loss: 2.748, ret loss: 0.687, fp loss: 1.480, KL loss: 10.187. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model12.ckpt. Average for epoch , loss: 10.009
+800000/6589500 (epoch 13) loss: 10.011, gen loss: 2.752, ret loss: 0.686, fp loss: 1.478, KL loss: 10.189. 
+810000/6589500 (epoch 13) loss: 10.012, gen loss: 2.750, ret loss: 0.686, fp loss: 1.479, KL loss: 10.194. 
+820000/6589500 (epoch 13) loss: 10.003, gen loss: 2.745, ret loss: 0.686, fp loss: 1.478, KL loss: 10.189. 
+830000/6589500 (epoch 13) loss: 10.008, gen loss: 2.747, ret loss: 0.687, fp loss: 1.479, KL loss: 10.189. 
+840000/6589500 (epoch 13) loss: 10.006, gen loss: 2.748, ret loss: 0.687, fp loss: 1.477, KL loss: 10.189. 
+850000/6589500 (epoch 13) loss: 10.009, gen loss: 2.749, ret loss: 0.687, fp loss: 1.478, KL loss: 10.190. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model13.ckpt. Average for epoch , loss: 10.008
+860000/6589500 (epoch 14) loss: 10.002, gen loss: 2.749, ret loss: 0.685, fp loss: 1.473, KL loss: 10.189. 
+870000/6589500 (epoch 14) loss: 10.013, gen loss: 2.750, ret loss: 0.685, fp loss: 1.477, KL loss: 10.202. 
+880000/6589500 (epoch 14) loss: 10.008, gen loss: 2.747, ret loss: 0.685, fp loss: 1.476, KL loss: 10.200. 
+890000/6589500 (epoch 14) loss: 10.006, gen loss: 2.745, ret loss: 0.686, fp loss: 1.477, KL loss: 10.196. 
+900000/6589500 (epoch 14) loss: 10.006, gen loss: 2.746, ret loss: 0.686, fp loss: 1.476, KL loss: 10.193. 
+910000/6589500 (epoch 14) loss: 10.007, gen loss: 2.747, ret loss: 0.687, fp loss: 1.476, KL loss: 10.196. 
+920000/6589500 (epoch 14) loss: 10.009, gen loss: 2.747, ret loss: 0.687, fp loss: 1.477, KL loss: 10.197. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model14.ckpt. Average for epoch , loss: 10.008
+930000/6589500 (epoch 15) loss: 9.998, gen loss: 2.745, ret loss: 0.687, fp loss: 1.476, KL loss: 10.181. 
+940000/6589500 (epoch 15) loss: 10.005, gen loss: 2.744, ret loss: 0.688, fp loss: 1.476, KL loss: 10.194. 
+950000/6589500 (epoch 15) loss: 10.002, gen loss: 2.741, ret loss: 0.688, fp loss: 1.479, KL loss: 10.188. 
+960000/6589500 (epoch 15) loss: 10.005, gen loss: 2.743, ret loss: 0.688, fp loss: 1.479, KL loss: 10.188. 
+970000/6589500 (epoch 15) loss: 10.005, gen loss: 2.744, ret loss: 0.688, fp loss: 1.479, KL loss: 10.189. 
+980000/6589500 (epoch 15) loss: 10.007, gen loss: 2.746, ret loss: 0.688, fp loss: 1.479, KL loss: 10.190. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model15.ckpt. Average for epoch , loss: 10.006
+990000/6589500 (epoch 16) loss: 10.009, gen loss: 2.749, ret loss: 0.685, fp loss: 1.469, KL loss: 10.213. 
+1000000/6589500 (epoch 16) loss: 10.009, gen loss: 2.751, ret loss: 0.685, fp loss: 1.473, KL loss: 10.198. 
+1010000/6589500 (epoch 16) loss: 10.009, gen loss: 2.749, ret loss: 0.685, fp loss: 1.474, KL loss: 10.201. 
+1020000/6589500 (epoch 16) loss: 10.005, gen loss: 2.747, ret loss: 0.685, fp loss: 1.476, KL loss: 10.197. 
+1030000/6589500 (epoch 16) loss: 10.007, gen loss: 2.748, ret loss: 0.686, fp loss: 1.477, KL loss: 10.194. 
+1040000/6589500 (epoch 16) loss: 10.006, gen loss: 2.748, ret loss: 0.686, fp loss: 1.475, KL loss: 10.193. 
+1050000/6589500 (epoch 16) loss: 10.008, gen loss: 2.748, ret loss: 0.686, fp loss: 1.476, KL loss: 10.195. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model16.ckpt. Average for epoch , loss: 10.007
+1060000/6589500 (epoch 17) loss: 9.996, gen loss: 2.748, ret loss: 0.686, fp loss: 1.472, KL loss: 10.181. 
+1070000/6589500 (epoch 17) loss: 10.002, gen loss: 2.747, ret loss: 0.684, fp loss: 1.471, KL loss: 10.199. 
+1080000/6589500 (epoch 17) loss: 10.004, gen loss: 2.746, ret loss: 0.685, fp loss: 1.475, KL loss: 10.197. 
+1090000/6589500 (epoch 17) loss: 10.005, gen loss: 2.746, ret loss: 0.686, fp loss: 1.475, KL loss: 10.196. 
+1100000/6589500 (epoch 17) loss: 10.005, gen loss: 2.747, ret loss: 0.686, fp loss: 1.475, KL loss: 10.194. 
+1110000/6589500 (epoch 17) loss: 10.006, gen loss: 2.749, ret loss: 0.687, fp loss: 1.474, KL loss: 10.193. 
+1120000/6589500 (epoch 17) loss: 10.007, gen loss: 2.749, ret loss: 0.686, fp loss: 1.474, KL loss: 10.196. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model17.ckpt. Average for epoch , loss: 10.007
+1130000/6589500 (epoch 18) loss: 10.002, gen loss: 2.748, ret loss: 0.685, fp loss: 1.471, KL loss: 10.196. 
+1140000/6589500 (epoch 18) loss: 10.005, gen loss: 2.749, ret loss: 0.684, fp loss: 1.472, KL loss: 10.201. 
+1150000/6589500 (epoch 18) loss: 10.001, gen loss: 2.743, ret loss: 0.685, fp loss: 1.473, KL loss: 10.198. 
+1160000/6589500 (epoch 18) loss: 10.004, gen loss: 2.745, ret loss: 0.685, fp loss: 1.475, KL loss: 10.198. 
+1170000/6589500 (epoch 18) loss: 10.004, gen loss: 2.747, ret loss: 0.685, fp loss: 1.474, KL loss: 10.196. 
+1180000/6589500 (epoch 18) loss: 10.006, gen loss: 2.747, ret loss: 0.685, fp loss: 1.474, KL loss: 10.199. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model18.ckpt. Average for epoch , loss: 10.005
+1190000/6589500 (epoch 19) loss: 9.999, gen loss: 2.751, ret loss: 0.682, fp loss: 1.466, KL loss: 10.201. 
+1200000/6589500 (epoch 19) loss: 10.003, gen loss: 2.747, ret loss: 0.683, fp loss: 1.472, KL loss: 10.201. 
+1210000/6589500 (epoch 19) loss: 9.999, gen loss: 2.745, ret loss: 0.683, fp loss: 1.473, KL loss: 10.194. 
+1220000/6589500 (epoch 19) loss: 9.999, gen loss: 2.743, ret loss: 0.684, fp loss: 1.474, KL loss: 10.194. 
+1230000/6589500 (epoch 19) loss: 10.000, gen loss: 2.745, ret loss: 0.685, fp loss: 1.473, KL loss: 10.194. 
+1240000/6589500 (epoch 19) loss: 10.002, gen loss: 2.748, ret loss: 0.686, fp loss: 1.472, KL loss: 10.194. 
+1250000/6589500 (epoch 19) loss: 10.004, gen loss: 2.749, ret loss: 0.686, fp loss: 1.472, KL loss: 10.196. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model19.ckpt. Average for epoch , loss: 10.003
+1260000/6589500 (epoch 20) loss: 10.003, gen loss: 2.747, ret loss: 0.686, fp loss: 1.472, KL loss: 10.195. 
+1270000/6589500 (epoch 20) loss: 10.007, gen loss: 2.748, ret loss: 0.686, fp loss: 1.473, KL loss: 10.201. 
+1280000/6589500 (epoch 20) loss: 10.001, gen loss: 2.744, ret loss: 0.685, fp loss: 1.474, KL loss: 10.197. 
+1290000/6589500 (epoch 20) loss: 10.005, gen loss: 2.745, ret loss: 0.686, fp loss: 1.474, KL loss: 10.200. 
+1300000/6589500 (epoch 20) loss: 10.005, gen loss: 2.746, ret loss: 0.686, fp loss: 1.473, KL loss: 10.200. 
+1310000/6589500 (epoch 20) loss: 10.007, gen loss: 2.746, ret loss: 0.686, fp loss: 1.474, KL loss: 10.202. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model20.ckpt. Average for epoch , loss: 10.006
+1320000/6589500 (epoch 21) loss: 10.008, gen loss: 2.748, ret loss: 0.688, fp loss: 1.474, KL loss: 10.199. 
+1330000/6589500 (epoch 21) loss: 10.006, gen loss: 2.747, ret loss: 0.685, fp loss: 1.473, KL loss: 10.201. 
+1340000/6589500 (epoch 21) loss: 10.003, gen loss: 2.747, ret loss: 0.685, fp loss: 1.473, KL loss: 10.197. 
+1350000/6589500 (epoch 21) loss: 9.999, gen loss: 2.742, ret loss: 0.685, fp loss: 1.474, KL loss: 10.197. 
+1360000/6589500 (epoch 21) loss: 10.003, gen loss: 2.745, ret loss: 0.686, fp loss: 1.474, KL loss: 10.197. 
+1370000/6589500 (epoch 21) loss: 10.002, gen loss: 2.745, ret loss: 0.686, fp loss: 1.473, KL loss: 10.198. 
+1380000/6589500 (epoch 21) loss: 10.004, gen loss: 2.745, ret loss: 0.686, fp loss: 1.474, KL loss: 10.200. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model21.ckpt. Average for epoch , loss: 10.004
+1390000/6589500 (epoch 22) loss: 9.997, gen loss: 2.745, ret loss: 0.685, fp loss: 1.468, KL loss: 10.199. 
+1400000/6589500 (epoch 22) loss: 9.999, gen loss: 2.743, ret loss: 0.685, fp loss: 1.468, KL loss: 10.206. 
+1410000/6589500 (epoch 22) loss: 10.002, gen loss: 2.742, ret loss: 0.685, fp loss: 1.472, KL loss: 10.207. 
+1420000/6589500 (epoch 22) loss: 10.002, gen loss: 2.742, ret loss: 0.685, fp loss: 1.472, KL loss: 10.207. 
+1430000/6589500 (epoch 22) loss: 10.003, gen loss: 2.743, ret loss: 0.685, fp loss: 1.472, KL loss: 10.205. 
+1440000/6589500 (epoch 22) loss: 10.004, gen loss: 2.745, ret loss: 0.685, fp loss: 1.472, KL loss: 10.204. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model22.ckpt. Average for epoch , loss: 10.005
+1450000/6589500 (epoch 23) loss: 9.986, gen loss: 2.733, ret loss: 0.672, fp loss: 1.458, KL loss: 10.247. 
+1460000/6589500 (epoch 23) loss: 10.005, gen loss: 2.746, ret loss: 0.682, fp loss: 1.474, KL loss: 10.208. 
+1470000/6589500 (epoch 23) loss: 10.007, gen loss: 2.747, ret loss: 0.682, fp loss: 1.474, KL loss: 10.208. 
+1480000/6589500 (epoch 23) loss: 10.001, gen loss: 2.743, ret loss: 0.684, fp loss: 1.473, KL loss: 10.205. 
+1490000/6589500 (epoch 23) loss: 10.004, gen loss: 2.745, ret loss: 0.684, fp loss: 1.474, KL loss: 10.202. 
+1500000/6589500 (epoch 23) loss: 10.002, gen loss: 2.746, ret loss: 0.685, fp loss: 1.472, KL loss: 10.200. 
+1510000/6589500 (epoch 23) loss: 10.005, gen loss: 2.747, ret loss: 0.685, fp loss: 1.472, KL loss: 10.201. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model23.ckpt. Average for epoch , loss: 10.004
+1520000/6589500 (epoch 24) loss: 9.993, gen loss: 2.750, ret loss: 0.683, fp loss: 1.467, KL loss: 10.187. 
+1530000/6589500 (epoch 24) loss: 10.002, gen loss: 2.749, ret loss: 0.683, fp loss: 1.468, KL loss: 10.203. 
+1540000/6589500 (epoch 24) loss: 10.002, gen loss: 2.751, ret loss: 0.682, fp loss: 1.469, KL loss: 10.200. 
+1550000/6589500 (epoch 24) loss: 10.000, gen loss: 2.747, ret loss: 0.683, fp loss: 1.471, KL loss: 10.199. 
+1560000/6589500 (epoch 24) loss: 10.003, gen loss: 2.748, ret loss: 0.684, fp loss: 1.472, KL loss: 10.197. 
+1570000/6589500 (epoch 24) loss: 10.003, gen loss: 2.749, ret loss: 0.684, fp loss: 1.471, KL loss: 10.198. 
+1580000/6589500 (epoch 24) loss: 10.005, gen loss: 2.750, ret loss: 0.684, fp loss: 1.472, KL loss: 10.199. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model24.ckpt. Average for epoch , loss: 10.005
+1590000/6589500 (epoch 25) loss: 9.999, gen loss: 2.750, ret loss: 0.684, fp loss: 1.471, KL loss: 10.189. 
+1600000/6589500 (epoch 25) loss: 10.006, gen loss: 2.750, ret loss: 0.683, fp loss: 1.472, KL loss: 10.203. 
+1610000/6589500 (epoch 25) loss: 10.003, gen loss: 2.748, ret loss: 0.683, fp loss: 1.473, KL loss: 10.199. 
+1620000/6589500 (epoch 25) loss: 10.006, gen loss: 2.750, ret loss: 0.683, fp loss: 1.474, KL loss: 10.196. 
+1630000/6589500 (epoch 25) loss: 10.005, gen loss: 2.752, ret loss: 0.683, fp loss: 1.472, KL loss: 10.196. 
+1640000/6589500 (epoch 25) loss: 10.007, gen loss: 2.752, ret loss: 0.684, fp loss: 1.472, KL loss: 10.198. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model25.ckpt. Average for epoch , loss: 10.006
+1650000/6589500 (epoch 26) loss: 9.983, gen loss: 2.746, ret loss: 0.682, fp loss: 1.461, KL loss: 10.190. 
+1660000/6589500 (epoch 26) loss: 10.001, gen loss: 2.751, ret loss: 0.681, fp loss: 1.472, KL loss: 10.192. 
+1670000/6589500 (epoch 26) loss: 10.005, gen loss: 2.751, ret loss: 0.682, fp loss: 1.472, KL loss: 10.198. 
+1680000/6589500 (epoch 26) loss: 10.002, gen loss: 2.748, ret loss: 0.683, fp loss: 1.472, KL loss: 10.198. 
+1690000/6589500 (epoch 26) loss: 10.005, gen loss: 2.750, ret loss: 0.684, fp loss: 1.472, KL loss: 10.197. 
+1700000/6589500 (epoch 26) loss: 10.004, gen loss: 2.751, ret loss: 0.684, fp loss: 1.471, KL loss: 10.196. 
+1710000/6589500 (epoch 26) loss: 10.006, gen loss: 2.753, ret loss: 0.684, fp loss: 1.472, KL loss: 10.195. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model26.ckpt. Average for epoch , loss: 10.006
+1720000/6589500 (epoch 27) loss: 10.001, gen loss: 2.753, ret loss: 0.686, fp loss: 1.470, KL loss: 10.184. 
+1730000/6589500 (epoch 27) loss: 10.006, gen loss: 2.755, ret loss: 0.685, fp loss: 1.469, KL loss: 10.194. 
+1740000/6589500 (epoch 27) loss: 10.007, gen loss: 2.754, ret loss: 0.683, fp loss: 1.472, KL loss: 10.194. 
+1750000/6589500 (epoch 27) loss: 10.007, gen loss: 2.754, ret loss: 0.684, fp loss: 1.473, KL loss: 10.193. 
+1760000/6589500 (epoch 27) loss: 10.008, gen loss: 2.756, ret loss: 0.684, fp loss: 1.472, KL loss: 10.192. 
+1770000/6589500 (epoch 27) loss: 10.010, gen loss: 2.758, ret loss: 0.684, fp loss: 1.471, KL loss: 10.193. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model27.ckpt. Average for epoch , loss: 10.009
+1780000/6589500 (epoch 28) loss: 10.009, gen loss: 2.757, ret loss: 0.688, fp loss: 1.470, KL loss: 10.190. 
+1790000/6589500 (epoch 28) loss: 10.016, gen loss: 2.763, ret loss: 0.684, fp loss: 1.469, KL loss: 10.200. 
+1800000/6589500 (epoch 28) loss: 10.013, gen loss: 2.758, ret loss: 0.684, fp loss: 1.470, KL loss: 10.201. 
+1810000/6589500 (epoch 28) loss: 10.007, gen loss: 2.754, ret loss: 0.685, fp loss: 1.470, KL loss: 10.197. 
+1820000/6589500 (epoch 28) loss: 10.009, gen loss: 2.755, ret loss: 0.685, fp loss: 1.472, KL loss: 10.196. 
+1830000/6589500 (epoch 28) loss: 10.009, gen loss: 2.755, ret loss: 0.685, fp loss: 1.471, KL loss: 10.195. 
+1840000/6589500 (epoch 28) loss: 10.011, gen loss: 2.756, ret loss: 0.685, fp loss: 1.472, KL loss: 10.198. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model28.ckpt. Average for epoch , loss: 10.010
+1850000/6589500 (epoch 29) loss: 9.997, gen loss: 2.755, ret loss: 0.683, fp loss: 1.464, KL loss: 10.190. 
+1860000/6589500 (epoch 29) loss: 10.008, gen loss: 2.759, ret loss: 0.682, fp loss: 1.467, KL loss: 10.199. 
+1870000/6589500 (epoch 29) loss: 10.010, gen loss: 2.760, ret loss: 0.682, fp loss: 1.469, KL loss: 10.197. 
+1880000/6589500 (epoch 29) loss: 10.009, gen loss: 2.757, ret loss: 0.683, fp loss: 1.470, KL loss: 10.197. 
+1890000/6589500 (epoch 29) loss: 10.011, gen loss: 2.758, ret loss: 0.683, fp loss: 1.471, KL loss: 10.197. 
+1900000/6589500 (epoch 29) loss: 10.012, gen loss: 2.759, ret loss: 0.684, fp loss: 1.470, KL loss: 10.199. 
+1910000/6589500 (epoch 29) loss: 10.013, gen loss: 2.759, ret loss: 0.684, fp loss: 1.470, KL loss: 10.199. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model29.ckpt. Average for epoch , loss: 10.012
+1920000/6589500 (epoch 30) loss: 10.003, gen loss: 2.759, ret loss: 0.682, fp loss: 1.467, KL loss: 10.191. 
+1930000/6589500 (epoch 30) loss: 10.009, gen loss: 2.759, ret loss: 0.684, fp loss: 1.469, KL loss: 10.196. 
+1940000/6589500 (epoch 30) loss: 10.006, gen loss: 2.755, ret loss: 0.684, fp loss: 1.470, KL loss: 10.193. 
+1950000/6589500 (epoch 30) loss: 10.010, gen loss: 2.757, ret loss: 0.685, fp loss: 1.472, KL loss: 10.192. 
+1960000/6589500 (epoch 30) loss: 10.011, gen loss: 2.758, ret loss: 0.685, fp loss: 1.471, KL loss: 10.193. 
+1970000/6589500 (epoch 30) loss: 10.013, gen loss: 2.759, ret loss: 0.685, fp loss: 1.472, KL loss: 10.195. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model30.ckpt. Average for epoch , loss: 10.012
+1980000/6589500 (epoch 31) loss: 10.008, gen loss: 2.759, ret loss: 0.684, fp loss: 1.467, KL loss: 10.196. 
+1990000/6589500 (epoch 31) loss: 10.013, gen loss: 2.757, ret loss: 0.684, fp loss: 1.472, KL loss: 10.199. 
+2000000/6589500 (epoch 31) loss: 10.011, gen loss: 2.756, ret loss: 0.683, fp loss: 1.474, KL loss: 10.194. 
+2010000/6589500 (epoch 31) loss: 10.008, gen loss: 2.751, ret loss: 0.684, fp loss: 1.475, KL loss: 10.196. 
+2020000/6589500 (epoch 31) loss: 10.011, gen loss: 2.754, ret loss: 0.683, fp loss: 1.475, KL loss: 10.196. 
+2030000/6589500 (epoch 31) loss: 10.011, gen loss: 2.755, ret loss: 0.684, fp loss: 1.473, KL loss: 10.196. 
+2040000/6589500 (epoch 31) loss: 10.012, gen loss: 2.755, ret loss: 0.684, fp loss: 1.474, KL loss: 10.198. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model31.ckpt. Average for epoch , loss: 10.012
+2050000/6589500 (epoch 32) loss: 10.011, gen loss: 2.759, ret loss: 0.682, fp loss: 1.469, KL loss: 10.203. 
+2060000/6589500 (epoch 32) loss: 10.009, gen loss: 2.755, ret loss: 0.682, fp loss: 1.469, KL loss: 10.204. 
+2070000/6589500 (epoch 32) loss: 10.007, gen loss: 2.753, ret loss: 0.682, fp loss: 1.472, KL loss: 10.198. 
+2080000/6589500 (epoch 32) loss: 10.010, gen loss: 2.754, ret loss: 0.683, fp loss: 1.474, KL loss: 10.197. 
+2090000/6589500 (epoch 32) loss: 10.010, gen loss: 2.756, ret loss: 0.684, fp loss: 1.473, KL loss: 10.193. 
+2100000/6589500 (epoch 32) loss: 10.013, gen loss: 2.758, ret loss: 0.684, fp loss: 1.474, KL loss: 10.193. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model32.ckpt. Average for epoch , loss: 10.013
+2110000/6589500 (epoch 33) loss: 10.001, gen loss: 2.762, ret loss: 0.681, fp loss: 1.464, KL loss: 10.189. 
+2120000/6589500 (epoch 33) loss: 10.016, gen loss: 2.763, ret loss: 0.685, fp loss: 1.470, KL loss: 10.195. 
+2130000/6589500 (epoch 33) loss: 10.014, gen loss: 2.763, ret loss: 0.684, fp loss: 1.470, KL loss: 10.194. 
+2140000/6589500 (epoch 33) loss: 10.008, gen loss: 2.757, ret loss: 0.684, fp loss: 1.471, KL loss: 10.191. 
+2150000/6589500 (epoch 33) loss: 10.012, gen loss: 2.758, ret loss: 0.685, fp loss: 1.473, KL loss: 10.193. 
+2160000/6589500 (epoch 33) loss: 10.011, gen loss: 2.758, ret loss: 0.685, fp loss: 1.471, KL loss: 10.194. 
+2170000/6589500 (epoch 33) loss: 10.013, gen loss: 2.759, ret loss: 0.685, fp loss: 1.472, KL loss: 10.194. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model33.ckpt. Average for epoch , loss: 10.012
+2180000/6589500 (epoch 34) loss: 10.005, gen loss: 2.753, ret loss: 0.682, fp loss: 1.477, KL loss: 10.186. 
+2190000/6589500 (epoch 34) loss: 10.010, gen loss: 2.754, ret loss: 0.683, fp loss: 1.475, KL loss: 10.196. 
+2200000/6589500 (epoch 34) loss: 10.013, gen loss: 2.758, ret loss: 0.682, fp loss: 1.478, KL loss: 10.191. 
+2210000/6589500 (epoch 34) loss: 10.013, gen loss: 2.756, ret loss: 0.683, fp loss: 1.478, KL loss: 10.191. 
+2220000/6589500 (epoch 34) loss: 10.016, gen loss: 2.758, ret loss: 0.684, fp loss: 1.480, KL loss: 10.190. 
+2230000/6589500 (epoch 34) loss: 10.018, gen loss: 2.759, ret loss: 0.685, fp loss: 1.479, KL loss: 10.190. 
+2240000/6589500 (epoch 34) loss: 10.017, gen loss: 2.759, ret loss: 0.684, fp loss: 1.479, KL loss: 10.190. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model34.ckpt. Average for epoch , loss: 10.017
+2250000/6589500 (epoch 35) loss: 10.014, gen loss: 2.761, ret loss: 0.684, fp loss: 1.474, KL loss: 10.189. 
+2260000/6589500 (epoch 35) loss: 10.016, gen loss: 2.763, ret loss: 0.683, fp loss: 1.472, KL loss: 10.194. 
+2270000/6589500 (epoch 35) loss: 10.010, gen loss: 2.758, ret loss: 0.683, fp loss: 1.473, KL loss: 10.191. 
+2280000/6589500 (epoch 35) loss: 10.015, gen loss: 2.760, ret loss: 0.684, fp loss: 1.475, KL loss: 10.192. 
+2290000/6589500 (epoch 35) loss: 10.014, gen loss: 2.762, ret loss: 0.684, fp loss: 1.473, KL loss: 10.191. 
+2300000/6589500 (epoch 35) loss: 10.015, gen loss: 2.761, ret loss: 0.685, fp loss: 1.473, KL loss: 10.192. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model35.ckpt. Average for epoch , loss: 10.015
+2310000/6589500 (epoch 36) loss: 10.000, gen loss: 2.751, ret loss: 0.682, fp loss: 1.477, KL loss: 10.180. 
+2320000/6589500 (epoch 36) loss: 10.016, gen loss: 2.756, ret loss: 0.684, fp loss: 1.478, KL loss: 10.196. 
+2330000/6589500 (epoch 36) loss: 10.015, gen loss: 2.757, ret loss: 0.684, fp loss: 1.478, KL loss: 10.193. 
+2340000/6589500 (epoch 36) loss: 10.012, gen loss: 2.756, ret loss: 0.684, fp loss: 1.477, KL loss: 10.190. 
+2350000/6589500 (epoch 36) loss: 10.015, gen loss: 2.759, ret loss: 0.684, fp loss: 1.477, KL loss: 10.190. 
+2360000/6589500 (epoch 36) loss: 10.016, gen loss: 2.761, ret loss: 0.685, fp loss: 1.475, KL loss: 10.190. 
+2370000/6589500 (epoch 36) loss: 10.017, gen loss: 2.762, ret loss: 0.685, fp loss: 1.475, KL loss: 10.190. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model36.ckpt. Average for epoch , loss: 10.017
+2380000/6589500 (epoch 37) loss: 10.013, gen loss: 2.767, ret loss: 0.681, fp loss: 1.473, KL loss: 10.185. 
+2390000/6589500 (epoch 37) loss: 10.015, gen loss: 2.768, ret loss: 0.682, fp loss: 1.470, KL loss: 10.190. 
+2400000/6589500 (epoch 37) loss: 10.014, gen loss: 2.765, ret loss: 0.683, fp loss: 1.473, KL loss: 10.186. 
+2410000/6589500 (epoch 37) loss: 10.017, gen loss: 2.766, ret loss: 0.685, fp loss: 1.474, KL loss: 10.184. 
+2420000/6589500 (epoch 37) loss: 10.018, gen loss: 2.766, ret loss: 0.685, fp loss: 1.474, KL loss: 10.185. 
+2430000/6589500 (epoch 37) loss: 10.019, gen loss: 2.768, ret loss: 0.686, fp loss: 1.474, KL loss: 10.184. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model37.ckpt. Average for epoch , loss: 10.019
+2440000/6589500 (epoch 38) loss: 10.020, gen loss: 2.769, ret loss: 0.683, fp loss: 1.470, KL loss: 10.196. 
+2450000/6589500 (epoch 38) loss: 10.020, gen loss: 2.764, ret loss: 0.683, fp loss: 1.477, KL loss: 10.193. 
+2460000/6589500 (epoch 38) loss: 10.017, gen loss: 2.761, ret loss: 0.684, fp loss: 1.474, KL loss: 10.196. 
+2470000/6589500 (epoch 38) loss: 10.013, gen loss: 2.756, ret loss: 0.685, fp loss: 1.474, KL loss: 10.195. 
+2480000/6589500 (epoch 38) loss: 10.015, gen loss: 2.759, ret loss: 0.685, fp loss: 1.473, KL loss: 10.195. 
+2490000/6589500 (epoch 38) loss: 10.014, gen loss: 2.759, ret loss: 0.685, fp loss: 1.472, KL loss: 10.195. 
+2500000/6589500 (epoch 38) loss: 10.016, gen loss: 2.760, ret loss: 0.686, fp loss: 1.473, KL loss: 10.196. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model38.ckpt. Average for epoch , loss: 10.017
+2510000/6589500 (epoch 39) loss: 10.010, gen loss: 2.764, ret loss: 0.686, fp loss: 1.466, KL loss: 10.190. 
+2520000/6589500 (epoch 39) loss: 10.016, gen loss: 2.768, ret loss: 0.685, fp loss: 1.467, KL loss: 10.192. 
+2530000/6589500 (epoch 39) loss: 10.017, gen loss: 2.765, ret loss: 0.686, fp loss: 1.470, KL loss: 10.192. 
+2540000/6589500 (epoch 39) loss: 10.018, gen loss: 2.764, ret loss: 0.687, fp loss: 1.470, KL loss: 10.194. 
+2550000/6589500 (epoch 39) loss: 10.017, gen loss: 2.764, ret loss: 0.687, fp loss: 1.469, KL loss: 10.194. 
+2560000/6589500 (epoch 39) loss: 10.019, gen loss: 2.765, ret loss: 0.688, fp loss: 1.469, KL loss: 10.196. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model39.ckpt. Average for epoch , loss: 10.019
+2570000/6589500 (epoch 40) loss: 10.106, gen loss: 2.799, ret loss: 0.689, fp loss: 1.483, KL loss: 10.271. 
+2580000/6589500 (epoch 40) loss: 10.018, gen loss: 2.768, ret loss: 0.683, fp loss: 1.471, KL loss: 10.192. 
+2590000/6589500 (epoch 40) loss: 10.019, gen loss: 2.769, ret loss: 0.684, fp loss: 1.470, KL loss: 10.193. 
+2600000/6589500 (epoch 40) loss: 10.017, gen loss: 2.767, ret loss: 0.684, fp loss: 1.470, KL loss: 10.189. 
+2610000/6589500 (epoch 40) loss: 10.019, gen loss: 2.769, ret loss: 0.685, fp loss: 1.471, KL loss: 10.189. 
+2620000/6589500 (epoch 40) loss: 10.018, gen loss: 2.769, ret loss: 0.685, fp loss: 1.469, KL loss: 10.189. 
+2630000/6589500 (epoch 40) loss: 10.020, gen loss: 2.769, ret loss: 0.686, fp loss: 1.470, KL loss: 10.190. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model40.ckpt. Average for epoch , loss: 10.020
+2640000/6589500 (epoch 41) loss: 10.011, gen loss: 2.771, ret loss: 0.685, fp loss: 1.466, KL loss: 10.179. 
+2650000/6589500 (epoch 41) loss: 10.020, gen loss: 2.770, ret loss: 0.685, fp loss: 1.469, KL loss: 10.192. 
+2660000/6589500 (epoch 41) loss: 10.018, gen loss: 2.769, ret loss: 0.684, fp loss: 1.470, KL loss: 10.192. 
+2670000/6589500 (epoch 41) loss: 10.016, gen loss: 2.766, ret loss: 0.684, fp loss: 1.471, KL loss: 10.189. 
+2680000/6589500 (epoch 41) loss: 10.017, gen loss: 2.768, ret loss: 0.684, fp loss: 1.471, KL loss: 10.189. 
+2690000/6589500 (epoch 41) loss: 10.018, gen loss: 2.768, ret loss: 0.685, fp loss: 1.470, KL loss: 10.191. 
+2700000/6589500 (epoch 41) loss: 10.020, gen loss: 2.768, ret loss: 0.685, fp loss: 1.470, KL loss: 10.194. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model41.ckpt. Average for epoch , loss: 10.020
+2710000/6589500 (epoch 42) loss: 10.023, gen loss: 2.771, ret loss: 0.685, fp loss: 1.471, KL loss: 10.192. 
+2720000/6589500 (epoch 42) loss: 10.025, gen loss: 2.772, ret loss: 0.685, fp loss: 1.471, KL loss: 10.193. 
+2730000/6589500 (epoch 42) loss: 10.021, gen loss: 2.769, ret loss: 0.684, fp loss: 1.473, KL loss: 10.189. 
+2740000/6589500 (epoch 42) loss: 10.022, gen loss: 2.770, ret loss: 0.685, fp loss: 1.473, KL loss: 10.188. 
+2750000/6589500 (epoch 42) loss: 10.023, gen loss: 2.770, ret loss: 0.686, fp loss: 1.474, KL loss: 10.186. 
+2760000/6589500 (epoch 42) loss: 10.027, gen loss: 2.772, ret loss: 0.687, fp loss: 1.476, KL loss: 10.186. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model42.ckpt. Average for epoch , loss: 10.025
+2770000/6589500 (epoch 43) loss: 10.006, gen loss: 2.769, ret loss: 0.685, fp loss: 1.466, KL loss: 10.173. 
+2780000/6589500 (epoch 43) loss: 10.027, gen loss: 2.778, ret loss: 0.683, fp loss: 1.475, KL loss: 10.182. 
+2790000/6589500 (epoch 43) loss: 10.031, gen loss: 2.778, ret loss: 0.685, fp loss: 1.476, KL loss: 10.183. 
+2800000/6589500 (epoch 43) loss: 10.024, gen loss: 2.772, ret loss: 0.687, fp loss: 1.476, KL loss: 10.179. 
+2810000/6589500 (epoch 43) loss: 10.027, gen loss: 2.773, ret loss: 0.688, fp loss: 1.476, KL loss: 10.181. 
+2820000/6589500 (epoch 43) loss: 10.026, gen loss: 2.773, ret loss: 0.688, fp loss: 1.474, KL loss: 10.180. 
+2830000/6589500 (epoch 43) loss: 10.028, gen loss: 2.774, ret loss: 0.688, fp loss: 1.475, KL loss: 10.183. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model43.ckpt. Average for epoch , loss: 10.028
+2840000/6589500 (epoch 44) loss: 10.025, gen loss: 2.777, ret loss: 0.687, fp loss: 1.473, KL loss: 10.176. 
+2850000/6589500 (epoch 44) loss: 10.030, gen loss: 2.781, ret loss: 0.686, fp loss: 1.472, KL loss: 10.182. 
+2860000/6589500 (epoch 44) loss: 10.031, gen loss: 2.777, ret loss: 0.686, fp loss: 1.475, KL loss: 10.185. 
+2870000/6589500 (epoch 44) loss: 10.032, gen loss: 2.778, ret loss: 0.687, fp loss: 1.475, KL loss: 10.185. 
+2880000/6589500 (epoch 44) loss: 10.032, gen loss: 2.778, ret loss: 0.687, fp loss: 1.474, KL loss: 10.184. 
+2890000/6589500 (epoch 44) loss: 10.033, gen loss: 2.779, ret loss: 0.688, fp loss: 1.474, KL loss: 10.185. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model44.ckpt. Average for epoch , loss: 10.032
+2900000/6589500 (epoch 45) loss: 10.004, gen loss: 2.761, ret loss: 0.690, fp loss: 1.464, KL loss: 10.178. 
+2910000/6589500 (epoch 45) loss: 10.033, gen loss: 2.781, ret loss: 0.687, fp loss: 1.472, KL loss: 10.186. 
+2920000/6589500 (epoch 45) loss: 10.033, gen loss: 2.779, ret loss: 0.687, fp loss: 1.472, KL loss: 10.189. 
+2930000/6589500 (epoch 45) loss: 10.025, gen loss: 2.775, ret loss: 0.687, fp loss: 1.472, KL loss: 10.182. 
+2940000/6589500 (epoch 45) loss: 10.029, gen loss: 2.776, ret loss: 0.688, fp loss: 1.472, KL loss: 10.184. 
+2950000/6589500 (epoch 45) loss: 10.028, gen loss: 2.777, ret loss: 0.689, fp loss: 1.471, KL loss: 10.183. 
+2960000/6589500 (epoch 45) loss: 10.031, gen loss: 2.778, ret loss: 0.689, fp loss: 1.472, KL loss: 10.184. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model45.ckpt. Average for epoch , loss: 10.030
+2970000/6589500 (epoch 46) loss: 10.019, gen loss: 2.781, ret loss: 0.687, fp loss: 1.469, KL loss: 10.165. 
+2980000/6589500 (epoch 46) loss: 10.030, gen loss: 2.780, ret loss: 0.688, fp loss: 1.472, KL loss: 10.180. 
+2990000/6589500 (epoch 46) loss: 10.028, gen loss: 2.778, ret loss: 0.687, fp loss: 1.472, KL loss: 10.182. 
+3000000/6589500 (epoch 46) loss: 10.026, gen loss: 2.775, ret loss: 0.688, fp loss: 1.471, KL loss: 10.184. 
+3010000/6589500 (epoch 46) loss: 10.029, gen loss: 2.776, ret loss: 0.689, fp loss: 1.471, KL loss: 10.186. 
+3020000/6589500 (epoch 46) loss: 10.030, gen loss: 2.778, ret loss: 0.689, fp loss: 1.470, KL loss: 10.188. 
+3030000/6589500 (epoch 46) loss: 10.031, gen loss: 2.779, ret loss: 0.688, fp loss: 1.470, KL loss: 10.189. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model46.ckpt. Average for epoch , loss: 10.030
+3040000/6589500 (epoch 47) loss: 10.028, gen loss: 2.786, ret loss: 0.685, fp loss: 1.463, KL loss: 10.188. 
+3050000/6589500 (epoch 47) loss: 10.030, gen loss: 2.785, ret loss: 0.685, fp loss: 1.464, KL loss: 10.193. 
+3060000/6589500 (epoch 47) loss: 10.024, gen loss: 2.779, ret loss: 0.686, fp loss: 1.466, KL loss: 10.189. 
+3070000/6589500 (epoch 47) loss: 10.029, gen loss: 2.779, ret loss: 0.687, fp loss: 1.467, KL loss: 10.192. 
+3080000/6589500 (epoch 47) loss: 10.028, gen loss: 2.779, ret loss: 0.688, fp loss: 1.466, KL loss: 10.192. 
+3090000/6589500 (epoch 47) loss: 10.030, gen loss: 2.779, ret loss: 0.688, fp loss: 1.467, KL loss: 10.193. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model47.ckpt. Average for epoch , loss: 10.028
+3100000/6589500 (epoch 48) loss: 10.023, gen loss: 2.775, ret loss: 0.689, fp loss: 1.459, KL loss: 10.201. 
+3110000/6589500 (epoch 48) loss: 10.030, gen loss: 2.777, ret loss: 0.688, fp loss: 1.466, KL loss: 10.198. 
+3120000/6589500 (epoch 48) loss: 10.028, gen loss: 2.776, ret loss: 0.688, fp loss: 1.465, KL loss: 10.197. 
+3130000/6589500 (epoch 48) loss: 10.025, gen loss: 2.773, ret loss: 0.690, fp loss: 1.466, KL loss: 10.194. 
+3140000/6589500 (epoch 48) loss: 10.029, gen loss: 2.775, ret loss: 0.690, fp loss: 1.468, KL loss: 10.192. 
+3150000/6589500 (epoch 48) loss: 10.029, gen loss: 2.776, ret loss: 0.691, fp loss: 1.467, KL loss: 10.190. 
+3160000/6589500 (epoch 48) loss: 10.031, gen loss: 2.777, ret loss: 0.690, fp loss: 1.468, KL loss: 10.190. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model48.ckpt. Average for epoch , loss: 10.030
+3170000/6589500 (epoch 49) loss: 10.029, gen loss: 2.784, ret loss: 0.687, fp loss: 1.468, KL loss: 10.182. 
+3180000/6589500 (epoch 49) loss: 10.032, gen loss: 2.784, ret loss: 0.687, fp loss: 1.468, KL loss: 10.185. 
+3190000/6589500 (epoch 49) loss: 10.031, gen loss: 2.779, ret loss: 0.688, fp loss: 1.472, KL loss: 10.185. 
+3200000/6589500 (epoch 49) loss: 10.031, gen loss: 2.778, ret loss: 0.688, fp loss: 1.472, KL loss: 10.184. 
+3210000/6589500 (epoch 49) loss: 10.031, gen loss: 2.778, ret loss: 0.688, fp loss: 1.472, KL loss: 10.185. 
+3220000/6589500 (epoch 49) loss: 10.033, gen loss: 2.779, ret loss: 0.689, fp loss: 1.471, KL loss: 10.186. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model49.ckpt. Average for epoch , loss: 10.032
+3230000/6589500 (epoch 50) loss: 10.024, gen loss: 2.793, ret loss: 0.688, fp loss: 1.461, KL loss: 10.163. 
+3240000/6589500 (epoch 50) loss: 10.040, gen loss: 2.791, ret loss: 0.687, fp loss: 1.473, KL loss: 10.180. 
+3250000/6589500 (epoch 50) loss: 10.036, gen loss: 2.788, ret loss: 0.687, fp loss: 1.471, KL loss: 10.181. 
+3260000/6589500 (epoch 50) loss: 10.029, gen loss: 2.781, ret loss: 0.687, fp loss: 1.471, KL loss: 10.180. 
+3270000/6589500 (epoch 50) loss: 10.032, gen loss: 2.783, ret loss: 0.687, fp loss: 1.471, KL loss: 10.182. 
+3280000/6589500 (epoch 50) loss: 10.031, gen loss: 2.782, ret loss: 0.687, fp loss: 1.471, KL loss: 10.182. 
+3290000/6589500 (epoch 50) loss: 10.034, gen loss: 2.782, ret loss: 0.688, fp loss: 1.472, KL loss: 10.185. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model50.ckpt. Average for epoch , loss: 10.033
+3300000/6589500 (epoch 51) loss: 10.028, gen loss: 2.779, ret loss: 0.688, fp loss: 1.471, KL loss: 10.178. 
+3310000/6589500 (epoch 51) loss: 10.034, gen loss: 2.780, ret loss: 0.687, fp loss: 1.471, KL loss: 10.192. 
+3320000/6589500 (epoch 51) loss: 10.032, gen loss: 2.778, ret loss: 0.687, fp loss: 1.473, KL loss: 10.188. 
+3330000/6589500 (epoch 51) loss: 10.031, gen loss: 2.775, ret loss: 0.688, fp loss: 1.474, KL loss: 10.189. 
+3340000/6589500 (epoch 51) loss: 10.033, gen loss: 2.777, ret loss: 0.688, fp loss: 1.473, KL loss: 10.189. 
+3350000/6589500 (epoch 51) loss: 10.035, gen loss: 2.779, ret loss: 0.689, fp loss: 1.472, KL loss: 10.190. 
+3360000/6589500 (epoch 51) loss: 10.034, gen loss: 2.778, ret loss: 0.688, fp loss: 1.473, KL loss: 10.191. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model51.ckpt. Average for epoch , loss: 10.034
+3370000/6589500 (epoch 52) loss: 10.034, gen loss: 2.778, ret loss: 0.689, fp loss: 1.473, KL loss: 10.185. 
+3380000/6589500 (epoch 52) loss: 10.039, gen loss: 2.779, ret loss: 0.689, fp loss: 1.473, KL loss: 10.197. 
+3390000/6589500 (epoch 52) loss: 10.032, gen loss: 2.775, ret loss: 0.689, fp loss: 1.472, KL loss: 10.193. 
+3400000/6589500 (epoch 52) loss: 10.036, gen loss: 2.777, ret loss: 0.689, fp loss: 1.472, KL loss: 10.195. 
+3410000/6589500 (epoch 52) loss: 10.035, gen loss: 2.777, ret loss: 0.690, fp loss: 1.470, KL loss: 10.196. 
+3420000/6589500 (epoch 52) loss: 10.038, gen loss: 2.779, ret loss: 0.690, fp loss: 1.471, KL loss: 10.195. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model52.ckpt. Average for epoch , loss: 10.036
+3430000/6589500 (epoch 53) loss: 10.028, gen loss: 2.781, ret loss: 0.687, fp loss: 1.464, KL loss: 10.191. 
+3440000/6589500 (epoch 53) loss: 10.039, gen loss: 2.780, ret loss: 0.691, fp loss: 1.470, KL loss: 10.197. 
+3450000/6589500 (epoch 53) loss: 10.038, gen loss: 2.778, ret loss: 0.691, fp loss: 1.470, KL loss: 10.197. 
+3460000/6589500 (epoch 53) loss: 10.034, gen loss: 2.776, ret loss: 0.691, fp loss: 1.471, KL loss: 10.191. 
+3470000/6589500 (epoch 53) loss: 10.035, gen loss: 2.779, ret loss: 0.690, fp loss: 1.471, KL loss: 10.189. 
+3480000/6589500 (epoch 53) loss: 10.037, gen loss: 2.782, ret loss: 0.690, fp loss: 1.470, KL loss: 10.189. 
+3490000/6589500 (epoch 53) loss: 10.039, gen loss: 2.784, ret loss: 0.690, fp loss: 1.471, KL loss: 10.189. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model53.ckpt. Average for epoch , loss: 10.038
+3500000/6589500 (epoch 54) loss: 10.032, gen loss: 2.790, ret loss: 0.686, fp loss: 1.461, KL loss: 10.190. 
+3510000/6589500 (epoch 54) loss: 10.039, gen loss: 2.788, ret loss: 0.687, fp loss: 1.466, KL loss: 10.197. 
+3520000/6589500 (epoch 54) loss: 10.033, gen loss: 2.783, ret loss: 0.687, fp loss: 1.466, KL loss: 10.193. 
+3530000/6589500 (epoch 54) loss: 10.036, gen loss: 2.785, ret loss: 0.687, fp loss: 1.467, KL loss: 10.195. 
+3540000/6589500 (epoch 54) loss: 10.035, gen loss: 2.784, ret loss: 0.687, fp loss: 1.466, KL loss: 10.195. 
+3550000/6589500 (epoch 54) loss: 10.037, gen loss: 2.785, ret loss: 0.688, fp loss: 1.466, KL loss: 10.195. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model54.ckpt. Average for epoch , loss: 10.036
+3560000/6589500 (epoch 55) loss: 10.043, gen loss: 2.785, ret loss: 0.690, fp loss: 1.467, KL loss: 10.202. 
+3570000/6589500 (epoch 55) loss: 10.041, gen loss: 2.791, ret loss: 0.688, fp loss: 1.466, KL loss: 10.194. 
+3580000/6589500 (epoch 55) loss: 10.042, gen loss: 2.789, ret loss: 0.687, fp loss: 1.468, KL loss: 10.196. 
+3590000/6589500 (epoch 55) loss: 10.038, gen loss: 2.785, ret loss: 0.687, fp loss: 1.470, KL loss: 10.192. 
+3600000/6589500 (epoch 55) loss: 10.041, gen loss: 2.788, ret loss: 0.688, fp loss: 1.471, KL loss: 10.189. 
+3610000/6589500 (epoch 55) loss: 10.041, gen loss: 2.789, ret loss: 0.688, fp loss: 1.469, KL loss: 10.189. 
+3620000/6589500 (epoch 55) loss: 10.041, gen loss: 2.788, ret loss: 0.688, fp loss: 1.471, KL loss: 10.190. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model55.ckpt. Average for epoch , loss: 10.040
+3630000/6589500 (epoch 56) loss: 10.030, gen loss: 2.788, ret loss: 0.684, fp loss: 1.468, KL loss: 10.180. 
+3640000/6589500 (epoch 56) loss: 10.034, gen loss: 2.786, ret loss: 0.686, fp loss: 1.468, KL loss: 10.188. 
+3650000/6589500 (epoch 56) loss: 10.040, gen loss: 2.787, ret loss: 0.687, fp loss: 1.471, KL loss: 10.188. 
+3660000/6589500 (epoch 56) loss: 10.042, gen loss: 2.789, ret loss: 0.688, fp loss: 1.473, KL loss: 10.183. 
+3670000/6589500 (epoch 56) loss: 10.041, gen loss: 2.791, ret loss: 0.689, fp loss: 1.473, KL loss: 10.177. 
+3680000/6589500 (epoch 56) loss: 10.043, gen loss: 2.793, ret loss: 0.690, fp loss: 1.472, KL loss: 10.176. 
+3690000/6589500 (epoch 56) loss: 10.043, gen loss: 2.794, ret loss: 0.690, fp loss: 1.472, KL loss: 10.175. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model56.ckpt. Average for epoch , loss: 10.043
+3700000/6589500 (epoch 57) loss: 10.041, gen loss: 2.800, ret loss: 0.686, fp loss: 1.469, KL loss: 10.172. 
+3710000/6589500 (epoch 57) loss: 10.045, gen loss: 2.799, ret loss: 0.687, fp loss: 1.471, KL loss: 10.174. 
+3720000/6589500 (epoch 57) loss: 10.038, gen loss: 2.793, ret loss: 0.687, fp loss: 1.472, KL loss: 10.171. 
+3730000/6589500 (epoch 57) loss: 10.042, gen loss: 2.793, ret loss: 0.688, fp loss: 1.473, KL loss: 10.174. 
+3740000/6589500 (epoch 57) loss: 10.041, gen loss: 2.792, ret loss: 0.689, fp loss: 1.472, KL loss: 10.177. 
+3750000/6589500 (epoch 57) loss: 10.042, gen loss: 2.792, ret loss: 0.689, fp loss: 1.472, KL loss: 10.178. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model57.ckpt. Average for epoch , loss: 10.041
+3760000/6589500 (epoch 58) loss: 10.037, gen loss: 2.795, ret loss: 0.691, fp loss: 1.467, KL loss: 10.170. 
+3770000/6589500 (epoch 58) loss: 10.043, gen loss: 2.789, ret loss: 0.690, fp loss: 1.466, KL loss: 10.194. 
+3780000/6589500 (epoch 58) loss: 10.041, gen loss: 2.789, ret loss: 0.690, fp loss: 1.468, KL loss: 10.189. 
+3790000/6589500 (epoch 58) loss: 10.040, gen loss: 2.788, ret loss: 0.690, fp loss: 1.470, KL loss: 10.184. 
+3800000/6589500 (epoch 58) loss: 10.042, gen loss: 2.791, ret loss: 0.690, fp loss: 1.471, KL loss: 10.181. 
+3810000/6589500 (epoch 58) loss: 10.042, gen loss: 2.792, ret loss: 0.691, fp loss: 1.470, KL loss: 10.179. 
+3820000/6589500 (epoch 58) loss: 10.043, gen loss: 2.793, ret loss: 0.690, fp loss: 1.471, KL loss: 10.179. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model58.ckpt. Average for epoch , loss: 10.042
+3830000/6589500 (epoch 59) loss: 10.046, gen loss: 2.800, ret loss: 0.691, fp loss: 1.467, KL loss: 10.175. 
+3840000/6589500 (epoch 59) loss: 10.047, gen loss: 2.798, ret loss: 0.690, fp loss: 1.469, KL loss: 10.180. 
+3850000/6589500 (epoch 59) loss: 10.045, gen loss: 2.795, ret loss: 0.691, fp loss: 1.471, KL loss: 10.175. 
+3860000/6589500 (epoch 59) loss: 10.047, gen loss: 2.798, ret loss: 0.691, fp loss: 1.472, KL loss: 10.174. 
+3870000/6589500 (epoch 59) loss: 10.047, gen loss: 2.798, ret loss: 0.691, fp loss: 1.472, KL loss: 10.173. 
+3880000/6589500 (epoch 59) loss: 10.050, gen loss: 2.800, ret loss: 0.691, fp loss: 1.473, KL loss: 10.172. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model59.ckpt. Average for epoch , loss: 10.050
+3890000/6589500 (epoch 60) loss: 10.033, gen loss: 2.789, ret loss: 0.696, fp loss: 1.466, KL loss: 10.162. 
+3900000/6589500 (epoch 60) loss: 10.051, gen loss: 2.797, ret loss: 0.693, fp loss: 1.474, KL loss: 10.174. 
+3910000/6589500 (epoch 60) loss: 10.051, gen loss: 2.800, ret loss: 0.693, fp loss: 1.475, KL loss: 10.168. 
+3920000/6589500 (epoch 60) loss: 10.049, gen loss: 2.797, ret loss: 0.693, fp loss: 1.477, KL loss: 10.165. 
+3930000/6589500 (epoch 60) loss: 10.052, gen loss: 2.800, ret loss: 0.692, fp loss: 1.477, KL loss: 10.166. 
+3940000/6589500 (epoch 60) loss: 10.050, gen loss: 2.800, ret loss: 0.693, fp loss: 1.475, KL loss: 10.164. 
+3950000/6589500 (epoch 60) loss: 10.053, gen loss: 2.802, ret loss: 0.693, fp loss: 1.475, KL loss: 10.167. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model60.ckpt. Average for epoch , loss: 10.053
+3960000/6589500 (epoch 61) loss: 10.039, gen loss: 2.798, ret loss: 0.690, fp loss: 1.468, KL loss: 10.165. 
+3970000/6589500 (epoch 61) loss: 10.046, gen loss: 2.801, ret loss: 0.692, fp loss: 1.468, KL loss: 10.170. 
+3980000/6589500 (epoch 61) loss: 10.049, gen loss: 2.802, ret loss: 0.692, fp loss: 1.473, KL loss: 10.164. 
+3990000/6589500 (epoch 61) loss: 10.049, gen loss: 2.800, ret loss: 0.692, fp loss: 1.473, KL loss: 10.166. 
+4000000/6589500 (epoch 61) loss: 10.049, gen loss: 2.801, ret loss: 0.692, fp loss: 1.472, KL loss: 10.167. 
+4010000/6589500 (epoch 61) loss: 10.053, gen loss: 2.804, ret loss: 0.692, fp loss: 1.473, KL loss: 10.168. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model61.ckpt. Average for epoch , loss: 10.053
+4020000/6589500 (epoch 62) loss: 10.014, gen loss: 2.791, ret loss: 0.690, fp loss: 1.470, KL loss: 10.124. 
+4030000/6589500 (epoch 62) loss: 10.057, gen loss: 2.814, ret loss: 0.691, fp loss: 1.471, KL loss: 10.162. 
+4040000/6589500 (epoch 62) loss: 10.057, gen loss: 2.812, ret loss: 0.691, fp loss: 1.471, KL loss: 10.167. 
+4050000/6589500 (epoch 62) loss: 10.050, gen loss: 2.805, ret loss: 0.691, fp loss: 1.471, KL loss: 10.165. 
+4060000/6589500 (epoch 62) loss: 10.055, gen loss: 2.807, ret loss: 0.692, fp loss: 1.472, KL loss: 10.168. 
+4070000/6589500 (epoch 62) loss: 10.054, gen loss: 2.806, ret loss: 0.693, fp loss: 1.471, KL loss: 10.168. 
+4080000/6589500 (epoch 62) loss: 10.058, gen loss: 2.808, ret loss: 0.693, fp loss: 1.473, KL loss: 10.170. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model62.ckpt. Average for epoch , loss: 10.057
+4090000/6589500 (epoch 63) loss: 10.043, gen loss: 2.804, ret loss: 0.690, fp loss: 1.469, KL loss: 10.161. 
+4100000/6589500 (epoch 63) loss: 10.048, gen loss: 2.799, ret loss: 0.690, fp loss: 1.470, KL loss: 10.179. 
+4110000/6589500 (epoch 63) loss: 10.051, gen loss: 2.802, ret loss: 0.690, fp loss: 1.471, KL loss: 10.176. 
+4120000/6589500 (epoch 63) loss: 10.048, gen loss: 2.800, ret loss: 0.691, fp loss: 1.470, KL loss: 10.174. 
+4130000/6589500 (epoch 63) loss: 10.050, gen loss: 2.801, ret loss: 0.692, fp loss: 1.470, KL loss: 10.174. 
+4140000/6589500 (epoch 63) loss: 10.050, gen loss: 2.800, ret loss: 0.693, fp loss: 1.469, KL loss: 10.175. 
+4150000/6589500 (epoch 63) loss: 10.051, gen loss: 2.800, ret loss: 0.693, fp loss: 1.470, KL loss: 10.178. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model63.ckpt. Average for epoch , loss: 10.051
+4160000/6589500 (epoch 64) loss: 10.044, gen loss: 2.792, ret loss: 0.692, fp loss: 1.467, KL loss: 10.185. 
+4170000/6589500 (epoch 64) loss: 10.049, gen loss: 2.793, ret loss: 0.691, fp loss: 1.469, KL loss: 10.189. 
+4180000/6589500 (epoch 64) loss: 10.046, gen loss: 2.791, ret loss: 0.691, fp loss: 1.471, KL loss: 10.185. 
+4190000/6589500 (epoch 64) loss: 10.048, gen loss: 2.792, ret loss: 0.691, fp loss: 1.471, KL loss: 10.187. 
+4200000/6589500 (epoch 64) loss: 10.047, gen loss: 2.793, ret loss: 0.691, fp loss: 1.469, KL loss: 10.188. 
+4210000/6589500 (epoch 64) loss: 10.051, gen loss: 2.795, ret loss: 0.691, fp loss: 1.470, KL loss: 10.190. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model64.ckpt. Average for epoch , loss: 10.050
+4220000/6589500 (epoch 65) loss: 10.027, gen loss: 2.794, ret loss: 0.687, fp loss: 1.459, KL loss: 10.177. 
+4230000/6589500 (epoch 65) loss: 10.048, gen loss: 2.802, ret loss: 0.688, fp loss: 1.468, KL loss: 10.180. 
+4240000/6589500 (epoch 65) loss: 10.047, gen loss: 2.798, ret loss: 0.687, fp loss: 1.469, KL loss: 10.184. 
+4250000/6589500 (epoch 65) loss: 10.044, gen loss: 2.795, ret loss: 0.687, fp loss: 1.470, KL loss: 10.183. 
+4260000/6589500 (epoch 65) loss: 10.048, gen loss: 2.797, ret loss: 0.688, fp loss: 1.470, KL loss: 10.184. 
+4270000/6589500 (epoch 65) loss: 10.048, gen loss: 2.798, ret loss: 0.689, fp loss: 1.469, KL loss: 10.185. 
+4280000/6589500 (epoch 65) loss: 10.051, gen loss: 2.799, ret loss: 0.689, fp loss: 1.470, KL loss: 10.187. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model65.ckpt. Average for epoch , loss: 10.051
+4290000/6589500 (epoch 66) loss: 10.051, gen loss: 2.801, ret loss: 0.690, fp loss: 1.465, KL loss: 10.192. 
+4300000/6589500 (epoch 66) loss: 10.049, gen loss: 2.796, ret loss: 0.689, fp loss: 1.464, KL loss: 10.200. 
+4310000/6589500 (epoch 66) loss: 10.049, gen loss: 2.795, ret loss: 0.689, fp loss: 1.467, KL loss: 10.197. 
+4320000/6589500 (epoch 66) loss: 10.050, gen loss: 2.796, ret loss: 0.689, fp loss: 1.469, KL loss: 10.194. 
+4330000/6589500 (epoch 66) loss: 10.051, gen loss: 2.797, ret loss: 0.690, fp loss: 1.468, KL loss: 10.192. 
+4340000/6589500 (epoch 66) loss: 10.053, gen loss: 2.799, ret loss: 0.690, fp loss: 1.468, KL loss: 10.192. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model66.ckpt. Average for epoch , loss: 10.052
+4350000/6589500 (epoch 67) loss: 10.049, gen loss: 2.795, ret loss: 0.688, fp loss: 1.469, KL loss: 10.193. 
+4360000/6589500 (epoch 67) loss: 10.052, gen loss: 2.803, ret loss: 0.689, fp loss: 1.466, KL loss: 10.186. 
+4370000/6589500 (epoch 67) loss: 10.051, gen loss: 2.801, ret loss: 0.690, fp loss: 1.467, KL loss: 10.187. 
+4380000/6589500 (epoch 67) loss: 10.053, gen loss: 2.801, ret loss: 0.691, fp loss: 1.469, KL loss: 10.184. 
+4390000/6589500 (epoch 67) loss: 10.057, gen loss: 2.804, ret loss: 0.692, fp loss: 1.472, KL loss: 10.179. 
+4400000/6589500 (epoch 67) loss: 10.056, gen loss: 2.805, ret loss: 0.692, fp loss: 1.471, KL loss: 10.177. 
+4410000/6589500 (epoch 67) loss: 10.058, gen loss: 2.806, ret loss: 0.692, fp loss: 1.472, KL loss: 10.176. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model67.ckpt. Average for epoch , loss: 10.057
+4420000/6589500 (epoch 68) loss: 10.035, gen loss: 2.801, ret loss: 0.691, fp loss: 1.462, KL loss: 10.161. 
+4430000/6589500 (epoch 68) loss: 10.050, gen loss: 2.805, ret loss: 0.693, fp loss: 1.465, KL loss: 10.175. 
+4440000/6589500 (epoch 68) loss: 10.052, gen loss: 2.804, ret loss: 0.692, fp loss: 1.469, KL loss: 10.174. 
+4450000/6589500 (epoch 68) loss: 10.052, gen loss: 2.802, ret loss: 0.692, fp loss: 1.471, KL loss: 10.174. 
+4460000/6589500 (epoch 68) loss: 10.054, gen loss: 2.803, ret loss: 0.692, fp loss: 1.470, KL loss: 10.177. 
+4470000/6589500 (epoch 68) loss: 10.055, gen loss: 2.804, ret loss: 0.693, fp loss: 1.469, KL loss: 10.178. 
+4480000/6589500 (epoch 68) loss: 10.055, gen loss: 2.805, ret loss: 0.692, fp loss: 1.470, KL loss: 10.178. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model68.ckpt. Average for epoch , loss: 10.055
+4490000/6589500 (epoch 69) loss: 10.055, gen loss: 2.808, ret loss: 0.692, fp loss: 1.466, KL loss: 10.179. 
+4500000/6589500 (epoch 69) loss: 10.064, gen loss: 2.812, ret loss: 0.693, fp loss: 1.469, KL loss: 10.181. 
+4510000/6589500 (epoch 69) loss: 10.055, gen loss: 2.804, ret loss: 0.692, fp loss: 1.469, KL loss: 10.178. 
+4520000/6589500 (epoch 69) loss: 10.057, gen loss: 2.804, ret loss: 0.692, fp loss: 1.471, KL loss: 10.178. 
+4530000/6589500 (epoch 69) loss: 10.056, gen loss: 2.805, ret loss: 0.693, fp loss: 1.470, KL loss: 10.178. 
+4540000/6589500 (epoch 69) loss: 10.057, gen loss: 2.804, ret loss: 0.693, fp loss: 1.470, KL loss: 10.180. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model69.ckpt. Average for epoch , loss: 10.057
+4550000/6589500 (epoch 70) loss: 10.049, gen loss: 2.809, ret loss: 0.689, fp loss: 1.468, KL loss: 10.168. 
+4560000/6589500 (epoch 70) loss: 10.059, gen loss: 2.803, ret loss: 0.688, fp loss: 1.470, KL loss: 10.196. 
+4570000/6589500 (epoch 70) loss: 10.054, gen loss: 2.801, ret loss: 0.689, fp loss: 1.470, KL loss: 10.186. 
+4580000/6589500 (epoch 70) loss: 10.051, gen loss: 2.798, ret loss: 0.690, fp loss: 1.471, KL loss: 10.184. 
+4590000/6589500 (epoch 70) loss: 10.055, gen loss: 2.799, ret loss: 0.690, fp loss: 1.472, KL loss: 10.186. 
+4600000/6589500 (epoch 70) loss: 10.056, gen loss: 2.800, ret loss: 0.691, fp loss: 1.471, KL loss: 10.188. 
+4610000/6589500 (epoch 70) loss: 10.059, gen loss: 2.802, ret loss: 0.691, fp loss: 1.473, KL loss: 10.186. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model70.ckpt. Average for epoch , loss: 10.059
+4620000/6589500 (epoch 71) loss: 10.056, gen loss: 2.806, ret loss: 0.691, fp loss: 1.469, KL loss: 10.179. 
+4630000/6589500 (epoch 71) loss: 10.062, gen loss: 2.808, ret loss: 0.690, fp loss: 1.470, KL loss: 10.188. 
+4640000/6589500 (epoch 71) loss: 10.059, gen loss: 2.805, ret loss: 0.689, fp loss: 1.473, KL loss: 10.184. 
+4650000/6589500 (epoch 71) loss: 10.058, gen loss: 2.805, ret loss: 0.690, fp loss: 1.472, KL loss: 10.184. 
+4660000/6589500 (epoch 71) loss: 10.057, gen loss: 2.804, ret loss: 0.690, fp loss: 1.470, KL loss: 10.186. 
+4670000/6589500 (epoch 71) loss: 10.059, gen loss: 2.805, ret loss: 0.691, fp loss: 1.470, KL loss: 10.186. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model71.ckpt. Average for epoch , loss: 10.058
+4680000/6589500 (epoch 72) loss: 10.091, gen loss: 2.821, ret loss: 0.695, fp loss: 1.468, KL loss: 10.212. 
+4690000/6589500 (epoch 72) loss: 10.064, gen loss: 2.808, ret loss: 0.691, fp loss: 1.471, KL loss: 10.187. 
+4700000/6589500 (epoch 72) loss: 10.062, gen loss: 2.804, ret loss: 0.690, fp loss: 1.471, KL loss: 10.194. 
+4710000/6589500 (epoch 72) loss: 10.058, gen loss: 2.801, ret loss: 0.691, fp loss: 1.472, KL loss: 10.188. 
+4720000/6589500 (epoch 72) loss: 10.061, gen loss: 2.804, ret loss: 0.692, fp loss: 1.472, KL loss: 10.186. 
+4730000/6589500 (epoch 72) loss: 10.060, gen loss: 2.805, ret loss: 0.692, fp loss: 1.471, KL loss: 10.184. 
+4740000/6589500 (epoch 72) loss: 10.062, gen loss: 2.805, ret loss: 0.692, fp loss: 1.473, KL loss: 10.185. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model72.ckpt. Average for epoch , loss: 10.062
+4750000/6589500 (epoch 73) loss: 10.048, gen loss: 2.810, ret loss: 0.693, fp loss: 1.470, KL loss: 10.152. 
+4760000/6589500 (epoch 73) loss: 10.062, gen loss: 2.812, ret loss: 0.693, fp loss: 1.470, KL loss: 10.173. 
+4770000/6589500 (epoch 73) loss: 10.069, gen loss: 2.817, ret loss: 0.694, fp loss: 1.475, KL loss: 10.166. 
+4780000/6589500 (epoch 73) loss: 10.068, gen loss: 2.815, ret loss: 0.695, fp loss: 1.476, KL loss: 10.164. 
+4790000/6589500 (epoch 73) loss: 10.068, gen loss: 2.815, ret loss: 0.695, fp loss: 1.475, KL loss: 10.165. 
+4800000/6589500 (epoch 73) loss: 10.070, gen loss: 2.816, ret loss: 0.695, fp loss: 1.474, KL loss: 10.168. 
+4810000/6589500 (epoch 73) loss: 10.070, gen loss: 2.816, ret loss: 0.695, fp loss: 1.475, KL loss: 10.168. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model73.ckpt. Average for epoch , loss: 10.071
+4820000/6589500 (epoch 74) loss: 10.061, gen loss: 2.820, ret loss: 0.694, fp loss: 1.473, KL loss: 10.149. 
+4830000/6589500 (epoch 74) loss: 10.069, gen loss: 2.822, ret loss: 0.693, fp loss: 1.475, KL loss: 10.157. 
+4840000/6589500 (epoch 74) loss: 10.062, gen loss: 2.814, ret loss: 0.693, fp loss: 1.475, KL loss: 10.160. 
+4850000/6589500 (epoch 74) loss: 10.068, gen loss: 2.815, ret loss: 0.694, fp loss: 1.478, KL loss: 10.163. 
+4860000/6589500 (epoch 74) loss: 10.065, gen loss: 2.813, ret loss: 0.694, fp loss: 1.476, KL loss: 10.163. 
+4870000/6589500 (epoch 74) loss: 10.069, gen loss: 2.814, ret loss: 0.694, fp loss: 1.478, KL loss: 10.167. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model74.ckpt. Average for epoch , loss: 10.068
+4880000/6589500 (epoch 75) loss: 10.055, gen loss: 2.814, ret loss: 0.690, fp loss: 1.470, KL loss: 10.162. 
+4890000/6589500 (epoch 75) loss: 10.064, gen loss: 2.815, ret loss: 0.695, fp loss: 1.473, KL loss: 10.162. 
+4900000/6589500 (epoch 75) loss: 10.063, gen loss: 2.813, ret loss: 0.696, fp loss: 1.474, KL loss: 10.162. 
+4910000/6589500 (epoch 75) loss: 10.063, gen loss: 2.810, ret loss: 0.697, fp loss: 1.475, KL loss: 10.162. 
+4920000/6589500 (epoch 75) loss: 10.065, gen loss: 2.813, ret loss: 0.698, fp loss: 1.475, KL loss: 10.160. 
+4930000/6589500 (epoch 75) loss: 10.067, gen loss: 2.814, ret loss: 0.698, fp loss: 1.474, KL loss: 10.161. 
+4940000/6589500 (epoch 75) loss: 10.068, gen loss: 2.815, ret loss: 0.698, fp loss: 1.475, KL loss: 10.161. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model75.ckpt. Average for epoch , loss: 10.068
+4950000/6589500 (epoch 76) loss: 10.059, gen loss: 2.810, ret loss: 0.697, fp loss: 1.469, KL loss: 10.166. 
+4960000/6589500 (epoch 76) loss: 10.065, gen loss: 2.810, ret loss: 0.695, fp loss: 1.470, KL loss: 10.179. 
+4970000/6589500 (epoch 76) loss: 10.062, gen loss: 2.806, ret loss: 0.696, fp loss: 1.472, KL loss: 10.176. 
+4980000/6589500 (epoch 76) loss: 10.065, gen loss: 2.808, ret loss: 0.696, fp loss: 1.473, KL loss: 10.176. 
+4990000/6589500 (epoch 76) loss: 10.065, gen loss: 2.809, ret loss: 0.695, fp loss: 1.473, KL loss: 10.174. 
+5000000/6589500 (epoch 76) loss: 10.068, gen loss: 2.812, ret loss: 0.696, fp loss: 1.473, KL loss: 10.174. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model76.ckpt. Average for epoch , loss: 10.067
+5010000/6589500 (epoch 77) loss: 10.055, gen loss: 2.815, ret loss: 0.692, fp loss: 1.471, KL loss: 10.155. 
+5020000/6589500 (epoch 77) loss: 10.087, gen loss: 2.831, ret loss: 0.693, fp loss: 1.478, KL loss: 10.169. 
+5030000/6589500 (epoch 77) loss: 10.079, gen loss: 2.825, ret loss: 0.695, fp loss: 1.477, KL loss: 10.165. 
+5040000/6589500 (epoch 77) loss: 10.071, gen loss: 2.815, ret loss: 0.696, fp loss: 1.477, KL loss: 10.167. 
+5050000/6589500 (epoch 77) loss: 10.074, gen loss: 2.816, ret loss: 0.696, fp loss: 1.477, KL loss: 10.169. 
+5060000/6589500 (epoch 77) loss: 10.071, gen loss: 2.814, ret loss: 0.696, fp loss: 1.476, KL loss: 10.171. 
+5070000/6589500 (epoch 77) loss: 10.073, gen loss: 2.813, ret loss: 0.696, fp loss: 1.476, KL loss: 10.174. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model77.ckpt. Average for epoch , loss: 10.072
+5080000/6589500 (epoch 78) loss: 10.054, gen loss: 2.805, ret loss: 0.691, fp loss: 1.475, KL loss: 10.165. 
+5090000/6589500 (epoch 78) loss: 10.062, gen loss: 2.810, ret loss: 0.692, fp loss: 1.474, KL loss: 10.172. 
+5100000/6589500 (epoch 78) loss: 10.063, gen loss: 2.808, ret loss: 0.693, fp loss: 1.478, KL loss: 10.169. 
+5110000/6589500 (epoch 78) loss: 10.065, gen loss: 2.806, ret loss: 0.694, fp loss: 1.478, KL loss: 10.173. 
+5120000/6589500 (epoch 78) loss: 10.065, gen loss: 2.807, ret loss: 0.694, fp loss: 1.476, KL loss: 10.176. 
+5130000/6589500 (epoch 78) loss: 10.066, gen loss: 2.808, ret loss: 0.694, fp loss: 1.476, KL loss: 10.178. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model78.ckpt. Average for epoch , loss: 10.066
+5140000/6589500 (epoch 79) loss: 10.030, gen loss: 2.796, ret loss: 0.676, fp loss: 1.463, KL loss: 10.190. 
+5150000/6589500 (epoch 79) loss: 10.065, gen loss: 2.808, ret loss: 0.693, fp loss: 1.473, KL loss: 10.181. 
+5160000/6589500 (epoch 79) loss: 10.067, gen loss: 2.809, ret loss: 0.693, fp loss: 1.472, KL loss: 10.186. 
+5170000/6589500 (epoch 79) loss: 10.063, gen loss: 2.806, ret loss: 0.694, fp loss: 1.473, KL loss: 10.181. 
+5180000/6589500 (epoch 79) loss: 10.067, gen loss: 2.809, ret loss: 0.694, fp loss: 1.474, KL loss: 10.179. 
+5190000/6589500 (epoch 79) loss: 10.067, gen loss: 2.811, ret loss: 0.695, fp loss: 1.473, KL loss: 10.177. 
+5200000/6589500 (epoch 79) loss: 10.069, gen loss: 2.813, ret loss: 0.694, fp loss: 1.474, KL loss: 10.177. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model79.ckpt. Average for epoch , loss: 10.068
+5210000/6589500 (epoch 80) loss: 10.061, gen loss: 2.810, ret loss: 0.688, fp loss: 1.472, KL loss: 10.183. 
+5220000/6589500 (epoch 80) loss: 10.062, gen loss: 2.807, ret loss: 0.690, fp loss: 1.473, KL loss: 10.184. 
+5230000/6589500 (epoch 80) loss: 10.062, gen loss: 2.808, ret loss: 0.689, fp loss: 1.473, KL loss: 10.183. 
+5240000/6589500 (epoch 80) loss: 10.062, gen loss: 2.807, ret loss: 0.690, fp loss: 1.475, KL loss: 10.181. 
+5250000/6589500 (epoch 80) loss: 10.066, gen loss: 2.812, ret loss: 0.691, fp loss: 1.475, KL loss: 10.176. 
+5260000/6589500 (epoch 80) loss: 10.067, gen loss: 2.814, ret loss: 0.692, fp loss: 1.474, KL loss: 10.175. 
+5270000/6589500 (epoch 80) loss: 10.068, gen loss: 2.815, ret loss: 0.691, fp loss: 1.474, KL loss: 10.175. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model80.ckpt. Average for epoch , loss: 10.068
+5280000/6589500 (epoch 81) loss: 10.053, gen loss: 2.818, ret loss: 0.689, fp loss: 1.469, KL loss: 10.155. 
+5290000/6589500 (epoch 81) loss: 10.063, gen loss: 2.819, ret loss: 0.690, fp loss: 1.471, KL loss: 10.166. 
+5300000/6589500 (epoch 81) loss: 10.064, gen loss: 2.818, ret loss: 0.690, fp loss: 1.476, KL loss: 10.161. 
+5310000/6589500 (epoch 81) loss: 10.068, gen loss: 2.818, ret loss: 0.690, fp loss: 1.478, KL loss: 10.162. 
+5320000/6589500 (epoch 81) loss: 10.067, gen loss: 2.817, ret loss: 0.690, fp loss: 1.478, KL loss: 10.164. 
+5330000/6589500 (epoch 81) loss: 10.071, gen loss: 2.817, ret loss: 0.691, fp loss: 1.479, KL loss: 10.167. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model81.ckpt. Average for epoch , loss: 10.070
+5340000/6589500 (epoch 82) loss: 10.061, gen loss: 2.805, ret loss: 0.691, fp loss: 1.476, KL loss: 10.177. 
+5350000/6589500 (epoch 82) loss: 10.071, gen loss: 2.815, ret loss: 0.689, fp loss: 1.481, KL loss: 10.175. 
+5360000/6589500 (epoch 82) loss: 10.070, gen loss: 2.814, ret loss: 0.688, fp loss: 1.480, KL loss: 10.175. 
+5370000/6589500 (epoch 82) loss: 10.065, gen loss: 2.810, ret loss: 0.688, fp loss: 1.481, KL loss: 10.172. 
+5380000/6589500 (epoch 82) loss: 10.070, gen loss: 2.814, ret loss: 0.689, fp loss: 1.481, KL loss: 10.174. 
+5390000/6589500 (epoch 82) loss: 10.068, gen loss: 2.814, ret loss: 0.689, fp loss: 1.479, KL loss: 10.172. 
+5400000/6589500 (epoch 82) loss: 10.071, gen loss: 2.816, ret loss: 0.689, fp loss: 1.481, KL loss: 10.171. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model82.ckpt. Average for epoch , loss: 10.071
+5410000/6589500 (epoch 83) loss: 10.055, gen loss: 2.813, ret loss: 0.686, fp loss: 1.476, KL loss: 10.162. 
+5420000/6589500 (epoch 83) loss: 10.065, gen loss: 2.816, ret loss: 0.687, fp loss: 1.476, KL loss: 10.174. 
+5430000/6589500 (epoch 83) loss: 10.068, gen loss: 2.813, ret loss: 0.688, fp loss: 1.479, KL loss: 10.174. 
+5440000/6589500 (epoch 83) loss: 10.072, gen loss: 2.816, ret loss: 0.689, fp loss: 1.481, KL loss: 10.172. 
+5450000/6589500 (epoch 83) loss: 10.074, gen loss: 2.817, ret loss: 0.690, fp loss: 1.482, KL loss: 10.170. 
+5460000/6589500 (epoch 83) loss: 10.076, gen loss: 2.820, ret loss: 0.691, fp loss: 1.481, KL loss: 10.169. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model83.ckpt. Average for epoch , loss: 10.078
+5470000/6589500 (epoch 84) loss: 10.051, gen loss: 2.809, ret loss: 0.687, fp loss: 1.470, KL loss: 10.171. 
+5480000/6589500 (epoch 84) loss: 10.083, gen loss: 2.832, ret loss: 0.689, fp loss: 1.483, KL loss: 10.160. 
+5490000/6589500 (epoch 84) loss: 10.081, gen loss: 2.827, ret loss: 0.689, fp loss: 1.482, KL loss: 10.165. 
+5500000/6589500 (epoch 84) loss: 10.071, gen loss: 2.819, ret loss: 0.690, fp loss: 1.480, KL loss: 10.163. 
+5510000/6589500 (epoch 84) loss: 10.074, gen loss: 2.821, ret loss: 0.690, fp loss: 1.481, KL loss: 10.164. 
+5520000/6589500 (epoch 84) loss: 10.075, gen loss: 2.823, ret loss: 0.691, fp loss: 1.479, KL loss: 10.164. 
+5530000/6589500 (epoch 84) loss: 10.077, gen loss: 2.824, ret loss: 0.691, fp loss: 1.480, KL loss: 10.164. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model84.ckpt. Average for epoch , loss: 10.077
+5540000/6589500 (epoch 85) loss: 10.055, gen loss: 2.818, ret loss: 0.689, fp loss: 1.474, KL loss: 10.146. 
+5550000/6589500 (epoch 85) loss: 10.075, gen loss: 2.829, ret loss: 0.692, fp loss: 1.477, KL loss: 10.156. 
+5560000/6589500 (epoch 85) loss: 10.076, gen loss: 2.829, ret loss: 0.690, fp loss: 1.478, KL loss: 10.158. 
+5570000/6589500 (epoch 85) loss: 10.073, gen loss: 2.825, ret loss: 0.691, fp loss: 1.478, KL loss: 10.158. 
+5580000/6589500 (epoch 85) loss: 10.074, gen loss: 2.825, ret loss: 0.691, fp loss: 1.479, KL loss: 10.157. 
+5590000/6589500 (epoch 85) loss: 10.076, gen loss: 2.827, ret loss: 0.693, fp loss: 1.478, KL loss: 10.156. 
+5600000/6589500 (epoch 85) loss: 10.078, gen loss: 2.828, ret loss: 0.693, fp loss: 1.479, KL loss: 10.156. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model85.ckpt. Average for epoch , loss: 10.077
+5610000/6589500 (epoch 86) loss: 10.088, gen loss: 2.838, ret loss: 0.695, fp loss: 1.485, KL loss: 10.138. 
+5620000/6589500 (epoch 86) loss: 10.086, gen loss: 2.834, ret loss: 0.694, fp loss: 1.482, KL loss: 10.149. 
+5630000/6589500 (epoch 86) loss: 10.077, gen loss: 2.828, ret loss: 0.694, fp loss: 1.481, KL loss: 10.147. 
+5640000/6589500 (epoch 86) loss: 10.080, gen loss: 2.829, ret loss: 0.694, fp loss: 1.482, KL loss: 10.151. 
+5650000/6589500 (epoch 86) loss: 10.078, gen loss: 2.827, ret loss: 0.694, fp loss: 1.479, KL loss: 10.157. 
+5660000/6589500 (epoch 86) loss: 10.079, gen loss: 2.825, ret loss: 0.694, fp loss: 1.480, KL loss: 10.159. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model86.ckpt. Average for epoch , loss: 10.078
+5670000/6589500 (epoch 87) loss: 10.064, gen loss: 2.815, ret loss: 0.691, fp loss: 1.478, KL loss: 10.160. 
+5680000/6589500 (epoch 87) loss: 10.100, gen loss: 2.834, ret loss: 0.695, fp loss: 1.488, KL loss: 10.168. 
+5690000/6589500 (epoch 87) loss: 10.096, gen loss: 2.834, ret loss: 0.694, fp loss: 1.488, KL loss: 10.159. 
+5700000/6589500 (epoch 87) loss: 10.087, gen loss: 2.826, ret loss: 0.695, fp loss: 1.486, KL loss: 10.160. 
+5710000/6589500 (epoch 87) loss: 10.087, gen loss: 2.826, ret loss: 0.695, fp loss: 1.485, KL loss: 10.161. 
+5720000/6589500 (epoch 87) loss: 10.086, gen loss: 2.826, ret loss: 0.696, fp loss: 1.483, KL loss: 10.162. 
+5730000/6589500 (epoch 87) loss: 10.087, gen loss: 2.827, ret loss: 0.696, fp loss: 1.483, KL loss: 10.163. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model87.ckpt. Average for epoch , loss: 10.087
+5740000/6589500 (epoch 88) loss: 10.084, gen loss: 2.829, ret loss: 0.695, fp loss: 1.482, KL loss: 10.155. 
+5750000/6589500 (epoch 88) loss: 10.087, gen loss: 2.829, ret loss: 0.695, fp loss: 1.480, KL loss: 10.164. 
+5760000/6589500 (epoch 88) loss: 10.083, gen loss: 2.826, ret loss: 0.696, fp loss: 1.482, KL loss: 10.157. 
+5770000/6589500 (epoch 88) loss: 10.086, gen loss: 2.828, ret loss: 0.697, fp loss: 1.484, KL loss: 10.155. 
+5780000/6589500 (epoch 88) loss: 10.086, gen loss: 2.828, ret loss: 0.697, fp loss: 1.484, KL loss: 10.152. 
+5790000/6589500 (epoch 88) loss: 10.090, gen loss: 2.831, ret loss: 0.698, fp loss: 1.485, KL loss: 10.151. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model88.ckpt. Average for epoch , loss: 10.091
+5800000/6589500 (epoch 89) loss: 10.077, gen loss: 2.839, ret loss: 0.695, fp loss: 1.476, KL loss: 10.134. 
+5810000/6589500 (epoch 89) loss: 10.086, gen loss: 2.836, ret loss: 0.697, fp loss: 1.483, KL loss: 10.140. 
+5820000/6589500 (epoch 89) loss: 10.084, gen loss: 2.832, ret loss: 0.699, fp loss: 1.482, KL loss: 10.144. 
+5830000/6589500 (epoch 89) loss: 10.080, gen loss: 2.828, ret loss: 0.700, fp loss: 1.482, KL loss: 10.142. 
+5840000/6589500 (epoch 89) loss: 10.084, gen loss: 2.830, ret loss: 0.699, fp loss: 1.482, KL loss: 10.147. 
+5850000/6589500 (epoch 89) loss: 10.084, gen loss: 2.830, ret loss: 0.699, fp loss: 1.480, KL loss: 10.151. 
+5860000/6589500 (epoch 89) loss: 10.086, gen loss: 2.830, ret loss: 0.699, fp loss: 1.480, KL loss: 10.153. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model89.ckpt. Average for epoch , loss: 10.084
+5870000/6589500 (epoch 90) loss: 10.068, gen loss: 2.825, ret loss: 0.695, fp loss: 1.477, KL loss: 10.144. 
+5880000/6589500 (epoch 90) loss: 10.077, gen loss: 2.831, ret loss: 0.695, fp loss: 1.474, KL loss: 10.154. 
+5890000/6589500 (epoch 90) loss: 10.078, gen loss: 2.828, ret loss: 0.694, fp loss: 1.478, KL loss: 10.156. 
+5900000/6589500 (epoch 90) loss: 10.079, gen loss: 2.827, ret loss: 0.695, fp loss: 1.479, KL loss: 10.157. 
+5910000/6589500 (epoch 90) loss: 10.081, gen loss: 2.829, ret loss: 0.695, fp loss: 1.479, KL loss: 10.156. 
+5920000/6589500 (epoch 90) loss: 10.083, gen loss: 2.831, ret loss: 0.696, fp loss: 1.478, KL loss: 10.158. 
+5930000/6589500 (epoch 90) loss: 10.083, gen loss: 2.830, ret loss: 0.696, fp loss: 1.478, KL loss: 10.157. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model90.ckpt. Average for epoch , loss: 10.083
+5940000/6589500 (epoch 91) loss: 10.074, gen loss: 2.831, ret loss: 0.695, fp loss: 1.476, KL loss: 10.143. 
+5950000/6589500 (epoch 91) loss: 10.082, gen loss: 2.831, ret loss: 0.695, fp loss: 1.478, KL loss: 10.155. 
+5960000/6589500 (epoch 91) loss: 10.076, gen loss: 2.827, ret loss: 0.696, fp loss: 1.477, KL loss: 10.151. 
+5970000/6589500 (epoch 91) loss: 10.081, gen loss: 2.831, ret loss: 0.696, fp loss: 1.478, KL loss: 10.153. 
+5980000/6589500 (epoch 91) loss: 10.081, gen loss: 2.831, ret loss: 0.697, fp loss: 1.476, KL loss: 10.155. 
+5990000/6589500 (epoch 91) loss: 10.085, gen loss: 2.833, ret loss: 0.697, fp loss: 1.477, KL loss: 10.155. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model91.ckpt. Average for epoch , loss: 10.084
+6000000/6589500 (epoch 92) loss: 10.086, gen loss: 2.840, ret loss: 0.691, fp loss: 1.478, KL loss: 10.155. 
+6010000/6589500 (epoch 92) loss: 10.104, gen loss: 2.844, ret loss: 0.695, fp loss: 1.483, KL loss: 10.163. 
+6020000/6589500 (epoch 92) loss: 10.095, gen loss: 2.837, ret loss: 0.696, fp loss: 1.481, KL loss: 10.161. 
+6030000/6589500 (epoch 92) loss: 10.091, gen loss: 2.834, ret loss: 0.696, fp loss: 1.480, KL loss: 10.161. 
+6040000/6589500 (epoch 92) loss: 10.092, gen loss: 2.835, ret loss: 0.696, fp loss: 1.480, KL loss: 10.160. 
+6050000/6589500 (epoch 92) loss: 10.090, gen loss: 2.835, ret loss: 0.696, fp loss: 1.479, KL loss: 10.160. 
+6060000/6589500 (epoch 92) loss: 10.091, gen loss: 2.836, ret loss: 0.696, fp loss: 1.479, KL loss: 10.161. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model92.ckpt. Average for epoch , loss: 10.091
+6070000/6589500 (epoch 93) loss: 10.080, gen loss: 2.835, ret loss: 0.691, fp loss: 1.470, KL loss: 10.168. 
+6080000/6589500 (epoch 93) loss: 10.086, gen loss: 2.837, ret loss: 0.691, fp loss: 1.473, KL loss: 10.172. 
+6090000/6589500 (epoch 93) loss: 10.083, gen loss: 2.834, ret loss: 0.692, fp loss: 1.477, KL loss: 10.162. 
+6100000/6589500 (epoch 93) loss: 10.085, gen loss: 2.835, ret loss: 0.692, fp loss: 1.477, KL loss: 10.160. 
+6110000/6589500 (epoch 93) loss: 10.082, gen loss: 2.835, ret loss: 0.692, fp loss: 1.477, KL loss: 10.156. 
+6120000/6589500 (epoch 93) loss: 10.086, gen loss: 2.836, ret loss: 0.693, fp loss: 1.478, KL loss: 10.158. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model93.ckpt. Average for epoch , loss: 10.085
+6130000/6589500 (epoch 94) loss: 10.097, gen loss: 2.841, ret loss: 0.694, fp loss: 1.479, KL loss: 10.165. 
+6140000/6589500 (epoch 94) loss: 10.089, gen loss: 2.838, ret loss: 0.689, fp loss: 1.481, KL loss: 10.160. 
+6150000/6589500 (epoch 94) loss: 10.087, gen loss: 2.837, ret loss: 0.690, fp loss: 1.479, KL loss: 10.160. 
+6160000/6589500 (epoch 94) loss: 10.080, gen loss: 2.834, ret loss: 0.692, fp loss: 1.480, KL loss: 10.150. 
+6170000/6589500 (epoch 94) loss: 10.084, gen loss: 2.836, ret loss: 0.692, fp loss: 1.481, KL loss: 10.149. 
+6180000/6589500 (epoch 94) loss: 10.083, gen loss: 2.836, ret loss: 0.693, fp loss: 1.481, KL loss: 10.147. 
+6190000/6589500 (epoch 94) loss: 10.087, gen loss: 2.838, ret loss: 0.693, fp loss: 1.482, KL loss: 10.147. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model94.ckpt. Average for epoch , loss: 10.086
+6200000/6589500 (epoch 95) loss: 10.088, gen loss: 2.837, ret loss: 0.690, fp loss: 1.481, KL loss: 10.159. 
+6210000/6589500 (epoch 95) loss: 10.082, gen loss: 2.838, ret loss: 0.691, fp loss: 1.477, KL loss: 10.151. 
+6220000/6589500 (epoch 95) loss: 10.082, gen loss: 2.835, ret loss: 0.691, fp loss: 1.480, KL loss: 10.151. 
+6230000/6589500 (epoch 95) loss: 10.084, gen loss: 2.836, ret loss: 0.692, fp loss: 1.481, KL loss: 10.152. 
+6240000/6589500 (epoch 95) loss: 10.086, gen loss: 2.837, ret loss: 0.693, fp loss: 1.481, KL loss: 10.151. 
+6250000/6589500 (epoch 95) loss: 10.088, gen loss: 2.837, ret loss: 0.694, fp loss: 1.480, KL loss: 10.153. 
+6260000/6589500 (epoch 95) loss: 10.090, gen loss: 2.839, ret loss: 0.693, fp loss: 1.481, KL loss: 10.154. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model95.ckpt. Average for epoch , loss: 10.090
+6270000/6589500 (epoch 96) loss: 10.093, gen loss: 2.839, ret loss: 0.694, fp loss: 1.485, KL loss: 10.149. 
+6280000/6589500 (epoch 96) loss: 10.091, gen loss: 2.838, ret loss: 0.694, fp loss: 1.484, KL loss: 10.149. 
+6290000/6589500 (epoch 96) loss: 10.085, gen loss: 2.833, ret loss: 0.694, fp loss: 1.484, KL loss: 10.150. 
+6300000/6589500 (epoch 96) loss: 10.089, gen loss: 2.834, ret loss: 0.693, fp loss: 1.485, KL loss: 10.154. 
+6310000/6589500 (epoch 96) loss: 10.087, gen loss: 2.834, ret loss: 0.693, fp loss: 1.483, KL loss: 10.153. 
+6320000/6589500 (epoch 96) loss: 10.089, gen loss: 2.835, ret loss: 0.693, fp loss: 1.484, KL loss: 10.155. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model96.ckpt. Average for epoch , loss: 10.088
+6330000/6589500 (epoch 97) loss: 10.072, gen loss: 2.841, ret loss: 0.688, fp loss: 1.469, KL loss: 10.146. 
+6340000/6589500 (epoch 97) loss: 10.088, gen loss: 2.842, ret loss: 0.692, fp loss: 1.477, KL loss: 10.154. 
+6350000/6589500 (epoch 97) loss: 10.083, gen loss: 2.838, ret loss: 0.692, fp loss: 1.478, KL loss: 10.150. 
+6360000/6589500 (epoch 97) loss: 10.081, gen loss: 2.832, ret loss: 0.693, fp loss: 1.479, KL loss: 10.155. 
+6370000/6589500 (epoch 97) loss: 10.085, gen loss: 2.835, ret loss: 0.693, fp loss: 1.480, KL loss: 10.155. 
+6380000/6589500 (epoch 97) loss: 10.087, gen loss: 2.836, ret loss: 0.694, fp loss: 1.480, KL loss: 10.155. 
+6390000/6589500 (epoch 97) loss: 10.089, gen loss: 2.837, ret loss: 0.693, fp loss: 1.481, KL loss: 10.155. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model97.ckpt. Average for epoch , loss: 10.089
+6400000/6589500 (epoch 98) loss: 10.093, gen loss: 2.840, ret loss: 0.693, fp loss: 1.483, KL loss: 10.154. 
+6410000/6589500 (epoch 98) loss: 10.096, gen loss: 2.842, ret loss: 0.692, fp loss: 1.484, KL loss: 10.157. 
+6420000/6589500 (epoch 98) loss: 10.087, gen loss: 2.835, ret loss: 0.692, fp loss: 1.484, KL loss: 10.154. 
+6430000/6589500 (epoch 98) loss: 10.090, gen loss: 2.835, ret loss: 0.692, fp loss: 1.485, KL loss: 10.157. 
+6440000/6589500 (epoch 98) loss: 10.088, gen loss: 2.835, ret loss: 0.692, fp loss: 1.483, KL loss: 10.157. 
+6450000/6589500 (epoch 98) loss: 10.091, gen loss: 2.837, ret loss: 0.692, fp loss: 1.483, KL loss: 10.158. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model98.ckpt. Average for epoch , loss: 10.090
+6460000/6589500 (epoch 99) loss: 10.085, gen loss: 2.828, ret loss: 0.692, fp loss: 1.473, KL loss: 10.185. 
+6470000/6589500 (epoch 99) loss: 10.090, gen loss: 2.839, ret loss: 0.692, fp loss: 1.477, KL loss: 10.163. 
+6480000/6589500 (epoch 99) loss: 10.095, gen loss: 2.841, ret loss: 0.694, fp loss: 1.478, KL loss: 10.163. 
+6490000/6589500 (epoch 99) loss: 10.090, gen loss: 2.837, ret loss: 0.694, fp loss: 1.481, KL loss: 10.157. 
+6500000/6589500 (epoch 99) loss: 10.092, gen loss: 2.837, ret loss: 0.694, fp loss: 1.483, KL loss: 10.157. 
+6510000/6589500 (epoch 99) loss: 10.090, gen loss: 2.836, ret loss: 0.693, fp loss: 1.481, KL loss: 10.157. 
+6520000/6589500 (epoch 99) loss: 10.092, gen loss: 2.838, ret loss: 0.693, fp loss: 1.482, KL loss: 10.159. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model99.ckpt. Average for epoch , loss: 10.093
+6530000/6589500 (epoch 100) loss: 10.080, gen loss: 2.840, ret loss: 0.692, fp loss: 1.476, KL loss: 10.145. 
+6540000/6589500 (epoch 100) loss: 10.090, gen loss: 2.843, ret loss: 0.691, fp loss: 1.477, KL loss: 10.157. 
+6550000/6589500 (epoch 100) loss: 10.091, gen loss: 2.842, ret loss: 0.691, fp loss: 1.481, KL loss: 10.153. 
+6560000/6589500 (epoch 100) loss: 10.091, gen loss: 2.841, ret loss: 0.692, fp loss: 1.482, KL loss: 10.154. 
+6570000/6589500 (epoch 100) loss: 10.089, gen loss: 2.839, ret loss: 0.692, fp loss: 1.481, KL loss: 10.154. 
+6580000/6589500 (epoch 100) loss: 10.090, gen loss: 2.839, ret loss: 0.692, fp loss: 1.481, KL loss: 10.157. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model100.ckpt. Average for epoch , loss: 10.091
+Process id is 21
+GPU device is 6
+Amount of data used is 4217280
+	
+0/6589500 (epoch 1) loss: 34.748, gen loss: 21.267, ret loss: 6.976, fp loss: 6.238, KL loss: 0.533. 
+10000/6589500 (epoch 1) loss: 13.186, gen loss: 5.986, ret loss: 1.475, fp loss: 2.648, KL loss: 6.153. 
+20000/6589500 (epoch 1) loss: 12.458, gen loss: 5.132, ret loss: 1.343, fp loss: 2.354, KL loss: 7.258. 
+30000/6589500 (epoch 1) loss: 12.110, gen loss: 4.738, ret loss: 1.281, fp loss: 2.199, KL loss: 7.784. 
+40000/6589500 (epoch 1) loss: 11.901, gen loss: 4.505, ret loss: 1.243, fp loss: 2.097, KL loss: 8.114. 
+50000/6589500 (epoch 1) loss: 11.750, gen loss: 4.341, ret loss: 1.215, fp loss: 2.019, KL loss: 8.352. 
+60000/6589500 (epoch 1) loss: 11.640, gen loss: 4.218, ret loss: 1.195, fp loss: 1.959, KL loss: 8.535. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model1.ckpt. Average for epoch , loss: 11.585
+70000/6589500 (epoch 2) loss: 10.994, gen loss: 3.532, ret loss: 1.080, fp loss: 1.610, KL loss: 9.546. 
+80000/6589500 (epoch 2) loss: 10.976, gen loss: 3.508, ret loss: 1.075, fp loss: 1.597, KL loss: 9.595. 
+90000/6589500 (epoch 2) loss: 10.960, gen loss: 3.490, ret loss: 1.071, fp loss: 1.587, KL loss: 9.621. 
+100000/6589500 (epoch 2) loss: 10.941, gen loss: 3.471, ret loss: 1.070, fp loss: 1.578, KL loss: 9.644. 
+110000/6589500 (epoch 2) loss: 10.929, gen loss: 3.458, ret loss: 1.068, fp loss: 1.569, KL loss: 9.666. 
+120000/6589500 (epoch 2) loss: 10.915, gen loss: 3.445, ret loss: 1.067, fp loss: 1.561, KL loss: 9.685. 
+130000/6589500 (epoch 2) loss: 10.905, gen loss: 3.435, ret loss: 1.064, fp loss: 1.554, KL loss: 9.704. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model2.ckpt. Average for epoch , loss: 10.903
+140000/6589500 (epoch 3) loss: 10.824, gen loss: 3.350, ret loss: 1.050, fp loss: 1.504, KL loss: 9.841. 
+150000/6589500 (epoch 3) loss: 10.816, gen loss: 3.342, ret loss: 1.047, fp loss: 1.499, KL loss: 9.856. 
+160000/6589500 (epoch 3) loss: 10.805, gen loss: 3.330, ret loss: 1.047, fp loss: 1.495, KL loss: 9.865. 
+170000/6589500 (epoch 3) loss: 10.803, gen loss: 3.326, ret loss: 1.047, fp loss: 1.493, KL loss: 9.875. 
+180000/6589500 (epoch 3) loss: 10.798, gen loss: 3.320, ret loss: 1.047, fp loss: 1.489, KL loss: 9.883. 
+190000/6589500 (epoch 3) loss: 10.795, gen loss: 3.315, ret loss: 1.046, fp loss: 1.487, KL loss: 9.893. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model3.ckpt. Average for epoch , loss: 10.790
+200000/6589500 (epoch 4) loss: 10.758, gen loss: 3.275, ret loss: 1.045, fp loss: 1.465, KL loss: 9.945. 
+210000/6589500 (epoch 4) loss: 10.753, gen loss: 3.272, ret loss: 1.041, fp loss: 1.463, KL loss: 9.952. 
+220000/6589500 (epoch 4) loss: 10.750, gen loss: 3.267, ret loss: 1.042, fp loss: 1.462, KL loss: 9.959. 
+230000/6589500 (epoch 4) loss: 10.745, gen loss: 3.259, ret loss: 1.043, fp loss: 1.461, KL loss: 9.963. 
+240000/6589500 (epoch 4) loss: 10.746, gen loss: 3.259, ret loss: 1.043, fp loss: 1.459, KL loss: 9.971. 
+250000/6589500 (epoch 4) loss: 10.743, gen loss: 3.256, ret loss: 1.043, fp loss: 1.456, KL loss: 9.976. 
+260000/6589500 (epoch 4) loss: 10.744, gen loss: 3.254, ret loss: 1.042, fp loss: 1.456, KL loss: 9.983. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model4.ckpt. Average for epoch , loss: 10.743
+270000/6589500 (epoch 5) loss: 10.722, gen loss: 3.230, ret loss: 1.040, fp loss: 1.443, KL loss: 10.018. 
+280000/6589500 (epoch 5) loss: 10.723, gen loss: 3.229, ret loss: 1.040, fp loss: 1.439, KL loss: 10.031. 
+290000/6589500 (epoch 5) loss: 10.723, gen loss: 3.226, ret loss: 1.042, fp loss: 1.439, KL loss: 10.034. 
+300000/6589500 (epoch 5) loss: 10.720, gen loss: 3.223, ret loss: 1.042, fp loss: 1.439, KL loss: 10.033. 
+310000/6589500 (epoch 5) loss: 10.718, gen loss: 3.222, ret loss: 1.042, fp loss: 1.437, KL loss: 10.033. 
+320000/6589500 (epoch 5) loss: 10.720, gen loss: 3.222, ret loss: 1.043, fp loss: 1.436, KL loss: 10.037. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model5.ckpt. Average for epoch , loss: 10.719
+330000/6589500 (epoch 6) loss: 10.728, gen loss: 3.207, ret loss: 1.037, fp loss: 1.436, KL loss: 10.098. 
+340000/6589500 (epoch 6) loss: 10.715, gen loss: 3.209, ret loss: 1.044, fp loss: 1.431, KL loss: 10.061. 
+350000/6589500 (epoch 6) loss: 10.715, gen loss: 3.208, ret loss: 1.044, fp loss: 1.429, KL loss: 10.069. 
+360000/6589500 (epoch 6) loss: 10.704, gen loss: 3.200, ret loss: 1.043, fp loss: 1.428, KL loss: 10.068. 
+370000/6589500 (epoch 6) loss: 10.708, gen loss: 3.201, ret loss: 1.043, fp loss: 1.429, KL loss: 10.071. 
+380000/6589500 (epoch 6) loss: 10.708, gen loss: 3.201, ret loss: 1.044, fp loss: 1.427, KL loss: 10.073. 
+390000/6589500 (epoch 6) loss: 10.710, gen loss: 3.201, ret loss: 1.044, fp loss: 1.427, KL loss: 10.077. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model6.ckpt. Average for epoch , loss: 10.710
+400000/6589500 (epoch 7) loss: 10.699, gen loss: 3.192, ret loss: 1.041, fp loss: 1.420, KL loss: 10.094. 
+410000/6589500 (epoch 7) loss: 10.708, gen loss: 3.193, ret loss: 1.046, fp loss: 1.421, KL loss: 10.097. 
+420000/6589500 (epoch 7) loss: 10.708, gen loss: 3.193, ret loss: 1.048, fp loss: 1.420, KL loss: 10.095. 
+430000/6589500 (epoch 7) loss: 10.703, gen loss: 3.189, ret loss: 1.048, fp loss: 1.420, KL loss: 10.094. 
+440000/6589500 (epoch 7) loss: 10.704, gen loss: 3.189, ret loss: 1.047, fp loss: 1.420, KL loss: 10.097. 
+450000/6589500 (epoch 7) loss: 10.705, gen loss: 3.189, ret loss: 1.047, fp loss: 1.419, KL loss: 10.100. 
+460000/6589500 (epoch 7) loss: 10.706, gen loss: 3.189, ret loss: 1.046, fp loss: 1.419, KL loss: 10.103. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model7.ckpt. Average for epoch , loss: 10.706
+470000/6589500 (epoch 8) loss: 10.697, gen loss: 3.181, ret loss: 1.048, fp loss: 1.415, KL loss: 10.106. 
+480000/6589500 (epoch 8) loss: 10.701, gen loss: 3.181, ret loss: 1.045, fp loss: 1.416, KL loss: 10.117. 
+490000/6589500 (epoch 8) loss: 10.698, gen loss: 3.177, ret loss: 1.046, fp loss: 1.416, KL loss: 10.119. 
+500000/6589500 (epoch 8) loss: 10.702, gen loss: 3.178, ret loss: 1.047, fp loss: 1.416, KL loss: 10.121. 
+510000/6589500 (epoch 8) loss: 10.703, gen loss: 3.179, ret loss: 1.046, fp loss: 1.415, KL loss: 10.124. 
+520000/6589500 (epoch 8) loss: 10.704, gen loss: 3.180, ret loss: 1.047, fp loss: 1.416, KL loss: 10.124. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model8.ckpt. Average for epoch , loss: 10.704
+530000/6589500 (epoch 9) loss: 10.689, gen loss: 3.177, ret loss: 1.041, fp loss: 1.407, KL loss: 10.128. 
+540000/6589500 (epoch 9) loss: 10.712, gen loss: 3.182, ret loss: 1.047, fp loss: 1.413, KL loss: 10.140. 
+550000/6589500 (epoch 9) loss: 10.707, gen loss: 3.180, ret loss: 1.048, fp loss: 1.412, KL loss: 10.136. 
+560000/6589500 (epoch 9) loss: 10.702, gen loss: 3.175, ret loss: 1.049, fp loss: 1.412, KL loss: 10.132. 
+570000/6589500 (epoch 9) loss: 10.704, gen loss: 3.177, ret loss: 1.048, fp loss: 1.413, KL loss: 10.134. 
+580000/6589500 (epoch 9) loss: 10.705, gen loss: 3.177, ret loss: 1.049, fp loss: 1.412, KL loss: 10.134. 
+590000/6589500 (epoch 9) loss: 10.707, gen loss: 3.177, ret loss: 1.049, fp loss: 1.414, KL loss: 10.135. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model9.ckpt. Average for epoch , loss: 10.707
+600000/6589500 (epoch 10) loss: 10.710, gen loss: 3.172, ret loss: 1.050, fp loss: 1.414, KL loss: 10.147. 
+610000/6589500 (epoch 10) loss: 10.713, gen loss: 3.175, ret loss: 1.049, fp loss: 1.413, KL loss: 10.154. 
+620000/6589500 (epoch 10) loss: 10.712, gen loss: 3.173, ret loss: 1.050, fp loss: 1.415, KL loss: 10.148. 
+630000/6589500 (epoch 10) loss: 10.711, gen loss: 3.172, ret loss: 1.051, fp loss: 1.415, KL loss: 10.147. 
+640000/6589500 (epoch 10) loss: 10.712, gen loss: 3.173, ret loss: 1.052, fp loss: 1.415, KL loss: 10.145. 
+650000/6589500 (epoch 10) loss: 10.714, gen loss: 3.174, ret loss: 1.051, fp loss: 1.414, KL loss: 10.148. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model10.ckpt. Average for epoch , loss: 10.715
+660000/6589500 (epoch 11) loss: 10.694, gen loss: 3.175, ret loss: 1.045, fp loss: 1.409, KL loss: 10.130. 
+670000/6589500 (epoch 11) loss: 10.712, gen loss: 3.175, ret loss: 1.054, fp loss: 1.411, KL loss: 10.144. 
+680000/6589500 (epoch 11) loss: 10.713, gen loss: 3.177, ret loss: 1.052, fp loss: 1.411, KL loss: 10.146. 
+690000/6589500 (epoch 11) loss: 10.708, gen loss: 3.171, ret loss: 1.050, fp loss: 1.412, KL loss: 10.149. 
+700000/6589500 (epoch 11) loss: 10.713, gen loss: 3.173, ret loss: 1.049, fp loss: 1.413, KL loss: 10.156. 
+710000/6589500 (epoch 11) loss: 10.713, gen loss: 3.173, ret loss: 1.050, fp loss: 1.412, KL loss: 10.157. 
+720000/6589500 (epoch 11) loss: 10.718, gen loss: 3.174, ret loss: 1.051, fp loss: 1.413, KL loss: 10.159. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model11.ckpt. Average for epoch , loss: 10.718
+730000/6589500 (epoch 12) loss: 10.722, gen loss: 3.176, ret loss: 1.048, fp loss: 1.414, KL loss: 10.169. 
+740000/6589500 (epoch 12) loss: 10.726, gen loss: 3.178, ret loss: 1.049, fp loss: 1.413, KL loss: 10.174. 
+750000/6589500 (epoch 12) loss: 10.724, gen loss: 3.175, ret loss: 1.050, fp loss: 1.415, KL loss: 10.168. 
+760000/6589500 (epoch 12) loss: 10.723, gen loss: 3.173, ret loss: 1.053, fp loss: 1.415, KL loss: 10.163. 
+770000/6589500 (epoch 12) loss: 10.725, gen loss: 3.175, ret loss: 1.055, fp loss: 1.416, KL loss: 10.160. 
+780000/6589500 (epoch 12) loss: 10.728, gen loss: 3.177, ret loss: 1.055, fp loss: 1.416, KL loss: 10.161. 
+790000/6589500 (epoch 12) loss: 10.729, gen loss: 3.177, ret loss: 1.056, fp loss: 1.416, KL loss: 10.159. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model12.ckpt. Average for epoch , loss: 10.729
+800000/6589500 (epoch 13) loss: 10.739, gen loss: 3.184, ret loss: 1.056, fp loss: 1.420, KL loss: 10.157. 
+810000/6589500 (epoch 13) loss: 10.741, gen loss: 3.184, ret loss: 1.059, fp loss: 1.420, KL loss: 10.157. 
+820000/6589500 (epoch 13) loss: 10.733, gen loss: 3.179, ret loss: 1.060, fp loss: 1.420, KL loss: 10.149. 
+830000/6589500 (epoch 13) loss: 10.736, gen loss: 3.180, ret loss: 1.060, fp loss: 1.420, KL loss: 10.152. 
+840000/6589500 (epoch 13) loss: 10.736, gen loss: 3.181, ret loss: 1.062, fp loss: 1.419, KL loss: 10.149. 
+850000/6589500 (epoch 13) loss: 10.739, gen loss: 3.182, ret loss: 1.062, fp loss: 1.419, KL loss: 10.152. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model13.ckpt. Average for epoch , loss: 10.739
+860000/6589500 (epoch 14) loss: 10.733, gen loss: 3.188, ret loss: 1.069, fp loss: 1.414, KL loss: 10.126. 
+870000/6589500 (epoch 14) loss: 10.751, gen loss: 3.186, ret loss: 1.068, fp loss: 1.418, KL loss: 10.160. 
+880000/6589500 (epoch 14) loss: 10.745, gen loss: 3.183, ret loss: 1.066, fp loss: 1.419, KL loss: 10.156. 
+890000/6589500 (epoch 14) loss: 10.744, gen loss: 3.180, ret loss: 1.065, fp loss: 1.419, KL loss: 10.160. 
+900000/6589500 (epoch 14) loss: 10.747, gen loss: 3.181, ret loss: 1.067, fp loss: 1.419, KL loss: 10.159. 
+910000/6589500 (epoch 14) loss: 10.748, gen loss: 3.182, ret loss: 1.067, fp loss: 1.419, KL loss: 10.161. 
+920000/6589500 (epoch 14) loss: 10.751, gen loss: 3.182, ret loss: 1.067, fp loss: 1.420, KL loss: 10.162. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model14.ckpt. Average for epoch , loss: 10.751
+930000/6589500 (epoch 15) loss: 10.754, gen loss: 3.188, ret loss: 1.065, fp loss: 1.421, KL loss: 10.160. 
+940000/6589500 (epoch 15) loss: 10.750, gen loss: 3.185, ret loss: 1.064, fp loss: 1.419, KL loss: 10.163. 
+950000/6589500 (epoch 15) loss: 10.742, gen loss: 3.178, ret loss: 1.065, fp loss: 1.419, KL loss: 10.160. 
+960000/6589500 (epoch 15) loss: 10.747, gen loss: 3.179, ret loss: 1.066, fp loss: 1.420, KL loss: 10.164. 
+970000/6589500 (epoch 15) loss: 10.749, gen loss: 3.181, ret loss: 1.068, fp loss: 1.419, KL loss: 10.162. 
+980000/6589500 (epoch 15) loss: 10.752, gen loss: 3.183, ret loss: 1.068, fp loss: 1.419, KL loss: 10.164. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model15.ckpt. Average for epoch , loss: 10.751
+990000/6589500 (epoch 16) loss: 10.768, gen loss: 3.198, ret loss: 1.062, fp loss: 1.420, KL loss: 10.176. 
+1000000/6589500 (epoch 16) loss: 10.758, gen loss: 3.188, ret loss: 1.066, fp loss: 1.417, KL loss: 10.177. 
+1010000/6589500 (epoch 16) loss: 10.759, gen loss: 3.186, ret loss: 1.068, fp loss: 1.419, KL loss: 10.173. 
+1020000/6589500 (epoch 16) loss: 10.760, gen loss: 3.182, ret loss: 1.066, fp loss: 1.422, KL loss: 10.178. 
+1030000/6589500 (epoch 16) loss: 10.764, gen loss: 3.185, ret loss: 1.067, fp loss: 1.423, KL loss: 10.177. 
+1040000/6589500 (epoch 16) loss: 10.763, gen loss: 3.185, ret loss: 1.069, fp loss: 1.422, KL loss: 10.174. 
+1050000/6589500 (epoch 16) loss: 10.770, gen loss: 3.187, ret loss: 1.071, fp loss: 1.424, KL loss: 10.177. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model16.ckpt. Average for epoch , loss: 10.769
+1060000/6589500 (epoch 17) loss: 10.772, gen loss: 3.188, ret loss: 1.077, fp loss: 1.420, KL loss: 10.173. 
+1070000/6589500 (epoch 17) loss: 10.773, gen loss: 3.187, ret loss: 1.081, fp loss: 1.419, KL loss: 10.170. 
+1080000/6589500 (epoch 17) loss: 10.771, gen loss: 3.183, ret loss: 1.077, fp loss: 1.420, KL loss: 10.180. 
+1090000/6589500 (epoch 17) loss: 10.772, gen loss: 3.182, ret loss: 1.083, fp loss: 1.421, KL loss: 10.173. 
+1100000/6589500 (epoch 17) loss: 10.776, gen loss: 3.184, ret loss: 1.086, fp loss: 1.421, KL loss: 10.169. 
+1110000/6589500 (epoch 17) loss: 10.778, gen loss: 3.185, ret loss: 1.088, fp loss: 1.421, KL loss: 10.168. 
+1120000/6589500 (epoch 17) loss: 10.780, gen loss: 3.186, ret loss: 1.089, fp loss: 1.422, KL loss: 10.167. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model17.ckpt. Average for epoch , loss: 10.780
+1130000/6589500 (epoch 18) loss: 10.777, gen loss: 3.189, ret loss: 1.098, fp loss: 1.420, KL loss: 10.140. 
+1140000/6589500 (epoch 18) loss: 10.783, gen loss: 3.191, ret loss: 1.097, fp loss: 1.422, KL loss: 10.145. 
+1150000/6589500 (epoch 18) loss: 10.779, gen loss: 3.185, ret loss: 1.096, fp loss: 1.422, KL loss: 10.150. 
+1160000/6589500 (epoch 18) loss: 10.784, gen loss: 3.186, ret loss: 1.098, fp loss: 1.424, KL loss: 10.149. 
+1170000/6589500 (epoch 18) loss: 10.785, gen loss: 3.187, ret loss: 1.099, fp loss: 1.424, KL loss: 10.151. 
+1180000/6589500 (epoch 18) loss: 10.789, gen loss: 3.188, ret loss: 1.099, fp loss: 1.425, KL loss: 10.153. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model18.ckpt. Average for epoch , loss: 10.789
+1190000/6589500 (epoch 19) loss: 10.774, gen loss: 3.191, ret loss: 1.099, fp loss: 1.416, KL loss: 10.138. 
+1200000/6589500 (epoch 19) loss: 10.801, gen loss: 3.196, ret loss: 1.101, fp loss: 1.423, KL loss: 10.163. 
+1210000/6589500 (epoch 19) loss: 10.794, gen loss: 3.192, ret loss: 1.100, fp loss: 1.423, KL loss: 10.156. 
+1220000/6589500 (epoch 19) loss: 10.794, gen loss: 3.190, ret loss: 1.101, fp loss: 1.424, KL loss: 10.159. 
+1230000/6589500 (epoch 19) loss: 10.796, gen loss: 3.192, ret loss: 1.101, fp loss: 1.424, KL loss: 10.159. 
+1240000/6589500 (epoch 19) loss: 10.800, gen loss: 3.194, ret loss: 1.105, fp loss: 1.424, KL loss: 10.154. 
+1250000/6589500 (epoch 19) loss: 10.802, gen loss: 3.195, ret loss: 1.105, fp loss: 1.424, KL loss: 10.154. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model19.ckpt. Average for epoch , loss: 10.801
+1260000/6589500 (epoch 20) loss: 10.788, gen loss: 3.188, ret loss: 1.105, fp loss: 1.421, KL loss: 10.149. 
+1270000/6589500 (epoch 20) loss: 10.794, gen loss: 3.189, ret loss: 1.107, fp loss: 1.422, KL loss: 10.153. 
+1280000/6589500 (epoch 20) loss: 10.794, gen loss: 3.186, ret loss: 1.105, fp loss: 1.424, KL loss: 10.157. 
+1290000/6589500 (epoch 20) loss: 10.799, gen loss: 3.189, ret loss: 1.106, fp loss: 1.425, KL loss: 10.158. 
+1300000/6589500 (epoch 20) loss: 10.799, gen loss: 3.190, ret loss: 1.106, fp loss: 1.423, KL loss: 10.158. 
+1310000/6589500 (epoch 20) loss: 10.800, gen loss: 3.191, ret loss: 1.106, fp loss: 1.424, KL loss: 10.157. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model20.ckpt. Average for epoch , loss: 10.802
+1320000/6589500 (epoch 21) loss: 10.806, gen loss: 3.192, ret loss: 1.098, fp loss: 1.429, KL loss: 10.174. 
+1330000/6589500 (epoch 21) loss: 10.812, gen loss: 3.198, ret loss: 1.111, fp loss: 1.424, KL loss: 10.158. 
+1340000/6589500 (epoch 21) loss: 10.810, gen loss: 3.194, ret loss: 1.113, fp loss: 1.424, KL loss: 10.157. 
+1350000/6589500 (epoch 21) loss: 10.801, gen loss: 3.190, ret loss: 1.113, fp loss: 1.423, KL loss: 10.150. 
+1360000/6589500 (epoch 21) loss: 10.808, gen loss: 3.194, ret loss: 1.114, fp loss: 1.424, KL loss: 10.154. 
+1370000/6589500 (epoch 21) loss: 10.809, gen loss: 3.195, ret loss: 1.116, fp loss: 1.424, KL loss: 10.149. 
+1380000/6589500 (epoch 21) loss: 10.810, gen loss: 3.195, ret loss: 1.115, fp loss: 1.425, KL loss: 10.150. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model21.ckpt. Average for epoch , loss: 10.809
+1390000/6589500 (epoch 22) loss: 10.807, gen loss: 3.193, ret loss: 1.111, fp loss: 1.425, KL loss: 10.156. 
+1400000/6589500 (epoch 22) loss: 10.809, gen loss: 3.197, ret loss: 1.112, fp loss: 1.424, KL loss: 10.152. 
+1410000/6589500 (epoch 22) loss: 10.814, gen loss: 3.197, ret loss: 1.116, fp loss: 1.426, KL loss: 10.149. 
+1420000/6589500 (epoch 22) loss: 10.818, gen loss: 3.199, ret loss: 1.117, fp loss: 1.428, KL loss: 10.148. 
+1430000/6589500 (epoch 22) loss: 10.820, gen loss: 3.200, ret loss: 1.118, fp loss: 1.427, KL loss: 10.149. 
+1440000/6589500 (epoch 22) loss: 10.823, gen loss: 3.201, ret loss: 1.118, fp loss: 1.427, KL loss: 10.153. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model22.ckpt. Average for epoch , loss: 10.825
+1450000/6589500 (epoch 23) loss: 10.803, gen loss: 3.199, ret loss: 1.114, fp loss: 1.424, KL loss: 10.134. 
+1460000/6589500 (epoch 23) loss: 10.824, gen loss: 3.202, ret loss: 1.127, fp loss: 1.428, KL loss: 10.134. 
+1470000/6589500 (epoch 23) loss: 10.835, gen loss: 3.205, ret loss: 1.128, fp loss: 1.430, KL loss: 10.145. 
+1480000/6589500 (epoch 23) loss: 10.827, gen loss: 3.199, ret loss: 1.125, fp loss: 1.429, KL loss: 10.147. 
+1490000/6589500 (epoch 23) loss: 10.829, gen loss: 3.202, ret loss: 1.123, fp loss: 1.430, KL loss: 10.150. 
+1500000/6589500 (epoch 23) loss: 10.830, gen loss: 3.203, ret loss: 1.122, fp loss: 1.428, KL loss: 10.153. 
+1510000/6589500 (epoch 23) loss: 10.832, gen loss: 3.204, ret loss: 1.123, fp loss: 1.429, KL loss: 10.151. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model23.ckpt. Average for epoch , loss: 10.833
+1520000/6589500 (epoch 24) loss: 10.831, gen loss: 3.210, ret loss: 1.117, fp loss: 1.427, KL loss: 10.154. 
+1530000/6589500 (epoch 24) loss: 10.840, gen loss: 3.206, ret loss: 1.124, fp loss: 1.430, KL loss: 10.160. 
+1540000/6589500 (epoch 24) loss: 10.841, gen loss: 3.208, ret loss: 1.124, fp loss: 1.432, KL loss: 10.152. 
+1550000/6589500 (epoch 24) loss: 10.840, gen loss: 3.204, ret loss: 1.123, fp loss: 1.433, KL loss: 10.160. 
+1560000/6589500 (epoch 24) loss: 10.842, gen loss: 3.205, ret loss: 1.123, fp loss: 1.434, KL loss: 10.158. 
+1570000/6589500 (epoch 24) loss: 10.842, gen loss: 3.206, ret loss: 1.123, fp loss: 1.434, KL loss: 10.157. 
+1580000/6589500 (epoch 24) loss: 10.842, gen loss: 3.207, ret loss: 1.124, fp loss: 1.435, KL loss: 10.153. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model24.ckpt. Average for epoch , loss: 10.842
+1590000/6589500 (epoch 25) loss: 10.843, gen loss: 3.212, ret loss: 1.125, fp loss: 1.429, KL loss: 10.154. 
+1600000/6589500 (epoch 25) loss: 10.848, gen loss: 3.210, ret loss: 1.132, fp loss: 1.433, KL loss: 10.147. 
+1610000/6589500 (epoch 25) loss: 10.845, gen loss: 3.206, ret loss: 1.136, fp loss: 1.434, KL loss: 10.139. 
+1620000/6589500 (epoch 25) loss: 10.849, gen loss: 3.207, ret loss: 1.139, fp loss: 1.436, KL loss: 10.134. 
+1630000/6589500 (epoch 25) loss: 10.850, gen loss: 3.209, ret loss: 1.140, fp loss: 1.435, KL loss: 10.132. 
+1640000/6589500 (epoch 25) loss: 10.854, gen loss: 3.210, ret loss: 1.141, fp loss: 1.436, KL loss: 10.134. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model25.ckpt. Average for epoch , loss: 10.855
+1650000/6589500 (epoch 26) loss: 10.835, gen loss: 3.206, ret loss: 1.138, fp loss: 1.428, KL loss: 10.126. 
+1660000/6589500 (epoch 26) loss: 10.857, gen loss: 3.211, ret loss: 1.150, fp loss: 1.434, KL loss: 10.124. 
+1670000/6589500 (epoch 26) loss: 10.861, gen loss: 3.212, ret loss: 1.148, fp loss: 1.434, KL loss: 10.134. 
+1680000/6589500 (epoch 26) loss: 10.859, gen loss: 3.209, ret loss: 1.148, fp loss: 1.435, KL loss: 10.135. 
+1690000/6589500 (epoch 26) loss: 10.861, gen loss: 3.213, ret loss: 1.147, fp loss: 1.436, KL loss: 10.131. 
+1700000/6589500 (epoch 26) loss: 10.861, gen loss: 3.214, ret loss: 1.147, fp loss: 1.436, KL loss: 10.128. 
+1710000/6589500 (epoch 26) loss: 10.861, gen loss: 3.214, ret loss: 1.146, fp loss: 1.436, KL loss: 10.130. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model26.ckpt. Average for epoch , loss: 10.860
+1720000/6589500 (epoch 27) loss: 10.861, gen loss: 3.218, ret loss: 1.152, fp loss: 1.425, KL loss: 10.131. 
+1730000/6589500 (epoch 27) loss: 10.862, gen loss: 3.214, ret loss: 1.152, fp loss: 1.429, KL loss: 10.134. 
+1740000/6589500 (epoch 27) loss: 10.861, gen loss: 3.212, ret loss: 1.149, fp loss: 1.435, KL loss: 10.128. 
+1750000/6589500 (epoch 27) loss: 10.862, gen loss: 3.214, ret loss: 1.148, fp loss: 1.435, KL loss: 10.132. 
+1760000/6589500 (epoch 27) loss: 10.866, gen loss: 3.216, ret loss: 1.151, fp loss: 1.435, KL loss: 10.128. 
+1770000/6589500 (epoch 27) loss: 10.870, gen loss: 3.219, ret loss: 1.152, fp loss: 1.436, KL loss: 10.127. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model27.ckpt. Average for epoch , loss: 10.870
+1780000/6589500 (epoch 28) loss: 10.883, gen loss: 3.230, ret loss: 1.164, fp loss: 1.441, KL loss: 10.097. 
+1790000/6589500 (epoch 28) loss: 10.876, gen loss: 3.222, ret loss: 1.159, fp loss: 1.437, KL loss: 10.114. 
+1800000/6589500 (epoch 28) loss: 10.879, gen loss: 3.220, ret loss: 1.158, fp loss: 1.436, KL loss: 10.130. 
+1810000/6589500 (epoch 28) loss: 10.873, gen loss: 3.217, ret loss: 1.155, fp loss: 1.438, KL loss: 10.127. 
+1820000/6589500 (epoch 28) loss: 10.874, gen loss: 3.218, ret loss: 1.155, fp loss: 1.438, KL loss: 10.126. 
+1830000/6589500 (epoch 28) loss: 10.875, gen loss: 3.219, ret loss: 1.158, fp loss: 1.438, KL loss: 10.122. 
+1840000/6589500 (epoch 28) loss: 10.876, gen loss: 3.219, ret loss: 1.158, fp loss: 1.438, KL loss: 10.123. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model28.ckpt. Average for epoch , loss: 10.875
+1850000/6589500 (epoch 29) loss: 10.880, gen loss: 3.222, ret loss: 1.166, fp loss: 1.434, KL loss: 10.117. 
+1860000/6589500 (epoch 29) loss: 10.879, gen loss: 3.225, ret loss: 1.163, fp loss: 1.437, KL loss: 10.108. 
+1870000/6589500 (epoch 29) loss: 10.883, gen loss: 3.225, ret loss: 1.161, fp loss: 1.439, KL loss: 10.116. 
+1880000/6589500 (epoch 29) loss: 10.886, gen loss: 3.223, ret loss: 1.162, fp loss: 1.441, KL loss: 10.118. 
+1890000/6589500 (epoch 29) loss: 10.886, gen loss: 3.225, ret loss: 1.162, fp loss: 1.441, KL loss: 10.116. 
+1900000/6589500 (epoch 29) loss: 10.886, gen loss: 3.225, ret loss: 1.161, fp loss: 1.440, KL loss: 10.121. 
+1910000/6589500 (epoch 29) loss: 10.886, gen loss: 3.225, ret loss: 1.160, fp loss: 1.440, KL loss: 10.120. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model29.ckpt. Average for epoch , loss: 10.885
+1920000/6589500 (epoch 30) loss: 10.874, gen loss: 3.227, ret loss: 1.161, fp loss: 1.434, KL loss: 10.105. 
+1930000/6589500 (epoch 30) loss: 10.902, gen loss: 3.224, ret loss: 1.158, fp loss: 1.439, KL loss: 10.162. 
+1940000/6589500 (epoch 30) loss: 10.889, gen loss: 3.219, ret loss: 1.158, fp loss: 1.439, KL loss: 10.146. 
+1950000/6589500 (epoch 30) loss: 10.889, gen loss: 3.223, ret loss: 1.157, fp loss: 1.441, KL loss: 10.136. 
+1960000/6589500 (epoch 30) loss: 10.891, gen loss: 3.225, ret loss: 1.161, fp loss: 1.440, KL loss: 10.131. 
+1970000/6589500 (epoch 30) loss: 10.897, gen loss: 3.226, ret loss: 1.166, fp loss: 1.441, KL loss: 10.129. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model30.ckpt. Average for epoch , loss: 10.898
+1980000/6589500 (epoch 31) loss: 10.911, gen loss: 3.222, ret loss: 1.161, fp loss: 1.444, KL loss: 10.169. 
+1990000/6589500 (epoch 31) loss: 10.903, gen loss: 3.229, ret loss: 1.162, fp loss: 1.444, KL loss: 10.135. 
+2000000/6589500 (epoch 31) loss: 10.910, gen loss: 3.227, ret loss: 1.167, fp loss: 1.444, KL loss: 10.143. 
+2010000/6589500 (epoch 31) loss: 10.905, gen loss: 3.227, ret loss: 1.168, fp loss: 1.446, KL loss: 10.131. 
+2020000/6589500 (epoch 31) loss: 10.909, gen loss: 3.231, ret loss: 1.168, fp loss: 1.445, KL loss: 10.130. 
+2030000/6589500 (epoch 31) loss: 10.908, gen loss: 3.231, ret loss: 1.168, fp loss: 1.445, KL loss: 10.128. 
+2040000/6589500 (epoch 31) loss: 10.913, gen loss: 3.233, ret loss: 1.172, fp loss: 1.446, KL loss: 10.123. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model31.ckpt. Average for epoch , loss: 10.913
+2050000/6589500 (epoch 32) loss: 10.885, gen loss: 3.227, ret loss: 1.162, fp loss: 1.439, KL loss: 10.114. 
+2060000/6589500 (epoch 32) loss: 10.900, gen loss: 3.233, ret loss: 1.169, fp loss: 1.442, KL loss: 10.113. 
+2070000/6589500 (epoch 32) loss: 10.901, gen loss: 3.230, ret loss: 1.175, fp loss: 1.444, KL loss: 10.103. 
+2080000/6589500 (epoch 32) loss: 10.907, gen loss: 3.231, ret loss: 1.178, fp loss: 1.444, KL loss: 10.109. 
+2090000/6589500 (epoch 32) loss: 10.909, gen loss: 3.231, ret loss: 1.178, fp loss: 1.445, KL loss: 10.110. 
+2100000/6589500 (epoch 32) loss: 10.910, gen loss: 3.231, ret loss: 1.180, fp loss: 1.445, KL loss: 10.106. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model32.ckpt. Average for epoch , loss: 10.910
+2110000/6589500 (epoch 33) loss: 10.921, gen loss: 3.248, ret loss: 1.175, fp loss: 1.443, KL loss: 10.110. 
+2120000/6589500 (epoch 33) loss: 10.913, gen loss: 3.238, ret loss: 1.174, fp loss: 1.446, KL loss: 10.110. 
+2130000/6589500 (epoch 33) loss: 10.915, gen loss: 3.235, ret loss: 1.177, fp loss: 1.446, KL loss: 10.114. 
+2140000/6589500 (epoch 33) loss: 10.908, gen loss: 3.229, ret loss: 1.181, fp loss: 1.448, KL loss: 10.099. 
+2150000/6589500 (epoch 33) loss: 10.911, gen loss: 3.233, ret loss: 1.180, fp loss: 1.448, KL loss: 10.100. 
+2160000/6589500 (epoch 33) loss: 10.913, gen loss: 3.233, ret loss: 1.182, fp loss: 1.447, KL loss: 10.101. 
+2170000/6589500 (epoch 33) loss: 10.917, gen loss: 3.233, ret loss: 1.182, fp loss: 1.449, KL loss: 10.106. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model33.ckpt. Average for epoch , loss: 10.916
+2180000/6589500 (epoch 34) loss: 10.897, gen loss: 3.227, ret loss: 1.184, fp loss: 1.446, KL loss: 10.079. 
+2190000/6589500 (epoch 34) loss: 10.928, gen loss: 3.233, ret loss: 1.185, fp loss: 1.448, KL loss: 10.123. 
+2200000/6589500 (epoch 34) loss: 10.934, gen loss: 3.237, ret loss: 1.185, fp loss: 1.451, KL loss: 10.122. 
+2210000/6589500 (epoch 34) loss: 10.930, gen loss: 3.237, ret loss: 1.186, fp loss: 1.452, KL loss: 10.109. 
+2220000/6589500 (epoch 34) loss: 10.930, gen loss: 3.239, ret loss: 1.187, fp loss: 1.452, KL loss: 10.104. 
+2230000/6589500 (epoch 34) loss: 10.932, gen loss: 3.241, ret loss: 1.187, fp loss: 1.451, KL loss: 10.107. 
+2240000/6589500 (epoch 34) loss: 10.933, gen loss: 3.240, ret loss: 1.186, fp loss: 1.451, KL loss: 10.111. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model34.ckpt. Average for epoch , loss: 10.932
+2250000/6589500 (epoch 35) loss: 10.939, gen loss: 3.248, ret loss: 1.190, fp loss: 1.453, KL loss: 10.096. 
+2260000/6589500 (epoch 35) loss: 10.951, gen loss: 3.251, ret loss: 1.185, fp loss: 1.456, KL loss: 10.120. 
+2270000/6589500 (epoch 35) loss: 10.937, gen loss: 3.243, ret loss: 1.184, fp loss: 1.455, KL loss: 10.108. 
+2280000/6589500 (epoch 35) loss: 10.944, gen loss: 3.247, ret loss: 1.185, fp loss: 1.457, KL loss: 10.108. 
+2290000/6589500 (epoch 35) loss: 10.939, gen loss: 3.247, ret loss: 1.187, fp loss: 1.455, KL loss: 10.100. 
+2300000/6589500 (epoch 35) loss: 10.940, gen loss: 3.247, ret loss: 1.187, fp loss: 1.455, KL loss: 10.101. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model35.ckpt. Average for epoch , loss: 10.939
+2310000/6589500 (epoch 36) loss: 10.952, gen loss: 3.251, ret loss: 1.179, fp loss: 1.452, KL loss: 10.140. 
+2320000/6589500 (epoch 36) loss: 10.948, gen loss: 3.247, ret loss: 1.181, fp loss: 1.454, KL loss: 10.131. 
+2330000/6589500 (epoch 36) loss: 10.942, gen loss: 3.247, ret loss: 1.187, fp loss: 1.453, KL loss: 10.110. 
+2340000/6589500 (epoch 36) loss: 10.938, gen loss: 3.245, ret loss: 1.186, fp loss: 1.453, KL loss: 10.109. 
+2350000/6589500 (epoch 36) loss: 10.935, gen loss: 3.245, ret loss: 1.182, fp loss: 1.452, KL loss: 10.111. 
+2360000/6589500 (epoch 36) loss: 10.934, gen loss: 3.245, ret loss: 1.184, fp loss: 1.452, KL loss: 10.109. 
+2370000/6589500 (epoch 36) loss: 10.934, gen loss: 3.244, ret loss: 1.185, fp loss: 1.452, KL loss: 10.105. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model36.ckpt. Average for epoch , loss: 10.933
+2380000/6589500 (epoch 37) loss: 10.947, gen loss: 3.245, ret loss: 1.190, fp loss: 1.449, KL loss: 10.124. 
+2390000/6589500 (epoch 37) loss: 10.961, gen loss: 3.247, ret loss: 1.201, fp loss: 1.454, KL loss: 10.119. 
+2400000/6589500 (epoch 37) loss: 10.949, gen loss: 3.243, ret loss: 1.199, fp loss: 1.455, KL loss: 10.104. 
+2410000/6589500 (epoch 37) loss: 10.952, gen loss: 3.246, ret loss: 1.202, fp loss: 1.455, KL loss: 10.098. 
+2420000/6589500 (epoch 37) loss: 10.947, gen loss: 3.246, ret loss: 1.199, fp loss: 1.453, KL loss: 10.099. 
+2430000/6589500 (epoch 37) loss: 10.950, gen loss: 3.247, ret loss: 1.198, fp loss: 1.454, KL loss: 10.103. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model37.ckpt. Average for epoch , loss: 10.949
+2440000/6589500 (epoch 38) loss: 10.939, gen loss: 3.248, ret loss: 1.196, fp loss: 1.458, KL loss: 10.075. 
+2450000/6589500 (epoch 38) loss: 10.934, gen loss: 3.245, ret loss: 1.182, fp loss: 1.451, KL loss: 10.110. 
+2460000/6589500 (epoch 38) loss: 10.937, gen loss: 3.245, ret loss: 1.190, fp loss: 1.452, KL loss: 10.100. 
+2470000/6589500 (epoch 38) loss: 10.936, gen loss: 3.240, ret loss: 1.194, fp loss: 1.454, KL loss: 10.095. 
+2480000/6589500 (epoch 38) loss: 10.940, gen loss: 3.242, ret loss: 1.194, fp loss: 1.455, KL loss: 10.097. 
+2490000/6589500 (epoch 38) loss: 10.943, gen loss: 3.244, ret loss: 1.193, fp loss: 1.455, KL loss: 10.101. 
+2500000/6589500 (epoch 38) loss: 10.945, gen loss: 3.246, ret loss: 1.192, fp loss: 1.457, KL loss: 10.101. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model38.ckpt. Average for epoch , loss: 10.944
+2510000/6589500 (epoch 39) loss: 10.956, gen loss: 3.253, ret loss: 1.191, fp loss: 1.459, KL loss: 10.107. 
+2520000/6589500 (epoch 39) loss: 10.958, gen loss: 3.256, ret loss: 1.190, fp loss: 1.455, KL loss: 10.114. 
+2530000/6589500 (epoch 39) loss: 10.951, gen loss: 3.251, ret loss: 1.192, fp loss: 1.457, KL loss: 10.103. 
+2540000/6589500 (epoch 39) loss: 10.949, gen loss: 3.250, ret loss: 1.192, fp loss: 1.457, KL loss: 10.101. 
+2550000/6589500 (epoch 39) loss: 10.954, gen loss: 3.252, ret loss: 1.192, fp loss: 1.458, KL loss: 10.104. 
+2560000/6589500 (epoch 39) loss: 10.961, gen loss: 3.253, ret loss: 1.192, fp loss: 1.460, KL loss: 10.110. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model39.ckpt. Average for epoch , loss: 10.959
+2570000/6589500 (epoch 40) loss: 11.001, gen loss: 3.304, ret loss: 1.184, fp loss: 1.481, KL loss: 10.065. 
+2580000/6589500 (epoch 40) loss: 10.960, gen loss: 3.255, ret loss: 1.195, fp loss: 1.457, KL loss: 10.104. 
+2590000/6589500 (epoch 40) loss: 10.966, gen loss: 3.250, ret loss: 1.199, fp loss: 1.459, KL loss: 10.116. 
+2600000/6589500 (epoch 40) loss: 10.957, gen loss: 3.247, ret loss: 1.200, fp loss: 1.459, KL loss: 10.101. 
+2610000/6589500 (epoch 40) loss: 10.960, gen loss: 3.249, ret loss: 1.204, fp loss: 1.460, KL loss: 10.094. 
+2620000/6589500 (epoch 40) loss: 10.965, gen loss: 3.253, ret loss: 1.206, fp loss: 1.460, KL loss: 10.092. 
+2630000/6589500 (epoch 40) loss: 10.968, gen loss: 3.254, ret loss: 1.206, fp loss: 1.462, KL loss: 10.091. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model40.ckpt. Average for epoch , loss: 10.968
+2640000/6589500 (epoch 41) loss: 10.937, gen loss: 3.252, ret loss: 1.195, fp loss: 1.451, KL loss: 10.078. 
+2650000/6589500 (epoch 41) loss: 10.973, gen loss: 3.256, ret loss: 1.203, fp loss: 1.461, KL loss: 10.106. 
+2660000/6589500 (epoch 41) loss: 10.980, gen loss: 3.253, ret loss: 1.208, fp loss: 1.463, KL loss: 10.111. 
+2670000/6589500 (epoch 41) loss: 10.974, gen loss: 3.251, ret loss: 1.209, fp loss: 1.464, KL loss: 10.100. 
+2680000/6589500 (epoch 41) loss: 10.978, gen loss: 3.256, ret loss: 1.211, fp loss: 1.464, KL loss: 10.092. 
+2690000/6589500 (epoch 41) loss: 10.979, gen loss: 3.258, ret loss: 1.210, fp loss: 1.465, KL loss: 10.092. 
+2700000/6589500 (epoch 41) loss: 10.982, gen loss: 3.259, ret loss: 1.209, fp loss: 1.465, KL loss: 10.098. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model41.ckpt. Average for epoch , loss: 10.982
+2710000/6589500 (epoch 42) loss: 10.974, gen loss: 3.261, ret loss: 1.199, fp loss: 1.466, KL loss: 10.095. 
+2720000/6589500 (epoch 42) loss: 10.971, gen loss: 3.261, ret loss: 1.201, fp loss: 1.461, KL loss: 10.096. 
+2730000/6589500 (epoch 42) loss: 10.966, gen loss: 3.255, ret loss: 1.203, fp loss: 1.461, KL loss: 10.095. 
+2740000/6589500 (epoch 42) loss: 10.964, gen loss: 3.256, ret loss: 1.201, fp loss: 1.461, KL loss: 10.092. 
+2750000/6589500 (epoch 42) loss: 10.962, gen loss: 3.255, ret loss: 1.201, fp loss: 1.460, KL loss: 10.090. 
+2760000/6589500 (epoch 42) loss: 10.966, gen loss: 3.257, ret loss: 1.202, fp loss: 1.462, KL loss: 10.092. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model42.ckpt. Average for epoch , loss: 10.968
+2770000/6589500 (epoch 43) loss: 10.980, gen loss: 3.263, ret loss: 1.202, fp loss: 1.472, KL loss: 10.085. 
+2780000/6589500 (epoch 43) loss: 10.971, gen loss: 3.265, ret loss: 1.197, fp loss: 1.467, KL loss: 10.084. 
+2790000/6589500 (epoch 43) loss: 10.969, gen loss: 3.262, ret loss: 1.192, fp loss: 1.465, KL loss: 10.099. 
+2800000/6589500 (epoch 43) loss: 10.961, gen loss: 3.258, ret loss: 1.197, fp loss: 1.464, KL loss: 10.083. 
+2810000/6589500 (epoch 43) loss: 10.971, gen loss: 3.262, ret loss: 1.199, fp loss: 1.464, KL loss: 10.092. 
+2820000/6589500 (epoch 43) loss: 10.971, gen loss: 3.263, ret loss: 1.200, fp loss: 1.464, KL loss: 10.088. 
+2830000/6589500 (epoch 43) loss: 10.974, gen loss: 3.265, ret loss: 1.200, fp loss: 1.465, KL loss: 10.090. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model43.ckpt. Average for epoch , loss: 10.975
+2840000/6589500 (epoch 44) loss: 10.979, gen loss: 3.267, ret loss: 1.202, fp loss: 1.465, KL loss: 10.091. 
+2850000/6589500 (epoch 44) loss: 10.974, gen loss: 3.266, ret loss: 1.204, fp loss: 1.462, KL loss: 10.086. 
+2860000/6589500 (epoch 44) loss: 10.971, gen loss: 3.262, ret loss: 1.199, fp loss: 1.464, KL loss: 10.093. 
+2870000/6589500 (epoch 44) loss: 10.979, gen loss: 3.262, ret loss: 1.198, fp loss: 1.465, KL loss: 10.108. 
+2880000/6589500 (epoch 44) loss: 10.979, gen loss: 3.264, ret loss: 1.195, fp loss: 1.464, KL loss: 10.110. 
+2890000/6589500 (epoch 44) loss: 10.980, gen loss: 3.266, ret loss: 1.196, fp loss: 1.464, KL loss: 10.107. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model44.ckpt. Average for epoch , loss: 10.978
+2900000/6589500 (epoch 45) loss: 10.986, gen loss: 3.273, ret loss: 1.196, fp loss: 1.459, KL loss: 10.118. 
+2910000/6589500 (epoch 45) loss: 10.966, gen loss: 3.265, ret loss: 1.196, fp loss: 1.457, KL loss: 10.095. 
+2920000/6589500 (epoch 45) loss: 10.965, gen loss: 3.264, ret loss: 1.194, fp loss: 1.458, KL loss: 10.097. 
+2930000/6589500 (epoch 45) loss: 10.962, gen loss: 3.259, ret loss: 1.196, fp loss: 1.460, KL loss: 10.096. 
+2940000/6589500 (epoch 45) loss: 10.971, gen loss: 3.261, ret loss: 1.202, fp loss: 1.461, KL loss: 10.095. 
+2950000/6589500 (epoch 45) loss: 10.977, gen loss: 3.262, ret loss: 1.210, fp loss: 1.461, KL loss: 10.087. 
+2960000/6589500 (epoch 45) loss: 10.983, gen loss: 3.264, ret loss: 1.213, fp loss: 1.462, KL loss: 10.087. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model45.ckpt. Average for epoch , loss: 10.983
+2970000/6589500 (epoch 46) loss: 10.975, gen loss: 3.259, ret loss: 1.223, fp loss: 1.468, KL loss: 10.052. 
+2980000/6589500 (epoch 46) loss: 10.998, gen loss: 3.263, ret loss: 1.221, fp loss: 1.470, KL loss: 10.088. 
+2990000/6589500 (epoch 46) loss: 11.000, gen loss: 3.267, ret loss: 1.219, fp loss: 1.471, KL loss: 10.088. 
+3000000/6589500 (epoch 46) loss: 11.000, gen loss: 3.263, ret loss: 1.219, fp loss: 1.473, KL loss: 10.089. 
+3010000/6589500 (epoch 46) loss: 11.005, gen loss: 3.265, ret loss: 1.218, fp loss: 1.473, KL loss: 10.097. 
+3020000/6589500 (epoch 46) loss: 11.003, gen loss: 3.266, ret loss: 1.217, fp loss: 1.473, KL loss: 10.096. 
+3030000/6589500 (epoch 46) loss: 11.000, gen loss: 3.266, ret loss: 1.214, fp loss: 1.472, KL loss: 10.096. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model46.ckpt. Average for epoch , loss: 11.000
+3040000/6589500 (epoch 47) loss: 10.975, gen loss: 3.264, ret loss: 1.213, fp loss: 1.459, KL loss: 10.078. 
+3050000/6589500 (epoch 47) loss: 10.989, gen loss: 3.270, ret loss: 1.213, fp loss: 1.461, KL loss: 10.090. 
+3060000/6589500 (epoch 47) loss: 10.993, gen loss: 3.265, ret loss: 1.213, fp loss: 1.463, KL loss: 10.102. 
+3070000/6589500 (epoch 47) loss: 10.996, gen loss: 3.266, ret loss: 1.214, fp loss: 1.465, KL loss: 10.104. 
+3080000/6589500 (epoch 47) loss: 10.998, gen loss: 3.266, ret loss: 1.212, fp loss: 1.466, KL loss: 10.109. 
+3090000/6589500 (epoch 47) loss: 11.004, gen loss: 3.267, ret loss: 1.213, fp loss: 1.467, KL loss: 10.115. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model47.ckpt. Average for epoch , loss: 11.005
+3100000/6589500 (epoch 48) loss: 10.976, gen loss: 3.265, ret loss: 1.205, fp loss: 1.452, KL loss: 10.110. 
+3110000/6589500 (epoch 48) loss: 10.986, gen loss: 3.270, ret loss: 1.211, fp loss: 1.461, KL loss: 10.087. 
+3120000/6589500 (epoch 48) loss: 10.982, gen loss: 3.265, ret loss: 1.208, fp loss: 1.463, KL loss: 10.092. 
+3130000/6589500 (epoch 48) loss: 10.988, gen loss: 3.265, ret loss: 1.214, fp loss: 1.464, KL loss: 10.092. 
+3140000/6589500 (epoch 48) loss: 10.998, gen loss: 3.269, ret loss: 1.212, fp loss: 1.466, KL loss: 10.102. 
+3150000/6589500 (epoch 48) loss: 11.001, gen loss: 3.270, ret loss: 1.214, fp loss: 1.468, KL loss: 10.099. 
+3160000/6589500 (epoch 48) loss: 11.005, gen loss: 3.271, ret loss: 1.213, fp loss: 1.469, KL loss: 10.104. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model48.ckpt. Average for epoch , loss: 11.005
+3170000/6589500 (epoch 49) loss: 10.998, gen loss: 3.274, ret loss: 1.200, fp loss: 1.472, KL loss: 10.106. 
+3180000/6589500 (epoch 49) loss: 11.024, gen loss: 3.280, ret loss: 1.202, fp loss: 1.474, KL loss: 10.137. 
+3190000/6589500 (epoch 49) loss: 11.073, gen loss: 3.281, ret loss: 1.206, fp loss: 1.492, KL loss: 10.188. 
+3200000/6589500 (epoch 49) loss: 11.066, gen loss: 3.280, ret loss: 1.210, fp loss: 1.492, KL loss: 10.166. 
+3210000/6589500 (epoch 49) loss: 11.057, gen loss: 3.280, ret loss: 1.208, fp loss: 1.490, KL loss: 10.157. 
+3220000/6589500 (epoch 49) loss: 11.052, gen loss: 3.283, ret loss: 1.209, fp loss: 1.487, KL loss: 10.145. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model49.ckpt. Average for epoch , loss: 11.046
+3230000/6589500 (epoch 50) loss: 10.981, gen loss: 3.287, ret loss: 1.209, fp loss: 1.462, KL loss: 10.048. 
+3240000/6589500 (epoch 50) loss: 11.040, gen loss: 3.287, ret loss: 1.213, fp loss: 1.478, KL loss: 10.123. 
+3250000/6589500 (epoch 50) loss: 11.032, gen loss: 3.284, ret loss: 1.212, fp loss: 1.479, KL loss: 10.113. 
+3260000/6589500 (epoch 50) loss: 11.027, gen loss: 3.282, ret loss: 1.215, fp loss: 1.479, KL loss: 10.102. 
+3270000/6589500 (epoch 50) loss: 11.032, gen loss: 3.285, ret loss: 1.213, fp loss: 1.481, KL loss: 10.107. 
+3280000/6589500 (epoch 50) loss: 11.028, gen loss: 3.284, ret loss: 1.212, fp loss: 1.480, KL loss: 10.104. 
+3290000/6589500 (epoch 50) loss: 11.028, gen loss: 3.284, ret loss: 1.211, fp loss: 1.480, KL loss: 10.104. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model50.ckpt. Average for epoch , loss: 11.028
+3300000/6589500 (epoch 51) loss: 10.990, gen loss: 3.266, ret loss: 1.213, fp loss: 1.473, KL loss: 10.077. 
+3310000/6589500 (epoch 51) loss: 11.006, gen loss: 3.277, ret loss: 1.212, fp loss: 1.475, KL loss: 10.084. 
+3320000/6589500 (epoch 51) loss: 11.008, gen loss: 3.277, ret loss: 1.210, fp loss: 1.478, KL loss: 10.086. 
+3330000/6589500 (epoch 51) loss: 11.006, gen loss: 3.274, ret loss: 1.210, fp loss: 1.477, KL loss: 10.089. 
+3340000/6589500 (epoch 51) loss: 11.005, gen loss: 3.275, ret loss: 1.208, fp loss: 1.476, KL loss: 10.091. 
+3350000/6589500 (epoch 51) loss: 11.014, gen loss: 3.278, ret loss: 1.213, fp loss: 1.476, KL loss: 10.092. 
+3360000/6589500 (epoch 51) loss: 11.015, gen loss: 3.279, ret loss: 1.214, fp loss: 1.476, KL loss: 10.092. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model51.ckpt. Average for epoch , loss: 11.015
+3370000/6589500 (epoch 52) loss: 11.018, gen loss: 3.283, ret loss: 1.224, fp loss: 1.474, KL loss: 10.075. 
+3380000/6589500 (epoch 52) loss: 11.042, gen loss: 3.288, ret loss: 1.217, fp loss: 1.479, KL loss: 10.115. 
+3390000/6589500 (epoch 52) loss: 11.038, gen loss: 3.285, ret loss: 1.217, fp loss: 1.482, KL loss: 10.108. 
+3400000/6589500 (epoch 52) loss: 11.038, gen loss: 3.287, ret loss: 1.219, fp loss: 1.483, KL loss: 10.101. 
+3410000/6589500 (epoch 52) loss: 11.032, gen loss: 3.286, ret loss: 1.220, fp loss: 1.480, KL loss: 10.093. 
+3420000/6589500 (epoch 52) loss: 11.040, gen loss: 3.287, ret loss: 1.222, fp loss: 1.481, KL loss: 10.101. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model52.ckpt. Average for epoch , loss: 11.041
+3430000/6589500 (epoch 53) loss: 11.043, gen loss: 3.289, ret loss: 1.225, fp loss: 1.482, KL loss: 10.095. 
+3440000/6589500 (epoch 53) loss: 11.059, gen loss: 3.295, ret loss: 1.236, fp loss: 1.485, KL loss: 10.086. 
+3450000/6589500 (epoch 53) loss: 11.058, gen loss: 3.290, ret loss: 1.243, fp loss: 1.484, KL loss: 10.083. 
+3460000/6589500 (epoch 53) loss: 11.065, gen loss: 3.290, ret loss: 1.247, fp loss: 1.487, KL loss: 10.082. 
+3470000/6589500 (epoch 53) loss: 11.066, gen loss: 3.291, ret loss: 1.248, fp loss: 1.486, KL loss: 10.085. 
+3480000/6589500 (epoch 53) loss: 11.063, gen loss: 3.292, ret loss: 1.250, fp loss: 1.484, KL loss: 10.073. 
+3490000/6589500 (epoch 53) loss: 11.066, gen loss: 3.294, ret loss: 1.252, fp loss: 1.485, KL loss: 10.070. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model53.ckpt. Average for epoch , loss: 11.066
+3500000/6589500 (epoch 54) loss: 11.007, gen loss: 3.285, ret loss: 1.249, fp loss: 1.474, KL loss: 9.999. 
+3510000/6589500 (epoch 54) loss: 11.029, gen loss: 3.291, ret loss: 1.247, fp loss: 1.474, KL loss: 10.035. 
+3520000/6589500 (epoch 54) loss: 11.031, gen loss: 3.287, ret loss: 1.251, fp loss: 1.477, KL loss: 10.031. 
+3530000/6589500 (epoch 54) loss: 11.040, gen loss: 3.288, ret loss: 1.255, fp loss: 1.479, KL loss: 10.035. 
+3540000/6589500 (epoch 54) loss: 11.043, gen loss: 3.290, ret loss: 1.254, fp loss: 1.481, KL loss: 10.036. 
+3550000/6589500 (epoch 54) loss: 11.048, gen loss: 3.293, ret loss: 1.253, fp loss: 1.482, KL loss: 10.040. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model54.ckpt. Average for epoch , loss: 11.045
+3560000/6589500 (epoch 55) loss: 11.024, gen loss: 3.291, ret loss: 1.255, fp loss: 1.475, KL loss: 10.007. 
+3570000/6589500 (epoch 55) loss: 11.041, gen loss: 3.296, ret loss: 1.243, fp loss: 1.476, KL loss: 10.053. 
+3580000/6589500 (epoch 55) loss: 11.034, gen loss: 3.292, ret loss: 1.240, fp loss: 1.476, KL loss: 10.052. 
+3590000/6589500 (epoch 55) loss: 11.071, gen loss: 3.293, ret loss: 1.248, fp loss: 1.485, KL loss: 10.089. 
+3600000/6589500 (epoch 55) loss: 11.068, gen loss: 3.294, ret loss: 1.252, fp loss: 1.485, KL loss: 10.072. 
+3610000/6589500 (epoch 55) loss: 11.067, gen loss: 3.297, ret loss: 1.251, fp loss: 1.486, KL loss: 10.067. 
+3620000/6589500 (epoch 55) loss: 11.070, gen loss: 3.297, ret loss: 1.249, fp loss: 1.488, KL loss: 10.073. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model55.ckpt. Average for epoch , loss: 11.069
+3630000/6589500 (epoch 56) loss: 11.054, gen loss: 3.304, ret loss: 1.248, fp loss: 1.484, KL loss: 10.036. 
+3640000/6589500 (epoch 56) loss: 11.064, gen loss: 3.301, ret loss: 1.249, fp loss: 1.487, KL loss: 10.053. 
+3650000/6589500 (epoch 56) loss: 11.048, gen loss: 3.298, ret loss: 1.248, fp loss: 1.486, KL loss: 10.031. 
+3660000/6589500 (epoch 56) loss: 11.045, gen loss: 3.296, ret loss: 1.250, fp loss: 1.485, KL loss: 10.029. 
+3670000/6589500 (epoch 56) loss: 11.049, gen loss: 3.296, ret loss: 1.252, fp loss: 1.485, KL loss: 10.029. 
+3680000/6589500 (epoch 56) loss: 11.052, gen loss: 3.296, ret loss: 1.251, fp loss: 1.484, KL loss: 10.041. 
+3690000/6589500 (epoch 56) loss: 11.051, gen loss: 3.297, ret loss: 1.250, fp loss: 1.483, KL loss: 10.041. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model56.ckpt. Average for epoch , loss: 11.051
+3700000/6589500 (epoch 57) loss: 11.053, gen loss: 3.300, ret loss: 1.247, fp loss: 1.480, KL loss: 10.052. 
+3710000/6589500 (epoch 57) loss: 11.047, gen loss: 3.297, ret loss: 1.245, fp loss: 1.479, KL loss: 10.052. 
+3720000/6589500 (epoch 57) loss: 11.047, gen loss: 3.292, ret loss: 1.248, fp loss: 1.480, KL loss: 10.052. 
+3730000/6589500 (epoch 57) loss: 11.053, gen loss: 3.295, ret loss: 1.248, fp loss: 1.483, KL loss: 10.055. 
+3740000/6589500 (epoch 57) loss: 11.048, gen loss: 3.294, ret loss: 1.248, fp loss: 1.481, KL loss: 10.050. 
+3750000/6589500 (epoch 57) loss: 11.050, gen loss: 3.295, ret loss: 1.250, fp loss: 1.481, KL loss: 10.045. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model57.ckpt. Average for epoch , loss: 11.048
+3760000/6589500 (epoch 58) loss: 10.983, gen loss: 3.278, ret loss: 1.219, fp loss: 1.466, KL loss: 10.040. 
+3770000/6589500 (epoch 58) loss: 11.050, gen loss: 3.295, ret loss: 1.246, fp loss: 1.481, KL loss: 10.056. 
+3780000/6589500 (epoch 58) loss: 11.056, gen loss: 3.299, ret loss: 1.247, fp loss: 1.486, KL loss: 10.048. 
+3790000/6589500 (epoch 58) loss: 11.058, gen loss: 3.295, ret loss: 1.250, fp loss: 1.488, KL loss: 10.050. 
+3800000/6589500 (epoch 58) loss: 11.059, gen loss: 3.296, ret loss: 1.251, fp loss: 1.489, KL loss: 10.047. 
+3810000/6589500 (epoch 58) loss: 11.056, gen loss: 3.297, ret loss: 1.252, fp loss: 1.487, KL loss: 10.039. 
+3820000/6589500 (epoch 58) loss: 11.057, gen loss: 3.298, ret loss: 1.254, fp loss: 1.488, KL loss: 10.032. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model58.ckpt. Average for epoch , loss: 11.056
+3830000/6589500 (epoch 59) loss: 11.056, gen loss: 3.300, ret loss: 1.250, fp loss: 1.484, KL loss: 10.045. 
+3840000/6589500 (epoch 59) loss: 11.067, gen loss: 3.301, ret loss: 1.255, fp loss: 1.488, KL loss: 10.046. 
+3850000/6589500 (epoch 59) loss: 11.065, gen loss: 3.298, ret loss: 1.257, fp loss: 1.489, KL loss: 10.041. 
+3860000/6589500 (epoch 59) loss: 11.064, gen loss: 3.299, ret loss: 1.256, fp loss: 1.488, KL loss: 10.042. 
+3870000/6589500 (epoch 59) loss: 11.063, gen loss: 3.302, ret loss: 1.256, fp loss: 1.487, KL loss: 10.035. 
+3880000/6589500 (epoch 59) loss: 11.063, gen loss: 3.303, ret loss: 1.256, fp loss: 1.487, KL loss: 10.034. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model59.ckpt. Average for epoch , loss: 11.063
+3890000/6589500 (epoch 60) loss: 11.049, gen loss: 3.295, ret loss: 1.283, fp loss: 1.486, KL loss: 9.969. 
+3900000/6589500 (epoch 60) loss: 11.052, gen loss: 3.302, ret loss: 1.269, fp loss: 1.481, KL loss: 9.999. 
+3910000/6589500 (epoch 60) loss: 11.053, gen loss: 3.302, ret loss: 1.265, fp loss: 1.483, KL loss: 10.005. 
+3920000/6589500 (epoch 60) loss: 11.057, gen loss: 3.301, ret loss: 1.264, fp loss: 1.487, KL loss: 10.010. 
+3930000/6589500 (epoch 60) loss: 11.056, gen loss: 3.303, ret loss: 1.262, fp loss: 1.488, KL loss: 10.007. 
+3940000/6589500 (epoch 60) loss: 11.054, gen loss: 3.301, ret loss: 1.261, fp loss: 1.487, KL loss: 10.007. 
+3950000/6589500 (epoch 60) loss: 11.059, gen loss: 3.301, ret loss: 1.262, fp loss: 1.489, KL loss: 10.013. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model60.ckpt. Average for epoch , loss: 11.058
+3960000/6589500 (epoch 61) loss: 11.062, gen loss: 3.306, ret loss: 1.256, fp loss: 1.494, KL loss: 10.012. 
+3970000/6589500 (epoch 61) loss: 11.061, gen loss: 3.307, ret loss: 1.261, fp loss: 1.489, KL loss: 10.008. 
+3980000/6589500 (epoch 61) loss: 11.063, gen loss: 3.307, ret loss: 1.260, fp loss: 1.493, KL loss: 10.006. 
+3990000/6589500 (epoch 61) loss: 11.067, gen loss: 3.307, ret loss: 1.263, fp loss: 1.493, KL loss: 10.010. 
+4000000/6589500 (epoch 61) loss: 11.065, gen loss: 3.306, ret loss: 1.264, fp loss: 1.491, KL loss: 10.007. 
+4010000/6589500 (epoch 61) loss: 11.073, gen loss: 3.307, ret loss: 1.264, fp loss: 1.490, KL loss: 10.023. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model61.ckpt. Average for epoch , loss: 11.081
+4020000/6589500 (epoch 62) loss: 10.981, gen loss: 3.267, ret loss: 1.262, fp loss: 1.481, KL loss: 9.942. 
+4030000/6589500 (epoch 62) loss: 11.078, gen loss: 3.315, ret loss: 1.275, fp loss: 1.496, KL loss: 9.986. 
+4040000/6589500 (epoch 62) loss: 11.079, gen loss: 3.316, ret loss: 1.268, fp loss: 1.494, KL loss: 10.000. 
+4050000/6589500 (epoch 62) loss: 11.071, gen loss: 3.309, ret loss: 1.270, fp loss: 1.492, KL loss: 10.001. 
+4060000/6589500 (epoch 62) loss: 11.071, gen loss: 3.310, ret loss: 1.272, fp loss: 1.492, KL loss: 9.995. 
+4070000/6589500 (epoch 62) loss: 11.069, gen loss: 3.309, ret loss: 1.272, fp loss: 1.490, KL loss: 9.997. 
+4080000/6589500 (epoch 62) loss: 11.070, gen loss: 3.309, ret loss: 1.272, fp loss: 1.490, KL loss: 9.999. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model62.ckpt. Average for epoch , loss: 11.072
+4090000/6589500 (epoch 63) loss: 11.086, gen loss: 3.305, ret loss: 1.260, fp loss: 1.494, KL loss: 10.054. 
+4100000/6589500 (epoch 63) loss: 11.095, gen loss: 3.318, ret loss: 1.264, fp loss: 1.494, KL loss: 10.039. 
+4110000/6589500 (epoch 63) loss: 11.097, gen loss: 3.317, ret loss: 1.263, fp loss: 1.496, KL loss: 10.039. 
+4120000/6589500 (epoch 63) loss: 11.089, gen loss: 3.315, ret loss: 1.266, fp loss: 1.497, KL loss: 10.020. 
+4130000/6589500 (epoch 63) loss: 11.087, gen loss: 3.314, ret loss: 1.264, fp loss: 1.495, KL loss: 10.026. 
+4140000/6589500 (epoch 63) loss: 11.082, gen loss: 3.315, ret loss: 1.265, fp loss: 1.493, KL loss: 10.018. 
+4150000/6589500 (epoch 63) loss: 11.075, gen loss: 3.314, ret loss: 1.264, fp loss: 1.491, KL loss: 10.012. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model63.ckpt. Average for epoch , loss: 11.076
+4160000/6589500 (epoch 64) loss: 11.056, gen loss: 3.305, ret loss: 1.268, fp loss: 1.476, KL loss: 10.016. 
+4170000/6589500 (epoch 64) loss: 11.057, gen loss: 3.307, ret loss: 1.261, fp loss: 1.481, KL loss: 10.017. 
+4180000/6589500 (epoch 64) loss: 11.057, gen loss: 3.302, ret loss: 1.262, fp loss: 1.483, KL loss: 10.021. 
+4190000/6589500 (epoch 64) loss: 11.074, gen loss: 3.307, ret loss: 1.265, fp loss: 1.488, KL loss: 10.029. 
+4200000/6589500 (epoch 64) loss: 11.082, gen loss: 3.311, ret loss: 1.265, fp loss: 1.490, KL loss: 10.032. 
+4210000/6589500 (epoch 64) loss: 11.088, gen loss: 3.313, ret loss: 1.266, fp loss: 1.492, KL loss: 10.035. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model64.ckpt. Average for epoch , loss: 11.088
+4220000/6589500 (epoch 65) loss: 11.170, gen loss: 3.341, ret loss: 1.285, fp loss: 1.492, KL loss: 10.104. 
+4230000/6589500 (epoch 65) loss: 11.127, gen loss: 3.332, ret loss: 1.278, fp loss: 1.501, KL loss: 10.030. 
+4240000/6589500 (epoch 65) loss: 11.118, gen loss: 3.332, ret loss: 1.273, fp loss: 1.504, KL loss: 10.017. 
+4250000/6589500 (epoch 65) loss: 11.102, gen loss: 3.326, ret loss: 1.269, fp loss: 1.502, KL loss: 10.011. 
+4260000/6589500 (epoch 65) loss: 11.103, gen loss: 3.326, ret loss: 1.267, fp loss: 1.500, KL loss: 10.020. 
+4270000/6589500 (epoch 65) loss: 11.105, gen loss: 3.325, ret loss: 1.267, fp loss: 1.498, KL loss: 10.029. 
+4280000/6589500 (epoch 65) loss: 11.107, gen loss: 3.326, ret loss: 1.268, fp loss: 1.498, KL loss: 10.032. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model65.ckpt. Average for epoch , loss: 11.105
+4290000/6589500 (epoch 66) loss: 11.087, gen loss: 3.317, ret loss: 1.271, fp loss: 1.492, KL loss: 10.012. 
+4300000/6589500 (epoch 66) loss: 11.111, gen loss: 3.323, ret loss: 1.310, fp loss: 1.494, KL loss: 9.969. 
+4310000/6589500 (epoch 66) loss: 11.102, gen loss: 3.318, ret loss: 1.310, fp loss: 1.496, KL loss: 9.954. 
+4320000/6589500 (epoch 66) loss: 11.097, gen loss: 3.318, ret loss: 1.305, fp loss: 1.496, KL loss: 9.955. 
+4330000/6589500 (epoch 66) loss: 11.092, gen loss: 3.318, ret loss: 1.303, fp loss: 1.495, KL loss: 9.952. 
+4340000/6589500 (epoch 66) loss: 11.093, gen loss: 3.318, ret loss: 1.300, fp loss: 1.495, KL loss: 9.957. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model66.ckpt. Average for epoch , loss: 11.091
+4350000/6589500 (epoch 67) loss: 11.033, gen loss: 3.310, ret loss: 1.272, fp loss: 1.485, KL loss: 9.933. 
+4360000/6589500 (epoch 67) loss: 11.106, gen loss: 3.319, ret loss: 1.284, fp loss: 1.503, KL loss: 9.998. 
+4370000/6589500 (epoch 67) loss: 11.110, gen loss: 3.322, ret loss: 1.285, fp loss: 1.500, KL loss: 10.005. 
+4380000/6589500 (epoch 67) loss: 11.103, gen loss: 3.321, ret loss: 1.290, fp loss: 1.500, KL loss: 9.984. 
+4390000/6589500 (epoch 67) loss: 11.100, gen loss: 3.320, ret loss: 1.290, fp loss: 1.502, KL loss: 9.976. 
+4400000/6589500 (epoch 67) loss: 11.098, gen loss: 3.321, ret loss: 1.291, fp loss: 1.501, KL loss: 9.970. 
+4410000/6589500 (epoch 67) loss: 11.101, gen loss: 3.323, ret loss: 1.291, fp loss: 1.502, KL loss: 9.970. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model67.ckpt. Average for epoch , loss: 11.101
+4420000/6589500 (epoch 68) loss: 11.084, gen loss: 3.329, ret loss: 1.274, fp loss: 1.491, KL loss: 9.980. 
+4430000/6589500 (epoch 68) loss: 11.100, gen loss: 3.331, ret loss: 1.275, fp loss: 1.499, KL loss: 9.989. 
+4440000/6589500 (epoch 68) loss: 11.100, gen loss: 3.329, ret loss: 1.283, fp loss: 1.498, KL loss: 9.979. 
+4450000/6589500 (epoch 68) loss: 11.117, gen loss: 3.331, ret loss: 1.288, fp loss: 1.500, KL loss: 9.996. 
+4460000/6589500 (epoch 68) loss: 11.113, gen loss: 3.332, ret loss: 1.287, fp loss: 1.500, KL loss: 9.989. 
+4470000/6589500 (epoch 68) loss: 11.124, gen loss: 3.331, ret loss: 1.287, fp loss: 1.501, KL loss: 10.009. 
+4480000/6589500 (epoch 68) loss: 11.127, gen loss: 3.332, ret loss: 1.287, fp loss: 1.503, KL loss: 10.011. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model68.ckpt. Average for epoch , loss: 11.127
+4490000/6589500 (epoch 69) loss: 11.107, gen loss: 3.337, ret loss: 1.276, fp loss: 1.500, KL loss: 9.986. 
+4500000/6589500 (epoch 69) loss: 11.116, gen loss: 3.343, ret loss: 1.296, fp loss: 1.504, KL loss: 9.946. 
+4510000/6589500 (epoch 69) loss: 11.120, gen loss: 3.337, ret loss: 1.307, fp loss: 1.503, KL loss: 9.947. 
+4520000/6589500 (epoch 69) loss: 11.127, gen loss: 3.337, ret loss: 1.306, fp loss: 1.507, KL loss: 9.954. 
+4530000/6589500 (epoch 69) loss: 11.130, gen loss: 3.339, ret loss: 1.306, fp loss: 1.508, KL loss: 9.955. 
+4540000/6589500 (epoch 69) loss: 11.130, gen loss: 3.340, ret loss: 1.305, fp loss: 1.510, KL loss: 9.951. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model69.ckpt. Average for epoch , loss: 11.127
+4550000/6589500 (epoch 70) loss: 11.079, gen loss: 3.320, ret loss: 1.280, fp loss: 1.491, KL loss: 9.976. 
+4560000/6589500 (epoch 70) loss: 11.133, gen loss: 3.331, ret loss: 1.301, fp loss: 1.500, KL loss: 10.004. 
+4570000/6589500 (epoch 70) loss: 11.130, gen loss: 3.336, ret loss: 1.297, fp loss: 1.504, KL loss: 9.985. 
+4580000/6589500 (epoch 70) loss: 11.128, gen loss: 3.336, ret loss: 1.295, fp loss: 1.504, KL loss: 9.988. 
+4590000/6589500 (epoch 70) loss: 11.127, gen loss: 3.337, ret loss: 1.293, fp loss: 1.503, KL loss: 9.987. 
+4600000/6589500 (epoch 70) loss: 11.120, gen loss: 3.336, ret loss: 1.290, fp loss: 1.503, KL loss: 9.982. 
+4610000/6589500 (epoch 70) loss: 11.128, gen loss: 3.338, ret loss: 1.289, fp loss: 1.505, KL loss: 9.991. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model70.ckpt. Average for epoch , loss: 11.129
+4620000/6589500 (epoch 71) loss: 11.079, gen loss: 3.331, ret loss: 1.275, fp loss: 1.493, KL loss: 9.960. 
+4630000/6589500 (epoch 71) loss: 11.098, gen loss: 3.333, ret loss: 1.280, fp loss: 1.501, KL loss: 9.968. 
+4640000/6589500 (epoch 71) loss: 11.091, gen loss: 3.325, ret loss: 1.280, fp loss: 1.501, KL loss: 9.972. 
+4650000/6589500 (epoch 71) loss: 11.103, gen loss: 3.326, ret loss: 1.282, fp loss: 1.501, KL loss: 9.986. 
+4660000/6589500 (epoch 71) loss: 11.103, gen loss: 3.329, ret loss: 1.283, fp loss: 1.501, KL loss: 9.978. 
+4670000/6589500 (epoch 71) loss: 11.102, gen loss: 3.330, ret loss: 1.283, fp loss: 1.500, KL loss: 9.976. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model71.ckpt. Average for epoch , loss: 11.104
+4680000/6589500 (epoch 72) loss: 11.136, gen loss: 3.333, ret loss: 1.321, fp loss: 1.517, KL loss: 9.931. 
+4690000/6589500 (epoch 72) loss: 11.149, gen loss: 3.342, ret loss: 1.315, fp loss: 1.516, KL loss: 9.951. 
+4700000/6589500 (epoch 72) loss: 11.124, gen loss: 3.334, ret loss: 1.299, fp loss: 1.508, KL loss: 9.965. 
+4710000/6589500 (epoch 72) loss: 11.129, gen loss: 3.333, ret loss: 1.292, fp loss: 1.509, KL loss: 9.990. 
+4720000/6589500 (epoch 72) loss: 11.124, gen loss: 3.333, ret loss: 1.286, fp loss: 1.507, KL loss: 9.995. 
+4730000/6589500 (epoch 72) loss: 11.124, gen loss: 3.333, ret loss: 1.282, fp loss: 1.508, KL loss: 10.001. 
+4740000/6589500 (epoch 72) loss: 11.124, gen loss: 3.333, ret loss: 1.282, fp loss: 1.509, KL loss: 10.001. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model72.ckpt. Average for epoch , loss: 11.155
+4750000/6589500 (epoch 73) loss: 11.133, gen loss: 3.311, ret loss: 1.272, fp loss: 1.504, KL loss: 10.092. 
+4760000/6589500 (epoch 73) loss: 11.125, gen loss: 3.324, ret loss: 1.288, fp loss: 1.507, KL loss: 10.012. 
+4770000/6589500 (epoch 73) loss: 11.138, gen loss: 3.330, ret loss: 1.283, fp loss: 1.514, KL loss: 10.022. 
+4780000/6589500 (epoch 73) loss: 11.140, gen loss: 3.330, ret loss: 1.279, fp loss: 1.516, KL loss: 10.029. 
+4790000/6589500 (epoch 73) loss: 11.134, gen loss: 3.332, ret loss: 1.279, fp loss: 1.514, KL loss: 10.017. 
+4800000/6589500 (epoch 73) loss: 11.130, gen loss: 3.332, ret loss: 1.277, fp loss: 1.510, KL loss: 10.022. 
+4810000/6589500 (epoch 73) loss: 11.127, gen loss: 3.332, ret loss: 1.276, fp loss: 1.509, KL loss: 10.021. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model73.ckpt. Average for epoch , loss: 11.127
+4820000/6589500 (epoch 74) loss: 11.110, gen loss: 3.345, ret loss: 1.268, fp loss: 1.500, KL loss: 9.995. 
+4830000/6589500 (epoch 74) loss: 11.119, gen loss: 3.348, ret loss: 1.265, fp loss: 1.507, KL loss: 9.999. 
+4840000/6589500 (epoch 74) loss: 11.110, gen loss: 3.337, ret loss: 1.267, fp loss: 1.507, KL loss: 9.997. 
+4850000/6589500 (epoch 74) loss: 11.116, gen loss: 3.338, ret loss: 1.268, fp loss: 1.509, KL loss: 10.001. 
+4860000/6589500 (epoch 74) loss: 11.111, gen loss: 3.335, ret loss: 1.270, fp loss: 1.507, KL loss: 9.997. 
+4870000/6589500 (epoch 74) loss: 11.110, gen loss: 3.335, ret loss: 1.272, fp loss: 1.507, KL loss: 9.995. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model74.ckpt. Average for epoch , loss: 11.109
+4880000/6589500 (epoch 75) loss: 11.086, gen loss: 3.326, ret loss: 1.260, fp loss: 1.491, KL loss: 10.019. 
+4890000/6589500 (epoch 75) loss: 11.095, gen loss: 3.323, ret loss: 1.258, fp loss: 1.499, KL loss: 10.027. 
+4900000/6589500 (epoch 75) loss: 11.118, gen loss: 3.325, ret loss: 1.265, fp loss: 1.507, KL loss: 10.042. 
+4910000/6589500 (epoch 75) loss: 11.137, gen loss: 3.328, ret loss: 1.273, fp loss: 1.510, KL loss: 10.052. 
+4920000/6589500 (epoch 75) loss: 11.134, gen loss: 3.331, ret loss: 1.272, fp loss: 1.509, KL loss: 10.043. 
+4930000/6589500 (epoch 75) loss: 11.131, gen loss: 3.333, ret loss: 1.272, fp loss: 1.507, KL loss: 10.037. 
+4940000/6589500 (epoch 75) loss: 11.129, gen loss: 3.333, ret loss: 1.272, fp loss: 1.507, KL loss: 10.035. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model75.ckpt. Average for epoch , loss: 11.128
+4950000/6589500 (epoch 76) loss: 11.086, gen loss: 3.328, ret loss: 1.264, fp loss: 1.504, KL loss: 9.981. 
+4960000/6589500 (epoch 76) loss: 11.088, gen loss: 3.327, ret loss: 1.268, fp loss: 1.503, KL loss: 9.980. 
+4970000/6589500 (epoch 76) loss: 11.095, gen loss: 3.321, ret loss: 1.282, fp loss: 1.505, KL loss: 9.973. 
+4980000/6589500 (epoch 76) loss: 11.109, gen loss: 3.324, ret loss: 1.286, fp loss: 1.504, KL loss: 9.989. 
+4990000/6589500 (epoch 76) loss: 11.121, gen loss: 3.329, ret loss: 1.291, fp loss: 1.505, KL loss: 9.993. 
+5000000/6589500 (epoch 76) loss: 11.130, gen loss: 3.334, ret loss: 1.293, fp loss: 1.506, KL loss: 9.992. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model76.ckpt. Average for epoch , loss: 11.142
+5010000/6589500 (epoch 77) loss: 11.149, gen loss: 3.347, ret loss: 1.320, fp loss: 1.514, KL loss: 9.934. 
+5020000/6589500 (epoch 77) loss: 11.140, gen loss: 3.348, ret loss: 1.315, fp loss: 1.516, KL loss: 9.923. 
+5030000/6589500 (epoch 77) loss: 11.138, gen loss: 3.342, ret loss: 1.308, fp loss: 1.513, KL loss: 9.951. 
+5040000/6589500 (epoch 77) loss: 11.134, gen loss: 3.334, ret loss: 1.309, fp loss: 1.514, KL loss: 9.953. 
+5050000/6589500 (epoch 77) loss: 11.130, gen loss: 3.336, ret loss: 1.304, fp loss: 1.512, KL loss: 9.954. 
+5060000/6589500 (epoch 77) loss: 11.160, gen loss: 3.336, ret loss: 1.302, fp loss: 1.512, KL loss: 10.018. 
+5070000/6589500 (epoch 77) loss: 11.163, gen loss: 3.337, ret loss: 1.302, fp loss: 1.513, KL loss: 10.023. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model77.ckpt. Average for epoch , loss: 11.164
+5080000/6589500 (epoch 78) loss: 11.168, gen loss: 3.353, ret loss: 1.315, fp loss: 1.522, KL loss: 9.957. 
+5090000/6589500 (epoch 78) loss: 11.163, gen loss: 3.348, ret loss: 1.322, fp loss: 1.519, KL loss: 9.948. 
+5100000/6589500 (epoch 78) loss: 11.179, gen loss: 3.346, ret loss: 1.324, fp loss: 1.520, KL loss: 9.979. 
+5110000/6589500 (epoch 78) loss: 11.181, gen loss: 3.346, ret loss: 1.333, fp loss: 1.521, KL loss: 9.962. 
+5120000/6589500 (epoch 78) loss: 11.196, gen loss: 3.351, ret loss: 1.336, fp loss: 1.521, KL loss: 9.976. 
+5130000/6589500 (epoch 78) loss: 11.193, gen loss: 3.354, ret loss: 1.337, fp loss: 1.521, KL loss: 9.962. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model78.ckpt. Average for epoch , loss: 11.191
+5140000/6589500 (epoch 79) loss: 11.120, gen loss: 3.350, ret loss: 1.299, fp loss: 1.515, KL loss: 9.910. 
+5150000/6589500 (epoch 79) loss: 11.181, gen loss: 3.362, ret loss: 1.332, fp loss: 1.518, KL loss: 9.937. 
+5160000/6589500 (epoch 79) loss: 11.197, gen loss: 3.362, ret loss: 1.339, fp loss: 1.520, KL loss: 9.952. 
+5170000/6589500 (epoch 79) loss: 11.202, gen loss: 3.361, ret loss: 1.347, fp loss: 1.524, KL loss: 9.940. 
+5180000/6589500 (epoch 79) loss: 11.193, gen loss: 3.363, ret loss: 1.347, fp loss: 1.525, KL loss: 9.918. 
+5190000/6589500 (epoch 79) loss: 11.187, gen loss: 3.362, ret loss: 1.343, fp loss: 1.523, KL loss: 9.919. 
+5200000/6589500 (epoch 79) loss: 11.179, gen loss: 3.361, ret loss: 1.338, fp loss: 1.522, KL loss: 9.916. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model79.ckpt. Average for epoch , loss: 11.177
+5210000/6589500 (epoch 80) loss: 11.115, gen loss: 3.344, ret loss: 1.317, fp loss: 1.507, KL loss: 9.894. 
+5220000/6589500 (epoch 80) loss: 11.165, gen loss: 3.350, ret loss: 1.314, fp loss: 1.520, KL loss: 9.962. 
+5230000/6589500 (epoch 80) loss: 11.160, gen loss: 3.349, ret loss: 1.308, fp loss: 1.519, KL loss: 9.970. 
+5240000/6589500 (epoch 80) loss: 11.155, gen loss: 3.346, ret loss: 1.311, fp loss: 1.520, KL loss: 9.954. 
+5250000/6589500 (epoch 80) loss: 11.157, gen loss: 3.348, ret loss: 1.313, fp loss: 1.522, KL loss: 9.948. 
+5260000/6589500 (epoch 80) loss: 11.154, gen loss: 3.348, ret loss: 1.315, fp loss: 1.521, KL loss: 9.942. 
+5270000/6589500 (epoch 80) loss: 11.476, gen loss: 3.347, ret loss: 1.313, fp loss: 1.518, KL loss: 10.596. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model80.ckpt. Average for epoch , loss: 11.462
+5280000/6589500 (epoch 81) loss: 11.087, gen loss: 3.327, ret loss: 1.304, fp loss: 1.498, KL loss: 9.914. 
+5290000/6589500 (epoch 81) loss: 11.135, gen loss: 3.347, ret loss: 1.322, fp loss: 1.512, KL loss: 9.908. 
+5300000/6589500 (epoch 81) loss: 12.920, gen loss: 4.828, ret loss: 1.542, fp loss: 2.241, KL loss: 8.618. 
+5310000/6589500 (epoch 81) loss: 12.769, gen loss: 4.790, ret loss: 1.560, fp loss: 2.239, KL loss: 8.361. 
+5320000/6589500 (epoch 81) loss: 12.494, gen loss: 4.571, ret loss: 1.532, fp loss: 2.129, KL loss: 8.523. 
+5330000/6589500 (epoch 81) loss: 12.290, gen loss: 4.396, ret loss: 1.503, fp loss: 2.043, KL loss: 8.695. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model81.ckpt. Average for epoch , loss: 12.169
+5340000/6589500 (epoch 82) loss: 11.232, gen loss: 3.468, ret loss: 1.321, fp loss: 1.579, KL loss: 9.729. 
+5350000/6589500 (epoch 82) loss: 11.205, gen loss: 3.445, ret loss: 1.323, fp loss: 1.561, KL loss: 9.754. 
+5360000/6589500 (epoch 82) loss: 11.215, gen loss: 3.437, ret loss: 1.329, fp loss: 1.555, KL loss: 9.788. 
+5370000/6589500 (epoch 82) loss: 11.207, gen loss: 3.429, ret loss: 1.331, fp loss: 1.551, KL loss: 9.792. 
+5380000/6589500 (epoch 82) loss: 11.206, gen loss: 3.427, ret loss: 1.331, fp loss: 1.549, KL loss: 9.799. 
+5390000/6589500 (epoch 82) loss: 11.202, gen loss: 3.425, ret loss: 1.334, fp loss: 1.546, KL loss: 9.796. 
+5400000/6589500 (epoch 82) loss: 11.200, gen loss: 3.423, ret loss: 1.333, fp loss: 1.544, KL loss: 9.799. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model82.ckpt. Average for epoch , loss: 11.198
+5410000/6589500 (epoch 83) loss: 11.175, gen loss: 3.404, ret loss: 1.308, fp loss: 1.529, KL loss: 9.868. 
+5420000/6589500 (epoch 83) loss: 11.181, gen loss: 3.405, ret loss: 1.315, fp loss: 1.529, KL loss: 9.865. 
+5430000/6589500 (epoch 83) loss: 11.183, gen loss: 3.405, ret loss: 1.315, fp loss: 1.533, KL loss: 9.862. 
+5440000/6589500 (epoch 83) loss: 11.185, gen loss: 3.403, ret loss: 1.313, fp loss: 1.533, KL loss: 9.872. 
+5450000/6589500 (epoch 83) loss: 11.206, gen loss: 3.406, ret loss: 1.312, fp loss: 1.535, KL loss: 9.905. 
+5460000/6589500 (epoch 83) loss: 11.208, gen loss: 3.407, ret loss: 1.313, fp loss: 1.536, KL loss: 9.903. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model83.ckpt. Average for epoch , loss: 11.206
+5470000/6589500 (epoch 84) loss: 11.165, gen loss: 3.385, ret loss: 1.315, fp loss: 1.538, KL loss: 9.854. 
+5480000/6589500 (epoch 84) loss: 11.181, gen loss: 3.393, ret loss: 1.302, fp loss: 1.534, KL loss: 9.905. 
+5490000/6589500 (epoch 84) loss: 11.177, gen loss: 3.393, ret loss: 1.303, fp loss: 1.530, KL loss: 9.902. 
+5500000/6589500 (epoch 84) loss: 11.161, gen loss: 3.389, ret loss: 1.305, fp loss: 1.525, KL loss: 9.884. 
+5510000/6589500 (epoch 84) loss: 11.160, gen loss: 3.387, ret loss: 1.303, fp loss: 1.523, KL loss: 9.892. 
+5520000/6589500 (epoch 84) loss: 11.163, gen loss: 3.387, ret loss: 1.306, fp loss: 1.522, KL loss: 9.896. 
+5530000/6589500 (epoch 84) loss: 11.162, gen loss: 3.388, ret loss: 1.306, fp loss: 1.522, KL loss: 9.892. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model84.ckpt. Average for epoch , loss: 11.163
+5540000/6589500 (epoch 85) loss: 11.177, gen loss: 3.380, ret loss: 1.299, fp loss: 1.522, KL loss: 9.950. 
+5550000/6589500 (epoch 85) loss: 11.208, gen loss: 3.389, ret loss: 1.303, fp loss: 1.523, KL loss: 9.985. 
+5560000/6589500 (epoch 85) loss: 11.195, gen loss: 3.389, ret loss: 1.302, fp loss: 1.521, KL loss: 9.968. 
+5570000/6589500 (epoch 85) loss: 11.200, gen loss: 3.391, ret loss: 1.301, fp loss: 1.525, KL loss: 9.966. 
+5580000/6589500 (epoch 85) loss: 11.197, gen loss: 3.391, ret loss: 1.302, fp loss: 1.523, KL loss: 9.962. 
+5590000/6589500 (epoch 85) loss: 11.200, gen loss: 3.391, ret loss: 1.300, fp loss: 1.522, KL loss: 9.976. 
+5600000/6589500 (epoch 85) loss: 11.198, gen loss: 3.393, ret loss: 1.299, fp loss: 1.522, KL loss: 9.970. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model85.ckpt. Average for epoch , loss: 11.198
+5610000/6589500 (epoch 86) loss: 13.055, gen loss: 4.349, ret loss: 1.432, fp loss: 1.975, KL loss: 10.600. 
+5620000/6589500 (epoch 86) loss: 12.777, gen loss: 4.646, ret loss: 1.573, fp loss: 2.106, KL loss: 8.906. 
+5630000/6589500 (epoch 86) loss: 12.250, gen loss: 4.238, ret loss: 1.515, fp loss: 1.920, KL loss: 9.153. 
+5640000/6589500 (epoch 86) loss: 11.981, gen loss: 4.030, ret loss: 1.472, fp loss: 1.824, KL loss: 9.310. 
+5650000/6589500 (epoch 86) loss: 11.819, gen loss: 3.906, ret loss: 1.443, fp loss: 1.763, KL loss: 9.416. 
+5660000/6589500 (epoch 86) loss: 11.707, gen loss: 3.819, ret loss: 1.421, fp loss: 1.723, KL loss: 9.487. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model86.ckpt. Average for epoch , loss: 11.647
+5670000/6589500 (epoch 87) loss: 11.170, gen loss: 3.380, ret loss: 1.295, fp loss: 1.523, KL loss: 9.941. 
+5680000/6589500 (epoch 87) loss: 11.172, gen loss: 3.393, ret loss: 1.312, fp loss: 1.524, KL loss: 9.886. 
+5690000/6589500 (epoch 87) loss: 11.165, gen loss: 3.392, ret loss: 1.309, fp loss: 1.521, KL loss: 9.887. 
+5700000/6589500 (epoch 87) loss: 11.159, gen loss: 3.387, ret loss: 1.307, fp loss: 1.521, KL loss: 9.887. 
+5710000/6589500 (epoch 87) loss: 11.161, gen loss: 3.388, ret loss: 1.304, fp loss: 1.522, KL loss: 9.896. 
+5720000/6589500 (epoch 87) loss: 11.166, gen loss: 3.389, ret loss: 1.309, fp loss: 1.522, KL loss: 9.892. 
+5730000/6589500 (epoch 87) loss: 11.169, gen loss: 3.390, ret loss: 1.309, fp loss: 1.522, KL loss: 9.897. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model87.ckpt. Average for epoch , loss: 11.170
+5740000/6589500 (epoch 88) loss: 11.169, gen loss: 3.395, ret loss: 1.311, fp loss: 1.516, KL loss: 9.892. 
+5750000/6589500 (epoch 88) loss: 11.231, gen loss: 3.393, ret loss: 1.310, fp loss: 1.520, KL loss: 10.017. 
+5760000/6589500 (epoch 88) loss: 11.215, gen loss: 3.395, ret loss: 1.312, fp loss: 1.528, KL loss: 9.959. 
+5770000/6589500 (epoch 88) loss: 11.236, gen loss: 3.393, ret loss: 1.308, fp loss: 1.530, KL loss: 10.010. 
+5780000/6589500 (epoch 88) loss: 11.230, gen loss: 3.395, ret loss: 1.306, fp loss: 1.529, KL loss: 10.001. 
+5790000/6589500 (epoch 88) loss: 11.226, gen loss: 3.396, ret loss: 1.306, fp loss: 1.529, KL loss: 9.989. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model88.ckpt. Average for epoch , loss: 11.227
+5800000/6589500 (epoch 89) loss: 11.168, gen loss: 3.404, ret loss: 1.311, fp loss: 1.513, KL loss: 9.880. 
+5810000/6589500 (epoch 89) loss: 12.673, gen loss: 4.528, ret loss: 1.584, fp loss: 2.018, KL loss: 9.085. 
+5820000/6589500 (epoch 89) loss: 13.175, gen loss: 5.272, ret loss: 1.836, fp loss: 2.429, KL loss: 7.273. 
+5830000/6589500 (epoch 89) loss: 12.656, gen loss: 4.816, ret loss: 1.733, fp loss: 2.232, KL loss: 7.750. 
+5840000/6589500 (epoch 89) loss: 12.343, gen loss: 4.507, ret loss: 1.651, fp loss: 2.088, KL loss: 8.193. 
+5850000/6589500 (epoch 89) loss: 12.139, gen loss: 4.306, ret loss: 1.597, fp loss: 1.991, KL loss: 8.488. 
+5860000/6589500 (epoch 89) loss: 11.994, gen loss: 4.166, ret loss: 1.557, fp loss: 1.923, KL loss: 8.696. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model89.ckpt. Average for epoch , loss: 11.941
+5870000/6589500 (epoch 90) loss: 11.205, gen loss: 3.422, ret loss: 1.342, fp loss: 1.552, KL loss: 9.780. 
+5880000/6589500 (epoch 90) loss: 11.196, gen loss: 3.422, ret loss: 1.335, fp loss: 1.548, KL loss: 9.782. 
+5890000/6589500 (epoch 90) loss: 11.208, gen loss: 3.417, ret loss: 1.332, fp loss: 1.544, KL loss: 9.829. 
+5900000/6589500 (epoch 90) loss: 11.204, gen loss: 3.414, ret loss: 1.332, fp loss: 1.544, KL loss: 9.829. 
+5910000/6589500 (epoch 90) loss: 11.214, gen loss: 3.415, ret loss: 1.330, fp loss: 1.542, KL loss: 9.852. 
+5920000/6589500 (epoch 90) loss: 11.216, gen loss: 3.419, ret loss: 1.331, fp loss: 1.540, KL loss: 9.852. 
+5930000/6589500 (epoch 90) loss: 11.225, gen loss: 3.421, ret loss: 1.331, fp loss: 1.541, KL loss: 9.865. 
+Model checkpoint: save/all_data_1k_vocab_0.5_KL_beta/model90.ckpt. Average for epoch , loss: 11.225
+5940000/6589500 (epoch 91) loss: 11.185, gen loss: 3.413, ret loss: 1.314, fp loss: 1.536, KL loss: 9.845. 
+5950000/6589500 (epoch 91) loss: 11.190, gen loss: 3.412, ret loss: 1.315, fp loss: 1.534, KL loss: 9.858. 
+5960000/6589500 (epoch 91) loss: 11.181, gen loss: 3.407, ret loss: 1.316, fp loss: 1.531, KL loss: 9.853. 
+5970000/6589500 (epoch 91) loss: 11.186, gen loss: 3.407, ret loss: 1.313, fp loss: 1.532, KL loss: 9.868. 
+5980000/6589500 (epoch 91) loss: 11.187, gen loss: 3.408, ret loss: 1.312, fp loss: 1.530, KL loss: 9.872. 
