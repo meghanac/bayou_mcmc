@@ -1,4 +1,5 @@
 import argparse
+import itertools
 import math
 import os
 import textwrap
@@ -22,6 +23,7 @@ from proposals.swap_proposal import SwapProposal
 from proposals.add_dnode_proposal import AddDnodeProposal
 from proposals.replace_proposal import ReplaceProposal
 from proposals.grow_constraint_proposal import GrowConstraintProposal
+from proposals.insertion_proposals import ProposalWithInsertion
 
 INSERT = 'insert'
 DELETE = 'delete'
@@ -63,6 +65,7 @@ class MCMCProgram:
         # Initialize variables about program
         self.constraints = []
         self.constraint_nodes = []  # has node numbers of constraints
+        self.exclusions = []
 
         self.curr_prog = None
         self.curr_log_prob = -0.0
@@ -81,7 +84,8 @@ class MCMCProgram:
         # self.proposal_probs = {INSERT: 0.05, DELETE: 0.05, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0, GROW_CONST: 0.9}
         self.proposals = list(self.proposal_probs.keys())
         self.p_probs = [self.proposal_probs[p] for p in self.proposals]
-        self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE, ADD_DNODE: DELETE, GROW_CONST:DELETE}
+        self.reverse = {INSERT: DELETE, DELETE: INSERT, SWAP: SWAP, REPLACE: REPLACE, ADD_DNODE: DELETE,
+                        GROW_CONST: DELETE}
 
         self.Insert = None
         self.Delete = None
@@ -160,7 +164,7 @@ class MCMCProgram:
         self.GrowConstraint = GrowConstraintProposal(self.tree_mod, self.decoder, self.sess, False, verbose=self.verbose,
                                                      debug=self.debug)
 
-    def init_program(self, constraints, ret_types, fps):
+    def init_program(self, constraints, ret_types, fps, ordered=True, exclude=None):
         """
         Creates initial program that satisfies all given constraints.
         :param constraints: (list of strings (api names)) list of apis that must appear in the program for
@@ -180,19 +184,28 @@ class MCMCProgram:
             for i in range(self.config.max_num_api - len(self.fp[0])):
                 self.fp[0].append(0)
 
-        # Initialize tree
-        head = self.tree_mod.create_and_add_node(START, None, SIBLING_EDGE)
-        self.curr_prog = head
+        # # Initialize tree
 
-        # Add constraint nodes to tree
-        last_node = head
-        for i in self.constraints:
-            node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
-            last_node = node
+
+        # Add exclusions
+        if exclude is not None:
+            self.init_exclusions(exclude)
+
+        # Initialize tree
+        if ordered:
+            head = self.tree_mod.create_and_add_node(START, None, SIBLING_EDGE)
+            self.curr_prog = head
+
+            # Add constraint nodes to tree
+            last_node = head
+            for i in self.constraints:
+                node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
+                last_node = node
+        else:
+            self.get_best_starting_program()
 
         # Initialize model states
         self.get_initial_decoder_state()
-        # self.get_random_initial_state()
 
         # Update probabilities of tree
         self.calculate_probability()
@@ -201,7 +214,98 @@ class MCMCProgram:
         # Initialize proposals
         self.init_proposals()
 
-    def check_validity(self):
+        # Grow out structures if present
+        if DBRANCH in self.constraints or DLOOP in self.constraints or DEXCEPT in self.constraints:
+            counter = 0
+            success = False
+            while not success and counter < 3:
+                success = self.init_structures()
+                counter += 1
+            if not success:
+                raise ValueError("Was not able to grow out required structures.")
+            print_verbose_tree_info(self.curr_prog)
+
+    def get_best_starting_program(self):
+        assert len(self.constraints) > 0, "Need to initialize constraints before calling this function"
+
+        permutations = list(itertools.permutations(self.constraints))
+        print(permutations)
+
+        curr_prog = None
+        curr_prob = -np.inf
+        # self.get_random_initial_state()
+        for api_order in permutations:
+            head = self.tree_mod.create_and_add_node(START, None, SIBLING_EDGE)
+            self.curr_prog = head
+            # Add constraint nodes to tree
+            last_node = head
+            for i in api_order:
+                node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
+                last_node = node
+            self.get_initial_decoder_state()
+            self.calculate_probability()
+            print(api_order)
+            print(self.curr_log_prob)
+            if self.curr_log_prob > curr_prob:
+                curr_prog = self.curr_prog
+                curr_prob = self.curr_log_prob
+
+        self.curr_prog = curr_prog
+        # self.curr_log_prob = self.prev_log_prob = curr_prob
+
+        print_verbose_tree_info(self.curr_prog)
+
+    def init_exclusions(self, exclude):
+        for e in exclude:
+            try:
+                node_num = self.config.vocab2node[e]
+                self.exclusions.append(e)
+            except KeyError:
+                print("Exclude API ", e, " is not in vocabulary. Will be skipped.")
+
+    def init_structures(self):
+        stack = []
+        curr_node = self.curr_prog.copy()
+        head = curr_node
+        num_structures_grown = 0
+
+        GrowStruct = ProposalWithInsertion(self.tree_mod, self.decoder, self.sess, verbose=self.verbose, debug=self.debug)
+        GrowStruct.curr_prog = curr_node
+        GrowStruct.initial_state = self.initial_state
+
+        while curr_node is not None:
+            if curr_node.api_name == DBRANCH and curr_node.child is None:
+                GrowStruct._grow_dbranch(curr_node)
+                num_structures_grown += 1
+            elif (curr_node.api_name == DLOOP or curr_node.api_name == DEXCEPT) and curr_node.child is None:
+                GrowStruct._grow_dloop_or_dexcept(curr_node)
+                num_structures_grown += 1
+
+            # Update curr_node
+            if curr_node.child is not None:
+                if curr_node.sibling is not None:
+                    stack.append(curr_node.sibling)
+                curr_node = curr_node.child
+            elif curr_node.sibling is not None:
+                curr_node = curr_node.sibling
+            else:
+                if len(stack) > 0:
+                    curr_node = stack.pop()
+                else:
+                    if num_structures_grown == 0:
+                        print("Error: no structures have been built!")
+                        return False
+                    curr_node = None
+
+        valid = self.check_validity(prog=head)
+
+        if valid:
+            self.curr_prog = head
+            self.update_latent_state_and_decoder_state()
+
+        return valid
+
+    def check_validity(self, prog=None):
         """
         TODO: add logging here
         Check the validity of the current program.
@@ -212,7 +316,10 @@ class MCMCProgram:
         constraints += self.constraint_nodes
 
         stack = []
-        curr_node = self.curr_prog
+        if prog is not None:
+            curr_node = prog
+        else:
+            curr_node = self.curr_prog
         last_node = curr_node
 
         counter = 0
@@ -221,6 +328,9 @@ class MCMCProgram:
             # Update constraint list
             if curr_node.api_num in constraints:
                 constraints.remove(curr_node.api_num)
+
+            if curr_node.api_name in self.exclusions:
+                return False
 
             if counter != 0 and curr_node.api_name == START:
                 return False
@@ -706,7 +816,7 @@ class MCMCProgram:
         Randomly chooses a transformation and transforms the current program if it is accepted.
         :return: (bool) whether current tree was transformed or not
         """
-        assert self.check_validity() is True
+        assert self.check_validity() is True, self.check_validity()
 
         move = np.random.choice(self.proposals, p=self.p_probs)
 
@@ -824,6 +934,7 @@ class MCMCProgram:
             state, ast_prob = self.decoder.get_ast_logits(node, edge, state)
             curr_prob += ast_prob[0][targets[i]]
 
+
         self.curr_log_prob = curr_prob
         # self.curr_log_prob = curr_prob - math.log(self.curr_prog.length)
 
@@ -849,6 +960,7 @@ class MCMCProgram:
         :return:
         """
         curr_prog = self.tree_mod.get_nodes_edges_targets(self.curr_prog)
+        print_verbose_tree_info(self.curr_prog)
         transformed = self.transform_tree()
 
         # make sure all undos work correctly

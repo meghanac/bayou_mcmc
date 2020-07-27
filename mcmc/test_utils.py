@@ -12,8 +12,8 @@ STR_LEN = 'java.lang.String.length()'
 STR_BUILD = 'java.lang.StringBuilder.StringBuilder(int)'
 STR_BUILD_APP = 'java.lang.StringBuilder.append(java.lang.String)'
 
-def create_base_program(saved_model_path, constraints, ret_type, fp, debug=False, verbose=False):
-    test_prog = MCMCProgramWrapper(saved_model_path, constraints, ret_type, fp, debug=debug, verbose=verbose)
+def create_base_program(saved_model_path, constraints, ret_type, fp, exclude=None, debug=False, verbose=False):
+    test_prog = MCMCProgramWrapper(saved_model_path, constraints, ret_type, fp, debug=debug, verbose=verbose, exclude=exclude)
     test_prog.update_nodes_and_edges()
     expected_nodes = [START]
     expected_edges = []
@@ -97,10 +97,10 @@ def create_all_dtypes_program(saved_model_path):
 
 
 class MCMCProgramWrapper:
-    def __init__(self, save_dir, constraints, return_type, formal_params, debug=True, verbose=True):
+    def __init__(self, save_dir, constraints, return_type, formal_params, exclude=None, debug=True, verbose=True):
         # init MCMCProgram
         self.prog = MCMCProgram(save_dir, debug=debug, verbose=verbose)
-        self.prog.init_program(constraints, return_type, formal_params)
+        self.prog.init_program(constraints, return_type, formal_params, exclude=exclude)
 
         self.constraints = self.prog.constraints
         self.vocab2node = self.prog.config.vocab2node
@@ -176,12 +176,12 @@ class MCMCProgramWrapper:
                 if len(stack) > 0:
                     curr_node = stack.pop()
                 else:
-                    # remove last DSTOP node
-                    if curr_node.api_name == STOP:
-                        curr_node.parent.remove_node(curr_node.parent_edge)
-                        nodes.pop()
-                        edges.pop()
-                        parents.pop()
+                    # # remove last DSTOP node
+                    # if curr_node.api_name == STOP:
+                    #     curr_node.parent.remove_node(curr_node.parent_edge)
+                    #     nodes.pop()
+                    #     edges.pop()
+                    #     parents.pop()
                     curr_node = None
 
         if verbose:

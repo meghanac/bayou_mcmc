@@ -223,3 +223,404 @@ Posterior Distribution:
 	 ('java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStream.read(byte[])', 'java.util.Arrays.equals(byte[],byte[])', 'java.lang.Throwable.printStackTrace()', 'DStop')
 	 [16, -23.82662332057953]
 
+
+
+
+
+
+	 -------------------LOGS:-------------------
+Constraints: ['java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()']
+Nodes: ['DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStream.close()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()']
+Edges: (False, False, False, False, False, False, False)
+Targets: ['java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStream.close()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.lang.String.String(byte[])']
+Formal Parameters: ['DSubTree', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['byte[]']
+Total accepted transformations: 22
+Total rejected transformations: 170
+Total valid transformations: 192
+Total invalid transformations: 68
+Total attempted add transforms: 88
+Total accepted add transforms: 4
+Total attempted delete transforms: 94
+Total accepted delete transforms: 6
+Total attempted swap transforms: 34
+Total accepted swap transforms: 1
+Posterior Distribution:
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)')
+	 (False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()')
+	 [11, -7.1355907917022705]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.DataInputStream.DataInputStream(java.io.InputStream)')
+	 (False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.DataInputStream.DataInputStream(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()')
+	 [5, -9.534067511558533]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.lang.String.indexOf(java.lang.String)')
+	 (False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.lang.String.indexOf(java.lang.String)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()')
+	 [14, -12.35245943069458]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.lang.System.arraycopy(java.lang.Object,int,java.lang.Object,int,int)')
+	 [4, -16.657167345285416]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.ByteArrayOutputStream.write(byte[],int,int)')
+	 (False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 [2, -5.36805647611618]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)')
+	 (False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 [43, -7.301340403035283]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()')
+	 [14, -9.906759772449732]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.net.URL.openStream()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.net.URL.openStream()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()')
+	 [48, -17.943718910217285]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.net.URL.openStream()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.ObjectOutputStream.writeObject(java.lang.Object)', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.net.URL.openStream()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.ObjectOutputStream.writeObject(java.lang.Object)', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()')
+	 [29, -28.34577503800392]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.net.URL.openStream()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.net.URL.openStream()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'DStop')
+	 [2, -16.863640947267413]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.net.URL.openStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.net.URL.openStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'DStop')
+	 [22, -18.21098917722702]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'DStop')
+	 [54, -12.299994885921478]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'DStop')
+	 [2, -12.522231742739677]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'DStop')
+	 [1, -17.308293983340263]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.FilterInputStream.read(byte[])', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.FilterInputStream.read(byte[])', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'DStop')
+	 [5, -16.518212974071503]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.lang.String.String(byte[])')
+	 (False, False, False, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.lang.String.String(byte[])', 'DStop')
+	 [32, -17.729011937975883]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.lang.String.String(byte[])')
+	 (False, False, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.lang.String.String(byte[])', 'DStop')
+	 [5, -14.065214469097555]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStream.close()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.lang.String.String(byte[])')
+	 (False, False, False, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStream.close()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FilterInputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.lang.String.String(byte[])', 'DStop')
+	 [37, -15.815444940701127]
+
+
+
+
+-------------------LOGS:-------------------
+Constraints: ['java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop']
+Nodes: ['DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FileInputStream.FileInputStream(java.io.File)', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()']
+Edges: (False, False, False, False, True, True, False, False, False, False)
+Targets: ['java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FileInputStream.FileInputStream(java.io.File)', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()']
+Formal Parameters: ['DSubTree', 'InputStream', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['byte[]']
+Total accepted transformations: 26
+Total rejected transformations: 119
+Total valid transformations: 145
+Total invalid transformations: 88
+Total attempted add transforms: 65
+Total accepted add transforms: 2
+Total attempted delete transforms: 105
+Total accepted delete transforms: 9
+Total attempted swap transforms: 21
+Total accepted swap transforms: 0
+Posterior Distribution:
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop')
+	 (False, False, False, True, True, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'DStop')
+	 [14, -11.988694667816162]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.DataInputStream.DataInputStream(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop')
+	 (False, False, False, False, True, True, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.DataInputStream.DataInputStream(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'DStop')
+	 [3, -12.752434208523482]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop')
+	 (False, False, False, True, True, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'DStop')
+	 [20, -9.808151573874056]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.close()')
+	 (False, False, False, True, True, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.close()', 'DStop')
+	 [6, -8.60620801243931]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()')
+	 (False, False, False, True, True, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'DStop')
+	 [47, -11.619524588692002]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FileInputStream.FileInputStream(java.io.File)', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()')
+	 (False, False, False, False, True, True, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FileInputStream.FileInputStream(java.io.File)', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'DStop')
+	 [47, -16.547304096166044]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FileInputStream.FileInputStream(java.io.File)', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.close()')
+	 (False, False, False, False, True, True, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FileInputStream.FileInputStream(java.io.File)', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.close()', 'DStop')
+	 [12, -15.538726212922484]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()')
+	 (False, False, False, False, True, True, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'DStop')
+	 [4, -14.615941131487489]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()')
+	 (False, False, False, False, True, True, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'DStop')
+	 [6, -18.58467238396406]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, True, True, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()', 'DStop')
+	 [4, -15.301856372505426]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, True, True, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()', 'DStop')
+	 [3, -13.226141639053822]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, True, True, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()', 'DStop')
+	 [5, -12.708420045208186]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.FileInputStream.close()', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, True, True, False, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.FileInputStream.close()', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()', 'DStop')
+	 [3, -26.548684703186154]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, False, True, True, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()', 'DStop')
+	 [33, -16.770132867619395]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, True, True, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[],int,int)', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()', 'DStop')
+	 [24, -14.869406383950263]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 (False, False, False, True, True, False, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()', 'DStop')
+	 [4, -15.87171572376974]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()')
+	 (False, False, False, True, True, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 [18, -11.914601595373824]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStream.close()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()')
+	 (False, False, False, False, True, True, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStream.close()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 [10, -14.64182013226673]
+
+	 ('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FileInputStream.FileInputStream(java.io.File)', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DLoop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()')
+	 (False, False, False, False, True, True, False, False, False, False)
+	 ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.FileInputStream.FileInputStream(java.io.File)', 'DLoop', 'java.io.InputStream.read(byte[])', 'java.io.ByteArrayOutputStream.write(byte[],int,int)', 'DStop', 'java.io.ByteArrayOutputStream.toByteArray()', 'java.io.ByteArrayOutputStream.close()', 'java.io.ByteArrayOutputStream.toByteArray()')
+	 [67, -15.13830882171169]
+
+
+
+-------------------LOGS:-------------------
+Constraints: ['java.awt.geom.RectangularShape.getHeight()', 'java.lang.Integer.toString(int)']
+Nodes: ['DSubTree', 'java.awt.geom.RectangularShape.getHeight()', 'java.lang.Integer.toString(int)']
+Edges: (False, False, False)
+Targets: ['java.awt.geom.RectangularShape.getHeight()', 'java.lang.Integer.toString(int)', 'DStop']
+Formal Parameters: ['DSubTree', '__UDT__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['void']
+Total accepted transformations: 8
+Total rejected transformations: 108
+Total valid transformations: 116
+Total invalid transformations: 160
+Total attempted add transforms: 71
+Total accepted add transforms: 0
+Total attempted delete transforms: 86
+Total accepted delete transforms: 2
+Total attempted swap transforms: 29
+Total accepted swap transforms: 0
+Posterior Distribution:
+	 ('DSubTree', 'java.awt.geom.RectangularShape.getHeight()')
+	 (False, False)
+	 ('java.awt.geom.RectangularShape.getHeight()', 'java.lang.Integer.toString(int)')
+	 [14, -10.04494047164917]
+
+	 ('DSubTree', 'java.awt.geom.RectangularShape.getHeight()', 'java.lang.Integer.toString(int)')
+	 (False, False, False)
+	 ('java.awt.geom.RectangularShape.getHeight()', 'java.lang.Integer.toString(int)', 'DStop')
+	 [313, -7.736327156424522]
+
+	 ('DSubTree', 'java.awt.geom.RectangularShape.getHeight()', 'java.lang.Integer.toString(int)', 'java.net.URL.URL(java.lang.String)')
+	 (False, False, False, False)
+	 ('java.awt.geom.RectangularShape.getHeight()', 'java.lang.Integer.toString(int)', 'java.net.URL.URL(java.lang.String)', 'DStop')
+	 [3, -19.628079116344452]
+
+
+
+
+ -------------------LOGS:-------------------
+self.proposal_probs = {INSERT: 0.1, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.4}
+Constraints: ['java.awt.geom.RectangularShape.getHeight()', 'java.lang.Integer.toString(int)']
+Nodes: ['DSubTree', 'java.awt.geom.RectangularShape.getHeight()', 'javax.swing.JCheckBox.JCheckBox()', 'java.lang.Integer.toString(int)']
+Edges: (False, False, False, False)
+Targets: ['java.awt.geom.RectangularShape.getHeight()', 'javax.swing.JCheckBox.JCheckBox()', 'java.lang.Integer.toString(int)', 'DStop']
+Formal Parameters: ['DSubTree', '__UDT__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['void']
+Total accepted transformations: 2
+Total rejected transformations: 213
+Total valid transformations: 215
+Total invalid transformations: 91
+Total attempted add transforms: 35
+Total accepted add transforms: 1
+Total attempted delete transforms: 59
+Total accepted delete transforms: 0
+Total attempted swap transforms: 31
+Total accepted swap transforms: 0
+Posterior Distribution:
+	 ('DSubTree', 'java.awt.geom.RectangularShape.getHeight()')
+	 (False, False)
+	 ('java.awt.geom.RectangularShape.getHeight()', 'java.lang.Integer.toString(int)')
+	 [4, -8.342711687088013]
+
+	 ('DSubTree', 'java.awt.geom.RectangularShape.getHeight()', 'java.lang.Integer.toString(int)')
+	 (False, False, False)
+	 ('java.awt.geom.RectangularShape.getHeight()', 'java.lang.Integer.toString(int)', 'DStop')
+	 [7, -9.11766429245472]
+
+	 ('DSubTree', 'java.awt.geom.RectangularShape.getHeight()', 'javax.swing.JCheckBox.JCheckBox()', 'java.lang.Integer.toString(int)')
+	 (False, False, False, False)
+	 ('java.awt.geom.RectangularShape.getHeight()', 'javax.swing.JCheckBox.JCheckBox()', 'java.lang.Integer.toString(int)', 'DStop')
+	 [319, -6.770536243915558]
+
+
+
+
+ -------------------LOGS:-------------------
+Constraints: ['java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.net.URL.toString()']
+Nodes: ['DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.io.StringReader.StringReader(java.lang.String)', 'java.net.URL.URL(java.lang.String)', 'java.net.URL.toString()']
+Edges: (False, False, False, False, False, False)
+Targets: ['java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.io.StringReader.StringReader(java.lang.String)', 'java.net.URL.URL(java.lang.String)', 'java.net.URL.toString()', 'DStop']
+Formal Parameters: ['DSubTree', 'URL', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['__UDT__']
+Total accepted transformations: 26
+Total rejected transformations: 145
+Total valid transformations: 171
+Total invalid transformations: 130
+Total attempted add transforms: 65
+Total accepted add transforms: 5
+Total attempted delete transforms: 96
+Total accepted delete transforms: 9
+Total attempted swap transforms: 36
+Total accepted swap transforms: 1
+Posterior Distribution:
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)')
+	 (False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.net.URL.toString()')
+	 [50, -7.113375186920166]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.net.URL.toString()')
+	 (False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.net.URL.toString()', 'DStop')
+	 [125, -9.27841031551361]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', '$NOT$java.lang.String.startsWith(java.lang.String)', 'java.net.URL.toString()')
+	 (False, False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', '$NOT$java.lang.String.startsWith(java.lang.String)', 'java.net.URL.toString()', 'DStop')
+	 [3, -19.5189321115613]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.Reader.read(char[])')
+	 (False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.Reader.read(char[])', 'java.net.URL.toString()')
+	 [1, -15.034162759780884]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.Reader.read(char[])', 'java.net.URL.toString()')
+	 (False, False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.Reader.read(char[])', 'java.net.URL.toString()', 'java.lang.String.equals(java.lang.Object)')
+	 [2, -16.3458309173584]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.net.URL.toString()')
+	 (False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.net.URL.toString()', 'java.lang.String.equals(java.lang.Object)')
+	 [2, -14.10333800315857]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.net.URL.toString()')
+	 (False, False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.net.URL.toString()', 'DStop')
+	 [22, -12.92889703065157]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.net.URL.toString()', 'java.io.BufferedReader.readLine()')
+	 (False, False, False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.net.URL.toString()', 'java.io.BufferedReader.readLine()', 'DStop')
+	 [10, -13.047746436670423]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)')
+	 (False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.net.URL.toString()')
+	 [7, -8.003092139959335]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.net.URL.toString()')
+	 (False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.net.URL.toString()', 'java.net.URL.URL(java.lang.String)')
+	 [15, -6.887580424547195]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.net.URL.toString()', 'java.net.URL.openStream()')
+	 (False, False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.net.URL.toString()', 'java.net.URL.openStream()', 'DStop')
+	 [8, -8.965299546718597]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.net.URL.toString()', 'java.net.URL.URL(java.lang.String)', 'java.net.URL.openStream()')
+	 (False, False, False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.net.URL.toString()', 'java.net.URL.URL(java.lang.String)', 'java.net.URL.openStream()', 'DStop')
+	 [7, -13.314207911491394]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.StringReader.StringReader(java.lang.String)', 'java.net.URL.toString()', 'java.net.URL.URL(java.lang.String)', 'java.net.URL.openStream()')
+	 (False, False, False, False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.StringReader.StringReader(java.lang.String)', 'java.net.URL.toString()', 'java.net.URL.URL(java.lang.String)', 'java.net.URL.openStream()', 'DStop')
+	 [6, -23.031569004058838]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.StringReader.StringReader(java.lang.String)', 'java.net.URL.toString()', 'java.net.URL.URL(java.lang.String)')
+	 (False, False, False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.StringReader.StringReader(java.lang.String)', 'java.net.URL.toString()', 'java.net.URL.URL(java.lang.String)', 'DStop')
+	 [3, -15.212913513183594]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.io.StringReader.StringReader(java.lang.String)', 'java.net.URL.toString()', 'java.net.URL.URL(java.lang.String)')
+	 (False, False, False, False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.io.StringReader.StringReader(java.lang.String)', 'java.net.URL.toString()', 'java.net.URL.URL(java.lang.String)', 'DStop')
+	 [4, -15.48986566066742]
+
+	 ('DSubTree', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.io.StringReader.StringReader(java.lang.String)', 'java.net.URL.URL(java.lang.String)', 'java.net.URL.toString()')
+	 (False, False, False, False, False, False)
+	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.io.StringReader.StringReader(java.lang.String)', 'java.net.URL.URL(java.lang.String)', 'java.net.URL.toString()', 'DStop')
+	 [65, -13.262490451335907]

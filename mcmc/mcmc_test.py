@@ -628,11 +628,9 @@ class MCMCProgramTest(unittest.TestCase):
         #                                                                 ['DSubTree', 'String'])
 
         test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_05_MODEL_PATH,
-                                                                        ['java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)',
-                                                                            'java.io.ByteArrayOutputStream.ByteArrayOutputStream()',
-                                                                            ],
-                                                                        ['byte[]'],
-                                                                        ['DSubTree', 'InputStream '])
+                                                                        ['java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.net.URL.toString()'],
+                                                                        ['__UDT__'],
+                                                                        ['DSubTree', 'URL'])
 
 
 
