@@ -65,7 +65,9 @@ class MCMCProgram:
         # Initialize variables about program
         self.constraints = []
         self.constraint_nodes = []  # has node numbers of constraints
+        self.constraint_control_structs = []
         self.exclusions = []
+        self.min_length = 0
 
         self.curr_prog = None
         self.curr_log_prob = -0.0
@@ -127,9 +129,12 @@ class MCMCProgram:
         """
         try:
             node_num = self.config.vocab2node[constraint]
-            if len(self.constraints) < self.config.max_num_api:
-                self.constraint_nodes.append(node_num)
-                self.constraints.append(constraint)
+            if len(self.constraints) + len(self.constraint_control_structs) < self.config.max_num_api:
+                if constraint in {DBRANCH, DLOOP, DEXCEPT}:
+                    self.constraint_control_structs.append(constraint)
+                else:
+                    self.constraint_nodes.append(node_num)
+                    self.constraints.append(constraint)
             else:
                 print("Cannot add constraint", constraint, ". Limit reached.")
         except KeyError:
@@ -164,7 +169,7 @@ class MCMCProgram:
         self.GrowConstraint = GrowConstraintProposal(self.tree_mod, self.decoder, self.sess, False, verbose=self.verbose,
                                                      debug=self.debug)
 
-    def init_program(self, constraints, ret_types, fps, ordered=True, exclude=None):
+    def init_program(self, constraints, ret_types, fps, ordered=True, exclude=None, min_length=0):
         """
         Creates initial program that satisfies all given constraints.
         :param constraints: (list of strings (api names)) list of apis that must appear in the program for
@@ -183,9 +188,6 @@ class MCMCProgram:
         if len(self.fp[0]) < self.config.max_num_api:
             for i in range(self.config.max_num_api - len(self.fp[0])):
                 self.fp[0].append(0)
-
-        # # Initialize tree
-
 
         # Add exclusions
         if exclude is not None:
@@ -215,7 +217,7 @@ class MCMCProgram:
         self.init_proposals()
 
         # Grow out structures if present
-        if DBRANCH in self.constraints or DLOOP in self.constraints or DEXCEPT in self.constraints:
+        if len(self.constraint_control_structs) > 0:
             counter = 0
             success = False
             while not success and counter < 3:
@@ -224,6 +226,11 @@ class MCMCProgram:
             if not success:
                 raise ValueError("Was not able to grow out required structures.")
             print_verbose_tree_info(self.curr_prog)
+
+        # Check length
+        self.min_length = min_length
+        if self.curr_prog.length < min_length:
+            self.grow_to_min_length()
 
     def get_best_starting_program(self):
         assert len(self.constraints) > 0, "Need to initialize constraints before calling this function"
@@ -301,9 +308,33 @@ class MCMCProgram:
 
         if valid:
             self.curr_prog = head
+            self.calculate_probability()
             self.update_latent_state_and_decoder_state()
 
         return valid
+
+    def grow_to_min_length(self):
+        constraint_idx = 0
+        GrowTree = ProposalWithInsertion(self.tree_mod, self.decoder, self.sess, verbose=self.verbose,
+                                           debug=self.debug)
+        GrowTree.curr_prog = self.curr_prog
+        GrowTree.initial_state = self.initial_state
+        counter = 0
+        difference = self.min_length - self.curr_prog.length
+        while self.curr_prog.length < self.min_length:
+            constraint = self.constraints[constraint_idx]
+            constraint_idx = (constraint_idx + 1) % len(self.constraints)
+            if constraint in {DLOOP, DBRANCH, DEXCEPT}:
+                continue
+            const_node = self.tree_mod.get_node_with_api(self.curr_prog, constraint)
+            GrowTree._get_new_node(const_node, SIBLING_EDGE)
+            counter += 1
+
+            if counter > difference * 2:
+                raise ValueError("could not grow tree to min length " + str(self.min_length))
+
+        self.calculate_probability()
+        self.update_latent_state_and_decoder_state()
 
     def check_validity(self, prog=None):
         """
@@ -314,6 +345,7 @@ class MCMCProgram:
         # Create a list of constraints yet to be met
         constraints = []
         constraints += self.constraint_nodes
+        constraints += self.constraint_control_structs
 
         stack = []
         if prog is not None:
@@ -323,6 +355,9 @@ class MCMCProgram:
         last_node = curr_node
 
         counter = 0
+
+        if self.curr_prog.length < self.min_length:
+            return False
 
         while curr_node is not None:
             # Update constraint list
@@ -530,7 +565,7 @@ class MCMCProgram:
 
         # Undo move if not valid
         if not valid:
-            self.Insert.undo_add_random_node(added_node, added_stop_node) # TODO: think about this
+            self.Insert.undo_add_random_node(added_node, added_stop_node)  # TODO: think about this
             self.curr_log_prob = self.prev_log_prob
             assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
                 self.curr_prog.length) + " != prev length: " + str(prev_length)
@@ -781,7 +816,7 @@ class MCMCProgram:
         # successful
         return True
 
-    # TODO: UNCOMMENT AFTER UPATING CODE
+    # TODO: UNCOMMENT AFTER UPDATING CODE
     # def add_dnode_proposal(self, verbose):
     #     # Logging and checks
     #     self.AddDnode.attempted += 1

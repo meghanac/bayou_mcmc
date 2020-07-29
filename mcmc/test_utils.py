@@ -12,8 +12,10 @@ STR_LEN = 'java.lang.String.length()'
 STR_BUILD = 'java.lang.StringBuilder.StringBuilder(int)'
 STR_BUILD_APP = 'java.lang.StringBuilder.append(java.lang.String)'
 
-def create_base_program(saved_model_path, constraints, ret_type, fp, exclude=None, debug=False, verbose=False):
-    test_prog = MCMCProgramWrapper(saved_model_path, constraints, ret_type, fp, debug=debug, verbose=verbose, exclude=exclude)
+def create_base_program(saved_model_path, constraints, ret_type, fp, ordered=True, exclude=None, debug=False,
+                        verbose=False):
+    test_prog = MCMCProgramWrapper(saved_model_path, constraints, ret_type, fp, debug=debug, verbose=verbose,
+                                   exclude=exclude, ordered=ordered)
     test_prog.update_nodes_and_edges()
     expected_nodes = [START]
     expected_edges = []
@@ -97,10 +99,10 @@ def create_all_dtypes_program(saved_model_path):
 
 
 class MCMCProgramWrapper:
-    def __init__(self, save_dir, constraints, return_type, formal_params, exclude=None, debug=True, verbose=True):
+    def __init__(self, save_dir, constraints, return_type, formal_params, ordered=True, exclude=None, debug=True, verbose=True):
         # init MCMCProgram
         self.prog = MCMCProgram(save_dir, debug=debug, verbose=verbose)
-        self.prog.init_program(constraints, return_type, formal_params, exclude=exclude)
+        self.prog.init_program(constraints, return_type, formal_params, exclude=exclude, ordered=ordered)
 
         self.constraints = self.prog.constraints
         self.vocab2node = self.prog.config.vocab2node

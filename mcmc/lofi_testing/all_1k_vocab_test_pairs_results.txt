@@ -624,3 +624,95 @@ Posterior Distribution:
 	 (False, False, False, False, False, False)
 	 ('java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.io.StringReader.StringReader(java.lang.String)', 'java.net.URL.URL(java.lang.String)', 'java.net.URL.toString()', 'DStop')
 	 [65, -13.262490451335907]
+
+
+
+-------------------LOGS:-------------------
+Constraints: ['java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.read(byte[])']
+Nodes: ['DSubTree', 'java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.read(byte[])']
+Edges: (False, False, False)
+Targets: ['java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.read(byte[])', 'DStop']
+Formal Parameters: ['DSubTree', 'String', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['void']
+Total accepted transformations: 10
+Total rejected transformations: 114
+Total valid transformations: 124
+Total invalid transformations: 135
+Total attempted add transforms: 63
+Total accepted add transforms: 2
+Total attempted delete transforms: 94
+Total accepted delete transforms: 3
+Total attempted swap transforms: 39
+Total accepted swap transforms: 0
+Posterior Distribution:
+	 ('DSubTree', 'java.nio.ByteBuffer.getInt(int)')
+	 (False, False)
+	 ('java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.read(byte[])')
+	 [4, -22.459330558776855]
+
+	 ('DSubTree', 'java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.read(byte[])')
+	 (False, False, False)
+	 ('java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.read(byte[])', 'DStop')
+	 [230, -22.060282016173005]
+
+	 ('DSubTree', 'java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.read(byte[])', 'java.io.OutputStream.write(byte[],int,int)')
+	 (False, False, False, False)
+	 ('java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.read(byte[])', 'java.io.OutputStream.write(byte[],int,int)', 'DStop')
+	 [15, -26.50180098414421]
+
+	 ('DSubTree', 'java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.read(byte[])', 'java.io.InputStream.close()')
+	 (False, False, False, False)
+	 ('java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.read(byte[])', 'java.io.InputStream.close()', 'DStop')
+	 [81, -30.09085796587169]
+
+
+
+
+ -------------------LOGS:-------------------
+Constraints: ['java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.read(byte[])']
+Nodes: ['DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.io.InputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.getBytes()', 'java.lang.String.String(byte[])', 'java.lang.String.trim()']
+Edges: (False, False, False, False, False, False, False)
+Targets: ['java.io.FileInputStream.read(byte[])', 'java.io.InputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.getBytes()', 'java.lang.String.String(byte[])', 'java.lang.String.trim()', 'DStop']
+Formal Parameters: ['DSubTree', 'String', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['void']
+Total accepted transformations: 7
+Total rejected transformations: 165
+Total valid transformations: 172
+Total invalid transformations: 108
+Total attempted add transforms: 71
+Total accepted add transforms: 2
+Total attempted delete transforms: 100
+Total accepted delete transforms: 0
+Total attempted swap transforms: 28
+Total accepted swap transforms: 0
+Posterior Distribution:
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)')
+	 (False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'DStop')
+	 [22, -18.288579609245062]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.close()')
+	 (False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.close()', 'DStop')
+	 [13, -20.68531097471714]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.String(byte[])')
+	 (False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.String(byte[])', 'DStop')
+	 [22, -21.958002373576164]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.String(byte[])', 'java.lang.String.trim()')
+	 (False, False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.String(byte[])', 'java.lang.String.trim()', 'DStop')
+	 [1, -23.3183431327343]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.io.InputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.String(byte[])', 'java.lang.String.trim()')
+	 (False, False, False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.io.InputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.String(byte[])', 'java.lang.String.trim()', 'DStop')
+	 [257, -23.661277920007706]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.io.InputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.getBytes()', 'java.lang.String.String(byte[])', 'java.lang.String.trim()')
+	 (False, False, False, False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.io.InputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.getBytes()', 'java.lang.String.String(byte[])', 'java.lang.String.trim()', 'DStop')
+	 [15, -29.930355310440063]
+
