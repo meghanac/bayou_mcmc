@@ -716,3 +716,149 @@ Posterior Distribution:
 	 ('java.io.FileInputStream.read(byte[])', 'java.io.InputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.getBytes()', 'java.lang.String.String(byte[])', 'java.lang.String.trim()', 'DStop')
 	 [15, -29.930355310440063]
 
+
+
+
+ -------------------LOGS:-------------------
+Constraints: ['java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.read(byte[])']
+Nodes: ['DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.io.Reader.read(char[])', 'java.nio.ByteBuffer.getInt(int)']
+Edges: (False, False, False, False, False)
+Targets: ['java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.io.Reader.read(char[])', 'java.nio.ByteBuffer.getInt(int)', 'DStop']
+Formal Parameters: ['DSubTree', 'String', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['void']
+Total accepted transformations: 7
+Total rejected transformations: 192
+Total valid transformations: 199
+Total invalid transformations: 99
+Total attempted add transforms: 55
+Total accepted add transforms: 1
+Total attempted delete transforms: 64
+Total accepted delete transforms: 1
+Total attempted swap transforms: 35
+Total accepted swap transforms: 0
+Posterior Distribution:
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.io.Reader.read(char[])')
+	 (False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.io.Reader.read(char[])', 'java.nio.ByteBuffer.getInt(int)')
+	 [56, -15.919012546539307]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.io.Reader.read(char[])', 'java.nio.ByteBuffer.getInt(int)')
+	 (False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.io.Reader.read(char[])', 'java.nio.ByteBuffer.getInt(int)', 'DStop')
+	 [13, -16.589121457654983]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.io.Reader.read(char[])')
+	 (False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.io.Reader.read(char[])', 'java.nio.ByteBuffer.getInt(int)')
+	 [136, -22.326737880706787]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.io.Reader.read(char[])', 'java.nio.ByteBuffer.getInt(int)')
+	 (False, False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.io.Reader.read(char[])', 'java.nio.ByteBuffer.getInt(int)', 'DStop')
+	 [125, -17.23382598441094]
+
+
+
+
+ -------------------LOGS:-------------------
+Constraints: ['java.nio.ByteBuffer.getInt(int)', 'java.io.FileInputStream.read(byte[])']
+Nodes: ['DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.nio.ByteBuffer.order(java.nio.ByteOrder)', 'java.nio.ByteBuffer.getInt(int)']
+Edges: (False, False, False, False, False)
+Targets: ['java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.nio.ByteBuffer.order(java.nio.ByteOrder)', 'java.nio.ByteBuffer.getInt(int)', 'DStop']
+Formal Parameters: ['DSubTree', 'String', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['void']
+Total accepted transformations: 12
+Total rejected transformations: 187
+Total valid transformations: 199
+Total invalid transformations: 106
+Total attempted add transforms: 73
+Total accepted add transforms: 1
+Total attempted delete transforms: 102
+Total accepted delete transforms: 2
+Total attempted swap transforms: 22
+Total accepted swap transforms: 0
+Posterior Distribution:
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])')
+	 (False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)')
+	 [46, -11.706950664520264]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)')
+	 (False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'DStop')
+	 [37, -13.572607762180269]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.nio.ByteBuffer.getInt(int)')
+	 (False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'DStop')
+	 [29, -15.256885088980198]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.nio.ByteBuffer.order(java.nio.ByteOrder)', 'java.nio.ByteBuffer.getInt(int)')
+	 (False, False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.nio.ByteBuffer.order(java.nio.ByteOrder)', 'java.nio.ByteBuffer.getInt(int)', 'DStop')
+	 [141, -11.254479210823774]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.nio.ByteBuffer.order(java.nio.ByteOrder)')
+	 (False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.wrap(byte[])', 'java.nio.ByteBuffer.order(java.nio.ByteOrder)', 'java.nio.ByteBuffer.getInt(int)')
+	 [77, -7.04146271944046]
+
+
+
+ -------------------LOGS:-------------------
+Constraints: ['java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.format(java.lang.String,java.lang.Object[])']
+Nodes: ['DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.allocateDirect(int)', 'java.nio.Buffer.position()', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.format(java.lang.String,java.lang.Object[])']
+Edges: (False, False, False, False, False, False)
+Targets: ['java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.allocateDirect(int)', 'java.nio.Buffer.position()', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'java.nio.Buffer.position()']
+Formal Parameters: ['DSubTree', 'String', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__', '__delim__']
+Return Types: ['void']
+Total accepted transformations: 13
+Total rejected transformations: 141
+Total valid transformations: 154
+Total invalid transformations: 143
+Total attempted add transforms: 67
+Total accepted add transforms: 2
+Total attempted delete transforms: 105
+Total accepted delete transforms: 4
+Total attempted swap transforms: 27
+Total accepted swap transforms: 0
+Posterior Distribution:
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)')
+	 (False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.format(java.lang.String,java.lang.Object[])')
+	 [105, -27.214396476745605]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.format(java.lang.String,java.lang.Object[])')
+	 (False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'DStop')
+	 [22, -23.888278171420097]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.lang.Float.Float(float)', 'java.nio.ByteBuffer.order(java.nio.ByteOrder)', 'java.nio.ByteBuffer.getInt(int)')
+	 (False, False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.lang.Float.Float(float)', 'java.nio.ByteBuffer.order(java.nio.ByteOrder)', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.format(java.lang.String,java.lang.Object[])')
+	 [13, -29.246004283428192]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.lang.Float.Float(float)', 'java.nio.ByteBuffer.order(java.nio.ByteOrder)', 'java.nio.Buffer.position()', 'java.nio.ByteBuffer.getInt(int)')
+	 (False, False, False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.lang.Float.Float(float)', 'java.nio.ByteBuffer.order(java.nio.ByteOrder)', 'java.nio.Buffer.position()', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.format(java.lang.String,java.lang.Object[])')
+	 [66, -27.31116613931954]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.allocateDirect(int)', 'java.nio.ByteBuffer.order(java.nio.ByteOrder)', 'java.nio.Buffer.position()', 'java.nio.ByteBuffer.getInt(int)')
+	 (False, False, False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.allocateDirect(int)', 'java.nio.ByteBuffer.order(java.nio.ByteOrder)', 'java.nio.Buffer.position()', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.format(java.lang.String,java.lang.Object[])')
+	 [1, -28.522111415863037]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.allocateDirect(int)', 'java.nio.Buffer.position()', 'java.nio.ByteBuffer.getInt(int)')
+	 (False, False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.allocateDirect(int)', 'java.nio.Buffer.position()', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.format(java.lang.String,java.lang.Object[])')
+	 [60, -22.302045106887817]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.allocateDirect(int)', 'java.nio.Buffer.position()', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.format(java.lang.String,java.lang.Object[])')
+	 (False, False, False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.allocateDirect(int)', 'java.nio.Buffer.position()', 'java.nio.ByteBuffer.getInt(int)', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'java.nio.Buffer.position()')
+	 [60, -24.13784288894385]
+
+	 ('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.allocateDirect(int)', 'java.nio.Buffer.position()', 'java.nio.ByteBuffer.getInt(int)', 'java.nio.Buffer.position()', 'java.lang.String.format(java.lang.String,java.lang.Object[])')
+	 (False, False, False, False, False, False, False)
+	 ('java.io.FileInputStream.read(byte[])', 'java.nio.ByteBuffer.allocateDirect(int)', 'java.nio.Buffer.position()', 'java.nio.ByteBuffer.getInt(int)', 'java.nio.Buffer.position()', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'java.nio.Buffer.position()')
+	 [3, -25.921660631895065]

@@ -1,7 +1,8 @@
 import unittest
+import networkx as nx
 from data_extractor.graph_analyzer import GraphAnalyzer, STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, \
     STR_BUILD_APP, LOWERCASE_LOCALE, DATA_DIR_PATH, ALL_DATA_1K_VOCAB, TESTING, NEW_VOCAB, APIS, RT, FP, TOP, MID, \
-    LOW
+    LOW, ALL_DATA_1K_VOCAB_NO_DUP
 from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
     MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
 
@@ -147,6 +148,51 @@ class TestGraphAnalyzer(unittest.TestCase):
             test_ga.print_summary_stats(prog_ids)
             programs = test_ga.get_programs_with_multiple_apis(list(pair), get_targets=True)
             test_ga.print_lists(programs)
+
+    def test_nodes_edges(self, data_path=ALL_DATA_1K_VOCAB):
+        ga = GraphAnalyzer(data_path, load_reader=True)
+        print(nx.get_node_attributes(ga.g, 'frequency'))
+        for node in ga.g.nodes.keys():
+            print(node)
+            prog_ids = ga.get_program_ids_for_api(node)
+            all_nodes = [ga.fetch_data_with_targets(prog_id)[0] for prog_id in prog_ids]
+            ga.print_programs_from_ids(prog_ids, limit=20)
+            all_nodes = list(filter(lambda x: len(x) > 0, all_nodes))
+            print("1 node progs:", len(all_nodes))
+            print(ga.g.nodes[node]['frequency'])
+            neighbors = list(ga.g.neighbors(node))
+            print(len(neighbors))
+            print(sorted([ga.g[node][i]['weight'] for i in neighbors], reverse=True))
+            print(sum([ga.g[node][i]['weight'] for i in neighbors]))
+
+    def test_remove_duplicates(self, data_path=ALL_DATA_1K_VOCAB_NO_DUP):
+        ga = GraphAnalyzer(data_path, save_reader=True)
+        prog_ids = ga.get_program_ids_for_api('DSubTree')
+        print(len(prog_ids))
+        print(ga.fetch_data_with_targets(0))
+        prog_ids = [ga.fetch_hashable_data_with_targets(prog_id) for prog_id in prog_ids]
+        prog_ids_set = list(set(prog_ids))
+        print(len(prog_ids_set))
+        prog_id_nodes = [prog_id[0] for prog_id in prog_ids]
+        all_nodes = list(filter(lambda x: x[2] == 0, prog_id_nodes))
+        rest_nodes = list(filter(lambda x: x[2] != 0, prog_id_nodes))
+        print(len(all_nodes))
+        set_nodes = [i[0] for i in prog_ids_set]
+        set_nodes_less_than_2 = list(filter(lambda x: x[2] == 0, set_nodes))
+        print(len(set_nodes_less_than_2))
+
+        print(len(rest_nodes))
+        set_nodes_more_than_2 = list(filter(lambda x: x[2] != 0, set_nodes))
+        print(len(set_nodes_more_than_2))
+
+    def test_remove_json_duplicates(self, data_path=ALL_DATA_1K_VOCAB):
+        ga = GraphAnalyzer(data_path, load_reader=True)
+        json_set = set([])
+        for program in ga.json_asts:
+            json_set.add(str(program))
+        print(len(json_set))
+
+
 
 
     # def test_4_1(self):

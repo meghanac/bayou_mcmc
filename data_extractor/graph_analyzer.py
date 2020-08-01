@@ -32,6 +32,7 @@ LOWERCASE_LOCALE = "java.lang.String.toLowerCase(java.util.Locale)"
 
 DATA_DIR_PATH = os.path.dirname(os.path.realpath(__file__)) + "/data/"
 ALL_DATA_1K_VOCAB = 'all_data_1k_vocab'
+ALL_DATA_1K_VOCAB_NO_DUP = 'all_data_1k_vocab_no_duplicates'
 TESTING = 'testing-600'
 NEW_VOCAB = 'new_1k_vocab_min_3-600000'
 
@@ -149,6 +150,7 @@ class GraphAnalyzer:
 
         data_f = open(os.path.join(self.dir_path, data_filename))
         self.json_asts = ijson.items(data_f, 'programs.item')
+        # data_f.close()
         # self.json_asts = json.load(data_f)
 
         if save_reader:
@@ -172,6 +174,11 @@ class GraphAnalyzer:
     def fetch_data_with_targets(self, prog_id):
         return self.nodes[prog_id], self.edges[prog_id], self.return_types[prog_id], \
                self.fp_types[prog_id], self.targets[prog_id], self.fp_type_targets[prog_id]
+
+    def fetch_hashable_data_with_targets(self, prog_id):
+        return tuple(self.nodes[prog_id].tolist()), tuple(self.edges[prog_id].tolist()), self.return_types[prog_id], \
+               tuple(self.fp_types[prog_id].tolist()), tuple(self.targets[prog_id].tolist()), tuple(
+            self.fp_type_targets[prog_id].tolist())
 
     def get_connected_nodes(self, node):
         print("Node:", node)

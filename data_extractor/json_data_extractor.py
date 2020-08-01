@@ -9,6 +9,42 @@ TRAINING_DATA_DIR_PATH = "data"
 TEST_DATA_DIR_PATH = "data/test_data"
 
 
+def copy_data_remove_duplicate(old_data_filename_path, new_data_filename):
+    new_dir_name = new_data_filename[:-5]
+    new_dir_path = os.path.join(TRAINING_DATA_DIR_PATH, new_dir_name)
+    if not os.path.exists(new_dir_path):
+        os.mkdir(new_dir_path)
+    new_data_path = os.path.join(new_dir_path, new_data_filename)
+    old_f = open(old_data_filename_path, 'rb')
+    new_f = open(new_data_path, 'w+')
+    # analysis_filename = new_data_filename[:-5] + "_analysis.txt"
+    # analysis_f = open(os.path.join(new_dir_path, analysis_filename), 'w+')
+
+    # initialize new json file
+    new_f.write("{\n")
+    new_f.write("\"programs\": [\n")
+
+    prog_set = set([])
+
+    for program in ijson.items(old_f, 'programs.item'):
+        prog_set.add(json.dumps(program))
+
+    print("There are " + str(len(prog_set)) + " unique programs in dataset.")
+
+    prog_set = list(prog_set)
+    for i in range(len(prog_set)):
+        if i != 0:
+            new_f.write(",\n")
+        new_f.write(prog_set[i])
+
+    print(str(len(prog_set)) + " json objects copied into " + new_data_filename)
+
+    # end new json data file
+    new_f.write("\n")
+    new_f.write("]\n")
+    new_f.write("}\n")
+
+
 def copy_json_data(old_data_filename, new_data_filename, num_programs=None, is_test_data=False,
                    old_data_dir_path=None, new_data_dir_path=None):
     """
@@ -687,6 +723,8 @@ def analyze_file(dir_path, filename, vocab_freq_saved=True):
 
     build_graph(sorted_apis, filename, dir_path)
 
+
+
 # copy_json_data_limit_vocab("data_surrounding_methods.json", "all_data_50k_vocab.json", 50000, split_data=1000)
 
 # copy_json_data_limit_vocab("data_surrounding_methods.json", "delete.json", 1000, num_programs=6000, is_test_data=False)
@@ -698,3 +736,6 @@ def analyze_file(dir_path, filename, vocab_freq_saved=True):
 # view_graph("data/delete-6000/delete-6000_api_graph.json")
 
 # build_graph_from_json_file("data/all_data_50k_vocab", "all_data_50k_vocab.json")
+
+
+copy_data_remove_duplicate("/Users/meghanachilukuri/Documents/GitHub/bayou_mcmc/data_extractor/data/data_surrounding_methods.json", "all_data_no_duplicates.json")
