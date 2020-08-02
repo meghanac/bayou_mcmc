@@ -2,7 +2,7 @@ import unittest
 import networkx as nx
 from data_extractor.graph_analyzer import GraphAnalyzer, STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, \
     STR_BUILD_APP, LOWERCASE_LOCALE, DATA_DIR_PATH, ALL_DATA_1K_VOCAB, TESTING, NEW_VOCAB, APIS, RT, FP, TOP, MID, \
-    LOW, ALL_DATA_1K_VOCAB_NO_DUP
+    LOW, ALL_DATA_1K_VOCAB_NO_DUP, ALL_DATA
 from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
     MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
 
@@ -165,7 +165,7 @@ class TestGraphAnalyzer(unittest.TestCase):
             print(sorted([ga.g[node][i]['weight'] for i in neighbors], reverse=True))
             print(sum([ga.g[node][i]['weight'] for i in neighbors]))
 
-    def test_remove_duplicates(self, data_path=ALL_DATA_1K_VOCAB_NO_DUP):
+    def test_remove_duplicates(self, data_path=ALL_DATA):
         ga = GraphAnalyzer(data_path, save_reader=True)
         prog_ids = ga.get_program_ids_for_api('DSubTree')
         print(len(prog_ids))
@@ -191,6 +191,8 @@ class TestGraphAnalyzer(unittest.TestCase):
         for program in ga.json_asts:
             json_set.add(str(program))
         print(len(json_set))
+
+
 
 
 

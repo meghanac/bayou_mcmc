@@ -25,7 +25,7 @@ def copy_data_remove_duplicate(old_data_filename_path, new_data_filename):
     new_f.write("\"programs\": [\n")
 
     prog_set = set([])
-
+    print("here")
     for program in ijson.items(old_f, 'programs.item'):
         prog_set.add(json.dumps(program))
 
@@ -738,4 +738,4 @@ def analyze_file(dir_path, filename, vocab_freq_saved=True):
 # build_graph_from_json_file("data/all_data_50k_vocab", "all_data_50k_vocab.json")
 
 
-copy_data_remove_duplicate("/Users/meghanachilukuri/Documents/GitHub/bayou_mcmc/data_extractor/data/data_surrounding_methods.json", "all_data_no_duplicates.json")
+# copy_data_remove_duplicate("/Users/meghanachilukuri/Documents/GitHub/bayou_mcmc/data_extractor/data/data_surrounding_methods.json", "all_data_no_duplicates.json")

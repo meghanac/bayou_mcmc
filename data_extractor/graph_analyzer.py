@@ -35,6 +35,7 @@ ALL_DATA_1K_VOCAB = 'all_data_1k_vocab'
 ALL_DATA_1K_VOCAB_NO_DUP = 'all_data_1k_vocab_no_duplicates'
 TESTING = 'testing-600'
 NEW_VOCAB = 'new_1k_vocab_min_3-600000'
+ALL_DATA = 'all_data'
 
 APIS = 'apis'
 RT = 'return_types'
