@@ -36,6 +36,7 @@ ALL_DATA_1K_VOCAB_NO_DUP = 'all_data_1k_vocab_no_duplicates'
 TESTING = 'testing-600'
 NEW_VOCAB = 'new_1k_vocab_min_3-600000'
 ALL_DATA = 'all_data'
+ALL_DATA_NO_DUP = 'all_data_no_duplicates'
 
 APIS = 'apis'
 RT = 'return_types'
@@ -47,7 +48,7 @@ LOW = 'low'
 
 class GraphAnalyzer:
 
-    def __init__(self, folder_name, test=False, save_reader=False, load_reader=False):
+    def __init__(self, folder_name, test=False, save_reader=False, load_reader=False, shuffle_data=True):
         if test:
             self.dir_path = os.path.dirname(os.path.realpath(__file__)) + "/data/" + folder_name + "/test_set/"
         else:
@@ -95,7 +96,7 @@ class GraphAnalyzer:
 
         # Build database
         if not os.path.exists(self.dir_path + "/vocab.json"):
-            self.reader = Reader(self.clargs, create_database=True)
+            self.reader = Reader(self.clargs, create_database=True, shuffle=shuffle_data)
             self.reader.save_data(self.clargs.data)
             # Save vocab dictionaries
             with open(os.path.join(self.clargs.data, 'vocab.json')) as f:
@@ -146,6 +147,7 @@ class GraphAnalyzer:
         self.api_to_prog_ids = self.database['api_to_prog_ids']
         self.rt_to_prog_ids = self.database['rt_to_prog_ids']
         self.fp_to_prog_ids = self.database['fp_to_prog_ids']
+        self.num_programs = len(self.nodes)
 
         print("Built Database\n")
 

@@ -16,7 +16,7 @@ from __future__ import print_function
 import argparse
 
 CONFIG_VOCAB = ['api_dict', 'api_dict_size', 'ret_dict', 'ret_dict_size',
-                'fp_dict', 'fp_dict_size', 'keyword_dict', 'keyword_dict_size']
+                'fp_dict', 'fp_dict_size']
 
 
 # convert vocab to JSON
@@ -46,10 +46,5 @@ def read_vocab(js):
     for item, value in vocab.ret_dict.items():
         chars_dict_ret[value] = item
     vocab.__setattr__('chars_ret', chars_dict_ret)
-
-    chars_dict_kw = dict()
-    for item, value in vocab.keyword_dict.items():
-        chars_dict_kw[value] = item
-    vocab.__setattr__('chars_kw', chars_dict_kw)
 
     return vocab

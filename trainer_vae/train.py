@@ -87,8 +87,7 @@ def train(clargs):
 
             for b in range(config.num_batches):
                 nodes, edges, targets, \
-                        ret_type, fp_type, fp_type_targets,\
-                        _ = loader.next_batch()
+                        ret_type, fp_type, fp_type_targets = loader.next_batch()
                 feed_dict = dropout_dict
                 feed_dict.update({model.nodes: nodes, model.edges: edges, model.targets: targets})
                 feed_dict.update({model.return_type: ret_type})

@@ -51,11 +51,13 @@ FP_TO_PROG_IDS = 'fp_to_prog_ids'
 
 
 class Reader:
-    def __init__(self, clargs, infer=False, create_database=False, vocab=None):
+    def __init__(self, clargs, infer=False, create_database=False, vocab=None, shuffle=True, remove_duplicates=False):
         self.ast_traverser = AstTraverser()
         self.ast_reader = AstReader()
         self.infer = infer
         self.vocab = argparse.Namespace()
+        self.shuffle = shuffle
+        self.remove_duplicates = remove_duplicates
 
         if self.infer:
             assert vocab is not None
@@ -68,21 +70,20 @@ class Reader:
             self.api_dict = Dictionary(self.vocab.api_dict)
             self.ret_dict = Dictionary(self.vocab.ret_dict)
             self.fp_dict = Dictionary(self.vocab.fp_dict)
-            self.keyword_dict = Dictionary(self.vocab.keyword_dict)
+
         else:
             self.api_dict = Dictionary()
             self.ret_dict = Dictionary()
             self.fp_dict = Dictionary()
-            self.keyword_dict = Dictionary()
 
-        ast_programs, return_types, formal_params, keywords = self.read_data(clargs.data + clargs.data_filename + ".json")
+
+        ast_programs, return_types, formal_params = self.read_data(clargs.data + clargs.data_filename + ".json")
 
         # setup input and target chars/vocab
         if not self.infer:
             self.vocab.api_dict, self.vocab.api_dict_size = self.api_dict.get_call_dict()
             self.vocab.ret_dict, self.vocab.ret_dict_size = self.ret_dict.get_call_dict()
             self.vocab.fp_dict, self.vocab.fp_dict_size = self.fp_dict.get_call_dict()
-            self.vocab.keyword_dict, self.vocab.keyword_dict_size = self.keyword_dict.get_call_dict()
 
         sz = len(ast_programs)
 
@@ -113,14 +114,6 @@ class Reader:
             self.fp_types[i, :len_list] = mod_list
             self.fp_type_targets[i, 0:(len_list - 1)] = mod_list[1:len_list]
 
-
-        ## Wrangle Keywords
-        self.keywords = np.zeros((sz, MAX_KEYWORDS), dtype=np.int32)
-        for i, kw in enumerate(keywords):
-            len_list = min(len(kw), MAX_KEYWORDS)
-            mod_list = kw[:len_list]
-            self.keywords[i, :len_list] = mod_list
-
         self.create_database = create_database
         if create_database:
             self.database = {}
@@ -147,9 +140,8 @@ class Reader:
                 parsed_api_array = self.read_ast(program['ast'])
                 return_type_id = self.read_return_type(program['returnType'])
                 parsed_fp_array = self.read_formal_params(program['formalParam'])
-                keywords = self.read_keywords(program['keywords'])
 
-                data_points.append((parsed_api_array, return_type_id, parsed_fp_array, keywords))
+                data_points.append((parsed_api_array, return_type_id, parsed_fp_array))
                 done += 1
 
             except TooLongLoopingException as e1:
@@ -167,10 +159,15 @@ class Reader:
         print('{:8d} programs/asts missed in training data for branch'.format(ignored_for_branch))
 
         # randomly shuffle to avoid bias towards initial data points during training
-        random.shuffle(data_points)
-        parsed_api_array, return_type_ids, formal_param_ids, keywords = zip(*data_points)  # unzip
+        if self.shuffle:
+            random.shuffle(data_points)
 
-        return parsed_api_array, return_type_ids, formal_param_ids, keywords
+        if self.remove_duplicates:
+            data_points = list(set(data_points))
+
+        parsed_api_array, return_type_ids, formal_param_ids = zip(*data_points)  # unzip
+
+        return parsed_api_array, return_type_ids, formal_param_ids
 
     def save_prog_database(self, sz):
         # program_ids = {}
@@ -230,9 +227,6 @@ class Reader:
         with open(path + '/formal_params.pickle', 'wb') as f:
             pickle.dump([self.fp_types, self.fp_type_targets], f)
 
-        with open(path + '/keywords.pickle', 'wb') as f:
-            pickle.dump(self.keywords, f)
-
         with open(os.path.join(path + '/vocab.json'), 'w') as f:
             json.dump(dump_vocab(self.vocab), fp=f, indent=2)
 
@@ -289,17 +283,6 @@ class Reader:
                 fp_call_id = self.fp_dict.conditional_add_node_val(fp_call)
             parsed_fp_array.append(fp_call_id)
         return parsed_fp_array
-
-    def read_keywords(self, program_keyword_js):
-        # Read the keywords
-        keywords = []
-        for kw in program_keyword_js:
-            if self.infer:
-                kw_id = self.keyword_dict.get_node_val(kw)
-            else:
-                kw_id = self.keyword_dict.conditional_add_node_val(kw)
-            keywords.append(kw_id)
-        return keywords
 
 
 # %%

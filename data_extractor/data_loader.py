@@ -33,9 +33,6 @@ class Loader:
         with open(clargs.data + '/formal_params.pickle', 'rb') as f:
             [self.fp_types, self.fp_type_targets] = pickle.load(f)
 
-        with open(clargs.data + '/keywords.pickle', 'rb') as f:
-            self.keywords = pickle.load(f)
-
         with open(os.path.join(clargs.data, 'vocab.json')) as f:
             self.config.vocab = read_vocab(json.load(f))
 
@@ -64,7 +61,6 @@ class Loader:
         self.fp_types = self.fp_types[:sz, :config.max_fp_depth]
         self.fp_type_targets = self.fp_type_targets[:sz, :config.max_fp_depth]
 
-        self.keywords = self.keywords[:sz, :config.max_keywords]
         return
 
     def split(self):
@@ -78,16 +74,14 @@ class Loader:
         self.fp_types = np.split(self.fp_types, self.config.num_batches, axis=0)
         self.fp_type_targets = np.split(self.fp_type_targets, self.config.num_batches, axis=0)
 
-        self.keywords = np.split(self.keywords, self.config.num_batches, axis=0)
         return
 
     def reset_batches(self):
         self.batches = iter(
             zip(self.nodes, self.edges, self.targets,
-                self.return_types, self.fp_types, self.fp_type_targets,
-                self.keywords))
+                self.return_types, self.fp_types, self.fp_type_targets))
         return
 
     def next_batch(self):
-        n, e, t, r, fp, fpt, kw = next(self.batches)
-        return n, e, t, r, fp, fpt, kw
+        n, e, t, r, fp, fpt = next(self.batches)
+        return n, e, t, r, fp, fpt
