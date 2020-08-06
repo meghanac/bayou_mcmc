@@ -3,6 +3,7 @@ import networkx as nx
 from data_extractor.graph_analyzer import GraphAnalyzer, STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, \
     STR_BUILD_APP, LOWERCASE_LOCALE, DATA_DIR_PATH, ALL_DATA_1K_VOCAB, TESTING, NEW_VOCAB, APIS, RT, FP, TOP, MID, \
     LOW, ALL_DATA_1K_VOCAB_NO_DUP, ALL_DATA, ALL_DATA_NO_DUP
+from data_extractor.dataset_creator import DatasetCreator
 from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
     MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
 
@@ -165,6 +166,15 @@ class TestGraphAnalyzer(unittest.TestCase):
             print(sorted([ga.g[node][i]['weight'] for i in neighbors], reverse=True))
             print(sum([ga.g[node][i]['weight'] for i in neighbors]))
 
+    def test_freq(self, data_path=ALL_DATA_NO_DUP):
+        ga = GraphAnalyzer(data_path, load_reader=True, load_g_without_control_structs=False)
+        self.assertEqual(ga.g.nodes[STR_BUILD]['frequency'], len(ga.get_program_ids_for_api(STR_BUILD)))
+        self.assertEqual(ga.g.edges[STR_BUILD, STR_BUILD_APP]['weight'],
+                         len(ga.get_program_ids_with_multiple_apis([STR_BUILD, STR_BUILD_APP])))
+        self.assertEqual(ga.g.edges[STR_BUILD, 'DBranch']['weight'],
+                         len(ga.get_program_ids_with_multiple_apis([STR_BUILD, 'DBranch'])))
+        print(len(ga.get_program_ids_with_multiple_apis([STR_BUILD, 'DBranch'])))
+
     def test_remove_duplicates(self, data_path=ALL_DATA_NO_DUP):
         ga = GraphAnalyzer(data_path, load_reader=True)
         prog_ids = ga.get_program_ids_for_api('DSubTree')
@@ -190,6 +200,10 @@ class TestGraphAnalyzer(unittest.TestCase):
         for program in ga.json_asts:
             json_set.add(str(program))
         print(len(json_set))
+
+    def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
+        dataset_creator = DatasetCreator(data_path)
+        dataset_creator.create_dataset()
 
 
 

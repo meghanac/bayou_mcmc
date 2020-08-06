@@ -48,7 +48,8 @@ LOW = 'low'
 
 class GraphAnalyzer:
 
-    def __init__(self, folder_name, test=False, save_reader=False, load_reader=False, shuffle_data=True):
+    def __init__(self, folder_name, test=False, save_reader=False, load_reader=False, shuffle_data=True,
+                 remove_duplicates=False, load_g_without_control_structs=True):
         if test:
             self.dir_path = os.path.dirname(os.path.realpath(__file__)) + "/data/" + folder_name + "/test_set/"
         else:
@@ -87,16 +88,22 @@ class GraphAnalyzer:
             vocab_freq_filename = folder_name + "_vocab_freq.json"
             vocab_freq_saved = os.path.exists(os.path.join(self.dir_path, vocab_freq_filename))
             print("vocab_freq_saved:", vocab_freq_saved)
-            self.g = build_graph_from_json_file(self.dir_path, data_filename, vocab_freq_saved=vocab_freq_saved)
+            self.g = build_graph_from_json_file(self.dir_path, data_filename, vocab_freq_saved=vocab_freq_saved,
+                                                return_g_without_control_structs=load_g_without_control_structs)
         else:
-            d = json.load(open(os.path.join(self.dir_path, folder_name + "_api_graph.json")))
-            self.g = json_graph.adjacency_graph(d)
+            if load_g_without_control_structs:
+                self.g = json_graph.adjacency_graph(
+                    json.load(open(os.path.join(self.dir_path, folder_name + "_api_graph.json"))))
+            else:
+                self.g = json_graph.adjacency_graph(
+                    json.load(open(os.path.join(self.dir_path, folder_name + "_graph.json"))))
 
         print("Built graph\n")
 
         # Build database
         if not os.path.exists(self.dir_path + "/vocab.json"):
-            self.reader = Reader(self.clargs, create_database=True, shuffle=shuffle_data)
+            self.reader = Reader(self.clargs, create_database=True, shuffle=shuffle_data,
+                                 remove_duplicates=remove_duplicates)
             self.reader.save_data(self.clargs.data)
             # Save vocab dictionaries
             with open(os.path.join(self.clargs.data, 'vocab.json')) as f:
@@ -183,6 +190,13 @@ class GraphAnalyzer:
                tuple(self.fp_types[prog_id].tolist()), tuple(self.targets[prog_id].tolist()), tuple(
             self.fp_type_targets[prog_id].tolist())
 
+    def get_apis_in_prog_set(self, prog_id):
+        nodes, _, _, _, targets, _ = self.fetch_data_with_targets(prog_id)
+        nodes = set(nodes)
+        nodes.update(set(targets))
+        nodes.discard(0)
+        return list(nodes)
+
     def get_connected_nodes(self, node):
         print("Node:", node)
         print("Number of programs it appears in:", self.g.nodes[node]['frequency'])
@@ -197,10 +211,13 @@ class GraphAnalyzer:
         try:
             prog_ids = self.api_to_prog_ids[self.vocab2node[api]].copy()
         except KeyError:
-            return {}
+            # print("api key error:", api)
+            return set([])
         if limit is not None and len(prog_ids) > limit:
-            return itertools.islice(prog_ids, limit)
-        return prog_ids
+            return set(itertools.islice(prog_ids, limit))
+        # print(prog_ids)
+        # print(type(prog_ids))
+        return set(prog_ids)
 
     def get_programs_for_api(self, api, input_prog_ids=None, limit=None, get_targets=True, get_jsons=False):
         if input_prog_ids is None:
@@ -246,8 +263,15 @@ class GraphAnalyzer:
 
     def get_program_ids_with_multiple_apis(self, apis, limit=None, exclude=None):
         common_programs = self.get_program_ids_for_api(apis[0])
+        if type(common_programs) == dict:
+            print(apis[0], "\n\n\n")
+
         for api in apis:
             progs = self.get_program_ids_for_api(api)
+            if type(progs) == dict:
+                print(api, "\n\n\n")
+            if type(common_programs) == dict:
+                print(apis[0], "\n\n\n")
             common_programs.intersection_update(progs)
 
         if exclude is not None:
@@ -259,7 +283,7 @@ class GraphAnalyzer:
 
         if limit is not None and len(common_programs) > limit:
             print("Total number of results:", len(common_programs))
-            return itertools.islice(common_programs, limit)
+            return set(itertools.islice(common_programs, limit))
 
         return common_programs
 

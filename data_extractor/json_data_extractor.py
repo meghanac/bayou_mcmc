@@ -497,7 +497,7 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
 
     build_graph(sorted_apis, new_data_filename, new_dir_path)
 
-def build_graph(sorted_apis, new_data_filename, new_dir_path):
+def build_graph(sorted_apis, new_data_filename, new_dir_path, return_g_without_control_structs=True):
     # build graph
     g = nx.Graph()
 
@@ -507,7 +507,6 @@ def build_graph(sorted_apis, new_data_filename, new_dir_path):
     nodes_edges = [(i[0][0], i[1].items()) for i in sorted_apis]
     for node, edges in nodes_edges:
         g.add_edges_from([(node, edge[0], {'weight': edge[1]}) for edge in edges])
-
     # dump graph to json file
     data = json_graph.adjacency_data(g)
     s = json.dumps(data)
@@ -515,6 +514,10 @@ def build_graph(sorted_apis, new_data_filename, new_dir_path):
     graph_f = open(os.path.join(new_dir_path, graph_filename), "w+")
     graph_f.write(s)
     graph_f.close()
+
+    if not return_g_without_control_structs:
+        orig_g = g.copy()
+        orig_filename = graph_filename
 
     g.remove_node('DBranch')
     g.remove_node('DLoop')
@@ -528,7 +531,10 @@ def build_graph(sorted_apis, new_data_filename, new_dir_path):
     graph_f.write(s)
     graph_f.close()
 
-    return g, os.path.join(new_dir_path, graph_filename)
+    if return_g_without_control_structs:
+        return g, os.path.join(new_dir_path, graph_filename)
+    else:
+        return orig_g, orig_filename
 
 
 def load_graph(path):
@@ -614,7 +620,8 @@ def get_vocab_frequencies(f, vocab_num):
     return data
 
 
-def build_graph_from_json_file(dir_path, filename, vocab_freq_saved=False, vocab_num=1000000000000):
+def build_graph_from_json_file(dir_path, filename, vocab_freq_saved=False, vocab_num=1000000000000,
+                               return_g_without_control_structs=True):
     f = open(os.path.join(dir_path, filename), 'r')
     if vocab_freq_saved:
         vocab_f = open(os.path.join(dir_path, filename[:-5] + "_vocab_freq.json"), "r")
@@ -625,7 +632,8 @@ def build_graph_from_json_file(dir_path, filename, vocab_freq_saved=False, vocab
         vocab_freq = vocab_freq_data['vocab_freq']
         dump_vocab_freq(dir_path, filename, vocab_freq_data)
     sorted_apis = get_sorted_api_cofreq(vocab_freq)
-    g, _ = build_graph(sorted_apis, filename, dir_path)
+    g, _ = build_graph(sorted_apis, filename, dir_path,
+                       return_g_without_control_structs=return_g_without_control_structs)
     print(nx.algorithms.components.number_connected_components(g))
     return g
 

@@ -141,6 +141,10 @@ class Reader:
                 return_type_id = self.read_return_type(program['returnType'])
                 parsed_fp_array = self.read_formal_params(program['formalParam'])
 
+                if self.remove_duplicates:
+                    parsed_api_array = tuple(parsed_api_array)
+                    parsed_fp_array = tuple(parsed_fp_array)
+
                 data_points.append((parsed_api_array, return_type_id, parsed_fp_array))
                 done += 1
 
