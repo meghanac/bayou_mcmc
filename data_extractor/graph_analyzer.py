@@ -11,7 +11,7 @@ import sys
 import numpy as np
 from graphviz import Digraph
 
-from data_extractor.data_reader import Reader
+from data_extractor.data_reader import Reader, MAX_AST_DEPTH
 
 from ast_helper.ast_traverser import AstTraverser
 from data_extractor.utils import read_vocab
@@ -45,6 +45,12 @@ FP = 'fp'
 TOP = 'top'
 MID = 'mid'
 LOW = 'low'
+
+MIN = 'min'
+MIN_EQ = 'min_eq'
+MAX = 'max'
+MAX_EQ = 'max_eq'
+EQ = 'eq'
 
 class GraphAnalyzer:
 
@@ -190,6 +196,9 @@ class GraphAnalyzer:
                tuple(self.fp_types[prog_id].tolist()), tuple(self.targets[prog_id].tolist()), tuple(
             self.fp_type_targets[prog_id].tolist())
 
+    def fetch_nodes_as_list(self, prog_id):
+        return self.nodes[prog_id].tolist()
+
     def get_apis_in_prog_set(self, prog_id):
         nodes, _, _, _, targets, _ = self.fetch_data_with_targets(prog_id)
         nodes = set(nodes)
@@ -217,6 +226,28 @@ class GraphAnalyzer:
             return set(itertools.islice(prog_ids, limit))
         # print(prog_ids)
         # print(type(prog_ids))
+        return set(prog_ids)
+
+    def get_program_ids_for_api_length_k(self, api, min_max_eq, k, limit=None):
+        prog_ids = self.get_program_ids_for_api(api)
+        prog_ids = list(prog_ids)
+
+        if min_max_eq == MIN:
+            prog_ids = filter(lambda x: self.fetch_nodes_as_list(x).index(0) > k, prog_ids)
+        elif min_max_eq == MIN_EQ:
+            prog_ids = filter(lambda x: self.fetch_nodes_as_list(x).index(0) >= k, prog_ids)
+        elif min_max_eq == MAX:
+            prog_ids = filter(lambda x: self.fetch_nodes_as_list(x).index(0) < k, prog_ids)
+        elif min_max_eq == MAX_EQ:
+            prog_ids = filter(lambda x: self.fetch_nodes_as_list(x).index(0) <= k, prog_ids)
+        elif min_max_eq == EQ:
+            prog_ids = filter(lambda x: self.fetch_nodes_as_list(x).index(0) == k, prog_ids)
+        else:
+            raise ValueError("min_max_eq must be min, min_eq, max, max_eq, or eq")
+
+        if limit is not None and len(prog_ids) > limit:
+            return set(itertools.islice(prog_ids, limit))
+
         return set(prog_ids)
 
     def get_programs_for_api(self, api, input_prog_ids=None, limit=None, get_targets=True, get_jsons=False):

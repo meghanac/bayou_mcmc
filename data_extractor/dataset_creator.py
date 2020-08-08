@@ -1,7 +1,8 @@
 import itertools
 import time
+import random
 
-from data_extractor.graph_analyzer import GraphAnalyzer, ALL_DATA_NO_DUP
+from data_extractor.graph_analyzer import GraphAnalyzer, ALL_DATA_NO_DUP, MAX_AST_DEPTH, MIN_EQ, MAX_EQ, MIN, MAX, EQ
 import networkx as nx
 import math
 
@@ -15,8 +16,6 @@ IN_API = 'include_api'
 EX_API = 'exclude_api'
 IN_CS = 'include_cs'
 EX_CS = 'exclude_cs'
-MIN = 'min'
-MAX = 'max'
 HIGH = 'high'
 MID = 'mid'
 LOW = 'low'
@@ -49,7 +48,7 @@ class DatasetCreator:
 
 
     """
-    def __init__(self, data_dir_path, save_reader=False, min_prog_per_category=1200, verbose=False, test_mode=True):
+    def __init__(self, data_dir_path, save_reader=False, min_prog_per_category=1200, verbose=True, test_mode=True):
         self.data_dir_path = data_dir_path
 
         if save_reader:
@@ -72,33 +71,35 @@ class DatasetCreator:
         self.ranks.remove(DEXCEPT)
         self.num_apis = len(self.ranks)
 
-        self.include_api_set = {SEEN: {}, NEW: {}}
-        self.include_cs_set = {SEEN: {}, NEW: {}}
-        self.exclude_api_set = {SEEN: {}, NEW: {}}
-        self.exclude_cs_set = {SEEN: {}, NEW: {}}
-        self.min_api_set = {SEEN: {}, NEW: {}}
-        self.max_api_set = {SEEN: {}, NEW: {}}
+        self.include_api_set = {SEEN: set([]), NEW: set([])}
+        self.include_cs_set = {SEEN: set([]), NEW: set([])}
+        self.exclude_api_set = {SEEN: set([]), NEW: set([])}
+        self.exclude_cs_set = {SEEN: set([]), NEW: set([])}
+        self.min_api_set = {SEEN: set([]), NEW: set([])}
+        self.max_api_set = {SEEN: set([]), NEW: set([])}
 
         self.categories = {IN_API: (self.include_api_set, API), EX_API: (self.exclude_api_set, API),
                            IN_CS: (self.include_cs_set, CS), EX_CS: (self.exclude_cs_set, CS),
-                           MAX: (self.max_api_set, LEN), MIN: (self.min_api_set, LEN)}
+                           MAX_EQ: (self.max_api_set, LEN), MIN_EQ: (self.min_api_set, LEN)}
 
         self.high_range = (0, math.floor(self.num_apis / 3))
         self.mid_range = (math.floor(self.num_apis / 3), math.floor(self.num_apis * 2/3))
         self.low_range = (math.floor(self.num_apis * 2/3), self.num_apis)
+        self.full_range = (0, self.num_apis)
+
         self.freq_pairs = [(LOW, LOW), (MID, LOW), (HIGH, LOW), (HIGH, MID), (HIGH, HIGH)]
-        self.idx_ranges = {HIGH: self.high_range, MID: self.mid_range, LOW: self.low_range}
+        self.idx_ranges = {HIGH: self.full_range, MID: self.full_range, LOW: self.full_range}
 
-        for category in self.categories:
-            test_set = self.categories[category][0]
-            for freq_pair in self.freq_pairs:
-                test_set[NEW][freq_pair] = set([])
-                test_set[SEEN][freq_pair] = set([])
+        # for category in self.categories:
+        #     test_set = self.categories[category][0]
+        #     for freq_pair in self.freq_pairs:
+        #         test_set[NEW][freq_pair] = set([])
+        #         test_set[SEEN][freq_pair] = set([])
 
-        if verbose:
-            print(self.high_range)
-            print(self.mid_range)
-            print(self.low_range)
+        # if verbose:
+        #     print(self.high_range)
+        #     print(self.mid_range)
+        #     print(self.low_range)
 
         self.min_prog_per_category = min_prog_per_category
         self.min_prog_per_freq = math.ceil(min_prog_per_category / 3)
@@ -113,38 +114,43 @@ class DatasetCreator:
         self.verbose = verbose
         self.test_mode = test_mode
 
+
     # def create_novelty_test_set(self):
 
-    def add_include_or_exclude_test_progs(self, added_to_test_set_func, category, freq_pair, novelty_label):
+    def add_include_or_exclude_test_progs(self, added_to_test_set_func, category, novelty_label):
         assert category in DP2_API or category in DP2_CS, "Error: category must be " + IN_CS + ", " + IN_API + ", " \
                                                           + EX_API + ", " + ", or " + EX_CS
-
-        api_idx_range = range(self.idx_ranges[freq_pair[0]][0], self.idx_ranges[freq_pair[0]][1])
+        api_idx_range = list(range(self.full_range[0], self.full_range[1]))
+        random.shuffle(api_idx_range)
 
         if category in DP2_API:
-            dp2_idx_range = range(self.idx_ranges[freq_pair[1]][0], self.idx_ranges[freq_pair[1]][1])
+            dp2_idx_range = list(range(self.full_range[0], self.full_range[1]))
+            random.shuffle(dp2_idx_range)
             data_points = self.ranks
         else:
             dp2_idx_range = range(len(self.control_structs))
             data_points = self.control_structs
 
-        test_set = self.categories[category][0][novelty_label][freq_pair]
+        test_set = self.categories[category][0][novelty_label]
 
         num_pairs_added = 0
 
         all_possible_data_points = itertools.product(api_idx_range, dp2_idx_range)
 
+        def suitable_candidate(idxs):
+            progs_with_both = len(
+                self.ga.get_program_ids_with_multiple_apis([self.ranks[idxs[0]], data_points[idxs[1]]]))
+            progs_with_api = len(self.ga.get_program_ids_for_api(self.ranks[idxs[0]]))
+            progs_with_dp2 = len(self.ga.get_program_ids_for_api(data_points[idxs[1]]))
+            return 1 < progs_with_both < progs_with_api and progs_with_dp2 > progs_with_both
+
         start_time = time.time()
-        valid_data_points = filter(lambda idxs: self.ga.g.has_edge(self.ranks[idxs[0]], data_points[idxs[1]]),
-                                   all_possible_data_points)
+        valid_data_points = filter(lambda idxs: suitable_candidate(idxs), all_possible_data_points)
+
         if self.test_mode:
             print("Time taken for valid_data_points:", start_time - time.time())
 
         added_apis = set([])
-
-        # print(len(list(valid_data_points)))
-        if self.verbose:
-            print(freq_pair)
 
         counter = 0
         start_time = time.time()
@@ -169,39 +175,38 @@ class DatasetCreator:
 
                 progs_with_both = self.ga.get_program_ids_with_multiple_apis([api, data_point2])
 
-                if added_to_test_set_func(api, data_point2, novelty_label, test_set, progs_with_api, progs_with_dp2, progs_with_both):
+                if added_to_test_set_func(api, data_point2, novelty_label, test_set, progs_with_api, progs_with_dp2,
+                                          progs_with_both):
                     num_pairs_added += 1
                     added_apis.add(api)
                     if category in DP2_API:
                         added_apis.add(data_point2)
-                    if num_pairs_added >= self.min_pairs_per_freq and len(test_set) >= self.min_prog_per_freq:
-                        print("Category:", category)
-                        print("Novelty label: " + novelty_label)
-                        print("Frequency Pair: " + str(freq_pair))
-                        print("Num API + " + category + " pairs added: " + str(num_pairs_added))
-                        print("Total programs added: " + str(len(test_set)))
-                        return
+                    if num_pairs_added >= self.min_prog_per_category:
+                        break
+
+        print("Category:", category)
+        print("Novelty label: " + novelty_label)
+        print("Num API + " + category + " pairs added: " + str(num_pairs_added))
+        print("Total programs added: " + str(len(test_set)))
 
     def added_to_include_test_set(self, api, data_point2, novelty_label, test_set, progs_with_api, progs_with_dp2,
                                   progs_with_both):
-        # print("num progs with both:", num_progs_with_both)
-        # print("num progs with api:", num_progs_with_api)
-        # print("num progs with dp2:", num_progs_with_dp2)
-        # print("control api:", self.control_limit * num_progs_with_api)
-        # print("control dp2:", self.control_limit * num_progs_with_dp2)
+
         num_progs_with_both = len(progs_with_both)
-        num_progs_with_api = len(progs_with_both)
+        num_progs_with_api = len(progs_with_api)
         num_progs_with_dp2 = len(progs_with_dp2)
 
-        # if self.verbose and self.test_mode:
-        #     print("num api:", num_progs_with_api)
-        #     print("num dp2:", num_progs_with_dp2)
-        #     print("num both:", num_progs_with_both)
+        if self.verbose and self.test_mode:
+            print("num progs with both:", num_progs_with_both)
+            print("num progs with api:", num_progs_with_api)
+            print("num progs with dp2:", num_progs_with_dp2)
+            print("control api:", self.control_limit * num_progs_with_api)
+            print("control dp2:", self.control_limit * num_progs_with_dp2)
 
         if num_progs_with_both <= self.control_limit * num_progs_with_api and \
                 num_progs_with_both <= self.control_limit * num_progs_with_dp2:
             if novelty_label == NEW and 0 < num_progs_with_both <= 1000:
-                prog_ids = self.ga.get_program_ids_with_multiple_apis([api, data_point2])
+                prog_ids = progs_with_both
 
                 if len(prog_ids) == 0:
                     return False
@@ -213,8 +218,8 @@ class DatasetCreator:
                 return True
 
             if novelty_label == SEEN:
-                limit = min(math.floor(num_progs_with_both / 4), 10)
-                prog_ids = self.ga.get_program_ids_with_multiple_apis([api, data_point2], limit=limit)
+                limit = min(math.ceil(num_progs_with_both / 4), self.control_limit * num_progs_with_api, 10)
+                prog_ids = set(itertools.islice(progs_with_both, limit))
 
                 if len(prog_ids) == 0:
                     return False
@@ -230,13 +235,17 @@ class DatasetCreator:
     def added_to_exclude_test_set(self, api, data_point2, novelty_label, test_set, progs_with_api, progs_with_dp2,
                                   progs_with_both):
         num_progs_with_both = len(progs_with_both)
-        num_progs_with_api = len(progs_with_both)
+        num_progs_with_api = len(progs_with_api)
         num_progs_with_dp2 = len(progs_with_dp2)
+        if self.verbose and self.test_mode:
+            print("num progs api", num_progs_with_api)
+            print("num progs dp2", num_progs_with_dp2)
+            print("num progs both", num_progs_with_both)
+            print("control limit:", num_progs_with_api * self.control_limit)
+            print("difference:", num_progs_with_api - num_progs_with_both)
         if num_progs_with_api - num_progs_with_both <= num_progs_with_api * self.control_limit:
             if novelty_label == NEW and 0 < num_progs_with_api - num_progs_with_both <= 500:
-                both_apis_prog_ids = self.ga.get_program_ids_with_multiple_apis([api, data_point2])
-                api_prog_ids = self.ga.get_program_ids_for_api(api)
-                prog_ids = api_prog_ids - both_apis_prog_ids
+                prog_ids = progs_with_api - progs_with_both
                 if self.verbose:
                     print("api:", api, "data_point:", data_point2)
                     print("num progs added:", len(prog_ids))
@@ -248,10 +257,9 @@ class DatasetCreator:
                 return True
 
             if novelty_label == SEEN:
-                limit = min(math.floor((num_progs_with_api - num_progs_with_both) / 4), 10)
-                both_apis_prog_ids = self.ga.get_program_ids_with_multiple_apis([api, data_point2])
-                api_prog_ids = self.ga.get_program_ids_for_api(api)
-                prog_ids = api_prog_ids - both_apis_prog_ids
+                limit = min(math.ceil((num_progs_with_api - num_progs_with_both) / 4),
+                            self.control_limit * num_progs_with_api, 10)
+                prog_ids = progs_with_api - progs_with_both
 
                 if len(prog_ids) == 0:
                     return False
@@ -265,9 +273,13 @@ class DatasetCreator:
 
         return False
 
-    def add_to_test_set(self, data_point1, data_point2, prog_ids_set, test_set):
+    def add_to_test_set(self, data_point1, data_point2, prog_ids_set, test_set, dp2type_is_int=False):
         api_num = self.ga.vocab2node[data_point1]
-        dp_num = self.ga.vocab2node[data_point2]
+
+        if dp2type_is_int:
+            dp_num = data_point2
+        else:
+            dp_num = self.ga.vocab2node[data_point2]
         for prog_id in prog_ids_set:
             test_set.add((prog_id, api_num, dp_num))
             apis = self.ga.get_apis_in_prog_set(prog_id)
@@ -278,14 +290,93 @@ class DatasetCreator:
                 else:
                     self.test_api_to_prog_ids[api] = {prog_id}
 
-    def add_exclude_test_progs(self, dp2_type, freq_pair, novel):
-        pass
+    def add_length_constrained_test_progs(self, category, novelty_label):
+        assert category == MAX_EQ or category == MIN_EQ
 
-    def create_accuracy_test_set(self):
-        pass
+        api_idx_range = list(range(self.full_range[0], self.full_range[1]))
+        random.shuffle(api_idx_range)
 
-    def add_length_constrained_test_progs(self, category, freq_pair, novel):
-        pass
+        len_range = list(range(3, 8))
+        random.shuffle(len_range)
+
+        test_set = self.categories[category][0][novelty_label]
+
+        num_pairs_added = 0
+
+        all_possible_data_points = itertools.product(api_idx_range, len_range)
+
+        def suitable_candidate(idxs):
+            progs_with_both = len(
+                self.ga.get_program_ids_for_api_length_k(self.ranks[idxs[0]], category, idxs[1]))
+            progs_with_api = len(self.ga.get_program_ids_for_api(self.ranks[idxs[0]]))
+            # if self.verbose and self.test_mode:
+            #     print("num progs with both:", progs_with_both)
+            #     print("num progs with api:", progs_with_api)
+            return 1 < progs_with_both < progs_with_api
+
+        start_time = time.time()
+        valid_data_points = filter(lambda idxs: suitable_candidate(idxs), all_possible_data_points)
+
+        if self.test_mode:
+            print("Time taken for valid_data_points:", start_time - time.time())
+
+        added_apis = set([])
+
+        counter = 0
+        start_time = time.time()
+        for api_idx, dp_idx in valid_data_points:
+            counter += 1
+            if counter % 5000 == 0:
+                print("num pairs added:", num_pairs_added)
+                if self.test_mode:
+                    print("time taken:", start_time - time.time())
+                    start_time = time.time()
+
+            api = self.ranks[api_idx]
+            length = dp_idx
+
+            if api not in added_apis:
+
+                valid_prog_ids = self.ga.get_program_ids_for_api_length_k(api, category, length)
+                num_valid_progs = len(valid_prog_ids)
+                progs_with_api = self.ga.get_program_ids_for_api(api)
+                num_progs_with_api = len(progs_with_api)
+
+                if self.verbose and self.test_mode:
+                    print("num progs that meet length criteria:", num_valid_progs)
+                    print("num progs with api:", num_progs_with_api)
+                    print("control api:", self.control_limit * num_progs_with_api)
+
+                if num_valid_progs <= self.control_limit * num_progs_with_api:
+                    if novelty_label == NEW and 0 < num_valid_progs <= 1000:
+                        if self.verbose:
+                            print("api:", api, "length:", length)
+                            print("num progs added:", len(valid_prog_ids))
+                        self.add_to_test_set(api, length, valid_prog_ids, test_set, dp2type_is_int=True)
+                        return True
+
+                    if novelty_label == SEEN:
+                        limit = min(math.ceil(num_valid_progs / 4), self.control_limit * num_progs_with_api, 10)
+                        prog_ids = set(itertools.islice(valid_prog_ids, limit))
+
+                        if len(prog_ids) == 0:
+                            return False
+
+                        if self.verbose:
+                            print("api:", api, "length:", length)
+                            print("num progs added:", len(prog_ids))
+
+                        self.add_to_test_set(api, length, prog_ids, test_set, dp2type_is_int=True)
+                        return True
+
+                    if num_pairs_added >= self.min_prog_per_category:
+                        break
+
+        print("Category:", category)
+        print("Novelty label: " + novelty_label)
+        print("Num API + " + category + " pairs added: " + str(num_pairs_added))
+        print("Total programs added: " + str(len(test_set)))
+        return False
 
     def add_random_programs(self):
         pass
@@ -293,37 +384,51 @@ class DatasetCreator:
     def create_dataset(self):
         print("Creating Custom Test Dataset\n")
         for novelty_label in [NEW, SEEN]:  # Create novelty test set first
-            for freq_pair in self.freq_pairs:
-                print("\n\n\n-----------------------------------")
-                print("EXCLUDE CS: ", freq_pair)
-                start_time = time.time()
-                self.add_include_or_exclude_test_progs(self.added_to_exclude_test_set, EX_CS,
-                                                       freq_pair, novelty_label)
-                print("test set len:", len(self.categories[EX_CS][0][novelty_label]), "\n")
-                if self.test_mode:
-                    print("Time taken for exclude cs", freq_pair, ":", start_time - time.time())
+            # print("\n\n\n-----------------------------------")
+            # print("INCLUDE API: ")
+            # start_time = time.time()
+            # self.add_include_or_exclude_test_progs(self.added_to_include_test_set, IN_API, novelty_label)
+            # print("test set len:", len(self.categories[IN_API][0][novelty_label]), "\n")
+            # if self.test_mode:
+            #     print("Time taken for include api:", start_time - time.time())
+            #
+            # print("\n\n\n-----------------------------------")
+            # print("EXCLUDE CS: ")
+            # start_time = time.time()
+            # self.add_include_or_exclude_test_progs(self.added_to_exclude_test_set, EX_CS, novelty_label)
+            # print("test set len:", len(self.categories[EX_CS][0][novelty_label]), "\n")
+            # if self.test_mode:
+            #     print("Time taken for exclude cs:", start_time - time.time())
+            #
+            # print("\n\n\n-----------------------------------")
+            # print("INCLUDE CS: ")
+            # start_time = time.time()
+            # self.add_include_or_exclude_test_progs(self.added_to_include_test_set, IN_CS, novelty_label)
+            # print("test set len:", len(self.categories[IN_CS][0][novelty_label]), "\n")
+            # if self.test_mode:
+            #     print("Time taken for include cs:", start_time - time.time())
+            #
+            # print("\n\n\n-----------------------------------")
+            # print("EXCLUDE API: ")
+            # start_time = time.time()
+            # self.add_include_or_exclude_test_progs(self.added_to_exclude_test_set, EX_API, novelty_label)
+            # print("test set len:", len(self.categories[EX_API][0][novelty_label]), "\n")
+            # if self.test_mode:
+            #     print("Time taken for exclude api:", start_time - time.time())
 
-                print("\n\n\n-----------------------------------")
-                print("INCLUDE API: ", freq_pair)
-                start_time = time.time()
-                self.add_include_or_exclude_test_progs(self.added_to_include_test_set, IN_API,
-                                                       freq_pair, novelty_label)
-                print("test set len:", len(self.categories[IN_API][0][novelty_label]), "\n")
-                if self.test_mode:
-                    print("Time taken for include api", freq_pair, ":", start_time - time.time())
+            print("\n\n\n-----------------------------------")
+            print("MIN LENGTH")
+            start_time = time.time()
+            self.add_length_constrained_test_progs(MIN_EQ, novelty_label)
+            print("test set len:", len(self.categories[MIN_EQ][0][novelty_label]), "\n")
+            if self.test_mode:
+                print("Time taken for include cs:", start_time - time.time())
 
-                # self.add_include_or_exclude_test_progs(self.added_to_include_test_set, IN_CS, freq_pair, novel)
-                # self.add_include_or_exclude_test_progs(self.added_to_exclude_test_set, EX_API, freq_pair, novel)
-
-                # print("\n\n\n-----------------------------------")
-                # print("MIN LENGTH")
-                # self.add_length_constrained_test_progs(MIN, freq_pair, novelty_label)
-                # print("test set len:", len(self.categories[MIN][0][novelty_label]), "\n")
-                #
-                # print("\n\n\n-----------------------------------")
-                # print("MAX LENGTH")
-                # self.add_length_constrained_test_progs(MAX, freq_pair, novelty_label)
-                # print("test set len:", len(self.categories[MAX][0][novelty_label]), "\n")
+            #
+            # print("\n\n\n-----------------------------------")
+            # print("MAX LENGTH")
+            # self.add_length_constrained_test_progs(MAX, freq_pair, novelty_label)
+            # print("test set len:", len(self.categories[MAX][0][novelty_label]), "\n")
 
         self.add_random_programs()
 
