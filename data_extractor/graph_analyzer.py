@@ -245,7 +245,7 @@ class GraphAnalyzer:
         else:
             raise ValueError("min_max_eq must be min, min_eq, max, max_eq, or eq")
 
-        if limit is not None and len(prog_ids) > limit:
+        if limit is not None and len(list(prog_ids)) > limit:
             return set(itertools.islice(prog_ids, limit))
 
         return set(prog_ids)

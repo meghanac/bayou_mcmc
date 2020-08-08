@@ -48,7 +48,7 @@ class DatasetCreator:
 
 
     """
-    def __init__(self, data_dir_path, save_reader=False, min_prog_per_category=1200, verbose=True, test_mode=True):
+    def __init__(self, data_dir_path, save_reader=False, min_prog_per_category=1200, verbose=False, test_mode=True):
         self.data_dir_path = data_dir_path
 
         if save_reader:
@@ -293,6 +293,15 @@ class DatasetCreator:
     def add_length_constrained_test_progs(self, category, novelty_label):
         assert category == MAX_EQ or category == MIN_EQ
 
+        # for i in range(self.num_apis):
+        #     api = self.ranks[i]
+        #     print("num total:", len(self.ga.get_program_ids_for_api(api)))
+        #     prog_ids = self.ga.get_program_ids_for_api_length_k(api, EQ, 2)
+        #     print("with k:", len(prog_ids))
+        #     prog_ids = [self.ga.fetch_data(prog_id) for prog_id in prog_ids]
+        #     for nodes in prog_ids:
+        #         print(nodes)
+
         api_idx_range = list(range(self.full_range[0], self.full_range[1]))
         random.shuffle(api_idx_range)
 
@@ -348,26 +357,28 @@ class DatasetCreator:
                     print("control api:", self.control_limit * num_progs_with_api)
 
                 if num_valid_progs <= self.control_limit * num_progs_with_api:
-                    if novelty_label == NEW and 0 < num_valid_progs <= 1000:
+                    if novelty_label == NEW and 0 < num_valid_progs <= 50:
                         if self.verbose:
                             print("api:", api, "length:", length)
                             print("num progs added:", len(valid_prog_ids))
                         self.add_to_test_set(api, length, valid_prog_ids, test_set, dp2type_is_int=True)
-                        return True
+                        num_pairs_added += 1
+                        added_apis.add(api)
 
                     if novelty_label == SEEN:
                         limit = min(math.ceil(num_valid_progs / 4), self.control_limit * num_progs_with_api, 10)
                         prog_ids = set(itertools.islice(valid_prog_ids, limit))
 
                         if len(prog_ids) == 0:
-                            return False
+                            continue
 
                         if self.verbose:
                             print("api:", api, "length:", length)
                             print("num progs added:", len(prog_ids))
 
                         self.add_to_test_set(api, length, prog_ids, test_set, dp2type_is_int=True)
-                        return True
+                        num_pairs_added += 1
+                        added_apis.add(api)
 
                     if num_pairs_added >= self.min_prog_per_category:
                         break
@@ -375,6 +386,7 @@ class DatasetCreator:
         print("Category:", category)
         print("Novelty label: " + novelty_label)
         print("Num API + " + category + " pairs added: " + str(num_pairs_added))
+        print("len added apis:", len(added_apis))
         print("Total programs added: " + str(len(test_set)))
         return False
 
@@ -422,13 +434,15 @@ class DatasetCreator:
             self.add_length_constrained_test_progs(MIN_EQ, novelty_label)
             print("test set len:", len(self.categories[MIN_EQ][0][novelty_label]), "\n")
             if self.test_mode:
-                print("Time taken for include cs:", start_time - time.time())
+                print("Time taken for min length:", start_time - time.time())
 
-            #
-            # print("\n\n\n-----------------------------------")
-            # print("MAX LENGTH")
-            # self.add_length_constrained_test_progs(MAX, freq_pair, novelty_label)
-            # print("test set len:", len(self.categories[MAX][0][novelty_label]), "\n")
+            print("\n\n\n-----------------------------------")
+            print("MAX LENGTH")
+            start_time = time.time()
+            self.add_length_constrained_test_progs(MAX_EQ, novelty_label)
+            print("test set len:", len(self.categories[MAX_EQ][0][novelty_label]), "\n")
+            if self.test_mode:
+                print("Time taken for max length:", start_time - time.time())
 
         self.add_random_programs()
 
