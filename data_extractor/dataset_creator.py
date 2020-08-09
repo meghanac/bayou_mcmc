@@ -1,7 +1,9 @@
 import itertools
+import pickle
 import time
 import random
-
+import os
+import numpy as np
 from data_extractor.graph_analyzer import GraphAnalyzer, ALL_DATA_NO_DUP, MAX_AST_DEPTH, MIN_EQ, MAX_EQ, MIN, MAX, EQ
 import networkx as nx
 import math
@@ -23,6 +25,7 @@ FREQ = 'frequency'
 WEIGHT = 'weight'
 DP2_API = [IN_API, EX_API]
 DP2_CS = [IN_CS, EX_CS]
+RANDOM = 'random'
 
 SEEN = 'accuracy'
 NEW = 'novelty'
@@ -38,24 +41,16 @@ class DatasetCreator:
     graph analyzer + database on:
     - 1k vocab dataset
     - entire dataset
-
-
-
-
-
-
-
-
-
     """
     def __init__(self, data_dir_path, save_reader=False, min_prog_per_category=1200, verbose=False, test_mode=True):
         self.data_dir_path = data_dir_path
 
         if save_reader:
             self.ga = GraphAnalyzer(data_dir_path, save_reader=True, shuffle_data=False,
-                                    load_g_without_control_structs=False)
+                                    load_g_without_control_structs=False, pickle_friendly=True)
         else:
-            self.ga = GraphAnalyzer(data_dir_path, load_reader=True, load_g_without_control_structs=False)
+            self.ga = GraphAnalyzer(data_dir_path, load_reader=True, load_g_without_control_structs=False,
+                                    pickle_friendly=True)
 
         # self.training_data = set(range(self.ga.num_programs))
         # self.test_data = set([])
@@ -63,12 +58,14 @@ class DatasetCreator:
         # self.accuracy_test_set = set([])
 
         self.ranks = sorted(nx.get_node_attributes(self.ga.g, 'frequency').items(), key=lambda x: x[1], reverse=True)
+        self.ranks = list(filter(lambda x: x[0] in self.ga.vocab2node, self.ranks))
         self.ranks = [(self.ranks[i][0], (i, self.ranks[i][1])) for i in range(len(self.ranks))]
         self.ranks_dict = dict(self.ranks)
         self.ranks = [i[0] for i in self.ranks]
         self.ranks.remove(DBRANCH)
         self.ranks.remove(DLOOP)
         self.ranks.remove(DEXCEPT)
+
         self.num_apis = len(self.ranks)
 
         self.include_api_set = {SEEN: set([]), NEW: set([])}
@@ -77,10 +74,12 @@ class DatasetCreator:
         self.exclude_cs_set = {SEEN: set([]), NEW: set([])}
         self.min_api_set = {SEEN: set([]), NEW: set([])}
         self.max_api_set = {SEEN: set([]), NEW: set([])}
+        self.random_progs_set = {HIGH: set([]), MID: set([]), LOW: set([])}
 
         self.categories = {IN_API: (self.include_api_set, API), EX_API: (self.exclude_api_set, API),
                            IN_CS: (self.include_cs_set, CS), EX_CS: (self.exclude_cs_set, CS),
-                           MAX_EQ: (self.max_api_set, LEN), MIN_EQ: (self.min_api_set, LEN)}
+                           MAX_EQ: (self.max_api_set, LEN), MIN_EQ: (self.min_api_set, LEN),
+                           RANDOM: (self.random_progs_set, None)}
 
         self.high_range = (0, math.floor(self.num_apis / 3))
         self.mid_range = (math.floor(self.num_apis / 3), math.floor(self.num_apis * 2/3))
@@ -113,6 +112,8 @@ class DatasetCreator:
 
         self.verbose = verbose
         self.test_mode = test_mode
+
+        self.dir_path = self.ga.dir_path + "/train_test_sets/"
 
 
     # def create_novelty_test_set(self):
@@ -157,6 +158,7 @@ class DatasetCreator:
         for api_idx, dp_idx in valid_data_points:
             counter += 1
             if counter % 5000 == 0:
+                print("counter:", counter)
                 print("num pairs added:", num_pairs_added)
                 if self.test_mode:
                     print("time taken:", start_time - time.time())
@@ -205,7 +207,7 @@ class DatasetCreator:
 
         if num_progs_with_both <= self.control_limit * num_progs_with_api and \
                 num_progs_with_both <= self.control_limit * num_progs_with_dp2:
-            if novelty_label == NEW and 0 < num_progs_with_both <= 1000:
+            if novelty_label == NEW and 0 < num_progs_with_both <= 500:
                 prog_ids = progs_with_both
 
                 if len(prog_ids) == 0:
@@ -244,7 +246,7 @@ class DatasetCreator:
             print("control limit:", num_progs_with_api * self.control_limit)
             print("difference:", num_progs_with_api - num_progs_with_both)
         if num_progs_with_api - num_progs_with_both <= num_progs_with_api * self.control_limit:
-            if novelty_label == NEW and 0 < num_progs_with_api - num_progs_with_both <= 500:
+            if novelty_label == NEW and 0 < num_progs_with_api - num_progs_with_both <= 200:
                 prog_ids = progs_with_api - progs_with_both
                 if self.verbose:
                     print("api:", api, "data_point:", data_point2)
@@ -390,43 +392,62 @@ class DatasetCreator:
         print("Total programs added: " + str(len(test_set)))
         return False
 
-    def add_random_programs(self):
-        pass
+    def build_and_save_train_test_sets(self):
+        self.add_random_programs()
+        self.create_curated_dataset()
+        self.pickle_dump_curated_test_sets()
+        self.pickle_dump_self()
+        self.build_and_save_sets()
 
-    def create_dataset(self):
-        print("Creating Custom Test Dataset\n")
+    def add_random_programs(self):
+        ranges = {HIGH: (10000, np.inf), MID: (100, 10000), LOW: (2, 100)}
+        for freq in [HIGH, MID, LOW]:
+            lower_bound, upper_bound = ranges[freq]
+            vocab_range = list(filter(lambda x: upper_bound > self.ga.g.nodes[x]['frequency'] > lower_bound, self.ranks))
+            selected_vocab_idx = random.choices(vocab_range, k=self.min_prog_per_category)
+
+            for i in range(len(selected_vocab_idx)):
+                prog_id = self.ga.get_program_ids_for_api(selected_vocab_idx[i], limit=1)
+                self.add_to_test_set(selected_vocab_idx[i], -1, prog_id, self.random_progs_set[freq],
+                                     dp2type_is_int=True)
+
+        print("Number of random programs added:", len(self.random_progs_set))
+
+    def create_curated_dataset(self):
+        print("Creating Curated Tests Dataset\n")
+
         for novelty_label in [NEW, SEEN]:  # Create novelty test set first
-            # print("\n\n\n-----------------------------------")
-            # print("INCLUDE API: ")
-            # start_time = time.time()
-            # self.add_include_or_exclude_test_progs(self.added_to_include_test_set, IN_API, novelty_label)
-            # print("test set len:", len(self.categories[IN_API][0][novelty_label]), "\n")
-            # if self.test_mode:
-            #     print("Time taken for include api:", start_time - time.time())
-            #
-            # print("\n\n\n-----------------------------------")
-            # print("EXCLUDE CS: ")
-            # start_time = time.time()
-            # self.add_include_or_exclude_test_progs(self.added_to_exclude_test_set, EX_CS, novelty_label)
-            # print("test set len:", len(self.categories[EX_CS][0][novelty_label]), "\n")
-            # if self.test_mode:
-            #     print("Time taken for exclude cs:", start_time - time.time())
-            #
-            # print("\n\n\n-----------------------------------")
-            # print("INCLUDE CS: ")
-            # start_time = time.time()
-            # self.add_include_or_exclude_test_progs(self.added_to_include_test_set, IN_CS, novelty_label)
-            # print("test set len:", len(self.categories[IN_CS][0][novelty_label]), "\n")
-            # if self.test_mode:
-            #     print("Time taken for include cs:", start_time - time.time())
-            #
-            # print("\n\n\n-----------------------------------")
-            # print("EXCLUDE API: ")
-            # start_time = time.time()
-            # self.add_include_or_exclude_test_progs(self.added_to_exclude_test_set, EX_API, novelty_label)
-            # print("test set len:", len(self.categories[EX_API][0][novelty_label]), "\n")
-            # if self.test_mode:
-            #     print("Time taken for exclude api:", start_time - time.time())
+            print("\n\n\n-----------------------------------")
+            print("INCLUDE API: ")
+            start_time = time.time()
+            self.add_include_or_exclude_test_progs(self.added_to_include_test_set, IN_API, novelty_label)
+            print("test set len:", len(self.categories[IN_API][0][novelty_label]), "\n")
+            if self.test_mode:
+                print("Time taken for include api:", start_time - time.time())
+
+            print("\n\n\n-----------------------------------")
+            print("INCLUDE CS: ")
+            start_time = time.time()
+            self.add_include_or_exclude_test_progs(self.added_to_include_test_set, IN_CS, novelty_label)
+            print("test set len:", len(self.categories[IN_CS][0][novelty_label]), "\n")
+            if self.test_mode:
+                print("Time taken for include cs:", start_time - time.time())
+
+            print("\n\n\n-----------------------------------")
+            print("EXCLUDE API: ")
+            start_time = time.time()
+            self.add_include_or_exclude_test_progs(self.added_to_exclude_test_set, EX_API, novelty_label)
+            print("test set len:", len(self.categories[EX_API][0][novelty_label]), "\n")
+            if self.test_mode:
+                print("Time taken for exclude api:", start_time - time.time())
+
+            print("\n\n\n-----------------------------------")
+            print("EXCLUDE CS: ")
+            start_time = time.time()
+            self.add_include_or_exclude_test_progs(self.added_to_exclude_test_set, EX_CS, novelty_label)
+            print("test set len:", len(self.categories[EX_CS][0][novelty_label]), "\n")
+            if self.test_mode:
+                print("Time taken for exclude cs:", start_time - time.time())
 
             print("\n\n\n-----------------------------------")
             print("MIN LENGTH")
@@ -444,8 +465,6 @@ class DatasetCreator:
             if self.test_mode:
                 print("Time taken for max length:", start_time - time.time())
 
-        self.add_random_programs()
-
     def get_freq_label(self, api):
         rank = self.ranks.index(api)
         if self.high_range[0] <= rank < self.high_range[1]:
@@ -454,6 +473,27 @@ class DatasetCreator:
             return MID
         else:
             return LOW
+
+    def pickle_dump_curated_test_sets(self):
+        if not os.path.exists(self.dir_path):
+            os.mkdir(self.dir_path)
+
+        with open(self.dir_path + "/curated_test_sets.pickle", 'wb') as f:
+            pickle.dump(self.categories, f)
+            f.close()
+
+    def pickle_dump_self(self):
+        if not os.path.exists(self.dir_path):
+            os.mkdir(self.dir_path)
+
+        with open(self.dir_path + "/dataset_creator.pickle", 'wb') as f:
+            pickle.dump(self, f)
+            f.close()
+
+    def build_and_save_sets(self):
+        pass
+
+
 
 
 

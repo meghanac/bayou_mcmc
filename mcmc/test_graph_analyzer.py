@@ -203,7 +203,7 @@ class TestGraphAnalyzer(unittest.TestCase):
 
     def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
         dataset_creator = DatasetCreator(data_path)
-        dataset_creator.create_dataset()
+        dataset_creator.build_and_save_train_test_sets()
 
 
 

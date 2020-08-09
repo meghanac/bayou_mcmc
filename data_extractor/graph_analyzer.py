@@ -55,7 +55,7 @@ EQ = 'eq'
 class GraphAnalyzer:
 
     def __init__(self, folder_name, test=False, save_reader=False, load_reader=False, shuffle_data=True,
-                 remove_duplicates=False, load_g_without_control_structs=True):
+                 remove_duplicates=False, load_g_without_control_structs=True, pickle_friendly=False):
         if test:
             self.dir_path = os.path.dirname(os.path.realpath(__file__)) + "/data/" + folder_name + "/test_set/"
         else:
@@ -164,8 +164,12 @@ class GraphAnalyzer:
 
         print("Built Database\n")
 
-        data_f = open(os.path.join(self.dir_path, data_filename))
-        self.json_asts = ijson.items(data_f, 'programs.item')
+        if pickle_friendly:
+            self.json_asts = None
+        else:
+            data_f = open(os.path.join(self.dir_path, data_filename))
+            self.json_asts = ijson.items(data_f, 'programs.item')
+
         # data_f.close()
         # self.json_asts = json.load(data_f)
 
