@@ -97,6 +97,39 @@ def create_all_dtypes_program(saved_model_path):
     # self.assertListEqual(test_prog.edges, expected_edges, "Edges must be equal to expected nodes in program.")
     return test_prog, expected_nodes, expected_edges
 
+def print_summary_logs(prog):
+    nodes, edges, targets = prog.tree_mod.get_nodes_edges_targets(prog.curr_prog)
+    print("\n", "-------------------LOGS:-------------------")
+    print("Constraints:", prog.constraints)
+    print("Nodes:", [prog.config.node2vocab[i] for i in nodes])
+    print("Edges:", edges)
+    print("Targets:", [prog.config.node2vocab[i] for i in targets])
+    print("Formal Parameters:", [prog.config.num2fp[i] for i in prog.fp[0]])
+    print("Return Types:", [prog.config.num2rettype[i] for i in prog.ret_type])
+    print("Total accepted transformations:", prog.accepted)
+    print("Total rejected transformations:", prog.rejected)
+    print("Total valid transformations:", prog.valid)
+    print("Total invalid transformations:", prog.invalid)
+    print("Total attempted add transforms:", prog.Insert.attempted)
+    print("Total accepted add transforms:", prog.Insert.accepted)
+    print("Total attempted delete transforms:", prog.Delete.attempted)
+    print("Total accepted delete transforms:", prog.Delete.accepted)
+    print("Total attempted swap transforms:", prog.Swap.attempted)
+    print("Total accepted swap transforms:", prog.Swap.accepted)
+    print("Posterior Distribution:")
+
+    posterior = {}
+    for prog_key in prog.posterior_dist.keys():
+        str_prog = [[prog.config.node2vocab[i] for i in prog_key[0]], prog_key[1],
+                    [prog.config.node2vocab[i] for i in prog_key[2]]]
+        str_prog = (tuple(str_prog[0]), tuple(str_prog[1]), tuple(str_prog[2]))
+        posterior[str_prog] = prog.posterior_dist[prog_key]
+
+        print('\t', str_prog[0])
+        print('\t', str_prog[1])
+        print('\t', str_prog[2])
+        print('\t', prog.posterior_dist[prog_key], '\n')
+
 
 class MCMCProgramWrapper:
     def __init__(self, save_dir, constraints, return_type, formal_params, ordered=True, exclude=None, debug=True, verbose=True):
@@ -228,39 +261,7 @@ class MCMCProgramWrapper:
             logs_f.write('\n\t' + str(self.prog.posterior_dist[prog]) + '\n')
 
     def print_summary_logs(self):
-        self.update_nodes_and_edges()
-        nodes, edges, targets = self.prog.tree_mod.get_nodes_edges_targets(self.prog.curr_prog)
-        print("\n", "-------------------LOGS:-------------------")
-        print("Constraints:", self.prog.constraints)
-        print("Nodes:", [self.node2vocab[i] for i in nodes])
-        print("Edges:", edges)
-        print("Targets:", [self.node2vocab[i] for i in targets])
-        print("Formal Parameters:", [self.prog.config.num2fp[i] for i in self.prog.fp[0]])
-        print("Return Types:", [self.prog.config.num2rettype[i] for i in self.prog.ret_type])
-        print("Total accepted transformations:", self.prog.accepted)
-        print("Total rejected transformations:", self.prog.rejected)
-        print("Total valid transformations:", self.prog.valid)
-        print("Total invalid transformations:", self.prog.invalid)
-        print("Total attempted add transforms:", self.prog.Insert.attempted)
-        print("Total accepted add transforms:", self.prog.Insert.accepted)
-        print("Total attempted delete transforms:", self.prog.Delete.attempted)
-        print("Total accepted delete transforms:", self.prog.Delete.accepted)
-        print("Total attempted swap transforms:", self.prog.Swap.attempted)
-        print("Total accepted swap transforms:", self.prog.Swap.accepted)
-        print("Posterior Distribution:")
-
-        posterior = {}
-        for prog in self.prog.posterior_dist.keys():
-            str_prog = [[self.prog.config.node2vocab[i] for i in prog[0]], prog[1],
-                        [self.prog.config.node2vocab[i] for i in prog[2]]]
-            str_prog = (tuple(str_prog[0]), tuple(str_prog[1]), tuple(str_prog[2]))
-            posterior[str_prog] = self.prog.posterior_dist[prog]
-
-            print('\t', str_prog[0])
-            print('\t', str_prog[1])
-            print('\t', str_prog[2])
-            print('\t', self.prog.posterior_dist[prog], '\n')
-
+        return print_summary_logs(self.prog)
 
 
         # print("Total attempted add dnode transforms:", self.prog.AddDnode.attempted)

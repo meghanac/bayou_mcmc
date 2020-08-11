@@ -585,7 +585,8 @@ class DatasetCreator:
 
 def build_sets_from_saved_creator(creator_path):
     print("\n\n\nBuilding Training and Test Sets\n")
-    dataset_creator = pickle.load(creator_path)
+    f = open(creator_path, "rb")
+    dataset_creator = pickle.load(f)
 
     test_set = set([])
     for category in dataset_creator.categories:

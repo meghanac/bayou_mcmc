@@ -3,7 +3,7 @@ import networkx as nx
 from data_extractor.graph_analyzer import GraphAnalyzer, STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, \
     STR_BUILD_APP, LOWERCASE_LOCALE, DATA_DIR_PATH, ALL_DATA_1K_VOCAB, TESTING, NEW_VOCAB, APIS, RT, FP, TOP, MID, \
     LOW, ALL_DATA_1K_VOCAB_NO_DUP, ALL_DATA, ALL_DATA_NO_DUP
-from data_extractor.dataset_creator import DatasetCreator
+from data_extractor.dataset_creator import DatasetCreator, build_sets_from_saved_creator
 from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
     MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
 
@@ -204,6 +204,10 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
         dataset_creator = DatasetCreator(data_path)
         dataset_creator.build_and_save_train_test_sets()
+
+    def test_build_sets_from_creator(self):
+        data_path = '../data_extractor/data/all_data_no_duplicates/train_test_sets/dataset_creator.pickle'
+        build_sets_from_saved_creator(data_path)
 
 
 
