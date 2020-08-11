@@ -48,7 +48,7 @@ class MCMCProgram:
 
     """
 
-    def __init__(self, save_dir, verbose=False, debug=False):
+    def __init__(self, save_dir, verbose=False, debug=False, save_states=False):
         """
         Initialize program
         :param save_dir: (string) path to directory in which saved model checkpoints are in
@@ -118,6 +118,9 @@ class MCMCProgram:
         # Whether to print logs
         self.debug = debug
         self.verbose = (verbose or debug)
+
+        self.save_states = save_states
+        self.states = []
 
     def restore(self, save):
         """
@@ -990,7 +993,7 @@ class MCMCProgram:
         :return:
         """
         curr_prog = self.tree_mod.get_nodes_edges_targets(self.curr_prog)
-        print_verbose_tree_info(self.curr_prog)
+        # print_verbose_tree_info(self.curr_prog)
         transformed = self.transform_tree()
 
         # make sure all undos work correctly
@@ -999,6 +1002,9 @@ class MCMCProgram:
             if new_prog != curr_prog:
                 print_verbose_tree_info(self.curr_prog)
             assert new_prog == curr_prog, "Program was not transformed yet somehow changed."
+
+        if self.save_states:
+            self.states.append(self.initial_state)
 
         self.update_latent_state_and_decoder_state()
 
