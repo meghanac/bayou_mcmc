@@ -1,8 +1,11 @@
 import itertools
+import json
 import pickle
 import time
 import random
 import os
+
+import ijson
 import numpy as np
 from data_extractor.graph_analyzer import GraphAnalyzer, ALL_DATA_NO_DUP, MAX_AST_DEPTH, MIN_EQ, MAX_EQ, MIN, MAX, EQ
 import networkx as nx
@@ -107,13 +110,14 @@ class DatasetCreator:
         self.control_structs = [DBRANCH, DEXCEPT, DLOOP]
 
         self.test_api_to_prog_ids = {}
+        self.test_set_new_prog_ids = None
 
         self.control_limit = 0.5
 
         self.verbose = verbose
         self.test_mode = test_mode
 
-        self.dir_path = self.ga.dir_path + "/train_test_sets/"
+        self.dir_path = self.ga.dir_path + "/train_test_sets2/"
 
 
     # def create_novelty_test_set(self):
@@ -198,6 +202,11 @@ class DatasetCreator:
         num_progs_with_api = len(progs_with_api)
         num_progs_with_dp2 = len(progs_with_dp2)
 
+        if data_point2 in {DBRANCH, DLOOP, DEXCEPT}:
+            max_progs = 50
+        else:
+            max_progs = 500
+
         if self.verbose and self.test_mode:
             print("num progs with both:", num_progs_with_both)
             print("num progs with api:", num_progs_with_api)
@@ -207,7 +216,7 @@ class DatasetCreator:
 
         if num_progs_with_both <= self.control_limit * num_progs_with_api and \
                 num_progs_with_both <= self.control_limit * num_progs_with_dp2:
-            if novelty_label == NEW and 0 < num_progs_with_both <= 500:
+            if novelty_label == NEW and 0 < num_progs_with_both <= max_progs:
                 prog_ids = progs_with_both
 
                 if len(prog_ids) == 0:
@@ -239,6 +248,12 @@ class DatasetCreator:
         num_progs_with_both = len(progs_with_both)
         num_progs_with_api = len(progs_with_api)
         num_progs_with_dp2 = len(progs_with_dp2)
+
+        if data_point2 in {DBRANCH, DLOOP, DEXCEPT}:
+            max_progs = 50
+        else:
+            max_progs = 200
+
         if self.verbose and self.test_mode:
             print("num progs api", num_progs_with_api)
             print("num progs dp2", num_progs_with_dp2)
@@ -246,7 +261,7 @@ class DatasetCreator:
             print("control limit:", num_progs_with_api * self.control_limit)
             print("difference:", num_progs_with_api - num_progs_with_both)
         if num_progs_with_api - num_progs_with_both <= num_progs_with_api * self.control_limit:
-            if novelty_label == NEW and 0 < num_progs_with_api - num_progs_with_both <= 200:
+            if novelty_label == NEW and 0 < num_progs_with_api - num_progs_with_both <= max_progs:
                 prog_ids = progs_with_api - progs_with_both
                 if self.verbose:
                     print("api:", api, "data_point:", data_point2)
@@ -396,8 +411,8 @@ class DatasetCreator:
         self.add_random_programs()
         self.create_curated_dataset()
         self.pickle_dump_curated_test_sets()
-        self.pickle_dump_self()
         self.build_and_save_sets()
+        self.pickle_dump_self()
 
     def add_random_programs(self):
         ranges = {HIGH: (10000, np.inf), MID: (100, 10000), LOW: (2, 100)}
@@ -486,48 +501,172 @@ class DatasetCreator:
         if not os.path.exists(self.dir_path):
             os.mkdir(self.dir_path)
 
+        self.ga.json_asts = None
+
         with open(self.dir_path + "/dataset_creator.pickle", 'wb') as f:
             pickle.dump(self, f)
             f.close()
 
     def build_and_save_sets(self):
-        pass
+        test_set = set([])
+        for category in self.categories:
+            cat_test_set = self.categories[category][0]
+            for t in cat_test_set.values():
+                test_set.update(t)
+
+        test_set = list(test_set)
+        test_set_progs = set([i[0] for i in test_set])
+
+        training_set = set([])
+        for api in self.ga.api_to_prog_ids:
+            training_set.update(self.ga.api_to_prog_ids[api])
+
+        all_progs = test_set_progs.copy()
+        all_progs.update(training_set)
+        assert all_progs == set(range(0, self.ga.num_programs))
+
+        if not os.path.exists(self.dir_path + "/train"):
+            os.mkdir(self.dir_path + "/train")
+
+        if not os.path.exists(self.dir_path + "/test"):
+            os.mkdir(self.dir_path + "/test")
+
+        train_f = open(self.dir_path + "/train/training_data.json", "w+")
+        test_f = open(self.dir_path + "/test/test_set.json", "w+")
+
+        # start data files
+        train_f.write("{\n")
+        train_f.write("\"programs\": [\n")
+        test_f.write("{\n")
+        test_f.write("\"programs\": [\n")
+
+        data_filename = self.ga.clargs.data_filename + ".json"
+        data_f = open(os.path.join(self.ga.dir_path, data_filename))
+        self.ga.json_asts = ijson.items(data_f, 'programs.item')
+
+        self.test_set_new_prog_ids = {}
+
+        prog_id = 0
+        test_prog_counter = 0
+        train_prog_counter = 0
+        for program in self.ga.json_asts:
+            if prog_id in test_set_progs:
+                if test_prog_counter != 0:
+                    test_f.write(",\n")
+                test_f.write(json.dumps(program))
+
+                # update
+                self.test_set_new_prog_ids[prog_id] = test_prog_counter
+                prog_id += 1
+                test_prog_counter += 1
+
+            elif prog_id in training_set:
+                if train_prog_counter != 0:
+                    train_f.write(",\n")
+                train_f.write(json.dumps(program))
+
+                # update
+                prog_id += 1
+                train_prog_counter += 1
+
+        # end new json data file
+        train_f.write("\n")
+        train_f.write("]\n")
+        train_f.write("}\n")
+        test_f.write("\n")
+        test_f.write("]\n")
+        test_f.write("}\n")
+        test_f.close()
+        train_f.close()
+
+        print("Added", test_prog_counter, "programs to test set")
+        print("Added", train_prog_counter, "programs to training set")
+
+
+def build_sets_from_saved_creator(creator_path):
+    print("\n\n\nBuilding Training and Test Sets\n")
+    dataset_creator = pickle.load(creator_path)
+
+    test_set = set([])
+    for category in dataset_creator.categories:
+        cat_test_set = dataset_creator.categories[category][0]
+        for t in cat_test_set.values():
+            test_set.update(t)
+
+    test_set = list(test_set)
+    test_set_progs = set([i[0] for i in test_set])
+
+    training_set = set([])
+    for api in dataset_creator.ga.api_to_prog_ids:
+        training_set.update(dataset_creator.ga.api_to_prog_ids[api])
+
+    all_progs = test_set_progs.copy()
+    all_progs.update(training_set)
+    assert all_progs == set(range(0, dataset_creator.ga.num_programs))
+
+    if not os.path.exists(dataset_creator.dir_path + "/train"):
+        os.mkdir(dataset_creator.dir_path + "/train")
+
+    if not os.path.exists(dataset_creator.dir_path + "/test"):
+        os.mkdir(dataset_creator.dir_path + "/test")
+
+    train_f = open(dataset_creator.dir_path + "/train/training_data.json", "w+")
+    test_f = open(dataset_creator.dir_path + "/test/test_set.json", "w+")
+
+    # start data files
+    train_f.write("{\n")
+    train_f.write("\"programs\": [\n")
+    test_f.write("{\n")
+    test_f.write("\"programs\": [\n")
+
+    data_filename = dataset_creator.ga.clargs.data_filename + ".json"
+    data_f = open(os.path.join(dataset_creator.ga.dir_path, data_filename))
+    dataset_creator.ga.json_asts = ijson.items(data_f, 'programs.item')
+
+    test_set_new_prog_ids = {}
+
+    prog_id = 0
+    test_prog_counter = 0
+    train_prog_counter = 0
+    for program in dataset_creator.ga.json_asts:
+        if prog_id in test_set_progs:
+            if test_prog_counter != 0:
+                test_f.write(",\n")
+            test_f.write(json.dumps(program))
+
+            # update
+            test_set_new_prog_ids[prog_id] = test_prog_counter
+            prog_id += 1
+            test_prog_counter += 1
+
+        elif prog_id in training_set:
+            if train_prog_counter != 0:
+                train_f.write(",\n")
+            train_f.write(json.dumps(program))
+
+            # update
+            prog_id += 1
+            train_prog_counter += 1
+
+    # end new json data file
+    train_f.write("\n")
+    train_f.write("]\n")
+    train_f.write("}\n")
+    test_f.write("\n")
+    test_f.write("]\n")
+    test_f.write("}\n")
+    test_f.close()
+    train_f.close()
+
+    print("Added", test_prog_counter, "programs to test set")
+    print("Added", train_prog_counter, "programs to training set")
+
+    with open(dataset_creator.dir_path + "/test/test_set_new_prog_ids.pickle", 'wb') as f:
+        pickle.dump(test_set_new_prog_ids, f)
+        f.close()
 
 
 
-
-
-
-
-
-# if num_progs_with_both <= self.control_limit * num_progs_with_api and \
-#         num_progs_with_both <= self.control_limit * num_progs_with_dp2:
-#     if novel and num_progs_with_both < 200:
-#         prog_ids = self.ga.get_program_ids_with_multiple_apis([api, data_point2])
-#         self.add_to_test_set(api, data_point2, prog_ids, test_set)
-#         num_pairs_added += 1
-#         if num_pairs_added >= self.min_pairs_per_freq and len(test_set) >= self.min_prog_per_freq:
-#             print("Category: Include " + dp2_type)
-#             print("Novel: " + novel)
-#             print("Frequency Pair: " + str(freq_pair))
-#             print("Num API + " + dp2_type + " pairs added: " + str(num_pairs_added))
-#             print("Total programs added: " + str(len(test_set)))
-#             return
-#         break
-#
-#     if not novel:
-#         limit = min(math.floor(num_progs_with_both / 4), 10)
-#         prog_ids = self.ga.get_program_ids_with_multiple_apis([api, data_point2], limit=limit)
-#         self.add_to_test_set(api, data_point2, prog_ids, test_set)
-#         num_pairs_added += 1
-#         if num_pairs_added >= self.min_pairs_per_freq and len(test_set) >= self.min_prog_per_freq:
-#             print("Category: Include " + dp2_type)
-#             print("Novel: " + novel)
-#             print("Frequency Pair: " + str(freq_pair))
-#             print("Num API + " + dp2_type + " pairs added: " + str(num_pairs_added))
-#             print("Total programs added: " + str(len(test_set)))
-#             return
-#         break
 
 
 
