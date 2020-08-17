@@ -667,6 +667,98 @@ def build_sets_from_saved_creator(creator_path):
         f.close()
 
 
+def create_smaller_test_set(creator_path, save=True):
+    print("\n\n\nBuilding Smaller Test Sets\n")
+    f = open(creator_path, "rb")
+    dataset_creator = pickle.load(f)
+
+
+    PID = 0
+    API = 1
+    DP2 = 2
+
+    smaller_test_set = {}
+    small_test_set_progs = set([])
+    for category in dataset_creator.categories:
+        cat_test_set = dataset_creator.categories[category][0]
+        smaller_test_set[category] = {}
+        for t in cat_test_set.keys():
+            smaller_test_set[t] = set([])
+            prog_ids = set([])
+            test_set = sorted(list(cat_test_set[t]), key=lambda x: x[1])
+            curr_api_id = -1
+            for i in range(len(test_set)):
+                if test_set[i][API] != curr_api_id:
+                    if test_set[i][PID] in prog_ids:
+                        if i < len(test_set) - 1 and test_set[i][API] != test_set[i+1][API]:
+                            smaller_test_set[t].add(test_set[i])
+                    else:
+                        curr_api_id = test_set[i][API]
+                        smaller_test_set[t].add(test_set[i])
+                        prog_ids.add(test_set[i][PID])
+            print("\n\nCategory:", category, t)
+            print("Prog ids added:", len(prog_ids))
+            print("Pairs added:", len(smaller_test_set[t]))
+            small_test_set_progs.update(prog_ids)
+
+    print("Num progs in smaller test set:", len(small_test_set_progs))
+
+    if save:
+        test_f = open(dataset_creator.dir_path + "/test/small_test_set.json", "w+")
+
+        # start data files
+        test_f.write("{\n")
+        test_f.write("\"programs\": [\n")
+
+        data_filename = dataset_creator.ga.clargs.data_filename + ".json"
+        data_f = open(os.path.join(dataset_creator.ga.dir_path, data_filename))
+        dataset_creator.ga.json_asts = ijson.items(data_f, 'programs.item')
+
+        test_set_new_prog_ids = {}
+
+        prog_id = 0
+        test_prog_counter = 0
+        for program in dataset_creator.ga.json_asts:
+            if prog_id in small_test_set_progs:
+                if test_prog_counter != 0:
+                    test_f.write(",\n")
+                test_f.write(json.dumps(program))
+
+                # update
+                test_set_new_prog_ids[prog_id] = test_prog_counter
+                test_prog_counter += 1
+
+            prog_id += 1
+
+        # end new json data file
+        test_f.write("\n")
+        test_f.write("]\n")
+        test_f.write("}\n")
+        test_f.close()
+
+        print("Added", test_prog_counter, "programs to test set")
+
+        with open(dataset_creator.dir_path + "/test/small_test_set_new_prog_ids.pickle", 'wb') as f:
+            pickle.dump(test_set_new_prog_ids, f)
+            f.close()
+
+        with open(dataset_creator.dir_path + "/test/small_curated_test_sets.pickle", 'wb') as f:
+            pickle.dump(smaller_test_set, f)
+            f.close()
+
+
+# def rebuild_curated_set(creator_path):
+#     print("\n\n\nBuilding Smaller Test Sets\n")
+#     f = open(creator_path, "rb")
+#     dataset_creator = pickle.load(f)
+
+
+
+
+
+
+
+
 
 
 

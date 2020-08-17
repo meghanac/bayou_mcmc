@@ -203,6 +203,37 @@ class GraphAnalyzer:
     def fetch_nodes_as_list(self, prog_id):
         return self.nodes[prog_id].tolist()
 
+    def fetch_all_list_data_without_delim(self, prog_id):
+        """
+        NOTE: THE RETURN ORDER IS DIFFERENT HERE
+        :param prog_id:
+        :return:
+        """
+        nodes = self.nodes[prog_id]
+        nodes = nodes[nodes != 0].tolist()
+        nodes = [self.node2vocab[i] for i in nodes]
+
+        edges = self.edges[prog_id]
+        edges = edges[edges != 0].tolist()
+
+        ret_type = self.return_types[prog_id]
+        ret_type = ret_type[ret_type != 0].tolist()
+        ret_type = [self.num2rettype[i] for i in ret_type]
+
+        fp_type = self.fp_types[prog_id]
+        fp_type = fp_type[fp_type != 0].tolist()
+        fp_type = [self.num2fp[i] for i in fp_type]
+
+        targets = self.targets[prog_id]
+        targets = targets[targets != 0].tolist()
+        targets = [self.node2vocab[i] for i in targets]
+
+        fp_type_targets = self.fp_type_targets[prog_id]
+        fp_type_targets = fp_type_targets[fp_type_targets != 0].tolist()
+        fp_type_targets = [self.num2fp[i] for i in fp_type_targets]
+
+        return nodes, edges, targets, ret_type, fp_type, fp_type_targets
+
     def get_apis_in_prog_set(self, prog_id):
         nodes, _, _, _, targets, _ = self.fetch_data_with_targets(prog_id)
         nodes = set(nodes)

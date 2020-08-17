@@ -1,4 +1,5 @@
 import os
+import random
 
 from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
 from mcmc import MCMCProgram
@@ -12,6 +13,7 @@ STR_LEN = 'java.lang.String.length()'
 STR_BUILD = 'java.lang.StringBuilder.StringBuilder(int)'
 STR_BUILD_APP = 'java.lang.StringBuilder.append(java.lang.String)'
 
+
 def create_base_program(saved_model_path, constraints, ret_type, fp, ordered=True, exclude=None, debug=False,
                         verbose=False):
     test_prog = MCMCProgramWrapper(saved_model_path, constraints, ret_type, fp, debug=debug, verbose=verbose,
@@ -24,8 +26,10 @@ def create_base_program(saved_model_path, constraints, ret_type, fp, ordered=Tru
         expected_edges.append(False)
     return test_prog, expected_nodes, expected_edges
 
+
 def create_str_buf_base_program(saved_model_path):
     return create_base_program(saved_model_path, [STR_BUF, 'abc'], ["void"], ["__delim__"])
+
 
 def create_eight_node_program(saved_model_path):
     test_prog, expected_nodes, expected_edges = create_str_buf_base_program(saved_model_path)
@@ -44,6 +48,7 @@ def create_eight_node_program(saved_model_path):
 
     return test_prog, expected_nodes, expected_edges
 
+
 def create_dbranch(test_prog, parent=None):
     # expected nodes = [DBRANCH, STR_BUF, STR_APP, STOP, READ_LINE, STOP]
     # expected edges = [CHILD_EDGE, CHILD_EDGE, SIBLING_EDGE, SIBLING_EDGE, SIBLING_EDGE]
@@ -58,6 +63,7 @@ def create_dbranch(test_prog, parent=None):
     test_prog.prog.tree_mod.create_and_add_node(STOP, else_node, SIBLING_EDGE)
     return test_prog, dbranch
 
+
 def create_dloop(test_prog, parent=None):
     # expected nodes = [DLOOP, READ_LINE, CLOSE, STOP]
     # expected edges = [CHILD_EDGE, CHILD_EDGE, SIBLING_EDGE]
@@ -70,6 +76,7 @@ def create_dloop(test_prog, parent=None):
     test_prog.prog.tree_mod.create_and_add_node(STOP, body, SIBLING_EDGE)
     return test_prog, dloop
 
+
 def create_dexcept(test_prog, parent=None):
     # expected nodes = [DEXCEPT, STR_BUF, CLOSE, STOP]
     # expected edges = [CHILD_EDGE, CHILD_EDGE, SIBLING_EDGE]
@@ -81,6 +88,7 @@ def create_dexcept(test_prog, parent=None):
     try_node = test_prog.prog.tree_mod.create_and_add_node(CLOSE, catch, CHILD_EDGE)
     test_prog.prog.tree_mod.create_and_add_node(STOP, try_node, SIBLING_EDGE)
     return test_prog, dexcept
+
 
 def create_all_dtypes_program(saved_model_path):
     test_prog, expected_nodes, expected_edges = create_str_buf_base_program(saved_model_path)
@@ -96,6 +104,23 @@ def create_all_dtypes_program(saved_model_path):
     # self.assertListEqual(test_prog.nodes, expected_nodes, "Nodes must be equal to expected nodes in program.")
     # self.assertListEqual(test_prog.edges, expected_edges, "Edges must be equal to expected nodes in program.")
     return test_prog, expected_nodes, expected_edges
+
+
+def get_str_posterior_distribution(prog):
+    """
+
+    :param prog: instance of MCMCProgram
+    :return:
+    """
+    posterior = {}
+    for prog_key in prog.posterior_dist.keys():
+        str_prog = [[prog.config.node2vocab[i] for i in prog_key[0]], prog_key[1],
+                    [prog.config.node2vocab[i] for i in prog_key[2]]]
+        str_prog = (tuple(str_prog[0]), tuple(str_prog[1]), tuple(str_prog[2]))
+        posterior[str_prog] = prog.posterior_dist[prog_key]
+
+    return posterior
+
 
 def print_summary_logs(prog):
     nodes, edges, targets = prog.tree_mod.get_nodes_edges_targets(prog.curr_prog)
@@ -118,17 +143,21 @@ def print_summary_logs(prog):
     print("Total accepted swap transforms:", prog.Swap.accepted)
     print("Posterior Distribution:")
 
-    posterior = {}
-    for prog_key in prog.posterior_dist.keys():
-        str_prog = [[prog.config.node2vocab[i] for i in prog_key[0]], prog_key[1],
-                    [prog.config.node2vocab[i] for i in prog_key[2]]]
-        str_prog = (tuple(str_prog[0]), tuple(str_prog[1]), tuple(str_prog[2]))
-        posterior[str_prog] = prog.posterior_dist[prog_key]
-
+    for str_prog in prog.posterior_dist.keys():
         print('\t', str_prog[0])
         print('\t', str_prog[1])
         print('\t', str_prog[2])
-        print('\t', prog.posterior_dist[prog_key], '\n')
+
+
+def add_random_noise_to_initial_tree(prog):
+    num_nodes = random.randint(0, 4)
+    for _ in range(num_nodes):
+        api_num = random.randint(1, prog.config.vocab_size - 1)
+        api_name = prog.config.node2vocab[api_num]
+        parent_pos = random.randint(0, prog.curr_prog.length - 1)
+        parent_node = prog.tree_mod.get_node_in_position(prog.curr_prog, parent_pos)
+        prog.tree_mod.create_and_add_node(api_name, parent_node, SIBLING_EDGE, save_neighbors=True)
+    return prog
 
 
 class MCMCProgramWrapper:
@@ -211,12 +240,6 @@ class MCMCProgramWrapper:
                 if len(stack) > 0:
                     curr_node = stack.pop()
                 else:
-                    # # remove last DSTOP node
-                    # if curr_node.api_name == STOP:
-                    #     curr_node.parent.remove_node(curr_node.parent_edge)
-                    #     nodes.pop()
-                    #     edges.pop()
-                    #     parents.pop()
                     curr_node = None
 
         if verbose:
@@ -262,7 +285,3 @@ class MCMCProgramWrapper:
 
     def print_summary_logs(self):
         return print_summary_logs(self.prog)
-
-
-        # print("Total attempted add dnode transforms:", self.prog.AddDnode.attempted)
-        # print("Total accepted add dnode transforms:", self.prog.AddDnode.accepted)

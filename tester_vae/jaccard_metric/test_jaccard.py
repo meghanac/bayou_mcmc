@@ -37,7 +37,7 @@ def main(clargs):
     psis, apis = [], []
     for i in range(1000):
         nodes, edges, targets, \
-                ret_type, fp_type, fp_type_targets, _ = loader.next_batch()
+                ret_type, fp_type, fp_type_targets = loader.next_batch()
         # print("nodes", nodes)
         # print("edges", edges)
         psi = predictor.get_latent_state(nodes, edges, ret_type, fp_type)

@@ -146,8 +146,8 @@ def train(clargs):
 
 # %%
 if __name__ == '__main__':
-    folder_name = 'all_data_1k_vocab_0.5_KL_beta'
-    data_folder_name = 'all_data_1k_vocab'
+    folder_name = 'all_data_138m_rohan_config'
+    data_folder_name = 'all_training_data'
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=textwrap.dedent(HELP))
     parser.add_argument('--python_recursion_limit', type=int, default=10000,

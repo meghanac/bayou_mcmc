@@ -70,6 +70,7 @@ class MCMCProgram:
         self.constraint_control_structs = []
         self.exclusions = []
         self.min_length = 0
+        self.max_length = np.inf
 
         self.curr_prog = None
         self.curr_log_prob = -0.0
@@ -186,7 +187,7 @@ class MCMCProgram:
         self.GrowConstraintUp = GrowConstraintUpwardsProposal(self.tree_mod, self.decoder, self.sess, grow_new_subtree,
                                                      verbose=self.verbose, debug=self.debug)
 
-    def init_program(self, constraints, ret_types, fps, ordered=True, exclude=None, min_length=0):
+    def init_program(self, constraints, ret_types, fps, ordered=True, exclude=None, min_length=0, max_length=np.inf):
         """
         Creates initial program that satisfies all given constraints.
         :param constraints: (list of strings (api names)) list of apis that must appear in the program for
@@ -588,8 +589,8 @@ class MCMCProgram:
                 self.curr_prog.length) + " != prev length: " + str(prev_length)
             return False
 
-        # Check that insertion was valid and that there aren't any bugs
-        self.check_insert(added_node, prev_length)
+        # # Check that insertion was valid and that there aren't any bugs
+        # self.check_insert(added_node, prev_length)
 
         # Logging
         self.Insert.accepted += 1
@@ -704,8 +705,8 @@ class MCMCProgram:
                 self.curr_prog.length) + " != prev length: " + str(prev_length)
             return False
 
-        # Check that insertion was valid and that there aren't any bugs
-        self.check_delete(node, prev_length)
+        # # Check that insertion was valid and that there aren't any bugs
+        # self.check_delete(node, prev_length)
 
         # Logging
         self.Delete.accepted += 1

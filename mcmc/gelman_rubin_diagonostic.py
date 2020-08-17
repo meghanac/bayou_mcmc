@@ -3,7 +3,9 @@ import math
 from mcmc import MCMCProgram
 import numpy as np
 
-from test_utils import print_summary_logs
+from test_utils import print_summary_logs, add_random_noise_to_initial_tree
+
+from utils import print_verbose_tree_info
 
 ALL_DATA_1K_05_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/all_data_1k_vocab_0.5_KL_beta'
 
@@ -17,7 +19,7 @@ https://arxiv.org/pdf/1812.09384.pdf
 """
 
 
-def run_gelman_rubin(data_path=ALL_DATA_1K_05_MODEL_PATH, num_chains=10, num_iterations=60, verbose=False):
+def run_gelman_rubin(data_path=ALL_DATA_1K_05_MODEL_PATH, num_chains=5, num_iterations=801, verbose=True):
     # Checks
     assert num_iterations % 3 == 0
 
@@ -43,6 +45,11 @@ def run_gelman_rubin(data_path=ALL_DATA_1K_05_MODEL_PATH, num_chains=10, num_ite
         formal_params = ['DSubTree', 'String']
 
         prog.init_program(constraints, return_type, formal_params, ordered=True)
+
+        # add random noise to tree
+        prog = add_random_noise_to_initial_tree(prog)
+
+        print_verbose_tree_info(prog.curr_prog)
 
         for _ in range(num_iterations):
             prog.mcmc()
@@ -128,7 +135,7 @@ def run_gelman_rubin(data_path=ALL_DATA_1K_05_MODEL_PATH, num_chains=10, num_ite
 
     R_L = math.sqrt(sigma_l_sq / W)
 
-    print("Improved PSRF:", R_L)
+    print("Improved Gelman-Rubin PSRF:", R_L)
 
 
 run_gelman_rubin()
@@ -141,3 +148,33 @@ run_gelman_rubin()
 # array list
 # num_chains=5, num_iterations=30, R = 1.006
 # num_chains=5, num_iterations=100, R=1.01152779091537
+# num_chains=10, num_iterations=60, Original Gelman-Rubin PSRF: 1.004047369037101, Improved PSRF: 1.04183716429312
+
+#3, 60
+# Original Gelman-Rubin PSRF: 1.050347504558823
+# Improved Gelman-Rubin PSRF: 1.0533385440756236
+
+#99, 5
+# Original Gelman-Rubin PSRF: 1.0472279992578046
+# Improved Gelman-Rubin PSRF: 1.0398186841821118
+
+#150, 5
+# Original Gelman-Rubin PSRF: 1.0407899536813472
+# Improved Gelman-Rubin PSRF: 1.0258844351917973
+
+#3, 198
+# Original Gelman-Rubin PSRF: 1.022403165247171
+# Improved Gelman-Rubin PSRF: 1.0327346300135585
+
+#5, 240
+# Original Gelman-Rubin PSRF: 1.0201060695287008
+# Improved Gelman-Rubin PSRF: 1.0471761824013213
+
+#5, 330
+# Original Gelman-Rubin PSRF: 1.060336434577341
+# Improved Gelman-Rubin PSRF: 1.031895398607067
+
+#5, 504
+# Original Gelman-Rubin PSRF: 1.0903189658762926
+# Improved Gelman-Rubin PSRF: 1.0379532918027448
+
