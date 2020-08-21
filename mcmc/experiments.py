@@ -1,5 +1,7 @@
 import math
 import pickle
+import random
+
 import numpy as np
 
 from data_extractor.graph_analyzer import GraphAnalyzer, MIN_EQ, MAX_EQ
@@ -20,6 +22,20 @@ TARGETS_IDX = 2
 RET_TYPE_IDX = 3
 FP_IDX = 4
 FP_TARGETS_IDX = 5
+
+JACC_API = "jaccard_api"
+JACC_SEQ = "jaccard_seq"
+AST_EQ = "ast_equivalence"
+IN_SET = "in_set"
+MIN_DIFF_ST = 'min_diff_statements'
+MIN_DIFF_CS = "min_diff_control_structs"
+
+RAND = 'random'
+ASC = 'ascending'
+PLUS_0 = 0
+PLUS_1 = 1
+PLUS_2 = 2
+PLUS_3 = 3
 
 
 class Metrics:
@@ -155,6 +171,7 @@ class Experiments:
 
         self.save_mcmc_progs = save_mcmc_progs
         self.posterior_dists = {}
+        self.avg_metrics = {}
 
         self.category_names = self.curated_test_sets.keys()
 
@@ -162,9 +179,11 @@ class Experiments:
         for category in self.curated_test_sets:
             self.curated_test_sets_idxs[category] = {}
             self.posterior_dists[category] = {}
+            self.avg_metrics[category] = {}
             for label in self.curated_test_sets[category].keys():
                 self.curated_test_sets_idxs[category][label] = set([])
                 self.posterior_dists[category][label] = {}
+                self.avg_metrics[category][label] = {}
                 for data_point in self.curated_test_sets_idxs[category][label]:
                     dp0 = self.test_prog_ids_to_idx[data_point[0]]
                     dp1 = self.dataset_creator.ga.node2vocab[data_point[1]]
@@ -173,7 +192,7 @@ class Experiments:
                         dp2 = self.dataset_creator.ga.node2vocab[data_point[2]]
                     self.curated_test_sets_idxs[category][label].add((dp0, dp1, dp2))
 
-    def get_mcmc_prog_and_ast(self, data_point, category):
+    def get_mcmc_prog_and_ast(self, data_point, category, in_random_order, num_apis_to_add_to_constraint):
         prog_id = data_point[0]
         constraints = [data_point[1]]
         dp2 = data_point[2]
@@ -192,6 +211,9 @@ class Experiments:
         else:
             print("ERROR: CATEGORY NOT ALLOWED")
 
+        ordered_apis = self.get_nonconstraint_apis_in_prog(constraints, data_point, in_random_order)
+        constraints += ordered_apis[:num_apis_to_add_to_constraint]
+
         nodes, edges, targets, return_type, fp, fp_targets = self.test_ga.fetch_all_list_data_without_delim(prog_id)
         ast = (nodes, edges, targets)
 
@@ -202,21 +224,23 @@ class Experiments:
 
         return mcmc_prog, ast, return_type, fp
 
-    def run_mcmc(self, category, label):
+    def run_mcmc(self, category, label, in_random_order, num_apis_to_add_to_constraint):
         post_dist_dict = self.posterior_dists[category][label]
         test_progs = self.curated_test_sets_idxs[category][label]
 
         for data_point in test_progs:
-            mcmc_prog, ast, ret_type, fp = self.get_mcmc_prog_and_ast(data_point, category)
+            mcmc_prog, ast, ret_type, fp = self.get_mcmc_prog_and_ast(data_point, category, in_random_order,
+                                                                      num_apis_to_add_to_constraint)
 
             for _ in self.num_iter:
                 mcmc_prog.mcmc()
 
-            self.add_to_post_dist(post_dist_dict, get_str_posterior_distribution(mcmc_prog), data_point, ast, ret_type,
-                                  fp)
+            post_dist_dict = self.add_to_post_dist(post_dist_dict, get_str_posterior_distribution(mcmc_prog),
+                                                   data_point, ast, ret_type, fp)
 
     def add_to_post_dist(self, post_dist_dict, posterior_dist, data_point, ast, ret_type, fp):
         post_dist_dict[data_point] = (posterior_dist, ast, ret_type, fp)
+        return post_dist_dict
 
     def calculate_metrics(self, category, label):
         post_dist_dict = self.posterior_dists[category][label]
@@ -243,4 +267,22 @@ class Experiments:
             in_dataset_metric += in_dataset
             min_diff_statements_metric += min_diff_statements
             min_diff_cs_metric += min_diff_cs
+
+    def get_nonconstraint_apis_in_prog(self, constraints, data_point, in_random_order):
+        apis = set(data_point[NODES_IDX])
+        apis.update(set(data_point[TARGETS_IDX]))
+        apis.difference_update(constraints)
+
+        if in_random_order:
+            apis = random.shuffle(list(apis))
+        else:  # ascending order in terms of api frequency in training set
+            apis = list(apis)
+            apis = sorted(apis, key=lambda x: self.train_ga.g.nodes[x]['frequency'])
+        return apis
+
     
+
+
+
+
+

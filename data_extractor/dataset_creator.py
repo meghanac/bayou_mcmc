@@ -117,7 +117,7 @@ class DatasetCreator:
         self.verbose = verbose
         self.test_mode = test_mode
 
-        self.dir_path = self.ga.dir_path + "/train_test_sets2/"
+        self.dir_path = self.ga.dir_path + "/train_test_sets3/"
 
 
     # def create_novelty_test_set(self):
@@ -250,7 +250,10 @@ class DatasetCreator:
         num_progs_with_dp2 = len(progs_with_dp2)
 
         if data_point2 in {DBRANCH, DLOOP, DEXCEPT}:
-            max_progs = 50
+            if novelty_label == SEEN:
+                max_progs = 100
+            else:
+                max_progs = 50
         else:
             max_progs = 200
 

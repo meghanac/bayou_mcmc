@@ -1,3 +1,5 @@
+import random
+import numpy as np
 import unittest
 import networkx as nx
 from data_extractor.graph_analyzer import GraphAnalyzer, STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, \
@@ -203,7 +205,10 @@ class TestGraphAnalyzer(unittest.TestCase):
 
     def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
         dataset_creator = DatasetCreator(data_path)
+        # dataset_creator.create_curated_dataset()
         dataset_creator.build_and_save_train_test_sets()
+        ata_path = '../data_extractor/data/all_data_no_duplicates/train_test_sets3/dataset_creator.pickle'
+        create_smaller_test_set(data_path)
 
     def test_build_sets_from_creator(self):
         data_path = '../data_extractor/data/all_data_no_duplicates/train_test_sets/dataset_creator.pickle'
@@ -212,6 +217,16 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_create_small_test_set(self):
         data_path = '../data_extractor/data/all_data_no_duplicates/train_test_sets/dataset_creator.pickle'
         create_smaller_test_set(data_path)
+
+    def test_nothing(self):
+        numbers1 = [random.uniform(0, 1) for _ in range(10000)]
+        numbers2 = [random.uniform(0, 1) for _ in range(10000)]
+
+        numbers1 = np.exp(numbers1)/sum(np.exp(numbers1))
+        numbers2 = np.exp(numbers2)/sum(np.exp(numbers2))
+
+        check = np.outer(numbers1, numbers2).ravel()
+        print("sum of outer:", sum(check))
 
 
 

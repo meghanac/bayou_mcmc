@@ -178,3 +178,7 @@ run_gelman_rubin()
 # Original Gelman-Rubin PSRF: 1.0903189658762926
 # Improved Gelman-Rubin PSRF: 1.0379532918027448
 
+#5, 801
+# Original Gelman-Rubin PSRF: 1.0270835053686858
+# Improved Gelman-Rubin PSRF: 1.0074789903512744
+
