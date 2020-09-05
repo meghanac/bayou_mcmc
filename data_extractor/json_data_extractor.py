@@ -45,6 +45,178 @@ def copy_data_remove_duplicate(old_data_filename_path, new_data_filename):
     new_f.write("}\n")
 
 
+def copy_data_remove_duplicate_bayou(old_data_filename_path, new_data_filename):
+    new_dir_name = new_data_filename[:-5]
+    new_dir_path = os.path.join(TRAINING_DATA_DIR_PATH, new_dir_name)
+    if not os.path.exists(new_dir_path):
+        os.mkdir(new_dir_path)
+    new_data_path = os.path.join(new_dir_path, new_data_filename)
+    old_f = open(old_data_filename_path, 'rb')
+    new_f = open(new_data_path, 'w+')
+    # analysis_filename = new_data_filename[:-5] + "_analysis.txt"
+    # analysis_f = open(os.path.join(new_dir_path, analysis_filename), 'w+')
+
+    # initialize new json file
+    new_f.write("{\n")
+    new_f.write("\"programs\": [\n")
+
+    data_types = ['ast', 'formalParam', 'returnType', 'keywords', 'apicalls', 'types']
+    counter = 0
+    prog_set = set([])
+    programs = []
+    for program in ijson.items(old_f, 'programs.item'):
+        key = (json.dumps(program['ast']), json.dumps(program['returnType']), json.dumps(program['formalParam']))
+        counter += 1
+        if counter % 100000 == 0:
+            print(counter)
+        if key not in prog_set:
+            prog = {}
+            for t in data_types:
+                prog[t] = program[t]
+            prog_set.add(key)
+            programs.append(json.dumps(prog))
+
+    print("There are " + str(counter) + " programs in the old dataset.")
+    print("There are " + str(len(prog_set)) + " unique programs in prog_set.")
+    print("There are " + str(len(programs)) + " unique programs in dataset.")
+
+    for i in range(len(programs)):
+        if i != 0:
+            new_f.write(",\n")
+        new_f.write(programs[i])
+
+    print(str(len(prog_set)) + " json objects copied into " + new_data_filename)
+
+    # end new json data file
+    new_f.write("\n")
+    new_f.write("]\n")
+    new_f.write("}\n")
+
+
+def copy_json_data_change_return_types(old_data_filename_path, new_data_filename_path):
+    # new_dir_name = new_data_filename[:-5]
+    # new_dir_path = os.path.join(TRAINING_DATA_DIR_PATH, new_dir_name)
+    # if not os.path.exists(new_dir_path):
+    #     os.mkdir(new_dir_path)
+    # new_data_path = os.path.join(new_dir_path, new_data_filename)
+    print(os.path.dirname(os.path.realpath(__file__)))
+    old_f = open(os.path.dirname(os.path.realpath(__file__)) + old_data_filename_path, 'rb')
+    new_f = open(os.path.dirname(os.path.realpath(__file__)) + new_data_filename_path, 'w+')
+
+    # initialize new json file
+    new_f.write("{\n")
+    new_f.write("\"programs\": [\n")
+
+    def get_last_node_returns(program):
+        if len(program) == 0:
+            return 'void'
+        if program[-1]['node'] == 'DBranch':
+            last_node = program[-1]['_then']
+            return get_last_node_returns(last_node)
+        elif program[-1]['node'] == 'DExcept':
+            last_node = program[-1]['_try']
+            return get_last_node_returns(last_node)
+        elif program[-1]['node'] == 'DLoop':
+            last_node = program[-1]['_body']
+            return get_last_node_returns(last_node)
+        else:
+            last_node = program[-1]
+            return last_node['_returns']
+
+    prog_set = []
+    num_rt_changed = 0
+    key_error = 0
+    num_void = 0
+    for program in ijson.items(old_f, 'programs.item'):
+        # prog_set.add(json.dumps(program))
+        # print(program)
+        # print(program['ast']['_nodes'])
+        # print(program['ast']['_nodes'][-1])
+        # print(program['ast']['_nodes'][-1]['_returns'])
+        # print(program['returnType'])
+        last_node_returns = get_last_node_returns(program['ast']['_nodes'])
+        try:
+            if program['returnType'] != last_node_returns:
+                num_rt_changed += 1
+                if program['returnType'] == 'void':
+                    num_void += 1
+            program['returnType'] = last_node_returns
+            prog_set.append(json.dumps(program))
+        except KeyError:
+            print(program['ast']['_nodes'][-1])
+            key_error += 1
+            continue
+
+    print("There are " + str(len(prog_set)) + " programs in dataset.")
+    print("There are " + str(len(set(prog_set))) + " unique programs in dataset.")
+    print("Number of key errors:", key_error)
+    print("Number of return types changed:", num_rt_changed)
+    print("Number of void returns changed:", num_void)
+
+    prog_set = list(prog_set)
+    for i in range(len(prog_set)):
+        if i != 0:
+            new_f.write(",\n")
+        new_f.write(prog_set[i])
+
+    print(str(len(prog_set)) + " json objects copied into " + new_data_filename_path)
+
+    # end new json data file
+    new_f.write("\n")
+    new_f.write("]\n")
+    new_f.write("}\n")
+
+def copy_bayou_json_data_change_apicalls(old_data_filename_path, new_data_filename_path):
+    print(os.path.dirname(os.path.realpath(__file__)))
+    old_f = open(os.path.dirname(os.path.realpath(__file__)) + old_data_filename_path, 'rb')
+    new_f = open(os.path.dirname(os.path.realpath(__file__)) + new_data_filename_path, 'w+')
+
+    # initialize new json file
+    new_f.write("{\n")
+    new_f.write("\"programs\": [\n")
+
+    def get_apis(program, api_set):
+        if len(program) == 0:
+            return api_set
+        for prog in program:
+            if prog['node'] == 'DBranch':
+                api_set.update(get_apis(prog['_then'], api_set))
+                api_set.update(get_apis(prog['_cond'], api_set))
+                api_set.update(get_apis(prog['_else'], api_set))
+            elif prog['node'] == 'DExcept':
+                api_set.update(get_apis(prog['_try'], api_set))
+                api_set.update(get_apis(prog['_catch'], api_set))
+            elif prog['node'] == 'DLoop':
+                api_set.update(get_apis(prog['_body'], api_set))
+                api_set.update(get_apis(prog['_cond'], api_set))
+            else:
+                api_set.add(prog['_call'])
+
+        return api_set
+
+    prog_set = []
+    for program in ijson.items(old_f, 'programs.item'):
+        apis = get_apis(program['ast']['_nodes'], set([]))
+        # print(apis)
+        program['apicalls'] = list(apis)
+        prog_set.append(json.dumps(program))
+
+    print("There are " + str(len(prog_set)) + " programs in dataset.")
+    print("There are " + str(len(set(prog_set))) + " unique programs in dataset.")
+
+    prog_set = list(prog_set)
+    for i in range(len(prog_set)):
+        if i != 0:
+            new_f.write(",\n")
+        new_f.write(prog_set[i])
+
+    print(str(len(prog_set)) + " json objects copied into " + new_data_filename_path)
+
+    # end new json data file
+    new_f.write("\n")
+    new_f.write("]\n")
+    new_f.write("}\n")
+
 def copy_json_data(old_data_filename, new_data_filename, num_programs=None, is_test_data=False,
                    old_data_dir_path=None, new_data_dir_path=None):
     """
@@ -119,6 +291,7 @@ def copy_json_data(old_data_filename, new_data_filename, num_programs=None, is_t
     new_f.write("]\n")
     new_f.write("}\n")
 
+
 def add_branched_to_vocab(valid_prog, vocab, vocab_size, node, prog_length, vocab_freq, apis_list, branching, vocab_num):
     if node['node'] == 'DLoop':
         # print("DLOOP keys:", node.keys())
@@ -181,6 +354,7 @@ def add_branched_to_vocab(valid_prog, vocab, vocab_size, node, prog_length, voca
 
     return valid_prog, vocab, vocab_size, prog_length, vocab_freq, apis_list, branching
 
+
 def add_call_to_vocab(valid_prog, vocab, vocab_size, call, prog_length, vocab_freq, apis_list, vocab_num):
     if call != '' and call != '__delim__':
         prog_length += 1
@@ -200,6 +374,7 @@ def add_call_to_vocab(valid_prog, vocab, vocab_size, call, prog_length, vocab_fr
 
     return valid_prog, vocab, vocab_size, prog_length, vocab_freq, apis_list
 
+
 def update_api_cofrequencies(apis_list, vocab_freq, prog_length):
     apis_list = list(set(apis_list))
     for api1 in apis_list:
@@ -215,12 +390,14 @@ def update_api_cofrequencies(apis_list, vocab_freq, prog_length):
                 vocab_freq[api1][1][api2] = 1
     return vocab_freq
 
+
 def get_top_k_cofreq(cofreq_dict, k):
     sorted_items = sorted(cofreq_dict.items(), key=lambda v: v[1], reverse=True)
     if len(sorted_items) > k:
         return sorted_items[:k]
     else:
         return sorted_items
+
 
 def remove_self_from_cofreq_list(api, api_cofreq_dict):
     try:
@@ -229,6 +406,7 @@ def remove_self_from_cofreq_list(api, api_cofreq_dict):
         print("Error: couldn't delete api from it's cofreq dict: ", e)
     return api_cofreq_dict
 
+
 def get_sorted_api_cofreq(vocab_freq):
     vocab_items = vocab_freq.items()
     sorted_apis = sorted([((i[0], i[1][1][i[0]]), i[1][1], sorted(i[1][2].items())) for i in vocab_items],
@@ -236,6 +414,7 @@ def get_sorted_api_cofreq(vocab_freq):
                          reverse=True)
     sorted_apis = [(i[0], remove_self_from_cofreq_list(i[0][0], i[1]), i[2]) for i in sorted_apis]
     return sorted_apis
+
 
 def get_api_cofrequencies(sorted_apis):
     api_cofreq = [(i[0], get_top_k_cofreq(i[1], 10), i[2]) for i in sorted_apis]
@@ -323,8 +502,6 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
     branching['DBranch'] = {'_cond': {}, '_else': {}, '_then': {}}
     branching['DExcept'] = {'_catch': {}, '_try': {}}
     branching['DLoop'] = {'_body': {}, '_cond': {}}
-
-
 
     valid_prog = False
     added_to_training = False
@@ -496,6 +673,7 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
         analyze_file(new_dir_path, test_data_filename)
 
     build_graph(sorted_apis, new_data_filename, new_dir_path)
+
 
 def build_graph(sorted_apis, new_data_filename, new_dir_path, return_g_without_control_structs=True):
     # build graph

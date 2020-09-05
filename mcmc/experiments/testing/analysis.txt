@@ -1,0 +1,3 @@
+data dir name: all_data_no_duplicates
+model dir path: ../trainer_vae/save/all_training_data_1.38m_large_config
+num iterations: 10

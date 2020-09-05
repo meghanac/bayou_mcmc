@@ -1,5 +1,6 @@
 import os
 import random
+from numba import jit, cuda
 
 from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
 from mcmc import MCMCProgram

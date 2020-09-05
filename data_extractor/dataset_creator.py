@@ -686,7 +686,8 @@ def create_smaller_test_set(creator_path, save=True):
         cat_test_set = dataset_creator.categories[category][0]
         smaller_test_set[category] = {}
         for t in cat_test_set.keys():
-            smaller_test_set[t] = set([])
+            print("t:", t)
+            smaller_test_set[category][t] = set([])
             prog_ids = set([])
             test_set = sorted(list(cat_test_set[t]), key=lambda x: x[1])
             curr_api_id = -1
@@ -694,27 +695,28 @@ def create_smaller_test_set(creator_path, save=True):
                 if test_set[i][API] != curr_api_id:
                     if test_set[i][PID] in prog_ids:
                         if i < len(test_set) - 1 and test_set[i][API] != test_set[i+1][API]:
-                            smaller_test_set[t].add(test_set[i])
+                            smaller_test_set[category][t].add(test_set[i])
                     else:
                         curr_api_id = test_set[i][API]
-                        smaller_test_set[t].add(test_set[i])
+                        smaller_test_set[category][t].add(test_set[i])
                         prog_ids.add(test_set[i][PID])
             print("\n\nCategory:", category, t)
             print("Prog ids added:", len(prog_ids))
-            print("Pairs added:", len(smaller_test_set[t]))
+            print("Pairs added:", len(smaller_test_set[category][t]))
             small_test_set_progs.update(prog_ids)
 
     print("Num progs in smaller test set:", len(small_test_set_progs))
+    print("Keys in small test set:", smaller_test_set.keys())
 
     if save:
-        test_f = open(dataset_creator.dir_path + "/test/small_test_set.json", "w+")
+        test_f = open(dataset_creator.dir_path + "/test/small/small_test_set.json", "w+")
 
         # start data files
         test_f.write("{\n")
         test_f.write("\"programs\": [\n")
 
         data_filename = dataset_creator.ga.clargs.data_filename + ".json"
-        data_f = open(os.path.join(dataset_creator.ga.dir_path, data_filename))
+        data_f = open(os.path.join(dataset_creator.ga.dir_path, data_filename), "r")
         dataset_creator.ga.json_asts = ijson.items(data_f, 'programs.item')
 
         test_set_new_prog_ids = {}
@@ -741,13 +743,116 @@ def create_smaller_test_set(creator_path, save=True):
 
         print("Added", test_prog_counter, "programs to test set")
 
-        with open(dataset_creator.dir_path + "/test/small_test_set_new_prog_ids.pickle", 'wb') as f:
+        with open(dataset_creator.dir_path + "/test/small/small_test_set_new_prog_ids.pickle", 'wb') as f:
             pickle.dump(test_set_new_prog_ids, f)
             f.close()
 
-        with open(dataset_creator.dir_path + "/test/small_curated_test_sets.pickle", 'wb') as f:
+        with open(dataset_creator.dir_path + "/test/small/small_curated_test_sets.pickle", 'wb') as f:
             pickle.dump(smaller_test_set, f)
             f.close()
+
+
+def build_bayou_datasets(mcmc_data_dir_path, bayou_data_dir_path, bayou_data_folder_name):
+    # f = open(creator_path, "rb")
+    # dataset_creator = pickle.load(f)
+
+    train_path = bayou_data_dir_path + "/train"
+    test_path = bayou_data_dir_path + "/test"
+    if not os.path.exists(train_path):
+        os.mkdir(train_path)
+    if not os.path.exists(test_path):
+        os.mkdir(test_path)
+
+    # train_f = open(bayou_data_dir_path + "/train/training_data.json", "w+")
+    # test_f = open(bayou_data_dir_path + "/test/small_test_set.json", "w+")
+    small_test_f = open(bayou_data_dir_path + "/test/small_test_set.json", "w+")
+
+    # start data files
+    # train_f.write("{\n")
+    # train_f.write("\"programs\": [\n")
+    # test_f.write("{\n")
+    # test_f.write("\"programs\": [\n")
+    small_test_f.write("{\n")
+    small_test_f.write("\"programs\": [\n")
+
+    data_f = open(bayou_data_dir_path + bayou_data_folder_name + ".json", "rb")
+
+    # mcmc_test_f = open(mcmc_data_dir_path + "train_test_sets/test/test_set.json", "rb")
+    mcmc_small_test_f = open(mcmc_data_dir_path + "train_test_sets/test/small_test_set.json", "rb")
+
+    # test_prog_set = set([])
+    # test_progs = ijson.items(mcmc_test_f, 'programs.item')
+    # for program in test_progs:
+    #     key = (json.dumps(program['ast']), json.dumps(program['returnType']), json.dumps(program['formalParam']))
+    #     test_prog_set.add(key)
+    #
+    # print("Number of programs in test set:", len(test_prog_set))
+
+    small_test_prog_set = set([])
+    test_progs = ijson.items(mcmc_small_test_f, 'programs.item')
+    for program in test_progs:
+        key = (json.dumps(program['ast']), json.dumps(program['returnType']), json.dumps(program['formalParam']))
+        small_test_prog_set.add(key)
+
+    print("Number of programs in small test set:", len(small_test_prog_set))
+
+    test_set_new_prog_ids = {}
+    small_test_set_new_prog_ids = {}
+    prog_id = 0
+    test_prog_counter = 0
+    train_prog_counter = 0
+    small_test_prog_counter = 0
+    for program in ijson.items(data_f, 'programs.item'):
+        key = (json.dumps(program['ast']), json.dumps(program['returnType']), json.dumps(program['formalParam']))
+
+        if key in small_test_prog_set:
+            if small_test_prog_counter != 0:
+                small_test_f.write(",\n")
+            small_test_set_new_prog_ids[prog_id] = small_test_prog_counter
+            small_test_f.write(json.dumps(program))
+            small_test_prog_counter += 1
+
+        # if key in test_prog_set:
+        #     if test_prog_counter != 0:
+        #         test_f.write(",\n")
+        #     test_set_new_prog_ids[prog_id] = test_prog_counter
+        #     test_f.write(json.dumps(program))
+        #     test_prog_counter += 1
+        # else:
+        #     if train_prog_counter != 0:
+        #         train_f.write(",\n")
+        #     train_f.write(json.dumps(program))
+        #     train_prog_counter += 1
+        prog_id += 1
+
+    # end new json data file
+    # train_f.write("\n")
+    # train_f.write("]\n")
+    # train_f.write("}\n")
+    # test_f.write("\n")
+    # test_f.write("]\n")
+    # test_f.write("}\n")
+    small_test_f.write("\n")
+    small_test_f.write("]\n")
+    small_test_f.write("}\n")
+    # test_f.close()
+    # train_f.close()
+    small_test_f.close()
+
+    # print("Added", test_prog_counter, "programs to test set")
+    # print("Added", train_prog_counter, "programs to training set")
+    print("Added", small_test_prog_counter, "programs to small test set")
+    print("Total programs in old dataset:", prog_id - 1)
+
+    # with open(bayou_data_dir_path + "/test/test_set_new_prog_ids.pickle", 'wb') as f:
+    #     pickle.dump(test_set_new_prog_ids, f)
+    #     f.close()
+
+    with open(bayou_data_dir_path + "/test/small_test_set_new_prog_ids.pickle", 'wb') as f:
+        pickle.dump(small_test_set_new_prog_ids, f)
+        f.close()
+
+
 
 
 # def rebuild_curated_set(creator_path):

@@ -1,5 +1,5 @@
 from json_data_extractor import copy_json_data_limit_vocab, view_graph, build_graph_from_json_file, \
-    copy_data_remove_duplicate
+    copy_data_remove_duplicate, copy_json_data_change_return_types, copy_data_remove_duplicate_bayou
 
 
 
@@ -16,5 +16,6 @@ from json_data_extractor import copy_json_data_limit_vocab, view_graph, build_gr
 
 # build_graph_from_json_file("data/all_data_50k_vocab", "all_data_50k_vocab.json")
 
+copy_data_remove_duplicate_bayou("data/data_surrounding_methods.json", "all_data_no_duplicates_bayou.json")
 
 # copy_data_remove_duplicate("/Users/meghanachilukuri/Documents/GitHub/bayou_mcmc/data_extractor/data/data_surrounding_methods.json", "all_data_no_duplicates.json")

@@ -8,6 +8,7 @@ import numpy as np
 import random
 import json
 import tensorflow as tf
+from numba import jit, cuda
 
 from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
 from utils import print_verbose_tree_info
@@ -71,7 +72,7 @@ class ProposalWithInsertion:
                 # Add then api as child to condition node
                 parent_node, _, prob = self._get_new_node(parent_node, edge, verbose=self.debug)
                 ln_prob += prob
-                counter += 1
+                counter +=1
 
             if parent_node.api_name != STOP:
                 self.tree_mod.create_and_add_node(STOP, parent_node, SIBLING_EDGE)
@@ -377,7 +378,6 @@ class ProposalWithInsertion:
 
             elif preceding_pos < i <= len(nodes) - 1:
                 for k in range(vocab_size):
-                    print(k)
                     if self.config.node2vocab[nodes[i]] == TEMP:
                         node[0][0] = k
                     logits[k], probs = self.decoder.get_ast_logits(node, edge, logits[k])

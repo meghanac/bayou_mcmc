@@ -1,10 +1,10 @@
-import json
 import math
 import os
 import pickle
 import random
 
 import numpy as np
+from numba import jit, cuda
 
 from data_extractor.graph_analyzer import GraphAnalyzer, MIN_EQ, MAX_EQ
 from test_utils import get_str_posterior_distribution
@@ -162,13 +162,11 @@ class Experiments:
         self.analysis_f.write("model dir path: " + model_dir_path + "\n")
         self.analysis_f.write("num iterations: " + str(num_iterations) + "\n")
 
-        self.train_ga = GraphAnalyzer(data_dir_name, train_test_split='train', filename='all_training_data', load_reader=True)
-        self.all_test_ga = GraphAnalyzer(data_dir_name, train_test_split='test', filename='test_set', load_reader=True)  # TODO: fix
-        self.test_ga = GraphAnalyzer(data_dir_name, train_test_split='small_test', filename='small_test_set', load_reader=True)
+        self.train_ga = GraphAnalyzer(data_dir_name, train_test_split='train', filename='all_training_data.json')
+        self.all_test_ga = GraphAnalyzer(data_dir_name, train_test_split='test', filename='test_set.json')  # TODO: fix
+        self.test_ga = GraphAnalyzer(data_dir_name, train_test_split='test', filename='small_test_set.json')
 
-        print(self.train_ga.g.nodes['java.lang.StringBuffer.deleteCharAt(int)'])
-
-        data_dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../data_extractor/data/" + data_dir_name)
+        data_dir_path = os.path.dirname(os.path.realpath(__file__)) + "../data_extractor/data/" + data_dir_name
         testing_path = os.path.join(data_dir_path, "train_test_sets/test")
 
         with open(testing_path + "/test_set_new_prog_ids.pickle", "rb") as f:
@@ -176,19 +174,17 @@ class Experiments:
             self.all_test_idx_to_prog_ids = dict(
                 zip(self.all_test_prog_ids_to_idx.values(), self.all_test_prog_ids_to_idx.keys()))
 
-        with open(testing_path + "/small/small_test_set_new_prog_ids.pickle", "rb") as f:
+        with open(testing_path + "/small_test_set_new_prog_ids.pickle", "rb") as f:
             self.test_prog_ids_to_idx = pickle.load(f)
             self.test_idx_to_prog_ids = dict(zip(self.test_prog_ids_to_idx.values(), self.test_prog_ids_to_idx.keys()))
 
-        with open(testing_path + "/small/small_curated_test_sets.pickle", "rb") as f:
+        with open(testing_path + "/small_curated_test_sets.pickle", "rb") as f:
             self.curated_test_sets = pickle.load(f)
-            print(self.curated_test_sets.keys())
 
-        with open(data_dir_path + "/train_test_sets/curated_test_sets.pickle", "rb") as f:
+        with open(data_dir_path + "/curated_test_sets.pickle", "rb") as f:
             self.all_curated_test_sets = pickle.load(f)
-            print(self.all_curated_test_sets.keys())
 
-        with open(data_dir_path + "/train_test_sets/dataset_creator.pickle", "rb") as f:
+        with open(data_dir_path + "/dataset_creator.pickle", "rb") as f:
             self.dataset_creator = pickle.load(f)
 
         self.save_mcmc_progs = save_mcmc_progs
@@ -206,11 +202,11 @@ class Experiments:
                 self.curated_test_sets_idxs[category][label] = set([])
                 self.posterior_dists[category][label] = {}
                 self.avg_metrics[category][label] = {}
-                for data_point in self.curated_test_sets[category][label]:
+                for data_point in self.curated_test_sets_idxs[category][label]:
                     dp0 = self.test_prog_ids_to_idx[data_point[0]]
                     dp1 = self.dataset_creator.ga.node2vocab[data_point[1]]
                     dp2 = data_point[2]
-                    if category != MIN_EQ and category != MAX_EQ and category != RAND:
+                    if category != MIN_EQ and category != MAX_EQ:
                         dp2 = self.dataset_creator.ga.node2vocab[data_point[2]]
                     self.curated_test_sets_idxs[category][label].add((dp0, dp1, dp2))
 
@@ -235,14 +231,12 @@ class Experiments:
         else:
             print("ERROR: CATEGORY NOT ALLOWED")
 
-        # print(data_point)
+        ordered_apis = self.get_nonconstraint_apis_in_prog(constraints, data_point, in_random_order)
+        constraints += ordered_apis[:num_apis_to_add_to_constraint]
 
         nodes, edges, targets, return_type, fp, fp_targets = self.test_ga.fetch_all_list_data_without_delim(prog_id)
         ast = (nodes, edges, targets)
 
-        ordered_apis = self.get_nonconstraint_apis_in_prog(constraints, ast, in_random_order)
-        constraints += ordered_apis[:num_apis_to_add_to_constraint]
-        print(constraints)
         # init MCMCProgram
         mcmc_prog = MCMCProgram(self.model_dir_path)
         mcmc_prog.init_program(constraints, return_type, fp, exclude=exclude, min_length=min_length,
@@ -251,19 +245,18 @@ class Experiments:
         return mcmc_prog, ast, return_type, fp
 
     def dump_metrics(self, category, label):
-        with open(self.exp_dir_path + "/metrics_" + category + "_" + label + ".json", "w+") as f:
-            f.write(json.dumps(self.avg_metrics[category][label]))
+        with open(self.exp_dir_path + "/metrics_" + category + "_" + label + ".json") as f:
+            f.write(self.avg_metrics[category][label])
             f.close()
 
     def dump_posterior_distributions(self, category, label):
-        with open(self.exp_dir_path + "/post_dist_" + category + "_" + label + ".json", "w+") as f:
-            f.write(json.dumps(self.posterior_dists[category][label]))
+        with open(self.exp_dir_path + "/post_dist_" + category + "_" + label + ".json") as f:
+            f.write(self.posterior_dists[category][label])
             f.close()
 
     def run_mcmc(self, category, label, in_random_order=True, num_apis_to_add_to_constraint=PLUS_0):
         post_dist_dict = self.posterior_dists[category][label]
         test_progs = self.curated_test_sets_idxs[category][label]
-        print(len(test_progs))
 
         for data_point in test_progs:
             mcmc_prog, ast, ret_type, fp = self.get_mcmc_prog_and_ast(data_point, category, in_random_order,
@@ -275,8 +268,11 @@ class Experiments:
             post_dist_dict = self.add_to_post_dist(post_dist_dict, get_str_posterior_distribution(mcmc_prog),
                                                    data_point, ast, ret_type, fp)
 
+            # TODO: REMOVE AFTER TESTING
+            break
+
         self.posterior_dists[category][label] = post_dist_dict
-        print("here")
+
         self.calculate_metrics(category, label)
         self.dump_metrics(category, label)
         self.dump_posterior_distributions(category, label)
@@ -317,17 +313,18 @@ class Experiments:
 
         self.avg_metrics[category][label] = metrics
 
-    def get_nonconstraint_apis_in_prog(self, constraints, ast, in_random_order):
-        apis = set(ast[NODES_IDX])
-        apis.update(set(ast[TARGETS_IDX]))
+
+    def get_nonconstraint_apis_in_prog(self, constraints, data_point, in_random_order):
+        apis = set(data_point[NODES_IDX])
+        apis.update(set(data_point[TARGETS_IDX]))
         apis.difference_update(constraints)
 
         if in_random_order:
-            random.shuffle(list(apis))
+            apis = random.shuffle(list(apis))
         else:  # ascending order in terms of api frequency in training set
             apis = list(apis)
             apis = sorted(apis, key=lambda x: self.train_ga.g.nodes[x]['frequency'])
-        return list(apis)
+        return apis
 
     
 

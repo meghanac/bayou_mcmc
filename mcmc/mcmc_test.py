@@ -627,12 +627,17 @@ class MCMCProgramTest(unittest.TestCase):
         #                                                                 ['__UDT__'],
         #                                                                 ['DSubTree', 'String'])
 
+        # test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_05_MODEL_PATH,
+        #                                                                 ['java.io.FileInputStream.read(byte[])',
+        #                                                                  'java.nio.ByteBuffer.getInt(int)',
+        #                                                                  'java.lang.String.format(java.lang.String,java.lang.Object[])'],
+        #                                                                 ['void'],
+        #                                                                 ['DSubTree', 'String'], ordered=True)
+
         test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_05_MODEL_PATH,
-                                                                        ['java.io.FileInputStream.read(byte[])',
-                                                                         'java.nio.ByteBuffer.getInt(int)',
-                                                                         'java.lang.String.format(java.lang.String,java.lang.Object[])'],
+                                                                        ['java.util.Random.Random(long)', 'java.io.OutputStream.write(byte[])'],
                                                                         ['void'],
-                                                                        ['DSubTree', 'String'], ordered=True)
+                                                                        ['DSubTree'])
 
 
 

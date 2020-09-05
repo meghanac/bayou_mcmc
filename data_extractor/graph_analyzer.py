@@ -18,8 +18,8 @@ from data_extractor.utils import read_vocab
 from data_extractor.json_data_extractor import build_graph_from_json_file
 from ast_helper.ast_reader import AstReader
 
-from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
-    MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
+# from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
+#     MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
 
 STR_BUF = 'java.lang.StringBuffer.StringBuffer()'
 STR_APP = 'java.lang.StringBuffer.append(java.lang.String)'
@@ -52,10 +52,27 @@ MAX = 'max'
 MAX_EQ = 'max_eq'
 EQ = 'eq'
 
+
 class GraphAnalyzer:
 
     def __init__(self, folder_name, test=False, save_reader=False, load_reader=False, shuffle_data=True,
-                 remove_duplicates=False, load_g_without_control_structs=True, pickle_friendly=False):
+                 remove_duplicates=False, load_g_without_control_structs=True, pickle_friendly=False,
+                 train_test_split=None, filename=None):
+
+        if filename is None:
+            orig_folder_name = folder_name
+        else:
+            orig_folder_name = filename
+
+        if train_test_split == 'train':
+            folder_name += '/train_test_sets/train/'
+        elif train_test_split == 'test':
+            folder_name += '/train_test_sets/test/'
+        elif train_test_split == 'small_test':
+            folder_name += '/train_test_sets/test/small/'
+        else:
+            raise ValueError("train_test_split must be 'train', 'test' or 'small_test'")
+
         if test:
             self.dir_path = os.path.dirname(os.path.realpath(__file__)) + "/data/" + folder_name + "/test_set/"
         else:
@@ -78,7 +95,10 @@ class GraphAnalyzer:
         if test:
             self.clargs.data_filename = folder_name + "_test"
         else:
-            self.clargs.data_filename = folder_name
+            if filename is None:
+                self.clargs.data_filename = folder_name
+            else:
+                self.clargs.data_filename = filename
 
         # if self.clargs.config and self.clargs.continue_from:
         #     parser.error('Do not provide --config if you are continuing from checkpointed model')
@@ -87,11 +107,17 @@ class GraphAnalyzer:
         # if self.clargs.continue_from is None:
         #     self.clargs.continue_from = self.clargs.save
 
-        data_filename = self.clargs.data_filename + ".json"
+        if filename is None:
+            data_filename = self.clargs.data_filename + ".json"
+        else:
+            data_filename = filename + ".json"
+
+        # print("graph:", self.dir_path, orig_folder_name + "_api_graph.json")
+        # print("load:", os.path.join(self.dir_path, orig_folder_name + "_api_graph.json"))
 
         # Build graph
-        if not os.path.exists(os.path.join(self.dir_path, folder_name + "_api_graph.json")):
-            vocab_freq_filename = folder_name + "_vocab_freq.json"
+        if not os.path.exists(os.path.join(self.dir_path, orig_folder_name + "_api_graph.json")):
+            vocab_freq_filename = orig_folder_name + "_vocab_freq.json"
             vocab_freq_saved = os.path.exists(os.path.join(self.dir_path, vocab_freq_filename))
             print("vocab_freq_saved:", vocab_freq_saved)
             self.g = build_graph_from_json_file(self.dir_path, data_filename, vocab_freq_saved=vocab_freq_saved,
@@ -99,10 +125,10 @@ class GraphAnalyzer:
         else:
             if load_g_without_control_structs:
                 self.g = json_graph.adjacency_graph(
-                    json.load(open(os.path.join(self.dir_path, folder_name + "_api_graph.json"))))
+                    json.load(open(os.path.join(self.dir_path, orig_folder_name + "_api_graph.json"))))
             else:
                 self.g = json_graph.adjacency_graph(
-                    json.load(open(os.path.join(self.dir_path, folder_name + "_graph.json"))))
+                    json.load(open(os.path.join(self.dir_path, orig_folder_name + "_graph.json"))))
 
         print("Built graph\n")
 

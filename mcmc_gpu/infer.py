@@ -17,6 +17,7 @@ import tensorflow as tf
 import os
 import json
 import numpy as np
+from numba import jit, cuda
 
 from trainer_vae.model import Model
 from trainer_vae.utils import get_var_list, read_config

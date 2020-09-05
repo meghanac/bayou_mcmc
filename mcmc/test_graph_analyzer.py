@@ -1,11 +1,16 @@
 import random
+
+import ijson
 import numpy as np
 import unittest
+import scipy.stats
 import networkx as nx
+from data_extractor.json_data_extractor import copy_json_data_change_return_types, copy_bayou_json_data_change_apicalls
 from data_extractor.graph_analyzer import GraphAnalyzer, STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, \
     STR_BUILD_APP, LOWERCASE_LOCALE, DATA_DIR_PATH, ALL_DATA_1K_VOCAB, TESTING, NEW_VOCAB, APIS, RT, FP, TOP, MID, \
     LOW, ALL_DATA_1K_VOCAB_NO_DUP, ALL_DATA, ALL_DATA_NO_DUP
-from data_extractor.dataset_creator import DatasetCreator, build_sets_from_saved_creator, create_smaller_test_set
+from data_extractor.dataset_creator import DatasetCreator, build_sets_from_saved_creator, create_smaller_test_set, \
+    build_bayou_datasets
 from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
     MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
 
@@ -71,11 +76,21 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_prog_ids(self, data_path=ALL_DATA_1K_VOCAB):
         graph_analyzer = GraphAnalyzer(data_path, load_reader=True)
         prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
-            'java.io.OutputStream.write(byte[])', 'java.util.Random.Random(long)'
+            'java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()',
+            'java.lang.StringBuilder.append(long)'
 
                                                                 ])
         graph_analyzer.print_summary_stats(prog_ids)
         graph_analyzer.print_programs_from_ids(prog_ids, limit=20)
+
+        prog_ids = graph_analyzer.get_program_ids_for_api('java.util.ArrayList<javax.xml.transform.Source>.ArrayList<Source>()')
+        graph_analyzer.print_summary_stats(prog_ids)
+        graph_analyzer.print_programs_from_ids(prog_ids, limit=20)
+
+        prog_ids = graph_analyzer.get_program_ids_for_api('java.lang.StringBuilder.append(long)')
+        graph_analyzer.print_summary_stats(prog_ids)
+        graph_analyzer.print_programs_from_ids(prog_ids, limit=20)
+
         # prog_ids = graph_analyzer.get_program_ids_with_multiple_apis([
         #     'java.lang.StringBuilder.append(long)', 'java.lang.String.isEmpty()'
         # ])
@@ -216,21 +231,49 @@ class TestGraphAnalyzer(unittest.TestCase):
 
     def test_create_small_test_set(self):
         data_path = '../data_extractor/data/all_data_no_duplicates/train_test_sets/dataset_creator.pickle'
-        create_smaller_test_set(data_path)
+        create_smaller_test_set(data_path, save=False)
+
+    def test_build_bayou_test_set(self):
+        bayou_data_dir_path = '../data_extractor/data/all_data_no_duplicates_bayou/'
+        bayou_data_folder_name = 'all_data_no_duplicates_bayou'
+        mcmc_data_dir_path = '../data_extractor/data/all_data_no_duplicates/'
+
+        build_bayou_datasets(mcmc_data_dir_path, bayou_data_dir_path, bayou_data_folder_name)
+
+    def test_change_return_type(self):
+        old_data_filename_path = '/data/all_data_no_duplicates/train_test_sets/train/all_training_data.json'
+        new_data_filename = '/data/all_data_no_duplicates_rt/train/all_training_data.json'
+        copy_json_data_change_return_types(old_data_filename_path, new_data_filename)
+
+    def test_change_api_calls(self):
+        old_data_filename_path = '/data/all_data_no_duplicates_bayou/train/training_data.json'
+        new_data_filename = '/data/all_data_no_duplicates_bayou/test/apicalls_training_data.json'
+        copy_bayou_json_data_change_apicalls(old_data_filename_path, new_data_filename)
 
     def test_nothing(self):
-        numbers1 = [random.uniform(0, 1) for _ in range(10000)]
-        numbers2 = [random.uniform(0, 1) for _ in range(10000)]
+        # numbers1 = [random.uniform(0, 1) for _ in range(10000)]
+        # numbers2 = [random.uniform(0, 1) for _ in range(10000)]
+        #
+        # numbers1 = np.exp(numbers1)/sum(np.exp(numbers1))
+        # numbers2 = np.exp(numbers2)/sum(np.exp(numbers2))
+        #
+        # check = np.outer(numbers1, numbers2).ravel()
+        # print("sum of outer:", sum(check))
 
-        numbers1 = np.exp(numbers1)/sum(np.exp(numbers1))
-        numbers2 = np.exp(numbers2)/sum(np.exp(numbers2))
+        print(scipy.stats.norm([0, 0], 1).pdf([0.5, 0.5]))
 
-        check = np.outer(numbers1, numbers2).ravel()
-        print("sum of outer:", sum(check))
+    def test_nothing2(self):
+        # ga = GraphAnalyzer(ALL_DATA_NO_DUP, load_reader=True)
+        # print(ga.num_programs)
 
-
-
-
+        counter = 0
+        mcmc_data_dir_path = '../data_extractor/data/all_data_no_duplicates/'
+        mcmc_train_f = open(mcmc_data_dir_path + "train_test_sets/train/all_training_data.json", "rb")
+        training_progs = ijson.items(mcmc_train_f, 'programs.item')
+        for _ in training_progs:
+            counter += 1
+        print(counter)
+        #1386118 - checks out
 
     # def test_4_1(self):
     #     prog_ids = list(self.get_program_ids_for_api('DBranch', limit=10))
