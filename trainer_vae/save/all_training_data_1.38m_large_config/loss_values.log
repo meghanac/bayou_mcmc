@@ -1,0 +1,278 @@
+Process id is 77
+GPU device is 6
+Amount of data used is 1386112
+	
+0/2165800 (epoch 1) loss: 68.950, gen loss: 52.147, ret loss: 6.969, fp loss: 9.579, KL loss: 0.507. 
+10000/2165800 (epoch 1) loss: 26.650, gen loss: 16.801, ret loss: 1.795, fp loss: 4.448, KL loss: 7.213. 
+20000/2165800 (epoch 1) loss: 25.073, gen loss: 15.141, ret loss: 1.612, fp loss: 3.984, KL loss: 8.672. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model1.ckpt. Average for epoch , loss: 24.915
+30000/2165800 (epoch 2) loss: 22.518, gen loss: 12.367, ret loss: 1.331, fp loss: 3.187, KL loss: 11.267. 
+40000/2165800 (epoch 2) loss: 22.346, gen loss: 12.136, ret loss: 1.307, fp loss: 3.094, KL loss: 11.618. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model2.ckpt. Average for epoch , loss: 22.290
+50000/2165800 (epoch 3) loss: 21.765, gen loss: 11.408, ret loss: 1.254, fp loss: 2.884, KL loss: 12.437. 
+60000/2165800 (epoch 3) loss: 21.676, gen loss: 11.281, ret loss: 1.245, fp loss: 2.845, KL loss: 12.608. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model3.ckpt. Average for epoch , loss: 21.633
+70000/2165800 (epoch 4) loss: 21.366, gen loss: 10.868, ret loss: 1.220, fp loss: 2.757, KL loss: 13.042. 
+80000/2165800 (epoch 4) loss: 21.289, gen loss: 10.781, ret loss: 1.216, fp loss: 2.726, KL loss: 13.133. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model4.ckpt. Average for epoch , loss: 21.256
+90000/2165800 (epoch 5) loss: 21.092, gen loss: 10.522, ret loss: 1.205, fp loss: 2.674, KL loss: 13.381. 
+100000/2165800 (epoch 5) loss: 21.022, gen loss: 10.444, ret loss: 1.198, fp loss: 2.652, KL loss: 13.459. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model5.ckpt. Average for epoch , loss: 20.993
+110000/2165800 (epoch 6) loss: 20.901, gen loss: 10.249, ret loss: 1.180, fp loss: 2.637, KL loss: 13.673. 
+120000/2165800 (epoch 6) loss: 20.821, gen loss: 10.192, ret loss: 1.183, fp loss: 2.606, KL loss: 13.679. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model6.ckpt. Average for epoch , loss: 20.795
+130000/2165800 (epoch 7) loss: 20.771, gen loss: 10.078, ret loss: 1.198, fp loss: 2.572, KL loss: 13.848. 
+140000/2165800 (epoch 7) loss: 20.659, gen loss: 9.986, ret loss: 1.178, fp loss: 2.579, KL loss: 13.831. 
+150000/2165800 (epoch 7) loss: 20.647, gen loss: 9.969, ret loss: 1.178, fp loss: 2.569, KL loss: 13.862. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model7.ckpt. Average for epoch , loss: 20.642
+160000/2165800 (epoch 8) loss: 20.533, gen loss: 9.823, ret loss: 1.175, fp loss: 2.551, KL loss: 13.969. 
+170000/2165800 (epoch 8) loss: 20.530, gen loss: 9.825, ret loss: 1.176, fp loss: 2.537, KL loss: 13.983. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model8.ckpt. Average for epoch , loss: 20.523
+180000/2165800 (epoch 9) loss: 20.434, gen loss: 9.702, ret loss: 1.171, fp loss: 2.516, KL loss: 14.089. 
+190000/2165800 (epoch 9) loss: 20.426, gen loss: 9.695, ret loss: 1.170, fp loss: 2.508, KL loss: 14.106. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model9.ckpt. Average for epoch , loss: 20.419
+200000/2165800 (epoch 10) loss: 20.363, gen loss: 9.604, ret loss: 1.171, fp loss: 2.499, KL loss: 14.178. 
+210000/2165800 (epoch 10) loss: 20.343, gen loss: 9.588, ret loss: 1.169, fp loss: 2.487, KL loss: 14.197. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model10.ckpt. Average for epoch , loss: 20.335
+220000/2165800 (epoch 11) loss: 20.281, gen loss: 9.512, ret loss: 1.164, fp loss: 2.472, KL loss: 14.265. 
+230000/2165800 (epoch 11) loss: 20.264, gen loss: 9.496, ret loss: 1.166, fp loss: 2.464, KL loss: 14.276. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model11.ckpt. Average for epoch , loss: 20.262
+240000/2165800 (epoch 12) loss: 20.256, gen loss: 9.446, ret loss: 1.166, fp loss: 2.476, KL loss: 14.335. 
+250000/2165800 (epoch 12) loss: 20.209, gen loss: 9.422, ret loss: 1.167, fp loss: 2.450, KL loss: 14.341. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model12.ckpt. Average for epoch , loss: 20.209
+260000/2165800 (epoch 13) loss: 20.136, gen loss: 9.268, ret loss: 1.158, fp loss: 2.497, KL loss: 14.428. 
+270000/2165800 (epoch 13) loss: 20.152, gen loss: 9.343, ret loss: 1.168, fp loss: 2.437, KL loss: 14.406. 
+280000/2165800 (epoch 13) loss: 20.156, gen loss: 9.345, ret loss: 1.168, fp loss: 2.431, KL loss: 14.423. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model13.ckpt. Average for epoch , loss: 20.156
+290000/2165800 (epoch 14) loss: 20.098, gen loss: 9.266, ret loss: 1.164, fp loss: 2.433, KL loss: 14.472. 
+300000/2165800 (epoch 14) loss: 20.113, gen loss: 9.279, ret loss: 1.166, fp loss: 2.427, KL loss: 14.481. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model14.ckpt. Average for epoch , loss: 20.111
+310000/2165800 (epoch 15) loss: 20.068, gen loss: 9.212, ret loss: 1.166, fp loss: 2.420, KL loss: 14.539. 
+320000/2165800 (epoch 15) loss: 20.076, gen loss: 9.220, ret loss: 1.168, fp loss: 2.419, KL loss: 14.538. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model15.ckpt. Average for epoch , loss: 20.077
+330000/2165800 (epoch 16) loss: 20.038, gen loss: 9.173, ret loss: 1.170, fp loss: 2.415, KL loss: 14.561. 
+340000/2165800 (epoch 16) loss: 20.043, gen loss: 9.174, ret loss: 1.171, fp loss: 2.410, KL loss: 14.578. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model16.ckpt. Average for epoch , loss: 20.046
+350000/2165800 (epoch 17) loss: 20.012, gen loss: 9.124, ret loss: 1.171, fp loss: 2.408, KL loss: 14.616. 
+360000/2165800 (epoch 17) loss: 20.016, gen loss: 9.131, ret loss: 1.171, fp loss: 2.398, KL loss: 14.632. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model17.ckpt. Average for epoch , loss: 20.022
+370000/2165800 (epoch 18) loss: 20.005, gen loss: 9.093, ret loss: 1.173, fp loss: 2.404, KL loss: 14.670. 
+380000/2165800 (epoch 18) loss: 19.993, gen loss: 9.097, ret loss: 1.169, fp loss: 2.387, KL loss: 14.680. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model18.ckpt. Average for epoch , loss: 19.996
+390000/2165800 (epoch 19) loss: 19.932, gen loss: 9.011, ret loss: 1.166, fp loss: 2.405, KL loss: 14.702. 
+400000/2165800 (epoch 19) loss: 19.974, gen loss: 9.064, ret loss: 1.174, fp loss: 2.387, KL loss: 14.699. 
+410000/2165800 (epoch 19) loss: 19.983, gen loss: 9.068, ret loss: 1.172, fp loss: 2.382, KL loss: 14.721. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model19.ckpt. Average for epoch , loss: 19.982
+420000/2165800 (epoch 20) loss: 19.951, gen loss: 9.026, ret loss: 1.172, fp loss: 2.381, KL loss: 14.744. 
+430000/2165800 (epoch 20) loss: 19.970, gen loss: 9.051, ret loss: 1.174, fp loss: 2.375, KL loss: 14.742. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model20.ckpt. Average for epoch , loss: 19.970
+440000/2165800 (epoch 21) loss: 19.940, gen loss: 9.012, ret loss: 1.173, fp loss: 2.373, KL loss: 14.765. 
+450000/2165800 (epoch 21) loss: 19.958, gen loss: 9.029, ret loss: 1.176, fp loss: 2.368, KL loss: 14.770. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model21.ckpt. Average for epoch , loss: 19.961
+460000/2165800 (epoch 22) loss: 19.931, gen loss: 8.997, ret loss: 1.172, fp loss: 2.363, KL loss: 14.797. 
+470000/2165800 (epoch 22) loss: 19.937, gen loss: 9.004, ret loss: 1.178, fp loss: 2.358, KL loss: 14.793. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model22.ckpt. Average for epoch , loss: 19.939
+480000/2165800 (epoch 23) loss: 19.930, gen loss: 8.978, ret loss: 1.183, fp loss: 2.362, KL loss: 14.816. 
+490000/2165800 (epoch 23) loss: 19.930, gen loss: 8.982, ret loss: 1.177, fp loss: 2.354, KL loss: 14.833. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model23.ckpt. Average for epoch , loss: 19.934
+500000/2165800 (epoch 24) loss: 19.929, gen loss: 8.985, ret loss: 1.166, fp loss: 2.362, KL loss: 14.830. 
+510000/2165800 (epoch 24) loss: 19.913, gen loss: 8.970, ret loss: 1.179, fp loss: 2.341, KL loss: 14.846. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model24.ckpt. Average for epoch , loss: 19.923
+520000/2165800 (epoch 25) loss: 19.997, gen loss: 8.946, ret loss: 1.195, fp loss: 2.381, KL loss: 14.951. 
+530000/2165800 (epoch 25) loss: 19.908, gen loss: 8.949, ret loss: 1.181, fp loss: 2.340, KL loss: 14.876. 
+540000/2165800 (epoch 25) loss: 19.916, gen loss: 8.962, ret loss: 1.181, fp loss: 2.337, KL loss: 14.872. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model25.ckpt. Average for epoch , loss: 19.915
+550000/2165800 (epoch 26) loss: 19.877, gen loss: 8.927, ret loss: 1.182, fp loss: 2.334, KL loss: 14.866. 
+560000/2165800 (epoch 26) loss: 19.894, gen loss: 8.950, ret loss: 1.181, fp loss: 2.330, KL loss: 14.865. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model26.ckpt. Average for epoch , loss: 19.897
+570000/2165800 (epoch 27) loss: 19.877, gen loss: 8.919, ret loss: 1.177, fp loss: 2.334, KL loss: 14.894. 
+580000/2165800 (epoch 27) loss: 19.904, gen loss: 8.942, ret loss: 1.181, fp loss: 2.331, KL loss: 14.899. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model27.ckpt. Average for epoch , loss: 19.907
+590000/2165800 (epoch 28) loss: 19.874, gen loss: 8.925, ret loss: 1.177, fp loss: 2.329, KL loss: 14.886. 
+600000/2165800 (epoch 28) loss: 19.889, gen loss: 8.931, ret loss: 1.182, fp loss: 2.327, KL loss: 14.896. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model28.ckpt. Average for epoch , loss: 19.893
+610000/2165800 (epoch 29) loss: 19.885, gen loss: 8.916, ret loss: 1.177, fp loss: 2.331, KL loss: 14.920. 
+620000/2165800 (epoch 29) loss: 19.890, gen loss: 8.922, ret loss: 1.181, fp loss: 2.327, KL loss: 14.921. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model29.ckpt. Average for epoch , loss: 19.894
+630000/2165800 (epoch 30) loss: 19.905, gen loss: 8.918, ret loss: 1.175, fp loss: 2.344, KL loss: 14.937. 
+640000/2165800 (epoch 30) loss: 19.870, gen loss: 8.902, ret loss: 1.183, fp loss: 2.323, KL loss: 14.923. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model30.ckpt. Average for epoch , loss: 19.877
+650000/2165800 (epoch 31) loss: 19.759, gen loss: 8.807, ret loss: 1.175, fp loss: 2.342, KL loss: 14.871. 
+660000/2165800 (epoch 31) loss: 19.857, gen loss: 8.885, ret loss: 1.176, fp loss: 2.319, KL loss: 14.954. 
+670000/2165800 (epoch 31) loss: 19.872, gen loss: 8.902, ret loss: 1.181, fp loss: 2.316, KL loss: 14.946. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model31.ckpt. Average for epoch , loss: 19.873
+680000/2165800 (epoch 32) loss: 19.854, gen loss: 8.868, ret loss: 1.187, fp loss: 2.324, KL loss: 14.950. 
+690000/2165800 (epoch 32) loss: 19.872, gen loss: 8.893, ret loss: 1.184, fp loss: 2.320, KL loss: 14.952. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model32.ckpt. Average for epoch , loss: 19.878
+700000/2165800 (epoch 33) loss: 19.860, gen loss: 8.871, ret loss: 1.190, fp loss: 2.320, KL loss: 14.956. 
+710000/2165800 (epoch 33) loss: 19.872, gen loss: 8.887, ret loss: 1.189, fp loss: 2.318, KL loss: 14.955. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model33.ckpt. Average for epoch , loss: 19.873
+720000/2165800 (epoch 34) loss: 19.882, gen loss: 8.871, ret loss: 1.186, fp loss: 2.315, KL loss: 15.019. 
+730000/2165800 (epoch 34) loss: 19.879, gen loss: 8.884, ret loss: 1.191, fp loss: 2.313, KL loss: 14.983. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model34.ckpt. Average for epoch , loss: 19.885
+740000/2165800 (epoch 35) loss: 19.880, gen loss: 8.879, ret loss: 1.191, fp loss: 2.320, KL loss: 14.977. 
+750000/2165800 (epoch 35) loss: 19.876, gen loss: 8.883, ret loss: 1.186, fp loss: 2.319, KL loss: 14.978. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model35.ckpt. Average for epoch , loss: 19.873
+760000/2165800 (epoch 36) loss: 19.914, gen loss: 8.886, ret loss: 1.177, fp loss: 2.339, KL loss: 15.025. 
+770000/2165800 (epoch 36) loss: 19.865, gen loss: 8.868, ret loss: 1.189, fp loss: 2.314, KL loss: 14.988. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model36.ckpt. Average for epoch , loss: 19.867
+780000/2165800 (epoch 37) loss: 19.855, gen loss: 8.833, ret loss: 1.183, fp loss: 2.323, KL loss: 15.031. 
+790000/2165800 (epoch 37) loss: 19.867, gen loss: 8.857, ret loss: 1.196, fp loss: 2.315, KL loss: 14.997. 
+800000/2165800 (epoch 37) loss: 19.873, gen loss: 8.871, ret loss: 1.193, fp loss: 2.311, KL loss: 14.996. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model37.ckpt. Average for epoch , loss: 19.873
+810000/2165800 (epoch 38) loss: 19.850, gen loss: 8.838, ret loss: 1.190, fp loss: 2.309, KL loss: 15.027. 
+820000/2165800 (epoch 38) loss: 19.871, gen loss: 8.865, ret loss: 1.195, fp loss: 2.308, KL loss: 15.007. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model38.ckpt. Average for epoch , loss: 19.876
+830000/2165800 (epoch 39) loss: 19.858, gen loss: 8.841, ret loss: 1.193, fp loss: 2.315, KL loss: 15.019. 
+840000/2165800 (epoch 39) loss: 19.871, gen loss: 8.861, ret loss: 1.197, fp loss: 2.310, KL loss: 15.008. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model39.ckpt. Average for epoch , loss: 19.873
+850000/2165800 (epoch 40) loss: 19.849, gen loss: 8.841, ret loss: 1.194, fp loss: 2.308, KL loss: 15.011. 
+860000/2165800 (epoch 40) loss: 19.859, gen loss: 8.856, ret loss: 1.194, fp loss: 2.305, KL loss: 15.007. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model40.ckpt. Average for epoch , loss: 19.865
+870000/2165800 (epoch 41) loss: 19.877, gen loss: 8.850, ret loss: 1.199, fp loss: 2.311, KL loss: 15.032. 
+880000/2165800 (epoch 41) loss: 19.860, gen loss: 8.850, ret loss: 1.192, fp loss: 2.306, KL loss: 15.023. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model41.ckpt. Average for epoch , loss: 19.865
+890000/2165800 (epoch 42) loss: 19.866, gen loss: 8.842, ret loss: 1.194, fp loss: 2.313, KL loss: 15.033. 
+900000/2165800 (epoch 42) loss: 19.852, gen loss: 8.850, ret loss: 1.198, fp loss: 2.301, KL loss: 15.007. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model42.ckpt. Average for epoch , loss: 19.855
+910000/2165800 (epoch 43) loss: 19.822, gen loss: 8.784, ret loss: 1.206, fp loss: 2.301, KL loss: 15.064. 
+920000/2165800 (epoch 43) loss: 19.853, gen loss: 8.840, ret loss: 1.199, fp loss: 2.304, KL loss: 15.021. 
+930000/2165800 (epoch 43) loss: 19.863, gen loss: 8.851, ret loss: 1.200, fp loss: 2.302, KL loss: 15.021. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model43.ckpt. Average for epoch , loss: 19.862
+940000/2165800 (epoch 44) loss: 19.831, gen loss: 8.816, ret loss: 1.199, fp loss: 2.308, KL loss: 15.017. 
+950000/2165800 (epoch 44) loss: 19.850, gen loss: 8.840, ret loss: 1.201, fp loss: 2.299, KL loss: 15.023. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model44.ckpt. Average for epoch , loss: 19.853
+960000/2165800 (epoch 45) loss: 19.837, gen loss: 8.827, ret loss: 1.196, fp loss: 2.301, KL loss: 15.026. 
+970000/2165800 (epoch 45) loss: 19.867, gen loss: 8.848, ret loss: 1.204, fp loss: 2.301, KL loss: 15.028. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model45.ckpt. Average for epoch , loss: 19.869
+980000/2165800 (epoch 46) loss: 19.844, gen loss: 8.832, ret loss: 1.201, fp loss: 2.304, KL loss: 15.012. 
+990000/2165800 (epoch 46) loss: 19.858, gen loss: 8.843, ret loss: 1.201, fp loss: 2.298, KL loss: 15.032. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model46.ckpt. Average for epoch , loss: 19.861
+1000000/2165800 (epoch 47) loss: 19.859, gen loss: 8.834, ret loss: 1.202, fp loss: 2.307, KL loss: 15.033. 
+1010000/2165800 (epoch 47) loss: 19.852, gen loss: 8.836, ret loss: 1.198, fp loss: 2.299, KL loss: 15.038. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model47.ckpt. Average for epoch , loss: 19.855
+1020000/2165800 (epoch 48) loss: 19.854, gen loss: 8.842, ret loss: 1.192, fp loss: 2.314, KL loss: 15.011. 
+1030000/2165800 (epoch 48) loss: 19.851, gen loss: 8.833, ret loss: 1.210, fp loss: 2.299, KL loss: 15.018. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model48.ckpt. Average for epoch , loss: 19.866
+1040000/2165800 (epoch 49) loss: 19.820, gen loss: 8.784, ret loss: 1.206, fp loss: 2.308, KL loss: 15.045. 
+1050000/2165800 (epoch 49) loss: 19.880, gen loss: 8.832, ret loss: 1.211, fp loss: 2.305, KL loss: 15.063. 
+1060000/2165800 (epoch 49) loss: 19.881, gen loss: 8.844, ret loss: 1.206, fp loss: 2.300, KL loss: 15.063. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model49.ckpt. Average for epoch , loss: 19.883
+1070000/2165800 (epoch 50) loss: 19.855, gen loss: 8.830, ret loss: 1.215, fp loss: 2.303, KL loss: 15.016. 
+1080000/2165800 (epoch 50) loss: 19.870, gen loss: 8.844, ret loss: 1.212, fp loss: 2.299, KL loss: 15.031. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model50.ckpt. Average for epoch , loss: 19.872
+1090000/2165800 (epoch 51) loss: 19.845, gen loss: 8.818, ret loss: 1.210, fp loss: 2.295, KL loss: 15.046. 
+1100000/2165800 (epoch 51) loss: 19.866, gen loss: 8.838, ret loss: 1.210, fp loss: 2.295, KL loss: 15.045. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model51.ckpt. Average for epoch , loss: 19.870
+1110000/2165800 (epoch 52) loss: 19.847, gen loss: 8.829, ret loss: 1.222, fp loss: 2.295, KL loss: 15.001. 
+1120000/2165800 (epoch 52) loss: 19.867, gen loss: 8.840, ret loss: 1.216, fp loss: 2.296, KL loss: 15.030. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model52.ckpt. Average for epoch , loss: 19.872
+1130000/2165800 (epoch 53) loss: 19.874, gen loss: 8.846, ret loss: 1.218, fp loss: 2.301, KL loss: 15.018. 
+1140000/2165800 (epoch 53) loss: 19.880, gen loss: 8.847, ret loss: 1.219, fp loss: 2.298, KL loss: 15.032. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model53.ckpt. Average for epoch , loss: 19.879
+1150000/2165800 (epoch 54) loss: 19.889, gen loss: 8.851, ret loss: 1.210, fp loss: 2.318, KL loss: 15.019. 
+1160000/2165800 (epoch 54) loss: 19.867, gen loss: 8.836, ret loss: 1.223, fp loss: 2.298, KL loss: 15.020. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model54.ckpt. Average for epoch , loss: 19.881
+1170000/2165800 (epoch 55) loss: 19.846, gen loss: 8.788, ret loss: 1.255, fp loss: 2.307, KL loss: 14.992. 
+1180000/2165800 (epoch 55) loss: 19.870, gen loss: 8.830, ret loss: 1.226, fp loss: 2.298, KL loss: 15.034. 
+1190000/2165800 (epoch 55) loss: 19.877, gen loss: 8.842, ret loss: 1.222, fp loss: 2.295, KL loss: 15.036. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model55.ckpt. Average for epoch , loss: 19.876
+1200000/2165800 (epoch 56) loss: 19.876, gen loss: 8.829, ret loss: 1.234, fp loss: 2.303, KL loss: 15.020. 
+1210000/2165800 (epoch 56) loss: 19.880, gen loss: 8.842, ret loss: 1.233, fp loss: 2.297, KL loss: 15.015. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model56.ckpt. Average for epoch , loss: 19.881
+1220000/2165800 (epoch 57) loss: 19.866, gen loss: 8.821, ret loss: 1.234, fp loss: 2.294, KL loss: 15.036. 
+1230000/2165800 (epoch 57) loss: 19.881, gen loss: 8.840, ret loss: 1.231, fp loss: 2.294, KL loss: 15.034. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model57.ckpt. Average for epoch , loss: 19.886
+1240000/2165800 (epoch 58) loss: 19.855, gen loss: 8.821, ret loss: 1.226, fp loss: 2.298, KL loss: 15.019. 
+1250000/2165800 (epoch 58) loss: 19.865, gen loss: 8.834, ret loss: 1.228, fp loss: 2.292, KL loss: 15.023. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model58.ckpt. Average for epoch , loss: 19.874
+1260000/2165800 (epoch 59) loss: 19.863, gen loss: 8.818, ret loss: 1.226, fp loss: 2.299, KL loss: 15.041. 
+1270000/2165800 (epoch 59) loss: 19.869, gen loss: 8.829, ret loss: 1.222, fp loss: 2.295, KL loss: 15.048. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model59.ckpt. Average for epoch , loss: 19.881
+1280000/2165800 (epoch 60) loss: 19.910, gen loss: 8.838, ret loss: 1.224, fp loss: 2.313, KL loss: 15.070. 
+1290000/2165800 (epoch 60) loss: 19.889, gen loss: 8.838, ret loss: 1.233, fp loss: 2.296, KL loss: 15.044. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model60.ckpt. Average for epoch , loss: 19.899
+1300000/2165800 (epoch 61) loss: 19.889, gen loss: 8.841, ret loss: 1.225, fp loss: 2.331, KL loss: 14.985. 
+1310000/2165800 (epoch 61) loss: 19.891, gen loss: 8.837, ret loss: 1.239, fp loss: 2.297, KL loss: 15.035. 
+1320000/2165800 (epoch 61) loss: 19.901, gen loss: 8.847, ret loss: 1.241, fp loss: 2.295, KL loss: 15.035. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model61.ckpt. Average for epoch , loss: 19.898
+1330000/2165800 (epoch 62) loss: 19.879, gen loss: 8.822, ret loss: 1.242, fp loss: 2.295, KL loss: 15.040. 
+1340000/2165800 (epoch 62) loss: 19.891, gen loss: 8.839, ret loss: 1.238, fp loss: 2.293, KL loss: 15.043. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model62.ckpt. Average for epoch , loss: 19.894
+1350000/2165800 (epoch 63) loss: 19.890, gen loss: 8.826, ret loss: 1.251, fp loss: 2.300, KL loss: 15.026. 
+1360000/2165800 (epoch 63) loss: 19.901, gen loss: 8.840, ret loss: 1.252, fp loss: 2.294, KL loss: 15.029. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model63.ckpt. Average for epoch , loss: 19.902
+1370000/2165800 (epoch 64) loss: 19.873, gen loss: 8.823, ret loss: 1.244, fp loss: 2.292, KL loss: 15.026. 
+1380000/2165800 (epoch 64) loss: 19.892, gen loss: 8.833, ret loss: 1.246, fp loss: 2.295, KL loss: 15.035. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model64.ckpt. Average for epoch , loss: 19.893
+1390000/2165800 (epoch 65) loss: 19.951, gen loss: 8.827, ret loss: 1.255, fp loss: 2.311, KL loss: 15.114. 
+1400000/2165800 (epoch 65) loss: 19.941, gen loss: 8.840, ret loss: 1.251, fp loss: 2.305, KL loss: 15.091. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model65.ckpt. Average for epoch , loss: 19.929
+1410000/2165800 (epoch 66) loss: 19.949, gen loss: 8.843, ret loss: 1.257, fp loss: 2.320, KL loss: 15.059. 
+1420000/2165800 (epoch 66) loss: 19.912, gen loss: 8.835, ret loss: 1.267, fp loss: 2.299, KL loss: 15.023. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model66.ckpt. Average for epoch , loss: 19.913
+1430000/2165800 (epoch 67) loss: 19.925, gen loss: 8.834, ret loss: 1.271, fp loss: 2.315, KL loss: 15.012. 
+1440000/2165800 (epoch 67) loss: 19.898, gen loss: 8.828, ret loss: 1.251, fp loss: 2.295, KL loss: 15.048. 
+1450000/2165800 (epoch 67) loss: 19.909, gen loss: 8.841, ret loss: 1.256, fp loss: 2.293, KL loss: 15.037. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model67.ckpt. Average for epoch , loss: 19.908
+1460000/2165800 (epoch 68) loss: 19.900, gen loss: 8.821, ret loss: 1.269, fp loss: 2.299, KL loss: 15.021. 
+1470000/2165800 (epoch 68) loss: 19.913, gen loss: 8.838, ret loss: 1.264, fp loss: 2.295, KL loss: 15.031. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model68.ckpt. Average for epoch , loss: 19.914
+1480000/2165800 (epoch 69) loss: 19.897, gen loss: 8.822, ret loss: 1.267, fp loss: 2.302, KL loss: 15.012. 
+1490000/2165800 (epoch 69) loss: 19.911, gen loss: 8.837, ret loss: 1.265, fp loss: 2.298, KL loss: 15.022. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model69.ckpt. Average for epoch , loss: 19.917
+1500000/2165800 (epoch 70) loss: 19.913, gen loss: 8.827, ret loss: 1.259, fp loss: 2.306, KL loss: 15.040. 
+1510000/2165800 (epoch 70) loss: 19.912, gen loss: 8.838, ret loss: 1.262, fp loss: 2.300, KL loss: 15.024. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model70.ckpt. Average for epoch , loss: 19.914
+1520000/2165800 (epoch 71) loss: 19.917, gen loss: 8.830, ret loss: 1.261, fp loss: 2.308, KL loss: 15.035. 
+1530000/2165800 (epoch 71) loss: 19.921, gen loss: 8.838, ret loss: 1.268, fp loss: 2.300, KL loss: 15.031. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model71.ckpt. Average for epoch , loss: 19.927
+1540000/2165800 (epoch 72) loss: 19.936, gen loss: 8.831, ret loss: 1.267, fp loss: 2.322, KL loss: 15.032. 
+1550000/2165800 (epoch 72) loss: 19.933, gen loss: 8.839, ret loss: 1.269, fp loss: 2.306, KL loss: 15.037. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model72.ckpt. Average for epoch , loss: 19.936
+1560000/2165800 (epoch 73) loss: 19.903, gen loss: 8.817, ret loss: 1.263, fp loss: 2.311, KL loss: 15.025. 
+1570000/2165800 (epoch 73) loss: 19.917, gen loss: 8.829, ret loss: 1.267, fp loss: 2.300, KL loss: 15.043. 
+1580000/2165800 (epoch 73) loss: 19.924, gen loss: 8.840, ret loss: 1.272, fp loss: 2.296, KL loss: 15.031. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model73.ckpt. Average for epoch , loss: 19.922
+1590000/2165800 (epoch 74) loss: 19.939, gen loss: 8.828, ret loss: 1.273, fp loss: 2.299, KL loss: 15.077. 
+1600000/2165800 (epoch 74) loss: 19.953, gen loss: 8.840, ret loss: 1.278, fp loss: 2.298, KL loss: 15.074. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model74.ckpt. Average for epoch , loss: 19.954
+1610000/2165800 (epoch 75) loss: 19.913, gen loss: 8.822, ret loss: 1.277, fp loss: 2.303, KL loss: 15.020. 
+1620000/2165800 (epoch 75) loss: 19.941, gen loss: 8.847, ret loss: 1.281, fp loss: 2.300, KL loss: 15.026. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model75.ckpt. Average for epoch , loss: 19.938
+1630000/2165800 (epoch 76) loss: 19.943, gen loss: 8.831, ret loss: 1.282, fp loss: 2.301, KL loss: 15.060. 
+1640000/2165800 (epoch 76) loss: 19.942, gen loss: 8.843, ret loss: 1.285, fp loss: 2.297, KL loss: 15.033. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model76.ckpt. Average for epoch , loss: 19.945
+1650000/2165800 (epoch 77) loss: 19.926, gen loss: 8.835, ret loss: 1.284, fp loss: 2.305, KL loss: 15.004. 
+1660000/2165800 (epoch 77) loss: 19.928, gen loss: 8.845, ret loss: 1.277, fp loss: 2.296, KL loss: 15.020. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model77.ckpt. Average for epoch , loss: 19.929
+1670000/2165800 (epoch 78) loss: 19.944, gen loss: 8.843, ret loss: 1.271, fp loss: 2.312, KL loss: 15.038. 
+1680000/2165800 (epoch 78) loss: 19.948, gen loss: 8.840, ret loss: 1.286, fp loss: 2.299, KL loss: 15.047. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model78.ckpt. Average for epoch , loss: 19.958
+1690000/2165800 (epoch 79) loss: 20.025, gen loss: 8.853, ret loss: 1.287, fp loss: 2.320, KL loss: 15.129. 
+1700000/2165800 (epoch 79) loss: 19.962, gen loss: 8.835, ret loss: 1.305, fp loss: 2.306, KL loss: 15.031. 
+1710000/2165800 (epoch 79) loss: 19.975, gen loss: 8.854, ret loss: 1.303, fp loss: 2.304, KL loss: 15.028. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model79.ckpt. Average for epoch , loss: 19.972
+1720000/2165800 (epoch 80) loss: 19.947, gen loss: 8.838, ret loss: 1.294, fp loss: 2.309, KL loss: 15.012. 
+1730000/2165800 (epoch 80) loss: 19.954, gen loss: 8.852, ret loss: 1.287, fp loss: 2.304, KL loss: 15.022. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model80.ckpt. Average for epoch , loss: 19.952
+1740000/2165800 (epoch 81) loss: 19.919, gen loss: 8.821, ret loss: 1.295, fp loss: 2.296, KL loss: 15.013. 
+1750000/2165800 (epoch 81) loss: 19.934, gen loss: 8.844, ret loss: 1.291, fp loss: 2.295, KL loss: 15.007. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model81.ckpt. Average for epoch , loss: 19.936
+1760000/2165800 (epoch 82) loss: 19.963, gen loss: 8.839, ret loss: 1.290, fp loss: 2.303, KL loss: 15.060. 
+1770000/2165800 (epoch 82) loss: 19.954, gen loss: 8.846, ret loss: 1.297, fp loss: 2.301, KL loss: 15.018. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model82.ckpt. Average for epoch , loss: 19.958
+1780000/2165800 (epoch 83) loss: 19.947, gen loss: 8.844, ret loss: 1.300, fp loss: 2.303, KL loss: 15.000. 
+1790000/2165800 (epoch 83) loss: 19.953, gen loss: 8.851, ret loss: 1.306, fp loss: 2.297, KL loss: 14.995. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model83.ckpt. Average for epoch , loss: 19.958
+1800000/2165800 (epoch 84) loss: 20.028, gen loss: 8.862, ret loss: 1.302, fp loss: 2.322, KL loss: 15.084. 
+1810000/2165800 (epoch 84) loss: 19.987, gen loss: 8.851, ret loss: 1.307, fp loss: 2.305, KL loss: 15.048. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model84.ckpt. Average for epoch , loss: 19.984
+1820000/2165800 (epoch 85) loss: 20.024, gen loss: 8.881, ret loss: 1.301, fp loss: 2.327, KL loss: 15.031. 
+1830000/2165800 (epoch 85) loss: 19.968, gen loss: 8.844, ret loss: 1.297, fp loss: 2.307, KL loss: 15.039. 
+1840000/2165800 (epoch 85) loss: 19.971, gen loss: 8.855, ret loss: 1.303, fp loss: 2.305, KL loss: 15.018. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model85.ckpt. Average for epoch , loss: 19.970
+1850000/2165800 (epoch 86) loss: 19.969, gen loss: 8.847, ret loss: 1.320, fp loss: 2.307, KL loss: 14.992. 
+1860000/2165800 (epoch 86) loss: 19.970, gen loss: 8.860, ret loss: 1.315, fp loss: 2.306, KL loss: 14.979. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model86.ckpt. Average for epoch , loss: 19.973
+1870000/2165800 (epoch 87) loss: 19.943, gen loss: 8.836, ret loss: 1.322, fp loss: 2.305, KL loss: 14.959. 
