@@ -5,7 +5,8 @@ import numpy as np
 import unittest
 import scipy.stats
 import networkx as nx
-from data_extractor.json_data_extractor import copy_json_data_change_return_types, copy_bayou_json_data_change_apicalls
+from data_extractor.json_data_extractor import copy_json_data_change_return_types, copy_bayou_json_data_change_apicalls, \
+    copy_json_data_limit_vocab, copy_data_remove_duplicate
 from data_extractor.graph_analyzer import GraphAnalyzer, STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, \
     STR_BUILD_APP, LOWERCASE_LOCALE, DATA_DIR_PATH, ALL_DATA_1K_VOCAB, TESTING, NEW_VOCAB, APIS, RT, FP, TOP, MID, \
     LOW, ALL_DATA_1K_VOCAB_NO_DUP, ALL_DATA, ALL_DATA_NO_DUP
@@ -16,8 +17,9 @@ from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COM
 
 class TestGraphAnalyzer(unittest.TestCase):
 
-    def testing(self, data_path=ALL_DATA_1K_VOCAB):
-        graph_analyzer = GraphAnalyzer(data_path, load_reader=True)
+    def testing(self, data_path=ALL_DATA_1K_VOCAB_NO_DUP):
+        graph_analyzer = GraphAnalyzer(data_path, save_reader=True)
+        print("Num progs:", graph_analyzer.num_programs)
         graph_analyzer.get_connected_nodes(LOWERCASE_LOCALE)
         # prog_id =
         print("\n\n")
@@ -218,6 +220,17 @@ class TestGraphAnalyzer(unittest.TestCase):
             json_set.add(str(program))
         print(len(json_set))
 
+    def test_create_1k_no_dup(self):
+        old_data_filename_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_1k_vocab_no_duplicates/all_data_1k_vocab_no_duplicates.json'
+        new_data_filename = 'new_all_data_1k_vocab_no_duplicates.json'
+        # copy_json_data_limit_vocab("all_data_no_duplicates.json", new_data_filename, 1000, old_data_dir_path='data/all_data_no_duplicates/')
+        copy_data_remove_duplicate(old_data_filename_path, new_data_filename)
+
+    def test_create_10k_no_dup(self):
+        new_data_filename = 'all_data_10k_vocab_no_duplicates.json'
+        copy_json_data_limit_vocab("all_data_no_duplicates.json", new_data_filename, 10000,
+                                   old_data_dir_path='/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_no_duplicates/')
+
     def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
         dataset_creator = DatasetCreator(data_path)
         # dataset_creator.create_curated_dataset()
@@ -274,6 +287,35 @@ class TestGraphAnalyzer(unittest.TestCase):
             counter += 1
         print(counter)
         #1386118 - checks out
+
+    def test_nothing3(self):
+        # node = [[[1]], [[0]], [1,2,2]]
+        node = [[1, 2, 3]]
+        length = 10
+        not_temp = np.array([node * length])
+        print(not_temp)
+        print(not_temp + 3)
+
+        nodes = np.array(range(10)).reshape(10, 1)
+        nodes = np.expand_dims(nodes, axis=0)
+        print(nodes)
+
+        nodes = np.ones([2,2])
+        column = np.zeros([2,10])
+        col2 = np.ones([2, 5]) * 5
+        nodes = np.append(nodes, column, axis=1)
+        nodes = np.append(nodes, col2, axis=1)
+        print(nodes)
+        print(nodes[:, 2:])
+
+        nodes[:, 4:] = np.ones([2, nodes.shape[1]-4]) * 7
+        print(nodes)
+
+        for i in nodes:
+            print(i)
+
+        # nodes += (not_temp)
+        # print(nodes)
 
     # def test_4_1(self):
     #     prog_ids = list(self.get_program_ids_for_api('DBranch', limit=10))

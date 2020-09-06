@@ -10,7 +10,6 @@ import random
 import json
 import tensorflow as tf
 import sys
-from numba import jit, cuda
 from infer import BayesianPredictor
 
 from trainer_vae.model import Model
@@ -225,6 +224,9 @@ class MCMCProgram:
             for i in self.constraints:
                 node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
                 last_node = node
+            for i in self.constraint_control_structs:
+                node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
+                last_node = node
         else:
             self.get_best_starting_program()
 
@@ -257,7 +259,7 @@ class MCMCProgram:
     def get_best_starting_program(self):
         assert len(self.constraints) > 0, "Need to initialize constraints before calling this function"
 
-        permutations = list(itertools.permutations(self.constraints))
+        permutations = list(itertools.permutations(self.constraints + self.constraint_control_structs))
         print(permutations)
 
         curr_prog = None
@@ -288,6 +290,11 @@ class MCMCProgram:
         for e in exclude:
             try:
                 node_num = self.config.vocab2node[e]
+
+                if e in self.constraints:
+                    print("Exclude API ", e, " is in constraints. Will be skipped.")
+                    return
+
                 self.exclusions.append(e)
             except KeyError:
                 print("Exclude API ", e, " is not in vocabulary. Will be skipped.")
@@ -304,12 +311,17 @@ class MCMCProgram:
         GrowStruct.initial_state = self.initial_state
 
         while curr_node is not None:
+            print("curr_node:", curr_node.api_name)
+            print("num structures grown:", num_structures_grown)
             if curr_node.api_name == DBRANCH and curr_node.child is None:
                 GrowStruct._grow_dbranch(curr_node)
                 num_structures_grown += 1
+                print_verbose_tree_info(head)
+                print("\n")
             elif (curr_node.api_name == DLOOP or curr_node.api_name == DEXCEPT) and curr_node.child is None:
                 GrowStruct._grow_dloop_or_dexcept(curr_node)
                 num_structures_grown += 1
+                print_verbose_tree_info(head)
 
             # Update curr_node
             if curr_node.child is not None:
@@ -328,6 +340,8 @@ class MCMCProgram:
                     curr_node = None
 
         valid = self.check_validity(prog=head)
+
+        print("valid:", valid)
 
         if valid:
             self.curr_prog = head

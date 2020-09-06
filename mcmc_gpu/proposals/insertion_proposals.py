@@ -1,18 +1,28 @@
 import argparse
+import datetime
 import math
 import os
 import sys
 import textwrap
 from copy import deepcopy
+import time
+# import dill as pickle
+
+from numba import jit, vectorize, njit
+
+import multiprocessing
+from joblib import Parallel, delayed
+
 import numpy as np
 import random
 import json
-import tensorflow as tf
-from numba import jit, cuda
+
 
 from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
 from utils import print_verbose_tree_info
 from configuration import TEMP
+
+from infer import BayesianPredictor
 
 
 class ProposalWithInsertion:
@@ -37,6 +47,8 @@ class ProposalWithInsertion:
         self.use_multinomial = True
 
         self.sess = tf_session
+
+        self.probs = np.zeros([self.config.vocab_size], dtype=float)
 
     def _grow_dbranch(self, dbranch):
         """
@@ -72,7 +84,7 @@ class ProposalWithInsertion:
                 # Add then api as child to condition node
                 parent_node, _, prob = self._get_new_node(parent_node, edge, verbose=self.debug)
                 ln_prob += prob
-                counter +=1
+                counter += 1
 
             if parent_node.api_name != STOP:
                 self.tree_mod.create_and_add_node(STOP, parent_node, SIBLING_EDGE)
@@ -226,16 +238,21 @@ class ProposalWithInsertion:
         :return: (int) number of api in vocabulary
         """
 
+        import tensorflow as tf
+
 
         logits = self._get_logits_for_add_node(self.curr_prog, self.initial_state, empty_node_pos, added_edge, grow_new_subtree=grow_new_subtree)
         sorted_logits = np.argsort(-logits)
 
+        print(logits.shape)
+
         if self.use_multinomial:
             # logits are already normalized from decoder
             logits = logits.reshape(1, logits.shape[0])
-            idx = self.sess.run(tf.multinomial(logits, 1)[0][0], {})
+            idx = self.sess.run(tf.multinomial(logits, 1), {})
             ln_prob = self.calculate_multinomial_ln_prob(logits, idx)
-            return idx, ln_prob
+            print("idx", idx)
+            return idx[0][0], ln_prob
             # return idx, logits[0][idx]/self.curr_prog.length
         else:  # randomly select from top_k
             mu = random.uniform(0, 1)
@@ -253,77 +270,72 @@ class ProposalWithInsertion:
                 prob = (1 - self.top_k_prob) * 1.0 / (len(logits) - self.decoder.top_k)
                 return sorted_logits[rand_idx], math.log(prob)
 
-    # def _get_logits_for_add_node(self, curr_prog, initial_state, empty_node_pos, added_edge):
-    #     #     assert empty_node_pos > 0, "Can't replace DSubTree, empty_node_pos must be > 0"
-    #     #
-    #     #     state = initial_state
-    #     #     nodes, edges = self.tree_mod.get_vector_representation(curr_prog)
-    #     #
-    #     #     node = np.zeros([1, 1], dtype=np.int32)
-    #     #     edge = np.zeros([1, 1], dtype=np.bool)
-    #     #
-    #     #     vocab_size = self.config.vocab.api_dict_size
-    #     #
-    #     #     # stores states and probabilities for each possible added node
-    #     #     # node_num: ast_state
-    #     #     # extra key in logits is probs_key. probs_key : [logit for each node]
-    #     #     logits = {}
-    #     #     probs_key = "probs"
-    #     #
-    #     #     preceding_pos = empty_node_pos - 1
-    #     #
-    #     #     preceding_prob = 0.0
-    #     #
-    #     #     for i in range(curr_prog.length):
-    #     #         node[0][0] = nodes[i]
-    #     #         edge[0][0] = edges[i]
-    #     #
-    #     #         # save all logits
-    #     #         if i == preceding_pos:
-    #     #             state, probs = self.decoder.get_ast_logits(node, edge, state)
-    #     #
-    #     #             assert (vocab_size == len(probs[0]), str(vocab_size) + ", " + str(len(probs[0])))
-    #     #
-    #     #             logits[probs_key] = np.zeros(vocab_size)
-    #     #             for j in range(len(probs[0])):
-    #     #                 logits[j] = state
-    #     #                 logits[probs_key][j] += (probs[0][j] + preceding_prob)
-    #     #
-    #     #         # pass in each node that could be added into decoder
-    #     #         elif i == empty_node_pos:
-    #     #             for k in range(vocab_size):
-    #     #                 node[0][0] = k
-    #     #                 edge[0][0] = added_edge
-    #     #
-    #     #                 ast_state, probs = self.decoder.get_ast_logits(node, edge, state)
-    #     #                 logits[k] = ast_state
-    #     #                 if empty_node_pos == curr_prog.length - 1:
-    #     #                     logits[probs_key][k] += probs[0][self.config.vocab2node[STOP]]
-    #     #                 else:
-    #     #                     logits[probs_key][k] += probs[0][nodes[i + 1]]
-    #     #
-    #     #             if empty_node_pos == curr_prog.length - 1:
-    #     #                 return logits[probs_key]
-    #     #
-    #     #         elif empty_node_pos < i < curr_prog.length - 1:
-    #     #             for k in range(vocab_size):
-    #     #                 ast_state, probs = self.decoder.get_ast_logits(node, edge, logits[k])
-    #     #                 logits[k] = ast_state
-    #     #                 logits[probs_key][k] += probs[0][nodes[i + 1]]
-    #     #
-    #     #         elif i == curr_prog.length - 1:
-    #     #             if self.config.node2vocab[nodes[i]] != STOP:
-    #     #                 for k in range(vocab_size):
-    #     #                     ast_state, probs = self.decoder.get_ast_logits(node, edge, logits[k])
-    #     #                     logits[k] = ast_state
-    #     #                     logits[probs_key][k] += probs[0][self.config.vocab2node[STOP]]
-    #     #
-    #     #             return logits[probs_key]
-    #     #
-    #     #         # pass in nodes up till the node before added node
-    #     #         else:
-    #     #             state, probs = self.decoder.get_ast_logits(node, edge, state)
-    #     #             preceding_prob += probs[0][nodes[i + 1]]
+    # def _get_logits_for_add_node(self, curr_prog, initial_state, empty_node_pos, added_edge, grow_new_subtree=False):
+    #     assert empty_node_pos > 0, "Can't replace DSubTree, empty_node_pos must be > 0"
+    #
+    #     state = initial_state
+    #     nodes, edges, targets = self.tree_mod.get_nodes_edges_targets(curr_prog, verbose=self.verbose)
+    #     preceding_pos = targets.index(self.config.vocab2node[TEMP])
+    #     # print(empty_node_pos)
+    #
+    #     # # If targets is the last node, modify nodes,edges,targets to include STOP node
+    #     # if empty_node_pos == len(targets) - 1:
+    #     #     nodes.append(self.config.vocab2node[TEMP])
+    #     #     edges.append(SIBLING_EDGE)
+    #     #     targets.append(self.config.vocab2node[STOP])
+    #
+    #     # assert len(empty_node_pos) == 1
+    #     # empty_node_pos = empty_node_pos[0]
+    #     # print(empty_node_pos)
+    #
+    #     node = np.zeros([1, 1], dtype=np.int32)
+    #     edge = np.zeros([1, 1], dtype=np.bool)
+    #
+    #     vocab_size = self.config.vocab_size
+    #
+    #     # stores states and probabilities for each possible added node
+    #     # node_num: ast_state
+    #     # extra key in logits is probs_key. probs_key : [logit for each node]
+    #     logits = {}
+    #     probs_key = "probs"
+    #
+    #     # preceding_pos = max(0, empty_node_pos - 1)
+    #
+    #     preceding_prob = 0.0
+    #
+    #     for i in range(len(nodes)):
+    #         node[0][0] = nodes[i]
+    #         edge[0][0] = edges[i]
+    #
+    #         # save all logits
+    #         if i == preceding_pos:
+    #             state, probs = self.decoder.get_ast_logits(node, edge, state)
+    #
+    #             assert (vocab_size == len(probs[0]), str(vocab_size) + ", " + str(len(probs[0])))
+    #
+    #             logits[probs_key] = np.zeros(vocab_size)
+    #             for j in range(len(probs[0])):
+    #                 logits[j] = state
+    #                 logits[probs_key][j] += (probs[0][j] + preceding_prob)
+    #
+    #             if grow_new_subtree or i == len(nodes) - 1:
+    #                 return logits[probs_key]
+    #
+    #         elif preceding_pos < i <= len(nodes) - 1:
+    #             for k in range(vocab_size):
+    #                 print(k)
+    #                 if self.config.node2vocab[nodes[i]] == TEMP:
+    #                     node[0][0] = k
+    #                 logits[k], probs = self.decoder.get_ast_logits(node, edge, logits[k])
+    #                 logits[probs_key][k] += probs[0][targets[i]]
+    #
+    #             if i == len(nodes) - 1:
+    #                 return logits[probs_key]
+    #
+    #         # pass in nodes up till the node before added node
+    #         else:
+    #             state, probs = self.decoder.get_ast_logits(node, edge, state)
+    #             preceding_prob += probs[0][targets[i]]
 
     def _get_logits_for_add_node(self, curr_prog, initial_state, empty_node_pos, added_edge, grow_new_subtree=False):
         assert empty_node_pos > 0, "Can't replace DSubTree, empty_node_pos must be > 0"
@@ -331,17 +343,6 @@ class ProposalWithInsertion:
         state = initial_state
         nodes, edges, targets = self.tree_mod.get_nodes_edges_targets(curr_prog, verbose=self.verbose)
         preceding_pos = targets.index(self.config.vocab2node[TEMP])
-        # print(empty_node_pos)
-
-        # # If targets is the last node, modify nodes,edges,targets to include STOP node
-        # if empty_node_pos == len(targets) - 1:
-        #     nodes.append(self.config.vocab2node[TEMP])
-        #     edges.append(SIBLING_EDGE)
-        #     targets.append(self.config.vocab2node[STOP])
-
-        # assert len(empty_node_pos) == 1
-        # empty_node_pos = empty_node_pos[0]
-        # print(empty_node_pos)
 
         node = np.zeros([1, 1], dtype=np.int32)
         edge = np.zeros([1, 1], dtype=np.bool)
@@ -351,8 +352,10 @@ class ProposalWithInsertion:
         # stores states and probabilities for each possible added node
         # node_num: ast_state
         # extra key in logits is probs_key. probs_key : [logit for each node]
-        logits = {}
-        probs_key = "probs"
+        # logits = {}
+
+        logits = np.zeros([1, 1, self.config.decoder.units], dtype=float)
+        self.probs = np.zeros([vocab_size], dtype=float)
 
         # preceding_pos = max(0, empty_node_pos - 1)
 
@@ -365,33 +368,150 @@ class ProposalWithInsertion:
             # save all logits
             if i == preceding_pos:
                 state, probs = self.decoder.get_ast_logits(node, edge, state)
+                # print(len(state[0][0]))
+                # print(len(probs[0]))
 
-                assert (vocab_size == len(probs[0]), str(vocab_size) + ", " + str(len(probs[0])))
-
-                logits[probs_key] = np.zeros(vocab_size)
-                for j in range(len(probs[0])):
-                    logits[j] = state
-                    logits[probs_key][j] += (probs[0][j] + preceding_prob)
+                # assert (vocab_size == len(probs[0]), str(vocab_size) + ", " + str(len(probs[0])))
+                logits = np.array([state[0][0]] * vocab_size)
+                # print(logits.shape)
+                self.probs = probs[0]
+                self.probs += preceding_prob
+                # for j in range(len(probs[0])):
+                #     logits[j] = state
+                #     logits[probs_key][j] += (probs[0][j] + preceding_prob)
 
                 if grow_new_subtree or i == len(nodes) - 1:
-                    return logits[probs_key]
+                    return self.probs
 
             elif preceding_pos < i <= len(nodes) - 1:
-                for k in range(vocab_size):
-                    if self.config.node2vocab[nodes[i]] == TEMP:
-                        node[0][0] = k
-                    logits[k], probs = self.decoder.get_ast_logits(node, edge, logits[k])
-                    logits[probs_key][k] += probs[0][targets[i]]
+                if self.config.node2vocab[nodes[i]] == TEMP:
+                    nodes_column = np.array(range(vocab_size), dtype=np.int32).reshape(vocab_size, 1)
+                else:
+                    nodes_column = np.ones(vocab_size, dtype=np.int32).reshape(vocab_size, 1) * nodes[i]
+
+                edges_column = np.ones(vocab_size, dtype=np.bool).reshape(vocab_size, 1) * edges[i]
+
+                targets_column = np.ones(vocab_size, dtype=np.int32).reshape(vocab_size, 1) * targets[i]
+
+                probs_column = np.zeros(vocab_size, dtype=np.int32).reshape(vocab_size, 1)
+
+                # print(targets_column)
+                #
+                # print("target:", targets[i])
+
+                idxs_column = np.array(range(vocab_size), dtype=np.int32).reshape(vocab_size, 1)
+
+                all_data = np.append(idxs_column, nodes_column, axis=1)
+                # print(all_data.shape)
+                all_data = np.append(all_data, edges_column, axis=1)
+                # print(all_data.shape)
+                all_data = np.append(all_data, targets_column, axis=1)
+                all_data = np.append(all_data, probs_column, axis=1)
+                all_data = np.append(all_data, logits, axis=1)
+
+                print(all_data.shape)
+
+                start_time = time.time()
+
+                num_cores = multiprocessing.cpu_count()
+
+                # print(num_cores)
+                #
+                # Parallel(n_jobs=num_cores)(delayed(self.get_ast_logits_wrapper)(i) for i in all_data)
+
+                all_data = parallel_apply_along_axis(get_ast_logits_wrapper, 1, all_data, save_dir=self.config.save_dir)
+
+                # self.get_ast_logits_wrapper.parallel_diagnostics(level=4)
+
+                end_time = time.time()
+
+                print("time taken:", end_time - start_time)
+
+                # print("after:", all_data.shape)
+
+                logits_idx = 4
+                logits = all_data[:, logits_idx:]
+
+                # print("logits:", logits.shape)
 
                 if i == len(nodes) - 1:
-                    return logits[probs_key]
+                    return self.probs
 
             # pass in nodes up till the node before added node
             else:
                 state, probs = self.decoder.get_ast_logits(node, edge, state)
                 preceding_prob += probs[0][targets[i]]
 
+    # def _get_logits_for_add_node(self, curr_prog, initial_state, empty_node_pos, added_edge, grow_new_subtree=False):
+    #     assert empty_node_pos > 0, "Can't replace DSubTree, empty_node_pos must be > 0"
+    #
+    #     state = initial_state
+    #     nodes, edges, targets = self.tree_mod.get_nodes_edges_targets(curr_prog, verbose=self.verbose)
+    #     preceding_pos = targets.index(self.config.vocab2node[TEMP])
+    #     # print(empty_node_pos)
+    #
+    #     # # If targets is the last node, modify nodes,edges,targets to include STOP node
+    #     # if empty_node_pos == len(targets) - 1:
+    #     #     nodes.append(self.config.vocab2node[TEMP])
+    #     #     edges.append(SIBLING_EDGE)
+    #     #     targets.append(self.config.vocab2node[STOP])
+    #
+    #     # assert len(empty_node_pos) == 1
+    #     # empty_node_pos = empty_node_pos[0]
+    #     # print(empty_node_pos)
+    #
+    #     node = np.zeros([1, 1], dtype=np.int32)
+    #     edge = np.zeros([1, 1], dtype=np.bool)
+    #
+    #     vocab_size = self.config.vocab_size
+    #
+    #     # stores states and probabilities for each possible added node
+    #     # node_num: ast_state
+    #     # extra key in logits is probs_key. probs_key : [logit for each node]
+    #     logits = {}
+    #     probs_key = "probs"
+    #
+    #     # preceding_pos = max(0, empty_node_pos - 1)
+    #
+    #     preceding_prob = 0.0
+    #
+    #     for i in range(len(nodes)):
+    #         node[0][0] = nodes[i]
+    #         edge[0][0] = edges[i]
+    #
+    #         # save all logits
+    #         if i == preceding_pos:
+    #             state, probs = self.decoder.get_ast_logits(node, edge, state)
+    #
+    #             assert (vocab_size == len(probs[0]), str(vocab_size) + ", " + str(len(probs[0])))
+    #
+    #             logits[probs_key] = np.zeros(vocab_size)
+    #             for j in range(len(probs[0])):
+    #                 logits[j] = state
+    #                 logits[probs_key][j] += (probs[0][j] + preceding_prob)
+    #
+    #             if grow_new_subtree or i == len(nodes) - 1:
+    #                 return logits[probs_key]
+    #
+    #         elif preceding_pos < i <= len(nodes) - 1:
+    #             for k in range(vocab_size):
+    #                 print(k)
+    #                 if self.config.node2vocab[nodes[i]] == TEMP:
+    #                     node[0][0] = k
+    #                 logits[k], probs = self.decoder.get_ast_logits(node, edge, logits[k])
+    #                 logits[probs_key][k] += probs[0][targets[i]]
+    #
+    #             if i == len(nodes) - 1:
+    #                 return logits[probs_key]
+    #
+    #         # pass in nodes up till the node before added node
+    #         else:
+    #             state, probs = self.decoder.get_ast_logits(node, edge, state)
+    #             preceding_prob += probs[0][targets[i]]
+
+
     def calculate_multinomial_ln_prob(self, logits, api_num):
+        import tensorflow as tf
         norm_logs = self.sess.run(tf.nn.log_softmax(logits[0]), {})
         # print("norm logs:", sum(norm_logs))
         # print("api name:", self.config.node2vocab[api_num])
@@ -511,3 +631,75 @@ class ProposalWithInsertion:
                 body_node.add_node(stop_node, SIBLING_EDGE)
 
                 return ln_prob
+
+
+def parallel_apply_along_axis(func1d, axis, arr, *args, **kwargs):
+    """
+    Like numpy.apply_along_axis(), but takes advantage of multiple
+    cores.
+    """
+    # Effective axis where apply_along_axis() will be applied by each
+    # worker (any non-zero axis number would work, so as to allow the use
+    # of `np.array_split()`, which is only done on axis 0):
+    effective_axis = 1 if axis == 0 else axis
+    if effective_axis != axis:
+        arr = arr.swapaxes(axis, effective_axis)
+    print("cpus:", multiprocessing.cpu_count())
+    # Chunks for the mapping (only a few chunks):
+    chunks = [(func1d, effective_axis, sub_arr, args, kwargs)
+              for sub_arr in np.array_split(arr, multiprocessing.cpu_count())]
+
+    pool = multiprocessing.pool.ThreadPool()
+    individual_results = pool.map(unpacking_apply_along_axis, chunks)
+    # Freeing the workers:
+    pool.close()
+    pool.join()
+
+    return np.concatenate(individual_results)
+
+
+def unpacking_apply_along_axis(all_args):
+    (func1d, axis, arr, args, kwargs) = all_args
+    return np.apply_along_axis(func1d, axis, arr, *args, **kwargs)
+
+
+def get_ast_logits_wrapper(all_data_row, save_dir):
+    # print("HEREEEEE")
+    beam_width = 1
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     description=textwrap.dedent(""))
+    parser.add_argument('--continue_from', type=str, default=save_dir,
+                        help='ignore config options and continue training model checkpointed here')
+    clargs = parser.parse_args()
+    decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
+
+    # print("all data row shape", all_data_row.shape)
+    # print(all_data_row)
+    api_num_idx = 0
+    nodes_idx = 1
+    edges_idx = 2
+    targets_idx = 3
+    probs_idx = 4
+    logits_idx = 5
+    api_num = int(all_data_row[api_num_idx])
+    # print("api num:", api_num)
+    node = np.ones([1, 1], dtype=np.int32) * int(all_data_row[nodes_idx])
+    edge = np.ones([1, 1], dtype=np.bool) * int(all_data_row[edges_idx])
+    logits = all_data_row[logits_idx:]
+    logits = np.expand_dims(logits, axis=0)
+    logits = np.expand_dims(logits, axis=0)
+    logits, probs = decoder.get_ast_logits(node, edge, logits)
+    target = int(all_data_row[targets_idx])
+    # print(self.probs.shape)
+    # print(self.probs[api_num])
+    # print(probs.shape)
+    # print(probs[0][target])
+    # print(probs[0][target])
+    all_data_row[probs_idx] += probs[0][target]
+
+    all_data_row[logits_idx:] = logits[0][0]
+
+    decoder.close()
+
+    return all_data_row
+

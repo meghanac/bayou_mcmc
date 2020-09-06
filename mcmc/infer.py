@@ -39,6 +39,7 @@ class BayesianPredictor(object):
 
         self.model = Model(self.config)
         self.sess = tf.Session()
+        # self.sess = tf.Session(config=tf.ConfigProto(use_per_session_threads=True))
         self.restore(save_dir)
 
         self.top_k = top_k

@@ -8,7 +8,6 @@ import numpy as np
 import random
 import json
 import tensorflow as tf
-from numba import jit, cuda
 
 from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
 from proposals.insertion_proposals import ProposalWithInsertion

@@ -32,7 +32,7 @@ LOWERCASE_LOCALE = "java.lang.String.toLowerCase(java.util.Locale)"
 
 DATA_DIR_PATH = os.path.dirname(os.path.realpath(__file__)) + "/data/"
 ALL_DATA_1K_VOCAB = 'all_data_1k_vocab'
-ALL_DATA_1K_VOCAB_NO_DUP = 'all_data_1k_vocab_no_duplicates'
+ALL_DATA_1K_VOCAB_NO_DUP = 'new_all_data_1k_vocab_no_duplicates'
 TESTING = 'testing-600'
 NEW_VOCAB = 'new_1k_vocab_min_3-600000'
 ALL_DATA = 'all_data'
@@ -70,6 +70,8 @@ class GraphAnalyzer:
             folder_name += '/train_test_sets/test/'
         elif train_test_split == 'small_test':
             folder_name += '/train_test_sets/test/small/'
+        elif train_test_split is None:
+            pass
         else:
             raise ValueError("train_test_split must be 'train', 'test' or 'small_test'")
 

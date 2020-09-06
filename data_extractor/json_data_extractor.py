@@ -5,7 +5,7 @@ from collections import defaultdict
 import networkx as nx
 from networkx.readwrite import json_graph
 
-TRAINING_DATA_DIR_PATH = "data"
+TRAINING_DATA_DIR_PATH = "data/"
 TEST_DATA_DIR_PATH = "data/test_data"
 
 
@@ -24,18 +24,28 @@ def copy_data_remove_duplicate(old_data_filename_path, new_data_filename):
     new_f.write("{\n")
     new_f.write("\"programs\": [\n")
 
+    data_types = ['ast', 'formalParam', 'returnType']
+    counter = 0
     prog_set = set([])
-    print("here")
+    programs = []
     for program in ijson.items(old_f, 'programs.item'):
-        prog_set.add(json.dumps(program))
+        key = (json.dumps(program['ast']), json.dumps(program['returnType']), json.dumps(program['formalParam']))
+        counter += 1
+        if counter % 100000 == 0:
+            print(counter)
+        if key not in prog_set:
+            prog = {}
+            for t in data_types:
+                prog[t] = program[t]
+            prog_set.add(key)
+            programs.append(json.dumps(prog))
 
     print("There are " + str(len(prog_set)) + " unique programs in dataset.")
 
-    prog_set = list(prog_set)
-    for i in range(len(prog_set)):
+    for i in range(len(programs)):
         if i != 0:
             new_f.write(",\n")
-        new_f.write(prog_set[i])
+        new_f.write(programs[i])
 
     print(str(len(prog_set)) + " json objects copied into " + new_data_filename)
 
@@ -452,11 +462,17 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
         test_f = None
         new_dir_path = None
     else:
+        if old_data_dir_path is None:
+            old_data_dir_path = TRAINING_DATA_DIR_PATH
+
+        if new_data_dir_path is None:
+            new_data_dir_path = TRAINING_DATA_DIR_PATH
+
         new_dir_name = new_data_filename[:-5]
-        new_dir_path = os.path.join(TRAINING_DATA_DIR_PATH, new_dir_name)
+        new_dir_path = os.path.join(new_data_dir_path, new_dir_name)
         if not os.path.exists(new_dir_path):
             os.mkdir(new_dir_path)
-        old_data_path = os.path.join(TRAINING_DATA_DIR_PATH, old_data_filename)
+        old_data_path = os.path.join(old_data_dir_path, old_data_filename)
         new_data_path = os.path.join(new_dir_path, new_data_filename)
         old_f = open(old_data_path, 'rb')
         new_f = open(new_data_path, 'w+')
@@ -482,7 +498,7 @@ def copy_json_data_limit_vocab(old_data_filename, new_data_filename, vocab_num, 
     counter = 0
     test_counter = 0
 
-    data_types = ['ast', 'formalParam', 'returnType', 'keywords']
+    data_types = ['ast', 'formalParam', 'returnType']
 
     vocab = set([])
     vocab_size = len(vocab)

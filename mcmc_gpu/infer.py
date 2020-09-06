@@ -17,7 +17,6 @@ import tensorflow as tf
 import os
 import json
 import numpy as np
-from numba import jit, cuda
 
 from trainer_vae.model import Model
 from trainer_vae.utils import get_var_list, read_config
@@ -39,7 +38,8 @@ class BayesianPredictor(object):
             self.config.batch_size = batch_size
 
         self.model = Model(self.config)
-        self.sess = tf.Session()
+        # self.sess = tf.Session()
+        self.sess = tf.Session(config=tf.ConfigProto(use_per_session_threads=True))
         self.restore(save_dir)
 
         self.top_k = top_k

@@ -117,7 +117,7 @@ class DatasetCreator:
         self.verbose = verbose
         self.test_mode = test_mode
 
-        self.dir_path = self.ga.dir_path + "/train_test_sets3/"
+        self.dir_path = self.ga.dir_path + "/train_test_sets/"
 
 
     # def create_novelty_test_set(self):

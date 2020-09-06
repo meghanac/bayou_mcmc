@@ -71,7 +71,7 @@ class ProposalWithInsertion:
                 # Add then api as child to condition node
                 parent_node, _, prob = self._get_new_node(parent_node, edge, verbose=self.debug)
                 ln_prob += prob
-                counter += 1
+                counter +=1
 
             if parent_node.api_name != STOP:
                 self.tree_mod.create_and_add_node(STOP, parent_node, SIBLING_EDGE)
@@ -225,7 +225,6 @@ class ProposalWithInsertion:
         :return: (int) number of api in vocabulary
         """
 
-
         logits = self._get_logits_for_add_node(self.curr_prog, self.initial_state, empty_node_pos, added_edge, grow_new_subtree=grow_new_subtree)
         sorted_logits = np.argsort(-logits)
 
@@ -377,7 +376,6 @@ class ProposalWithInsertion:
 
             elif preceding_pos < i <= len(nodes) - 1:
                 for k in range(vocab_size):
-                    print(k)
                     if self.config.node2vocab[nodes[i]] == TEMP:
                         node[0][0] = k
                     logits[k], probs = self.decoder.get_ast_logits(node, edge, logits[k])

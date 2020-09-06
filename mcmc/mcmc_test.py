@@ -9,6 +9,7 @@ import unittest
 from ast_helper.beam_searcher.program_beam_searcher import ProgramBeamSearcher
 from data_extractor.data_loader import Loader
 from mcmc import Node, MCMCProgram, SIBLING_EDGE, CHILD_EDGE, START, STOP, DBRANCH, DLOOP, DEXCEPT
+from utils import print_verbose_tree_info
 from trainer_vae.infer import BayesianPredictor
 from trainer_vae.model import Model
 
@@ -36,6 +37,8 @@ import unittest.mock as mock
 SAVED_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/1k_vocab_constraint_min_3-600000'
 
 ALL_DATA_1K_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/all_data_1k_vocab'
+
+ALL_DATA_TRAINING_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/all_training_data_1.38m_large_config'
 
 ALL_DATA_1K_05_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/all_data_1k_vocab_0.5_KL_beta'
 
@@ -634,7 +637,7 @@ class MCMCProgramTest(unittest.TestCase):
         #                                                                 ['void'],
         #                                                                 ['DSubTree', 'String'], ordered=True)
 
-        test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_05_MODEL_PATH,
+        test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_TRAINING_PATH,
                                                                         ['java.util.Random.Random(long)', 'java.io.OutputStream.write(byte[])'],
                                                                         ['void'],
                                                                         ['DSubTree'])
@@ -663,6 +666,7 @@ class MCMCProgramTest(unittest.TestCase):
             print("\n\n---------------")
             print(i)
             test_prog.prog.mcmc()
+            print_verbose_tree_info(test_prog.prog.curr_prog)
             # if i % 1 == 0:
             #     test_prog.update_nodes_and_edges(verbose=True)
 
