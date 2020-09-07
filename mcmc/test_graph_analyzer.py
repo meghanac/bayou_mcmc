@@ -18,6 +18,7 @@ from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COM
 class TestGraphAnalyzer(unittest.TestCase):
 
     def testing(self, data_path=ALL_DATA_1K_VOCAB_NO_DUP):
+        data_path = 'all_data_2k_vocab_no_duplicates'
         graph_analyzer = GraphAnalyzer(data_path, save_reader=True)
         print("Num progs:", graph_analyzer.num_programs)
         graph_analyzer.get_connected_nodes(LOWERCASE_LOCALE)
@@ -220,22 +221,24 @@ class TestGraphAnalyzer(unittest.TestCase):
             json_set.add(str(program))
         print(len(json_set))
 
-    def test_create_1k_no_dup(self):
-        old_data_filename_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_1k_vocab_no_duplicates/all_data_1k_vocab_no_duplicates.json'
-        new_data_filename = 'new_all_data_1k_vocab_no_duplicates.json'
+    def test_create_5k_no_dup(self):
+        old_data_filename_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_5k_vocab_no_duplicates/all_data_5k_vocab_no_duplicates.json'
+        new_data_filename = 'new_all_data_5k_vocab_no_duplicates.json'
         # copy_json_data_limit_vocab("all_data_no_duplicates.json", new_data_filename, 1000, old_data_dir_path='data/all_data_no_duplicates/')
         copy_data_remove_duplicate(old_data_filename_path, new_data_filename)
 
-    def test_create_10k_no_dup(self):
-        new_data_filename = 'all_data_10k_vocab_no_duplicates.json'
-        copy_json_data_limit_vocab("all_data_no_duplicates.json", new_data_filename, 10000,
+    def test_create_2k_no_dup_limit_vocab(self):
+        new_data_filename = 'all_data_2k_vocab_no_duplicates.json'
+        copy_json_data_limit_vocab("all_data_no_duplicates.json", new_data_filename, 2000,
                                    old_data_dir_path='/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_no_duplicates/')
 
     def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
-        dataset_creator = DatasetCreator(data_path)
+        # data_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_10k_vocab_no_duplicates/'
+        data_path = 'all_data_10k_vocab_no_duplicates'
+        dataset_creator = DatasetCreator(data_path, load_reader=True)
         # dataset_creator.create_curated_dataset()
         dataset_creator.build_and_save_train_test_sets()
-        ata_path = '../data_extractor/data/all_data_no_duplicates/train_test_sets3/dataset_creator.pickle'
+        data_path = '../data_extractor/data/all_data_10k_vocab_no_duplicates/train_test_sets/dataset_creator.pickle'
         create_smaller_test_set(data_path)
 
     def test_build_sets_from_creator(self):

@@ -9,6 +9,8 @@ import random
 import json
 import tensorflow as tf
 
+tf.config.optimizer.set_jit(True)
+
 from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
 from utils import print_verbose_tree_info
 from configuration import TEMP

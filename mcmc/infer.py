@@ -21,9 +21,10 @@ import numpy as np
 from trainer_vae.model import Model
 from trainer_vae.utils import get_var_list, read_config
 
+tf.config.optimizer.set_jit(True)
+
 
 class BayesianPredictor(object):
-
     def __init__(self, save_dir, top_k=10, depth=None, batch_size=None):
 
         config_file = os.path.join(save_dir, 'config.json')

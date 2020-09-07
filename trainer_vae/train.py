@@ -143,10 +143,13 @@ def train(clargs):
                 analysis_file.flush()
                 os.fsync(analysis_file.fileno())
 
+        tf.train.write_graph(sess.graph_def, clargs.save, 'model.pbtxt')
+        tf.train.write_graph(sess.graph_def, clargs.save, 'model.pb', as_text=False)
+
 
 # %%
 if __name__ == '__main__':
-    folder_name = 'all_data_138m_rohan_config'
+    folder_name = 'all_training_data_1.38m_large_config_test'
     data_folder_name = 'all_training_data'
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=textwrap.dedent(HELP))
@@ -156,14 +159,17 @@ if __name__ == '__main__':
                         help='checkpoint model during training here')
     parser.add_argument('--data', type=str, default='../data_extractor/data/' + data_folder_name + "/",
                         help='load data from here')
-    parser.add_argument('--config', type=str, default='config.json',
-                        help='config file (see description above for help)')
-    parser.add_argument('--continue_from', type=str, default=None,
-                        help='ignore config options and continue training model checkpointed here')
-    # parser.add_argument('--config', type=str, default=None,
+
+    # parser.add_argument('--config', type=str, default='config.json',
     #                     help='config file (see description above for help)')
-    # parser.add_argument('--continue_from', type=str, default='save/' + folder_name + '/',
+    # parser.add_argument('--continue_from', type=str, default=None,
     #                     help='ignore config options and continue training model checkpointed here')
+
+    parser.add_argument('--config', type=str, default=None,
+                        help='config file (see description above for help)')
+    parser.add_argument('--continue_from', type=str, default='save/' + folder_name + '/',
+                        help='ignore config options and continue training model checkpointed here')
+
     parser.add_argument('--topK', type=int, default=10,
                         help='plot only the top-k labels')
     parser.add_argument('--filename', type=str, help='name of data file and dir name')

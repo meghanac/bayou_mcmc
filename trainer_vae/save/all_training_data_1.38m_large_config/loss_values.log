@@ -276,3 +276,16 @@ Model checkpoint: save/all_training_data_1.38m_large_config/model85.ckpt. Averag
 1860000/2165800 (epoch 86) loss: 19.970, gen loss: 8.860, ret loss: 1.315, fp loss: 2.306, KL loss: 14.979. 
 Model checkpoint: save/all_training_data_1.38m_large_config/model86.ckpt. Average for epoch , loss: 19.973
 1870000/2165800 (epoch 87) loss: 19.943, gen loss: 8.836, ret loss: 1.322, fp loss: 2.305, KL loss: 14.959. 
+Process id is 94
+GPU device is 6
+Amount of data used is 1386112
+	
+0/2165800 (epoch 1) loss: 20.595, gen loss: 10.043, ret loss: 1.238, fp loss: 2.086, KL loss: 14.456. 
+Process id is 161
+GPU device is 6
+Amount of data used is 1386112
+	
+0/21658 (epoch 1) loss: 20.105, gen loss: 9.802, ret loss: 1.133, fp loss: 1.934, KL loss: 14.470. 
+10000/21658 (epoch 1) loss: 20.429, gen loss: 9.435, ret loss: 1.325, fp loss: 2.315, KL loss: 14.707. 
+20000/21658 (epoch 1) loss: 20.431, gen loss: 9.414, ret loss: 1.325, fp loss: 2.309, KL loss: 14.767. 
+Model checkpoint: save/all_training_data_1.38m_large_config/model1.ckpt. Average for epoch , loss: 20.428

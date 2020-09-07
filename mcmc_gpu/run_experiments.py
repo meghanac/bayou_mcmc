@@ -12,3 +12,5 @@ exp_dir_name = "testing"
 exp = Experiments(data_dir_name, model_dir_path, exp_dir_name, num_iterations, save_mcmc_progs=True)
 
 exp.run_mcmc(IN_CS, NEW)
+
+

@@ -53,6 +53,7 @@ def copy_data_remove_duplicate(old_data_filename_path, new_data_filename):
     new_f.write("\n")
     new_f.write("]\n")
     new_f.write("}\n")
+    new_f.close()
 
 
 def copy_data_remove_duplicate_bayou(old_data_filename_path, new_data_filename):
@@ -101,6 +102,7 @@ def copy_data_remove_duplicate_bayou(old_data_filename_path, new_data_filename):
     new_f.write("\n")
     new_f.write("]\n")
     new_f.write("}\n")
+    new_f.close()
 
 
 def copy_json_data_change_return_types(old_data_filename_path, new_data_filename_path):

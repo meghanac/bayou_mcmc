@@ -250,10 +250,7 @@ class DatasetCreator:
         num_progs_with_dp2 = len(progs_with_dp2)
 
         if data_point2 in {DBRANCH, DLOOP, DEXCEPT}:
-            if novelty_label == SEEN:
-                max_progs = 100
-            else:
-                max_progs = 50
+            max_progs = 50
         else:
             max_progs = 200
 
@@ -349,6 +346,11 @@ class DatasetCreator:
         if self.test_mode:
             print("Time taken for valid_data_points:", start_time - time.time())
 
+        if category == MIN_EQ:
+            max_progs = 50
+        else:
+            max_progs = 200
+
         added_apis = set([])
 
         counter = 0
@@ -377,7 +379,7 @@ class DatasetCreator:
                     print("control api:", self.control_limit * num_progs_with_api)
 
                 if num_valid_progs <= self.control_limit * num_progs_with_api:
-                    if novelty_label == NEW and 0 < num_valid_progs <= 50:
+                    if novelty_label == NEW and 0 < num_valid_progs <= max_progs:
                         if self.verbose:
                             print("api:", api, "length:", length)
                             print("num progs added:", len(valid_prog_ids))
@@ -436,6 +438,14 @@ class DatasetCreator:
 
         for novelty_label in [NEW, SEEN]:  # Create novelty test set first
             print("\n\n\n-----------------------------------")
+            print("EXCLUDE CS: ")
+            start_time = time.time()
+            self.add_include_or_exclude_test_progs(self.added_to_exclude_test_set, EX_CS, novelty_label)
+            print("test set len:", len(self.categories[EX_CS][0][novelty_label]), "\n")
+            if self.test_mode:
+                print("Time taken for exclude cs:", start_time - time.time())
+
+            print("\n\n\n-----------------------------------")
             print("INCLUDE API: ")
             start_time = time.time()
             self.add_include_or_exclude_test_progs(self.added_to_include_test_set, IN_API, novelty_label)
@@ -458,14 +468,6 @@ class DatasetCreator:
             print("test set len:", len(self.categories[EX_API][0][novelty_label]), "\n")
             if self.test_mode:
                 print("Time taken for exclude api:", start_time - time.time())
-
-            print("\n\n\n-----------------------------------")
-            print("EXCLUDE CS: ")
-            start_time = time.time()
-            self.add_include_or_exclude_test_progs(self.added_to_exclude_test_set, EX_CS, novelty_label)
-            print("test set len:", len(self.categories[EX_CS][0][novelty_label]), "\n")
-            if self.test_mode:
-                print("Time taken for exclude cs:", start_time - time.time())
 
             print("\n\n\n-----------------------------------")
             print("MIN LENGTH")
