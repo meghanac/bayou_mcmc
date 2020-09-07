@@ -266,6 +266,15 @@ class TestGraphAnalyzer(unittest.TestCase):
         new_data_filename = '/data/all_data_no_duplicates_bayou/test/apicalls_training_data.json'
         copy_bayou_json_data_change_apicalls(old_data_filename_path, new_data_filename)
 
+    def test_ga_info(self):
+        data_path = 'all_data_1k_vocab_no_duplicates'
+        graph_analyzer = GraphAnalyzer(data_path, load_reader=True)
+        print("Num progs:", graph_analyzer.num_programs)
+
+        data_path = 'new_all_data_1k_vocab_no_duplicates'
+        graph_analyzer = GraphAnalyzer(data_path, load_reader=True)
+        print("Num progs:", graph_analyzer.num_programs)
+
     def test_nothing(self):
         # numbers1 = [random.uniform(0, 1) for _ in range(10000)]
         # numbers2 = [random.uniform(0, 1) for _ in range(10000)]

@@ -197,6 +197,8 @@ class MCMCProgram:
         it to be valid
         :return:
         """
+        assert 1 <= min_length <= max_length, "Min length must be less than or equal to max length and be greater than 1"
+
         # Add given constraints, return types and formal parameters if valid
         for i in constraints:
             self.add_constraint(i)
@@ -253,6 +255,7 @@ class MCMCProgram:
 
         # Check length
         self.min_length = min_length
+        self.max_length = max_length
         if self.curr_prog.length < min_length:
             self.grow_to_min_length()
 
@@ -393,7 +396,7 @@ class MCMCProgram:
 
         counter = 0
 
-        if self.curr_prog.length < self.min_length:
+        if self.curr_prog.length < self.min_length or self.max_length < self.curr_prog.length:
             return False
 
         while curr_node is not None:
