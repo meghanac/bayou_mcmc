@@ -93,6 +93,9 @@ class MCMCProgram:
         self.proposal_probs = {INSERT: 0.2, DELETE: 0.3, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.2,
                                GROW_CONST_UP: 0.0}
 
+        # self.proposal_probs = {INSERT: 0.3, DELETE: 0.1, SWAP: 0.6, REPLACE: 0.0, ADD_DNODE: 0.0, GROW_CONST: 0.0,
+        #                        GROW_CONST_UP: 0.0}
+
         # self.proposal_probs = {INSERT: 0.05, DELETE: 0.05, SWAP: 0.0, REPLACE: 0.0, ADD_DNODE: 0.0, GROW_CONST: 0.9}
 
         # self.proposal_probs = {INSERT: 0.1, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.1, ADD_DNODE: 0.0, GROW_CONST: 0.25,
@@ -190,7 +193,7 @@ class MCMCProgram:
         self.GrowConstraintUp = GrowConstraintUpwardsProposal(self.tree_mod, self.decoder, self.sess, grow_new_subtree,
                                                               verbose=self.verbose, debug=self.debug)
 
-    def init_program(self, constraints, ret_types, fps, ordered=True, exclude=None, min_length=0, max_length=np.inf):
+    def init_program(self, constraints, ret_types, fps, ordered=True, exclude=None, min_length=1, max_length=np.inf):
         """
         Creates initial program that satisfies all given constraints.
         :param constraints: (list of strings (api names)) list of apis that must appear in the program for
@@ -384,7 +387,7 @@ class MCMCProgram:
         """
         # Create a list of constraints yet to be met
         constraints = []
-        constraints += self.constraint_nodes
+        constraints += self.constraints
         constraints += self.constraint_control_structs
 
         stack = []
@@ -401,8 +404,8 @@ class MCMCProgram:
 
         while curr_node is not None:
             # Update constraint list
-            if curr_node.api_num in constraints:
-                constraints.remove(curr_node.api_num)
+            if curr_node.api_name in constraints:
+                constraints.remove(curr_node.api_name)
 
             if curr_node.api_name in self.exclusions:
                 return False
@@ -746,6 +749,8 @@ class MCMCProgram:
             print("old program:")
             print_verbose_tree_info(self.curr_prog)
 
+        curr_prog_rep = self.tree_mod.get_nodes_edges_targets(self.curr_prog)
+
         # Swap nodes
         curr_prog, node1, node2, ln_prob = self.Swap.random_swap(self.curr_prog)
         if curr_prog is None:
@@ -776,6 +781,8 @@ class MCMCProgram:
             self.curr_log_prob = self.prev_log_prob
             assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
                 self.curr_prog.length) + " != prev length: " + str(prev_length)
+
+            assert curr_prog_rep == self.tree_mod.get_nodes_edges_targets(self.curr_prog)
             return False
 
         # Check that there are no bugs in implementation

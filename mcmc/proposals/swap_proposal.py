@@ -39,10 +39,8 @@ class SwapProposal:
         self.curr_prog = curr_prog
 
         # get 2 distinct node positions
-        node1, rand_node1_pos = self.__get_random_node_to_swap()
-        other_nodes = list(range(1, self.curr_prog.length))
-        other_nodes.remove(rand_node1_pos)
-        node2, node2_pos = self.__get_random_node_to_swap(given_list=other_nodes)
+        node1, node1_pos = self.__get_random_node_to_swap()
+        node2, node2_pos = self.__get_valid_node2(node1, node1_pos)
 
         if node1 is None or node2 is None:
             return None, None, None, None
@@ -68,50 +66,21 @@ class SwapProposal:
         be selected
         :return: (Node) the randomly selected node, (int) position of the randomly selected node
         """
-        # Boolean flag that checks whether a valid node exists in the program or given list. Is computed at the end of
-        # the first iteration
-        selectable_node_exists_in_program = None
-
-        # Unselectable nodes
-        unselectable_nodes = {self.config.vocab2node[START], self.config.vocab2node[STOP],
-                              self.config.vocab2node[EMPTY],
-                              self.config.vocab2node[DLOOP], self.config.vocab2node[DEXCEPT],
-                              self.config.vocab2node[DBRANCH]}
-
-        while True:  # while a valid node exists in the program
-            # If no list of nodes is specified, choose a random one from the program
-            if given_list is None:
-                if self.curr_prog.length > 1:
-                    # exclude DSubTree node, randint is [a,b] inclusive
-                    rand_node_pos = random.randint(1, self.curr_prog.length - 1)
-                else:
-                    return None, None
-            elif len(given_list) == 0:
-                return None, None
+        # If no list of nodes is specified, choose a random one from the program
+        if given_list is None:
+            if self.curr_prog.length > 1:
+                # exclude DSubTree node, randint is [a,b] inclusive
+                rand_node_pos = random.randint(1, self.curr_prog.length - 1)
             else:
-                rand_node_pos = random.choice(given_list)
+                return None, None
+        elif len(given_list) == 0:
+            return None, None
+        else:
+            rand_node_pos = random.choice(given_list)
 
-            node = self.tree_mod.get_node_in_position(self.curr_prog, rand_node_pos)
+        node = self.tree_mod.get_node_in_position(self.curr_prog, rand_node_pos)
 
-            # Check validity of selected node
-            if node.api_num not in unselectable_nodes:
-                return node, rand_node_pos
-
-            # If node is invalid, check if valid node exists in program or given list
-            if selectable_node_exists_in_program is None:
-                nodes, _ = self.tree_mod.get_vector_representation(self.curr_prog)
-                if given_list is not None:
-                    nodes = [nodes[i] for i in given_list]
-                for i in range(len(nodes)):
-                    if i == 0:
-                        nodes[i] = 0
-                    else:
-                        if nodes[i] in unselectable_nodes:
-                            nodes[i] = 0
-                if sum(nodes) == 0:
-                    return None, None
-                else:
-                    selectable_node_exists_in_program = True
+        return node, rand_node_pos
 
     def __swap_nodes(self, node1, node2):
         """
@@ -120,7 +89,6 @@ class SwapProposal:
         :param node2: (Node) node to be swapped
         :return:
         """
-
         # Save parents and parent edges for nodes
         node1_parent = node1.parent
         node2_parent = node2.parent
@@ -135,6 +103,22 @@ class SwapProposal:
             else:
                 parent = node1
                 node = node2
+
+            if node.api_name in {DLOOP, DBRANCH, DEXCEPT} or parent.api_name in {DLOOP, DBRANCH, DEXCEPT}:
+                if node.api_name in {DLOOP, DBRANCH, DEXCEPT}:
+                    assert parent.child is None
+
+                grandparent = parent.parent
+                grandparent_edge = parent.parent_edge
+
+                grandparent.remove_node(grandparent_edge)
+                parent.remove_node(node.parent_edge)
+                sibling = node.remove_node(SIBLING_EDGE)
+
+                grandparent.add_node(node, grandparent_edge)
+                node.add_node(parent, SIBLING_EDGE)
+                parent.add_node(sibling, SIBLING_EDGE)
+                return
 
             # get pointers to parent child and sibling nodes
             parent_edge = node.parent_edge
@@ -169,23 +153,32 @@ class SwapProposal:
             # add node's child and sibling to parent
             parent.add_node(node_child, CHILD_EDGE)
             parent.add_node(node_sibling, SIBLING_EDGE)
-
         else:
             # remove from parents
             node1_parent.remove_node(node1_edge)
             node2_parent.remove_node(node2_edge)
 
-            # save all siblings and children
+            # save all siblings
             node1_sibling = node1.sibling
-            node1_child = node1.child
             node2_sibling = node2.sibling
+            node1_child = node1.child
             node2_child = node2.child
+
+            # save children only if swapping APIs
+            if node1.api_name in {DBRANCH, DLOOP, DEXCEPT}:
+                node1_child = None
+            if node2.api_name in {DBRANCH, DLOOP, DEXCEPT}:
+                node2_child = None
 
             # remove all siblings and children
             node1.remove_node(SIBLING_EDGE)
-            node1.remove_node(CHILD_EDGE)
             node2.remove_node(SIBLING_EDGE)
-            node2.remove_node(CHILD_EDGE)
+
+            # remove child if needed
+            if node1.api_name not in {DBRANCH, DLOOP, DEXCEPT}:
+                node1.remove_node(CHILD_EDGE)
+            if node2.api_name not in {DBRANCH, DLOOP, DEXCEPT}:
+                node2.remove_node(CHILD_EDGE)
 
             # add siblings and children to swapped nodes
             node1.add_node(node2_sibling, SIBLING_EDGE)
@@ -199,3 +192,32 @@ class SwapProposal:
 
     def calculate_ln_prob_of_move(self):
         return self.ln_proposal_dist
+
+    def __get_valid_node2(self, node1, node1_pos):
+        if node1.api_name in {DBRANCH, DLOOP, DEXCEPT}:
+            parent_node = node1.parent
+            parent_edge = node1.parent_edge
+            parent_node.remove_node_save_siblings()
+
+            node2, _ = self.__get_random_node_to_swap()
+            if node2 is None:
+                return None, None
+
+            parent_node.insert_in_between_after_self(node1, parent_edge)
+
+            node2_pos = self.tree_mod.get_nodes_position(self.curr_prog, node2)
+
+            return node2, node2_pos
+
+        else:
+            parent_node = node1.parent
+            cfs_nodes = {}
+            while parent_node.api_name != START:
+                if parent_node.api_name in {DBRANCH, DLOOP, DEXCEPT}:
+                    cfs_nodes[parent_node] = self.tree_mod.get_nodes_position(self.curr_prog, parent_node)
+                parent_node = parent_node.parent
+
+            other_nodes = list(range(1, self.curr_prog.length))
+            other_nodes.remove(node1_pos)
+            other_nodes = list(filter(lambda x: x not in set(cfs_nodes.values()), other_nodes))
+            return self.__get_random_node_to_swap(given_list=other_nodes)
