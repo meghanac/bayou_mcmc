@@ -37,6 +37,11 @@ DBRANCH = 'DBranch'
 DLOOP = 'DLoop'
 DEXCEPT = 'DExcept'
 
+PID = 0
+API = 1
+DP2 = 2
+LEN = 3
+
 
 class DatasetCreator:
     """
@@ -117,10 +122,7 @@ class DatasetCreator:
         self.verbose = verbose
         self.test_mode = test_mode
 
-        self.dir_path = self.ga.dir_path + "/train_test_sets/"
-
-
-    # def create_novelty_test_set(self):
+        self.dir_path = self.ga.dir_path + "/train_test_sets_new_ex/"
 
     def add_include_or_exclude_test_progs(self, added_to_test_set_func, category, novelty_label):
         assert category in DP2_API or category in DP2_CS, "Error: category must be " + IN_CS + ", " + IN_API + ", " \
@@ -181,7 +183,7 @@ class DatasetCreator:
 
                 progs_with_both = self.ga.get_program_ids_with_multiple_apis([api, data_point2])
 
-                if added_to_test_set_func(api, data_point2, novelty_label, test_set, progs_with_api, progs_with_dp2,
+                if added_to_test_set_func([api], data_point2, novelty_label, test_set, progs_with_api, progs_with_dp2,
                                           progs_with_both):
                     num_pairs_added += 1
                     added_apis.add(api)
@@ -225,7 +227,7 @@ class DatasetCreator:
                 if self.verbose:
                     print("api:", api, "data_point:", data_point2)
                     print("num progs added:", len(prog_ids))
-                self.add_to_test_set(api, data_point2, prog_ids, test_set)
+                self.add_to_test_set((api), data_point2, prog_ids, test_set)
                 return True
 
             if novelty_label == SEEN:
@@ -242,6 +244,155 @@ class DatasetCreator:
                 return True
 
         return False
+
+    def add_exclude_test_progs(self,category, novelty_label):
+        assert category in DP2_API or category in DP2_CS, "Error: category must be " + IN_CS + ", " + IN_API + ", " \
+                                                          + EX_API + ", " + ", or " + EX_CS
+        api_idx_range = list(range(self.full_range[0], self.full_range[1]))
+        random.shuffle(api_idx_range)
+
+        all_idx_range = list(range(self.full_range[0], self.full_range[1] + len(self.control_structs)))
+
+        if category in DP2_API:
+            dp2_idx_range = list(range(self.full_range[0], self.full_range[1]))
+            random.shuffle(dp2_idx_range)
+            data_points = self.ranks
+        else:
+            dp2_idx_range = range(len(self.control_structs))
+            data_points = self.control_structs
+
+        test_set = self.categories[category][0][novelty_label]
+
+        num_pairs_added = 0
+
+        all_possible_data_points = itertools.product(api_idx_range, all_idx_range, dp2_idx_range)
+
+        def suitable_candidate(idxs):
+            if idxs[0] == idxs[1] or idxs[1] == idxs[2] or idxs[2] == idxs[0]:
+                return False
+
+            if idxs[1] in range(self.full_range[1]):
+                i3 = self.ranks[idxs[1]]
+            else:
+                i3 = self.control_structs[idxs[1] % self.full_range[1]]
+            api = self.ranks[idxs[0]]
+            dp2 = data_points[idxs[2]]
+
+            progs_with_all = len(
+                self.ga.get_program_ids_with_multiple_apis([api, i3, dp2]))
+            progs_with_api = len(self.ga.get_program_ids_for_api(api))
+            progs_with_dp2 = len(self.ga.get_program_ids_for_api(dp2))
+            progs_with_i3 = len(self.ga.get_program_ids_for_api(i3))
+            progs_with_api_i3 = len(self.ga.get_program_ids_with_multiple_apis([api, i3], exclude=[dp2]))
+            progs_with_dp2_i3 = len(self.ga.get_program_ids_with_multiple_apis([dp2, i3], exclude=[api]))
+            progs_with_api_dp2 = len(self.ga.get_program_ids_with_multiple_apis([api, dp2], exclude=[i3]))
+
+            num_training_set_progs = progs_with_api + progs_with_dp2 + progs_with_all + progs_with_i3 \
+                + progs_with_api_i3 + progs_with_dp2_i3
+            num_test_set_progs = progs_with_api_dp2
+
+            valid = num_test_set_progs > 1 and num_training_set_progs > 1
+            return valid
+
+        start_time = time.time()
+        valid_data_points = filter(lambda idxs: suitable_candidate(idxs), all_possible_data_points)
+
+        if self.test_mode:
+            print("Time taken for valid_data_points:", start_time - time.time())
+
+        added_apis = set([])
+
+        counter = 0
+        start_time = time.time()
+        for api_idx, i3_idx, dp_idx in valid_data_points:
+            counter += 1
+            if counter % 5000 == 0:
+                print("counter:", counter)
+                print("num pairs added:", num_pairs_added)
+                if self.test_mode:
+                    print("time taken:", start_time - time.time())
+                    start_time = time.time()
+
+            api = self.ranks[api_idx]
+            dp2 = data_points[dp_idx]
+            if i3_idx in range(self.full_range[1]):
+                i3 = self.ranks[i3_idx]
+            else:
+                i3 = self.control_structs[i3_idx % self.full_range[1]]
+
+
+
+            if api not in added_apis and not (category in DP2_API and dp2 in added_apis) and not (category in DP2_API and i2 in added_apis):
+                if not self.ga.g.has_edge(api, dp2):
+                    raise ValueError("shouldn't be here!!!")
+
+                if dp2 in {DBRANCH, DLOOP, DEXCEPT}:
+                    max_progs = 50
+                else:
+                    max_progs = 200
+
+                progs_with_api_dp2 = self.ga.get_program_ids_with_multiple_apis([api, dp2], exclude=[i3])
+
+                num_progs_with_api = len(self.ga.get_program_ids_for_api(api))
+                num_progs_with_dp2 = len(self.ga.get_program_ids_for_api(dp2))
+                num_progs_with_all = len(self.ga.get_program_ids_with_multiple_apis([api, i3, dp2]))
+                num_progs_with_i3 = len(self.ga.get_program_ids_for_api(i3))
+                num_progs_with_api_i3 = len(self.ga.get_program_ids_with_multiple_apis([api, i3], exclude=[dp2]))
+                num_progs_with_dp2_i3 = len(self.ga.get_program_ids_with_multiple_apis([dp2, i3], exclude=[api]))
+                num_progs_with_api_dp2 = len(progs_with_api_dp2)
+
+                num_training_set_progs = num_progs_with_api + num_progs_with_dp2 + num_progs_with_all + num_progs_with_i3 + num_progs_with_api_i3 + num_progs_with_dp2_i3
+                num_test_set_progs = num_progs_with_api_dp2
+
+                if self.verbose and self.test_mode:
+                    print("api:", api, "num progs api", num_progs_with_api)
+                    print("i3:", i3, "num progs i3", num_progs_with_i3)
+                    print("dp2", dp2, "num progs dp2", num_progs_with_dp2)
+                    print("num progs api, i3", num_progs_with_api_i3)
+                    print("num progs dp2, i3", num_progs_with_dp2_i3)
+                    print("num progs all", num_progs_with_all)
+                    print("num progs api dp2", num_progs_with_api_dp2)
+
+                success = False
+
+                if num_test_set_progs <= num_training_set_progs * self.control_limit:
+                    if novelty_label == NEW and 0 < num_test_set_progs <= max_progs:
+                        prog_ids = progs_with_api_dp2
+                        if self.verbose:
+                            print("api:", api, "data_point:", dp2)
+                            print("num progs added:", len(prog_ids))
+
+                        if len(prog_ids) != 0:
+                            self.add_to_test_set((api, i3), dp2, prog_ids, test_set)
+                            success = True
+
+                    if novelty_label == SEEN:
+                        limit = min(math.ceil(num_test_set_progs / 4), 10)
+                        prog_ids = progs_with_api_dp2
+
+                        if len(prog_ids) != 0:
+                            prog_ids = itertools.islice(prog_ids, limit)
+
+                            if self.verbose:
+                                print("api:", api, "data_point:", dp2)
+                            self.add_to_test_set((api, i3), dp2, prog_ids, test_set)
+
+                            success = True
+
+                if success:
+                    num_pairs_added += 1
+                    added_apis.add(api)
+                    if category in DP2_API:
+                        added_apis.add(dp2)
+                    if i3_idx in range(self.full_range[1]):
+                        added_apis.add(i3)
+                    if num_pairs_added >= self.min_prog_per_category:
+                        break
+
+        print("Category:", category)
+        print("Novelty label: " + novelty_label)
+        print("Num API + " + category + " pairs added: " + str(num_pairs_added))
+        print("Total programs added: " + str(len(test_set)))
 
     def added_to_exclude_test_set(self, api, data_point2, novelty_label, test_set, progs_with_api, progs_with_dp2,
                                   progs_with_both):
@@ -290,15 +441,18 @@ class DatasetCreator:
 
         return False
 
-    def add_to_test_set(self, data_point1, data_point2, prog_ids_set, test_set, dp2type_is_int=False):
-        api_num = self.ga.vocab2node[data_point1]
+    def add_to_test_set(self, include_api_list, data_point2, prog_ids_set, test_set, dp2type_is_int=False):
+        api_num = []
+        for i in include_api_list:
+            api_num.append(self.ga.vocab2node[i])
 
         if dp2type_is_int:
             dp_num = data_point2
         else:
             dp_num = self.ga.vocab2node[data_point2]
+
         for prog_id in prog_ids_set:
-            test_set.add((prog_id, api_num, dp_num))
+            test_set.add((prog_id, tuple(api_num), dp_num))
             apis = self.ga.get_apis_in_prog_set(prog_id)
             for api in apis:
                 self.ga.api_to_prog_ids[api].discard(prog_id)
@@ -383,7 +537,7 @@ class DatasetCreator:
                         if self.verbose:
                             print("api:", api, "length:", length)
                             print("num progs added:", len(valid_prog_ids))
-                        self.add_to_test_set(api, length, valid_prog_ids, test_set, dp2type_is_int=True)
+                        self.add_to_test_set([api], length, valid_prog_ids, test_set, dp2type_is_int=True)
                         num_pairs_added += 1
                         added_apis.add(api)
 
@@ -398,7 +552,7 @@ class DatasetCreator:
                             print("api:", api, "length:", length)
                             print("num progs added:", len(prog_ids))
 
-                        self.add_to_test_set(api, length, prog_ids, test_set, dp2type_is_int=True)
+                        self.add_to_test_set([api], length, prog_ids, test_set, dp2type_is_int=True)
                         num_pairs_added += 1
                         added_apis.add(api)
 
@@ -440,7 +594,7 @@ class DatasetCreator:
             print("\n\n\n-----------------------------------")
             print("EXCLUDE CS: ")
             start_time = time.time()
-            self.add_include_or_exclude_test_progs(self.added_to_exclude_test_set, EX_CS, novelty_label)
+            self.add_exclude_test_progs(EX_CS, novelty_label)
             print("test set len:", len(self.categories[EX_CS][0][novelty_label]), "\n")
             if self.test_mode:
                 print("Time taken for exclude cs:", start_time - time.time())
@@ -464,7 +618,7 @@ class DatasetCreator:
             print("\n\n\n-----------------------------------")
             print("EXCLUDE API: ")
             start_time = time.time()
-            self.add_include_or_exclude_test_progs(self.added_to_exclude_test_set, EX_API, novelty_label)
+            self.add_exclude_test_progs(EX_API, novelty_label)
             print("test set len:", len(self.categories[EX_API][0][novelty_label]), "\n")
             if self.test_mode:
                 print("Time taken for exclude api:", start_time - time.time())
@@ -494,21 +648,30 @@ class DatasetCreator:
         else:
             return LOW
 
-    def pickle_dump_curated_test_sets(self):
-        if not os.path.exists(self.dir_path):
-            os.mkdir(self.dir_path)
+    def pickle_dump_curated_test_sets(self, path=None):
+        if path is None:
+            path = self.dir_path
 
-        with open(self.dir_path + "/curated_test_sets.pickle", 'wb') as f:
+        if not os.path.exists(path):
+            os.mkdir(path)
+
+        with open(path + "/curated_test_sets.pickle", 'wb') as f:
             pickle.dump(self.categories, f)
             f.close()
 
-    def pickle_dump_self(self):
-        if not os.path.exists(self.dir_path):
-            os.mkdir(self.dir_path)
+        with open(path + "/test/test_set_new_prog_ids.pickle", 'wb') as f:
+            pickle.dump(self.test_set_new_prog_ids, f)
+            f.close()
+
+    def pickle_dump_self(self, path=None):
+        if path is None:
+            path = self.dir_path
+        if not os.path.exists(path):
+            os.mkdir(path)
 
         self.ga.json_asts = None
 
-        with open(self.dir_path + "/dataset_creator.pickle", 'wb') as f:
+        with open(path + "/dataset_creator.pickle", 'wb') as f:
             pickle.dump(self, f)
             f.close()
 
@@ -588,7 +751,8 @@ class DatasetCreator:
         print("Added", train_prog_counter, "programs to training set")
 
 
-def build_sets_from_saved_creator(creator_path):
+def build_sets_from_saved_creator(creator_dir_path):
+    creator_path = creator_dir_path + "/dataseet_creator.pickle"
     print("\n\n\nBuilding Training and Test Sets\n")
     f = open(creator_path, "rb")
     dataset_creator = pickle.load(f)
@@ -667,20 +831,143 @@ def build_sets_from_saved_creator(creator_path):
     print("Added", test_prog_counter, "programs to test set")
     print("Added", train_prog_counter, "programs to training set")
 
-    with open(dataset_creator.dir_path + "/test/test_set_new_prog_ids.pickle", 'wb') as f:
+    with open(creator_dir_path + "/test/test_set_new_prog_ids.pickle", 'wb') as f:
         pickle.dump(test_set_new_prog_ids, f)
         f.close()
 
 
-def create_smaller_test_set(creator_path, save=True):
-    print("\n\n\nBuilding Smaller Test Sets\n")
+def pickle_dump_test_sets(data_dir_path, data_dir_name):
+    creator_dir_path = data_dir_path + "/train_test_sets/"
+    creator_path = creator_dir_path + "/dataset_creator.pickle"
+    print("\n\n\nBuilding Training and Test Sets\n")
     f = open(creator_path, "rb")
     dataset_creator = pickle.load(f)
 
+    test_set = set([])
+    for category in dataset_creator.categories:
+        cat_test_set = dataset_creator.categories[category][0]
+        for t in cat_test_set.values():
+            test_set.update(t)
 
-    PID = 0
-    API = 1
-    DP2 = 2
+    test_set = list(test_set)
+    test_set_progs = set([i[0] for i in test_set])
+
+    training_set = set([])
+    for api in dataset_creator.ga.api_to_prog_ids:
+        training_set.update(dataset_creator.ga.api_to_prog_ids[api])
+
+    all_progs = test_set_progs.copy()
+    all_progs.update(training_set)
+    assert all_progs == set(range(0, dataset_creator.ga.num_programs))
+
+    if not os.path.exists(creator_dir_path  + "/train"):
+        os.mkdir(creator_dir_path + "/train")
+
+    if not os.path.exists(creator_dir_path  + "/test"):
+        os.mkdir(creator_dir_path + "/test")
+
+    data_filename = data_dir_name + ".json"
+    data_f = open(os.path.join(data_dir_path, data_filename), "r")
+    dataset_creator.ga.json_asts = ijson.items(data_f, 'programs.item')
+
+    test_set_new_prog_ids = {}
+
+    prog_id = 0
+    test_prog_counter = 0
+    for _ in dataset_creator.ga.json_asts:
+        if prog_id in test_set_progs:
+            # update
+            test_set_new_prog_ids[prog_id] = test_prog_counter
+            prog_id += 1
+            test_prog_counter += 1
+
+    with open(creator_dir_path + "/test/test_set_new_prog_ids.pickle", 'wb') as f:
+        pickle.dump(test_set_new_prog_ids, f)
+        f.close()
+
+
+def create_small_test_set_one_per_api(category, t, test_set, smaller_test_set, prog_ids, min_length):
+    curr_api_id = -1
+    for i in range(len(test_set)):
+        # if on a new API
+        if test_set[i][API] != curr_api_id:
+            # if prog ID already saved but this is the only program with API, add it
+            if test_set[i][PID] in prog_ids:
+                if i < len(test_set) - 1 and test_set[i][API] != test_set[i + 1][API]:
+                    smaller_test_set[category][t].add(test_set[i])
+            else:
+                if i < len(test_set) - 1 and test_set[i][API] != test_set[i + 1][API]:
+                    curr_api_id = test_set[i][API]
+                    smaller_test_set[category][t].add(test_set[i])
+                    prog_ids.add(test_set[i][PID])
+                else:
+                    if test_set[i][LEN] >= min_length:
+                        curr_api_id = test_set[i][API]
+                        smaller_test_set[category][t].add(test_set[i])
+                        prog_ids.add(test_set[i][PID])
+
+    return test_set, smaller_test_set, prog_ids
+
+
+def create_small_test_set_multiple_per_api(category, t, num_per_api, num_progs_per_category, test_set, smaller_test_set,
+                                           prog_ids, min_length):
+    curr_api_id = -1
+    num_of_api_added = 0
+    for i in range(len(test_set)):
+        if test_set[i][API] != curr_api_id:
+            if test_set[i][PID] in prog_ids:
+                if num_of_api_added < num_per_api:
+                    smaller_test_set[category][t].add(test_set[i])
+                    num_of_api_added += 1
+            else:
+                if i < len(test_set) - 1 and test_set[i][API] != test_set[i + 1][API]:
+                    curr_api_id = test_set[i][API]
+                    num_of_api_added = 1
+                    smaller_test_set[category][t].add(test_set[i])
+                    prog_ids.add(test_set[i][PID])
+                else:
+                    if test_set[i][LEN] >= min_length:
+                        curr_api_id = test_set[i][API]
+                        num_of_api_added = 1
+                        smaller_test_set[category][t].add(test_set[i])
+                        prog_ids.add(test_set[i][PID])
+
+    if len(smaller_test_set[category][t]) < num_progs_per_category:
+        random.shuffle(test_set)
+        for i in range(len(test_set)):
+            if test_set[i][PID] not in prog_ids and test_set[i] not in smaller_test_set[category][t]:
+                if test_set[i][LEN] >= min_length:
+                    smaller_test_set[category][t].add(test_set[i])
+                    prog_ids.add(test_set[i][PID])
+
+            if len(smaller_test_set[category][t]) >= num_progs_per_category:
+                return test_set, smaller_test_set, prog_ids
+
+        for i in range(len(test_set)):
+            if test_set[i] not in smaller_test_set[category][t]:
+                if test_set[i][LEN] >= min_length:
+                    smaller_test_set[category][t].add(test_set[i])
+                    prog_ids.add(test_set[i][PID])
+
+            if len(smaller_test_set[category][t]) >= num_progs_per_category:
+                return test_set, smaller_test_set, prog_ids
+
+        # for i in range(len(test_set)):
+        #     if test_set[i] not in smaller_test_set[category][t]:
+        #         smaller_test_set[category][t].add(test_set[i])
+        #         prog_ids.add(test_set[i][PID])
+        #
+        #     if len(smaller_test_set[category][t]) >= num_progs_per_category:
+        #         return test_set, smaller_test_set, prog_ids
+
+    return test_set, smaller_test_set, prog_ids
+
+
+def create_smaller_test_set(data_dir_path, data_dir_name, num_progs_per_category=1200, save=True, min_length=3):
+    print("\n\n\nBuilding Smaller Test Sets\n")
+    creator_dir_path = data_dir_path + "/train_test_sets/"
+    f = open(creator_dir_path + "/dataset_creator.pickle", "rb")
+    dataset_creator = pickle.load(f)
 
     smaller_test_set = {}
     small_test_set_progs = set([])
@@ -691,17 +978,24 @@ def create_smaller_test_set(creator_path, save=True):
             print("t:", t)
             smaller_test_set[category][t] = set([])
             prog_ids = set([])
-            test_set = sorted(list(cat_test_set[t]), key=lambda x: x[1])
-            curr_api_id = -1
-            for i in range(len(test_set)):
-                if test_set[i][API] != curr_api_id:
-                    if test_set[i][PID] in prog_ids:
-                        if i < len(test_set) - 1 and test_set[i][API] != test_set[i+1][API]:
-                            smaller_test_set[category][t].add(test_set[i])
-                    else:
-                        curr_api_id = test_set[i][API]
-                        smaller_test_set[category][t].add(test_set[i])
-                        prog_ids.add(test_set[i][PID])
+            test_set = list(cat_test_set[t].copy())
+            random.shuffle(test_set)
+            test_set = sorted(test_set, key=lambda x: x[1])
+            num_unique_apis = len(set([x[1] for x in test_set]))
+
+            if num_unique_apis < num_progs_per_category:
+                num_progs_per_t = min(len(test_set), num_progs_per_category)
+                num_per_api = int(math.ceil(num_progs_per_t/num_unique_apis))
+
+                test_set, smaller_test_set, prog_ids = create_small_test_set_multiple_per_api(category, t, num_per_api,
+                                                                                              num_progs_per_category,
+                                                                                              test_set,
+                                                                                              smaller_test_set,
+                                                                                              prog_ids, min_length)
+            else:
+                test_set, smaller_test_set, prog_ids = create_small_test_set_one_per_api(category, t, test_set,
+                                                                                         smaller_test_set, prog_ids, min_length)
+
             print("\n\nCategory:", category, t)
             print("Prog ids added:", len(prog_ids))
             print("Pairs added:", len(smaller_test_set[category][t]))
@@ -711,14 +1005,18 @@ def create_smaller_test_set(creator_path, save=True):
     print("Keys in small test set:", smaller_test_set.keys())
 
     if save:
-        test_f = open(dataset_creator.dir_path + "/test/small/small_test_set.json", "w+")
+        test_dir_path = "/test/small_min_length_" + str(min_length) + "/"
+        if not os.path.exists(creator_dir_path + test_dir_path):
+            os.mkdir(creator_dir_path + "/test/small_min_length_" + str(min_length) + "/")
+
+        test_f = open(creator_dir_path + test_dir_path + "small_test_set.json", "w+")
 
         # start data files
         test_f.write("{\n")
         test_f.write("\"programs\": [\n")
 
-        data_filename = dataset_creator.ga.clargs.data_filename + ".json"
-        data_f = open(os.path.join(dataset_creator.ga.dir_path, data_filename), "r")
+        data_filename = data_dir_name + ".json"
+        data_f = open(os.path.join(data_dir_path, data_filename), "r")
         dataset_creator.ga.json_asts = ijson.items(data_f, 'programs.item')
 
         test_set_new_prog_ids = {}
@@ -745,11 +1043,11 @@ def create_smaller_test_set(creator_path, save=True):
 
         print("Added", test_prog_counter, "programs to test set")
 
-        with open(dataset_creator.dir_path + "/test/small/small_test_set_new_prog_ids.pickle", 'wb') as f:
+        with open(creator_dir_path + test_dir_path + "small_test_set_new_prog_ids.pickle", 'wb') as f:
             pickle.dump(test_set_new_prog_ids, f)
             f.close()
 
-        with open(dataset_creator.dir_path + "/test/small/small_curated_test_sets.pickle", 'wb') as f:
+        with open(creator_dir_path + test_dir_path + "small_curated_test_sets.pickle", 'wb') as f:
             pickle.dump(smaller_test_set, f)
             f.close()
 
@@ -855,12 +1153,30 @@ def build_bayou_datasets(mcmc_data_dir_path, bayou_data_dir_path, bayou_data_fol
         f.close()
 
 
+def add_prog_length_to_dataset_creator(data_dir_path, save=False):
+    creator_dir_path = data_dir_path + "/train_test_sets/"
+    f = open(creator_dir_path + "/dataset_creator.pickle", "rb")
+    dataset_creator = pickle.load(f)
 
+    for category in dataset_creator.categories:
+        cat_test_set = dataset_creator.categories[category][0]
+        for t in cat_test_set.keys():
+            new_test_set = set([])
+            for data in cat_test_set[t]:
+                prog_id = data[PID]
+                api = data[API]
+                dp2 = data[DP2]
+                length = np.argmax(dataset_creator.ga.reader.nodes[prog_id] == 0)
+                new_test_set.add((prog_id, api, dp2, length))
+                # print("old:", data)
+                # print(dataset_creator.ga.reader.nodes[prog_id])
+                # print("new:", (prog_id, api, dp2, length), "\n")
 
-# def rebuild_curated_set(creator_path):
-#     print("\n\n\nBuilding Smaller Test Sets\n")
-#     f = open(creator_path, "rb")
-#     dataset_creator = pickle.load(f)
+            dataset_creator.categories[category][0][t] = new_test_set
+
+    if save:
+        dataset_creator.pickle_dump_self(path=creator_dir_path)
+        dataset_creator.pickle_dump_curated_test_sets(path=creator_dir_path)
 
 
 

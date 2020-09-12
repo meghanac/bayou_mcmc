@@ -33,7 +33,7 @@ from tester_vae.tSNE_visualizor.plot import plot
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"  # see issue #152
-os.environ["CUDA_VISIBLE_DEVICES"] = "6"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "6"
 
 HELP = """\
 Config options should be given as a JSON file (see config.json for example)

@@ -178,6 +178,27 @@ def copy_json_data_change_return_types(old_data_filename_path, new_data_filename
     new_f.write("]\n")
     new_f.write("}\n")
 
+
+def get_apis(program, api_set):
+    if len(program) == 0:
+        return api_set
+    for prog in program:
+        if prog['node'] == 'DBranch':
+            api_set.update(get_apis(prog['_then'], api_set))
+            api_set.update(get_apis(prog['_cond'], api_set))
+            api_set.update(get_apis(prog['_else'], api_set))
+        elif prog['node'] == 'DExcept':
+            api_set.update(get_apis(prog['_try'], api_set))
+            api_set.update(get_apis(prog['_catch'], api_set))
+        elif prog['node'] == 'DLoop':
+            api_set.update(get_apis(prog['_body'], api_set))
+            api_set.update(get_apis(prog['_cond'], api_set))
+        else:
+            api_set.add(prog['_call'])
+
+    return api_set
+
+
 def copy_bayou_json_data_change_apicalls(old_data_filename_path, new_data_filename_path):
     print(os.path.dirname(os.path.realpath(__file__)))
     old_f = open(os.path.dirname(os.path.realpath(__file__)) + old_data_filename_path, 'rb')
@@ -186,25 +207,6 @@ def copy_bayou_json_data_change_apicalls(old_data_filename_path, new_data_filena
     # initialize new json file
     new_f.write("{\n")
     new_f.write("\"programs\": [\n")
-
-    def get_apis(program, api_set):
-        if len(program) == 0:
-            return api_set
-        for prog in program:
-            if prog['node'] == 'DBranch':
-                api_set.update(get_apis(prog['_then'], api_set))
-                api_set.update(get_apis(prog['_cond'], api_set))
-                api_set.update(get_apis(prog['_else'], api_set))
-            elif prog['node'] == 'DExcept':
-                api_set.update(get_apis(prog['_try'], api_set))
-                api_set.update(get_apis(prog['_catch'], api_set))
-            elif prog['node'] == 'DLoop':
-                api_set.update(get_apis(prog['_body'], api_set))
-                api_set.update(get_apis(prog['_cond'], api_set))
-            else:
-                api_set.add(prog['_call'])
-
-        return api_set
 
     prog_set = []
     for program in ijson.items(old_f, 'programs.item'):
@@ -228,6 +230,67 @@ def copy_bayou_json_data_change_apicalls(old_data_filename_path, new_data_filena
     new_f.write("\n")
     new_f.write("]\n")
     new_f.write("}\n")
+
+
+def create_identical_bayou_dataset(all_data_bayou_dataset_path, mcmc_dataset_path, new_bayou_dataset_name, new_bayou_data_dir_path):
+    mcmc_f = open(mcmc_dataset_path, 'rb')
+    prog_set = set([])
+    for program in ijson.items(mcmc_f, 'programs.item'):
+        key = (json.dumps(program['ast']), json.dumps(program['returnType']), json.dumps(program['formalParam']))
+        prog_set.add(key)
+
+    print("There are " + str(len(prog_set)) + " programs in dataset.")
+    # print("There are " + str(len(set(prog_set))) + " unique programs in dataset.")
+
+    mcmc_f.close()
+
+
+    all_bayou_f = open(all_data_bayou_dataset_path, 'rb')
+    new_bayou_f = open(new_bayou_data_dir_path + new_bayou_dataset_name, "w+")
+
+    # initialize new json file
+    new_bayou_f.write("{\n")
+    new_bayou_f.write("\"programs\": [\n")
+
+    data_types = ['ast', 'formalParam', 'returnType', 'keywords', 'types']
+    counter = 0
+    bayou_prog_set = set([])
+    programs = []
+    for program in ijson.items(all_bayou_f, 'programs.item'):
+        key = (json.dumps(program['ast']), json.dumps(program['returnType']), json.dumps(program['formalParam']))
+        counter += 1
+        if counter % 100000 == 0:
+            print(counter)
+        if key in prog_set and key not in bayou_prog_set:
+            prog = {}
+            for t in data_types:
+                prog[t] = program[t]
+            apis = get_apis(program['ast']['_nodes'], set([]))
+            prog['apicalls'] = list(apis)
+            bayou_prog_set.add(key)
+            programs.append(json.dumps(prog))
+
+        if len(bayou_prog_set) == len(prog_set):
+            break
+
+    print("There are " + str(counter) + " programs in the old dataset.")
+    print("There are " + str(len(prog_set)) + " unique programs in prog_set.")
+    print("There are " + str(len(programs)) + " unique programs in dataset.")
+
+    for i in range(len(programs)):
+        if i != 0:
+            new_bayou_f.write(",\n")
+        new_bayou_f.write(programs[i])
+
+    print(str(len(programs)) + " json objects copied into " + new_bayou_dataset_name)
+
+    # end new json data file
+    new_bayou_f.write("\n")
+    new_bayou_f.write("]\n")
+    new_bayou_f.write("}\n")
+    new_bayou_f.close()
+    all_bayou_f.close()
+
 
 def copy_json_data(old_data_filename, new_data_filename, num_programs=None, is_test_data=False,
                    old_data_dir_path=None, new_data_dir_path=None):
@@ -863,7 +926,7 @@ def analyze_file(dir_path, filename, vocab_freq_saved=True):
     num_skipped = vocab_freq_data['num_skipped']
     prog_sizes = vocab_freq_data['prog_sizes']
     vocab_size = vocab_freq_data['vocab_size']
-    branching = vocab_freq_data['vocab_size']
+    branching = vocab_freq_data['branching']
 
     print(str(counter) + " json objects in " + filename)
     print("Vocab size:", len(vocab))

@@ -166,8 +166,6 @@ class Experiments:
         self.all_test_ga = GraphAnalyzer(data_dir_name, train_test_split='test', filename='test_set', load_reader=True)  # TODO: fix
         self.test_ga = GraphAnalyzer(data_dir_name, train_test_split='small_test', filename='small_test_set', load_reader=True)
 
-        print(self.train_ga.g.nodes['java.lang.StringBuffer.deleteCharAt(int)'])
-
         data_dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../data_extractor/data/" + data_dir_name)
         testing_path = os.path.join(data_dir_path, "train_test_sets/test")
 
@@ -221,7 +219,7 @@ class Experiments:
         constraints = [data_point[1]]
         dp2 = data_point[2]
         exclude = []
-        min_length = 0
+        min_length = 1
         max_length = np.inf
 
         if category == IN_API or category == IN_CS:
@@ -265,15 +263,21 @@ class Experiments:
         test_progs = self.curated_test_sets_idxs[category][label]
         print(len(test_progs))
 
+
+        counter = 0
         for data_point in test_progs:
             mcmc_prog, ast, ret_type, fp = self.get_mcmc_prog_and_ast(data_point, category, in_random_order,
                                                                       num_apis_to_add_to_constraint)
 
-            for _ in self.num_iter:
+            for _ in range(int(self.num_iter)):
                 mcmc_prog.mcmc()
 
             post_dist_dict = self.add_to_post_dist(post_dist_dict, get_str_posterior_distribution(mcmc_prog),
                                                    data_point, ast, ret_type, fp)
+
+            counter += 1
+            if counter == 10:
+                break
 
         self.posterior_dists[category][label] = post_dist_dict
         print("here")

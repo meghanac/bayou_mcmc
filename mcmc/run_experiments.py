@@ -4,8 +4,8 @@ from data_extractor.graph_analyzer import ALL_DATA_NO_DUP
 
 
 num_iterations = 10
-data_dir_name = ALL_DATA_NO_DUP
-model_dir_path = '../trainer_vae/save/all_training_data_1.38m_large_config'
+data_dir_name = 'new_all_data_1k_vocab_no_duplicates'
+model_dir_path = '../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta'
 
 exp_dir_name = "testing"
 

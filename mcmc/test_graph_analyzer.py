@@ -1,3 +1,4 @@
+import pickle
 import random
 
 import ijson
@@ -6,14 +7,15 @@ import unittest
 import scipy.stats
 import networkx as nx
 from data_extractor.json_data_extractor import copy_json_data_change_return_types, copy_bayou_json_data_change_apicalls, \
-    copy_json_data_limit_vocab, copy_data_remove_duplicate
+    copy_json_data_limit_vocab, copy_data_remove_duplicate, create_identical_bayou_dataset, analyze_file
 from data_extractor.graph_analyzer import GraphAnalyzer, STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, \
     STR_BUILD_APP, LOWERCASE_LOCALE, DATA_DIR_PATH, ALL_DATA_1K_VOCAB, TESTING, NEW_VOCAB, APIS, RT, FP, TOP, MID, \
-    LOW, ALL_DATA_1K_VOCAB_NO_DUP, ALL_DATA, ALL_DATA_NO_DUP
+    LOW, ALL_DATA_1K_VOCAB_NO_DUP, ALL_DATA, ALL_DATA_NO_DUP, MIN_EQ, MAX_EQ
 from data_extractor.dataset_creator import DatasetCreator, build_sets_from_saved_creator, create_smaller_test_set, \
-    build_bayou_datasets
+    build_bayou_datasets, pickle_dump_test_sets, add_prog_length_to_dataset_creator
 from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
     MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
+
 
 class TestGraphAnalyzer(unittest.TestCase):
 
@@ -234,20 +236,80 @@ class TestGraphAnalyzer(unittest.TestCase):
 
     def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
         # data_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_10k_vocab_no_duplicates/'
-        data_path = 'all_data_10k_vocab_no_duplicates'
-        dataset_creator = DatasetCreator(data_path, load_reader=True)
-        # dataset_creator.create_curated_dataset()
-        dataset_creator.build_and_save_train_test_sets()
-        data_path = '../data_extractor/data/all_data_10k_vocab_no_duplicates/train_test_sets/dataset_creator.pickle'
-        create_smaller_test_set(data_path)
+        data_path = 'new_all_data_1k_vocab_no_duplicates'
+        dataset_creator = DatasetCreator(data_path, verbose=True)
+        dataset_creator.create_curated_dataset()
+
+        # dataset_creator.build_and_save_train_test_sets()
+        # data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/dataset_creator.pickle'
+        # create_smaller_test_set(data_path)
+
+    def test_analyze_file(self):
+        analyze_file('/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/test/small_min_length_3/', "small_test_set.json", vocab_freq_saved=False)
+
+    def test_build_identical_bayou_dataset(self):
+        all_data_bayou_dataset_name = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/data_surrounding_methods.json'
+        mcmc_dataset_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/train/all_training_data.json'
+        new_bayou_dataset_name = 'training_1k_vocab_apicalls.json'
+        bayou_path = '/Users/meghanachilukuri/bayou/src/main/python/bayou/models/low_level_evidences/data/'
+        create_identical_bayou_dataset(all_data_bayou_dataset_name, mcmc_dataset_path, new_bayou_dataset_name, bayou_path)
 
     def test_build_sets_from_creator(self):
         data_path = '../data_extractor/data/all_data_no_duplicates/train_test_sets/dataset_creator.pickle'
         build_sets_from_saved_creator(data_path)
 
     def test_create_small_test_set(self):
-        data_path = '../data_extractor/data/all_data_no_duplicates/train_test_sets/dataset_creator.pickle'
-        create_smaller_test_set(data_path, save=False)
+        data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'
+        create_smaller_test_set(data_path, 'new_all_data_1k_vocab_no_duplicates', num_progs_per_category=1000, save=True)
+
+    def test_connected_components(self):
+        data_dir_name = 'new_all_data_1k_vocab_no_duplicates'
+        train_ga = GraphAnalyzer(data_dir_name, train_test_split='train', filename='all_training_data',
+                                 load_reader=True, load_g_without_control_structs=False)
+        data_dir_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'
+        creator_dir_path = data_dir_path + "/train_test_sets/"
+        f = open(creator_dir_path + "/dataset_creator.pickle", "rb")
+        dataset_creator = pickle.load(f)
+
+        api_count = {}
+
+        for category in dataset_creator.categories:
+            cat_test_set = dataset_creator.categories[category][0]
+            for t in cat_test_set.keys():
+                if category != MIN_EQ and category != MAX_EQ and category != 'random':
+                    print("category:", category, "label:", t)
+                    num_joint = 0
+                    num_disjoint = 0
+
+                    for data in cat_test_set[t]:
+                        prog_id = data[0]
+                        api = dataset_creator.ga.node2vocab[data[1]]
+                        dp2 = dataset_creator.ga.node2vocab[data[2]]
+                        # len = data[3]
+
+                        # intersection = set(train_ga.g.neighbors(api)).intersection(set(train_ga.g.neighbors(dp2)))
+                        intersection = set(train_ga.g[api].keys()).intersection(set(train_ga.g[dp2].keys()))
+
+                        if len(intersection) == 0:
+                            num_disjoint += 1
+                        else:
+                            num_joint += 1
+
+                        for i in [api, dp2]:
+                            if i in api_count:
+                                api_count[i] += 1
+                            else:
+                                api_count[i] = 1
+
+                    print("num joint:", num_joint)
+                    print("num disjoint", num_disjoint)
+
+        print(sorted(api_count.items(), key=lambda x: x[1], reverse=True))
+        print(len(api_count))
+
+    def test_add_length_to_creator(self):
+        data_dir_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'
+        add_prog_length_to_dataset_creator(data_dir_path, save=True)
 
     def test_build_bayou_test_set(self):
         bayou_data_dir_path = '../data_extractor/data/all_data_no_duplicates_bayou/'
@@ -255,6 +317,10 @@ class TestGraphAnalyzer(unittest.TestCase):
         mcmc_data_dir_path = '../data_extractor/data/all_data_no_duplicates/'
 
         build_bayou_datasets(mcmc_data_dir_path, bayou_data_dir_path, bayou_data_folder_name)
+
+    def test_pickle_test_set(self):
+        data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'
+        pickle_dump_test_sets(data_path, 'new_all_data_1k_vocab_no_duplicates')
 
     def test_change_return_type(self):
         old_data_filename_path = '/data/all_data_no_duplicates/train_test_sets/train/all_training_data.json'

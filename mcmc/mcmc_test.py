@@ -638,7 +638,7 @@ class MCMCProgramTest(unittest.TestCase):
         #                                                                 ['DSubTree', 'String'], ordered=True)
 
         test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_05_MODEL_PATH,
-                                                                        ['java.util.Random.Random(long)', 'java.io.OutputStream.write(byte[])', 'DLoop'],
+                                                                        ['java.util.Random.Random(long)', 'java.io.OutputStream.write(byte[])'],
                                                                         ['void'],
                                                                         ['DSubTree'])
 
