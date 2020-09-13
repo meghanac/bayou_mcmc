@@ -237,7 +237,7 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
         # data_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_10k_vocab_no_duplicates/'
         data_path = 'new_all_data_1k_vocab_no_duplicates'
-        dataset_creator = DatasetCreator(data_path, verbose=True)
+        dataset_creator = DatasetCreator(data_path, verbose=False)
         dataset_creator.create_curated_dataset()
 
         # dataset_creator.build_and_save_train_test_sets()

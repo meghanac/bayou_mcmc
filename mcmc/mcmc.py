@@ -443,8 +443,8 @@ class MCMCProgram:
                 # if curr_node.child.child is None or curr_node.child.sibling is None \
                 #         or curr_node.child.child.sibling is None:
                 #     return False
-                if curr_node.child.api_name in (DNODES - {STOP}) or curr_node.child.child.api_name in (DNODES - {STOP}) \
-                        or curr_node.child.sibling.api_name in (DNODES - {STOP}):
+                if curr_node.child.api_name in (DNODES - {STOP}) or (curr_node.child.child is not None and curr_node.child.child.api_name in (DNODES - {STOP})) \
+                        or (curr_node.child.sibling is not None and curr_node.child.sibling.api_name in (DNODES - {STOP})):
                     return False
                 if curr_node.sibling is None:
                     return False

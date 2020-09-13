@@ -28,9 +28,14 @@ FP_TARGETS_IDX = 5
 JACC_API = "jaccard_api"
 JACC_SEQ = "jaccard_seq"
 AST_EQ = "ast_equivalence"
-IN_SET = "in_set"
 MIN_DIFF_ST = 'min_diff_statements'
 MIN_DIFF_CS = "min_diff_control_structs"
+
+IN_SET = "in_set"
+MEET_CONST = "meets_constraints"
+HAS_MORE_APIS = "has_more_apis"
+JACC_TEST_SET = "jaccard_test_set"
+REL_ADD = "relevant_additions"
 
 RAND = 'random'
 ASC = 'ascending'
@@ -39,6 +44,11 @@ PLUS_1 = 1
 PLUS_2 = 2
 PLUS_3 = 3
 
+INCLUDE = 'include'
+EXCLUDE = 'exclude'
+MIN_LENGTH = 'min_length'
+MAX_LENGTH = 'max_length'
+
 
 class Metrics:
     def __init__(self, num_iterations, top_k=10):
@@ -46,9 +56,8 @@ class Metrics:
         self.top_k = top_k
 
     def get_top_k_gen_progs(self, posterior_dist):
-        posterior = posterior_dist.items
-        posterior = sorted([(i[0], i[1][0] / self.num_iter * i[1][1]) for i in posterior], reverse=True,
-                           key=lambda x: x[1])  # TODO: CHECK IF THIS METRIC MAKES SENSE
+        posterior = posterior_dist.items()
+        posterior = sorted([(i[0], i[1][1]) for i in posterior], reverse=True, key=lambda x: x[1])  # TODO: CHECK IF THIS METRIC MAKES SENSE
         top_k = min(self.top_k, len(posterior))
         posterior = posterior[:top_k]
         posterior = [i[0] for i in posterior]
@@ -94,6 +103,7 @@ class Metrics:
         return 1.0 * min(top_k_diff)
 
     def get_apis_set(self, data_point):
+        # print("data point:", data_point)
         apis = set(data_point[NODES_IDX])
         apis.update(set(data_point[TARGETS_IDX]))
         return apis
@@ -115,29 +125,106 @@ class Metrics:
 
     def get_jaccard_distance(self, set_a, set_b):
         try:
-            1.0 * len(set_a & set_b) / len(set_a | set_b)
+            return 1.0 * len(set_a.intersection(set_b)) / len(set_a.union(set_b))
         except ZeroDivisionError:
             print("get_jaccard_distance: ZeroDivisionError but shouldn't be here!")
             print("len set_a:", len(set_a), "len set_b:", len(set_b), "len(set_a & set_b):", len(set_a & set_b),
                   "len(set_a | set_b):", len(set_a | set_b))
             return 0.0
 
-    def get_all_metrics(self, test_data_point, posterior_dist, ret_type, fp, ga):
-        jaccard_api = self.jaccard_api(test_data_point, posterior_dist)
-        jaccard_seq = self.jaccard_sequence(test_data_point, posterior_dist)
-        ast_eq = self.ast_equivalence_top_k(test_data_point, posterior_dist)
-        min_diff_cs = self.abs_min_diff_control_structs_top_k(test_data_point, posterior_dist)
-        min_diff_statements = self.abs_min_diff_statements_top_k(test_data_point, posterior_dist)
-        in_dataset = self.appears_in_set(posterior_dist, ret_type, fp, ga)
+    def get_all_metrics(self, posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga):
+        # jaccard_api = self.jaccard_api(test_data_point, posterior_dist)
+        # jaccard_seq = self.jaccard_sequence(test_data_point, posterior_dist)
+        # ast_eq = self.ast_equivalence_top_k(test_data_point, posterior_dist)
+        # min_diff_cs = self.abs_min_diff_control_structs_top_k(test_data_point, posterior_dist)
+        # min_diff_statements = self.abs_min_diff_statements_top_k(test_data_point, posterior_dist)
 
-        return jaccard_api, jaccard_seq, ast_eq, min_diff_cs, min_diff_statements, in_dataset
+        metrics = {}
 
-    def get_all_averaged_metrics(self, test_data_point, posterior_dist, ret_type, fp, ga):
-        jaccard_api, jaccard_seq, ast_eq, min_diff_cs, min_diff_statements, in_dataset = self.get_all_metrics(
-            test_data_point, posterior_dist, ret_type, fp, ga)
+        metrics[IN_SET] = self.appears_in_set(posterior_dist, ret_type, fp, test_ga)
+        metrics[MEET_CONST] = self.meets_constraints(posterior_dist, constraint_dict)
+        metrics[REL_ADD] = self.relevant_additions(posterior_dist, constraint_dict, train_ga)
+        metrics[HAS_MORE_APIS] = self.has_more_apis(posterior_dist, constraint_dict)
+        metrics[JACC_TEST_SET] = self.jaccard_distance_test_set(posterior_dist, constraint_dict, test_ga)
 
-        return jaccard_api / self.num_iter, jaccard_seq / self.num_iter, ast_eq / self.num_iter, \
-            min_diff_cs / self.num_iter, min_diff_statements / self.num_iter, in_dataset / self.num_iter
+        return metrics
+
+    def get_all_averaged_metrics(self, posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga):
+        # jaccard_api, jaccard_seq, ast_eq, min_diff_cs, min_diff_statements, in_dataset = self.get_all_metrics(
+        #     test_data_point, posterior_dist, ret_type, fp, constraint_dict, ga)
+        #
+        # # TODO: CHANGE!!!!
+        # return jaccard_api / self.num_iter, jaccard_seq / self.num_iter, ast_eq / self.num_iter, \
+        #     min_diff_cs / self.num_iter, min_diff_statements / self.num_iter, in_dataset / self.num_iter
+
+        all_metrics = self.get_all_metrics(posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga)
+        print(all_metrics)
+        for metric in all_metrics:
+            all_metrics[metric] /= self.num_iter
+
+        return all_metrics
+
+    def meets_constraints(self, posterior_dist, constraint_dict):
+        posterior = self.get_top_k_gen_progs(posterior_dist)
+
+        def get_score(prog):
+            score = True
+            apis = self.get_apis_set(prog)
+            score = score and set(constraint_dict[INCLUDE]).issubset(apis)
+            score = score and not set(constraint_dict[EXCLUDE]).issubset(apis)
+            score = score and constraint_dict[MIN_LENGTH] <= len(prog[0])
+            score = score and len(prog[0]) <= constraint_dict[MAX_LENGTH]
+            return int(score)
+
+        return sum([get_score(i) for i in posterior]) * 1.0 / self.top_k
+
+    def has_more_apis(self, posterior_dist, constraint_dict):
+        posterior = self.get_top_k_gen_progs(posterior_dist)
+
+        def get_score(prog):
+            return int(len(prog[0]) > len(constraint_dict[INCLUDE]))
+        # TODO: FIGURE OUT HOW TO ACCOUNT FOR CFS
+        return sum([get_score(i) for i in posterior]) * 1.0 / self.top_k
+
+    def get_post_dict_from_str(self, posterior_dist):
+        post_dist = {}
+        print(type(posterior_dist))
+        for str_prog in posterior_dist:
+            prog = json.loads(str_prog)
+            post_dist[prog] = posterior_dist[str_prog]
+        return post_dist
+
+    def jaccard_distance_test_set(self, posterior_dist, constraint_dict, ga):
+        test_progs_meet_constraints = ga.get_programs_with_multiple_apis(constraint_dict[INCLUDE],
+                                                                         exclude=constraint_dict[EXCLUDE],
+                                                                         min_length=constraint_dict[MIN_LENGTH],
+                                                                         max_length=constraint_dict[MAX_LENGTH])
+        test_progs_meet_constraints = set([tuple(self.get_apis_set((i[0][1], i[1][1], i[2][1]))) for i in test_progs_meet_constraints])
+        print(test_progs_meet_constraints)
+        # posterior_dist = self.get_post_dict_from_str(posterior_dist)
+        posterior = self.get_top_k_gen_progs(posterior_dist)
+        api_sets = set([tuple(self.get_apis_set(i)) for i in posterior])
+        return self.get_jaccard_distance(api_sets, test_progs_meet_constraints)
+
+    def relevant_additions(self, posterior_dist, constraint_dict, ga):
+        # posterior_dist = self.get_post_dict_from_str(posterior_dist)
+        posterior = self.get_top_k_gen_progs(posterior_dist)
+        api_sets = set([tuple(self.get_apis_set(i)) for i in posterior])
+        num_progs = len(api_sets)
+
+        avg_score = 0.0
+        for prog in api_sets:
+            added_apis = list(set(prog).difference(set(constraint_dict[INCLUDE])))
+            num_added_apis = len(added_apis)
+            score = 0.0
+            for added_api in added_apis:
+                api_appears_with_constraint = False
+                for constraint in constraint_dict[INCLUDE]:
+                    api_appears_with_constraint = api_appears_with_constraint or len(
+                        ga.get_program_ids_with_multiple_apis([added_api, constraint])) > 0
+                score += int(api_appears_with_constraint)
+            avg_score += 1.0 * score / num_added_apis
+        return 1.0 * avg_score / num_progs
 
 
 class Experiments:
@@ -212,9 +299,11 @@ class Experiments:
                         dp2 = self.dataset_creator.ga.node2vocab[data_point[2]]
                     self.curated_test_sets_idxs[category][label].add((dp0, dp1, dp2))
 
-        self.metric_labels = [JACC_API, JACC_SEQ, AST_EQ, IN_SET, MIN_DIFF_CS, MIN_DIFF_ST]
+        # self.metric_labels = [JACC_API, JACC_SEQ, AST_EQ, IN_SET, MIN_DIFF_CS, MIN_DIFF_ST]
 
-    def get_mcmc_prog_and_ast(self, data_point, category, in_random_order, num_apis_to_add_to_constraint):
+        self.metric_labels = [JACC_TEST_SET, HAS_MORE_APIS, REL_ADD, MEET_CONST, IN_SET]
+
+    def get_mcmc_prog_and_ast(self, data_point, category, in_random_order, num_apis_to_add_to_constraint, verbose=False):
         prog_id = data_point[0]
         constraints = [data_point[1]]
         dp2 = data_point[2]
@@ -242,23 +331,35 @@ class Experiments:
         constraints += ordered_apis[:num_apis_to_add_to_constraint]
         print(constraints)
         # init MCMCProgram
-        mcmc_prog = MCMCProgram(self.model_dir_path)
+        mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose)
         mcmc_prog.init_program(constraints, return_type, fp, exclude=exclude, min_length=min_length,
                                max_length=max_length, ordered=False)
 
-        return mcmc_prog, ast, return_type, fp
+        constraint_dict = {INCLUDE: constraints, EXCLUDE: exclude, MIN_LENGTH: min_length, MAX_LENGTH: max_length}
+
+        return mcmc_prog, ast, return_type, fp, constraint_dict
 
     def dump_metrics(self, category, label):
         with open(self.exp_dir_path + "/metrics_" + category + "_" + label + ".json", "w+") as f:
             f.write(json.dumps(self.avg_metrics[category][label]))
             f.close()
 
-    def dump_posterior_distributions(self, category, label):
-        with open(self.exp_dir_path + "/post_dist_" + category + "_" + label + ".json", "w+") as f:
-            f.write(json.dumps(self.posterior_dists[category][label]))
+    def dump_posterior_dist(self, category, label):
+        # print(self.posterior_dists[category][label])
+        # str_post_dist = {}
+        # for key in self.posterior_dists[category][label]:
+        #     str_key = []
+        #     for i in key:
+        #         str_key.append(str(key))
+        #     str_key = str(tuple(str_key))
+        #     str_post_dist[str_key] = self.posterior_dists[category][label][key]
+        with open(self.exp_dir_path + "/post_dist_" + category + "_" + label + ".pickle", "wb") as f:
+            # f.write(json.dumps(str_post_dist))
+            # f.close()
+            pickle.dump(self.posterior_dists[category][label], f)
             f.close()
 
-    def run_mcmc(self, category, label, in_random_order=True, num_apis_to_add_to_constraint=PLUS_0):
+    def run_mcmc(self, category, label, in_random_order=True, num_apis_to_add_to_constraint=PLUS_0, verbose=False):
         post_dist_dict = self.posterior_dists[category][label]
         test_progs = self.curated_test_sets_idxs[category][label]
         print(len(test_progs))
@@ -266,27 +367,27 @@ class Experiments:
 
         counter = 0
         for data_point in test_progs:
-            mcmc_prog, ast, ret_type, fp = self.get_mcmc_prog_and_ast(data_point, category, in_random_order,
-                                                                      num_apis_to_add_to_constraint)
+            mcmc_prog, ast, ret_type, fp, constraint_dict = self.get_mcmc_prog_and_ast(data_point, category, in_random_order,
+                                                                      num_apis_to_add_to_constraint, verbose=verbose)
 
             for _ in range(int(self.num_iter)):
                 mcmc_prog.mcmc()
-
+            print(get_str_posterior_distribution(mcmc_prog))
             post_dist_dict = self.add_to_post_dist(post_dist_dict, get_str_posterior_distribution(mcmc_prog),
-                                                   data_point, ast, ret_type, fp)
+                                                   data_point, ast, ret_type, fp, constraint_dict)
 
             counter += 1
-            if counter == 10:
+            if counter == 2:
                 break
 
         self.posterior_dists[category][label] = post_dist_dict
         print("here")
         self.calculate_metrics(category, label)
         self.dump_metrics(category, label)
-        self.dump_posterior_distributions(category, label)
+        self.dump_posterior_dist(category, label)
 
-    def add_to_post_dist(self, post_dist_dict, posterior_dist, data_point, ast, ret_type, fp):
-        post_dist_dict[data_point] = (posterior_dist, ast, ret_type, fp)
+    def add_to_post_dist(self, post_dist_dict, posterior_dist, data_point, ast, ret_type, fp, constraint_dict):
+        post_dist_dict[data_point] = (posterior_dist, ast, ret_type, fp, constraint_dict)
         return post_dist_dict
 
     def calculate_metrics(self, category, label):
@@ -303,21 +404,32 @@ class Experiments:
         # min_diff_statements_metric = 0.0
         # min_diff_cs_metric = 0.0
 
-        if label == SEEN:
-            ga = self.train_ga
-        else:
-            ga = self.all_test_ga
+        train_ga = self.train_ga
+        test_ga = self.all_test_ga
 
-        for posterior_dist, ast, ret_type, fp in post_dist_dict.values():
-            jaccard_api, jaccard_seq, ast_eq, min_diff_cs, min_diff_statements, in_dataset = \
-                self.metrics.get_all_averaged_metrics(posterior_dist, ast, ret_type, fp, ga)
+        for posterior_dist, ast, ret_type, fp, constraint_dict in post_dist_dict.values():
+            print(posterior_dist)
+            print(ast)
+            print(ret_type)
+            print(fp)
+            print(constraint_dict)
+            prog_metrics = \
+                self.metrics.get_all_averaged_metrics(posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga)
 
-            metrics[JACC_API] += jaccard_api
-            metrics[JACC_SEQ] += jaccard_seq
-            metrics[AST_EQ] += ast_eq
-            metrics[IN_SET] += in_dataset
-            metrics[MIN_DIFF_ST] += min_diff_statements
-            metrics[MIN_DIFF_CS] += min_diff_cs
+            print(prog_metrics)
+
+            # metrics[JACC_API] += jaccard_api
+            # metrics[JACC_SEQ] += jaccard_seq
+            # metrics[AST_EQ] += ast_eq
+            # metrics[IN_SET] += in_dataset
+            # metrics[MIN_DIFF_ST] += min_diff_statements
+            # metrics[MIN_DIFF_CS] += min_diff_cs
+
+            metrics[IN_SET] += prog_metrics[IN_SET]
+            metrics[JACC_TEST_SET] += prog_metrics[JACC_TEST_SET]
+            metrics[HAS_MORE_APIS] += prog_metrics[HAS_MORE_APIS]
+            metrics[REL_ADD] += metrics[REL_ADD]
+            metrics[MEET_CONST] += metrics[MEET_CONST]
 
         self.avg_metrics[category][label] = metrics
 

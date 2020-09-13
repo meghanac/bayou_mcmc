@@ -242,7 +242,7 @@ class GraphAnalyzer:
         nodes = [self.node2vocab[i] for i in nodes]
 
         edges = self.edges[prog_id]
-        edges = edges[edges != 0].tolist()
+        edges = edges[:len(nodes)].tolist()
 
         ret_type = self.return_types[prog_id]
         ret_type = ret_type[ret_type != 0].tolist()
@@ -279,17 +279,29 @@ class GraphAnalyzer:
         for i in edges:
             print(i[1], i[2]['weight'])
 
-    def get_program_ids_for_api(self, api, limit=None):
+    def get_program_ids_for_api(self, api, limit=None, exclude=(), min_length=1, max_length=np.inf):
         try:
-            prog_ids = self.api_to_prog_ids[self.vocab2node[api]].copy()
+            prog_ids = set(self.api_to_prog_ids[self.vocab2node[api]].copy())
         except KeyError:
             # print("api key error:", api)
             return set([])
+
+        exclude_prog_ids = set([])
+        for e in exclude:
+            try:
+                e_prog_id = self.api_to_prog_ids[self.vocab2node[e]].copy()
+                exclude_prog_ids.update(e_prog_id)
+            except KeyError:
+                pass
+
+        prog_ids.difference_update(exclude_prog_ids)
+        prog_ids = set(filter(lambda x: max_length >= self.fetch_nodes_as_list(x).index(0) >= min_length, list(prog_ids)))
+
         if limit is not None and len(prog_ids) > limit:
             return set(itertools.islice(prog_ids, limit))
         # print(prog_ids)
         # print(type(prog_ids))
-        return set(prog_ids)
+        return prog_ids
 
     def get_program_ids_for_api_length_k(self, api, min_max_eq, k, limit=None):
         prog_ids = self.get_program_ids_for_api(api)
@@ -355,25 +367,25 @@ class GraphAnalyzer:
             return ("nodes:", nodes), ("edges:", edges), ("return type:", return_type), (
                 "formal params:", formal_params)
 
-    def get_program_ids_with_multiple_apis(self, apis, limit=None, exclude=None):
-        common_programs = self.get_program_ids_for_api(apis[0])
+    def get_program_ids_with_multiple_apis(self, apis, limit=None, exclude=(), min_length=1, max_length=np.inf):
+        common_programs = self.get_program_ids_for_api(apis[0], exclude=exclude, min_length=min_length,
+                                                       max_length=max_length)
         if type(common_programs) == dict:
             print(apis[0], "\n\n\n")
 
         for api in apis:
-            progs = self.get_program_ids_for_api(api)
+            progs = self.get_program_ids_for_api(api, exclude=exclude, min_length=min_length, max_length=max_length)
             if type(progs) == dict:
                 print(api, "\n\n\n")
             if type(common_programs) == dict:
                 print(apis[0], "\n\n\n")
             common_programs.intersection_update(progs)
 
-        if exclude is not None:
-            for e in exclude:
-                apis_copy = apis.copy()
-                apis_copy.append(e)
-                e_progs = self.get_program_ids_with_multiple_apis(apis_copy)
-                common_programs -= e_progs
+        # for e in exclude:
+        #     apis_copy = apis.copy()
+        #     apis_copy.append(e)
+        #     e_progs = self.get_program_ids_with_multiple_apis(apis_copy)
+        #     common_programs -= e_progs
 
         if limit is not None and len(common_programs) > limit:
             print("Total number of results:", len(common_programs))
@@ -381,8 +393,8 @@ class GraphAnalyzer:
 
         return common_programs
 
-    def get_programs_with_multiple_apis(self, apis, limit=None, get_targets=True, get_jsons=False, exclude=None):
-        prog_ids = self.get_program_ids_with_multiple_apis(apis, limit=limit, exclude=exclude)
+    def get_programs_with_multiple_apis(self, apis, limit=None, get_targets=True, get_jsons=False, exclude=(), min_length=1, max_length=np.inf):
+        prog_ids = self.get_program_ids_with_multiple_apis(apis, limit=limit, exclude=exclude, min_length=min_length, max_length=max_length)
         programs = []
         for id in prog_ids:
             programs.append(self.get_formatted_program(id, get_targets=get_targets, get_jsons=get_jsons))
@@ -414,9 +426,9 @@ class GraphAnalyzer:
         # dot.node(nodes[0], )
         for i in range(len(nodes)):
             dot.node(str(i), label=nodes[i])
-            dot.node(str(i+1), label=targets[i])
+            dot.node(str(i + 1), label=targets[i])
             label = 'child' if edges[i] else 'sibling'
-            dot.edge(str(i), str(i+1), label=label, constraint='true', direction='LR')
+            dot.edge(str(i), str(i + 1), label=label, constraint='true', direction='LR')
             # dfs_id += 1
 
         dot.render("graph_analysis_outputs/" + filename)
@@ -485,6 +497,7 @@ class GraphAnalyzer:
     def get_sorted_stats(self, stats):
         def take_count(e):
             return e[1]
+
         sorted_apis = sorted(stats[APIS].items(), key=take_count, reverse=True)
         sorted_rt = sorted(stats[RT].items(), key=take_count, reverse=True)
         sorted_fp = sorted(stats[FP].items(), key=take_count, reverse=True)
@@ -529,12 +542,12 @@ class GraphAnalyzer:
             fp = [i[0] for i in sorted_fp[:fp_k]]
 
         elif level == 'mid':
-            api_diff = math.floor((len(sorted_apis) - api_k)/2)
-            apis = [i[0] for i in sorted_apis[api_diff:api_diff+k]]
-            rt_diff = math.floor((len(sorted_rt) - rt_k)/2)
-            rt = [i[0] for i in sorted_rt[rt_diff:rt_diff+k]]
-            fp_diff = math.floor((len(sorted_fp) - fp_k)/2)
-            fp = [i[0] for i in sorted_fp[fp_diff:fp_diff+k]]
+            api_diff = math.floor((len(sorted_apis) - api_k) / 2)
+            apis = [i[0] for i in sorted_apis[api_diff:api_diff + k]]
+            rt_diff = math.floor((len(sorted_rt) - rt_k) / 2)
+            rt = [i[0] for i in sorted_rt[rt_diff:rt_diff + k]]
+            fp_diff = math.floor((len(sorted_fp) - fp_k) / 2)
+            fp = [i[0] for i in sorted_fp[fp_diff:fp_diff + k]]
 
         else:
             apis = [i[0] for i in sorted_apis[-api_k:]]
@@ -605,8 +618,8 @@ class GraphAnalyzer:
         if level == TOP:
             selected = sorted_dj_nodes[:k]
         elif level == MID:
-            idx = max(math.floor(len(sorted_dj_nodes)/2 - k/2), 0)
-            selected = sorted_dj_nodes[idx:idx+k]
+            idx = max(math.floor(len(sorted_dj_nodes) / 2 - k / 2), 0)
+            selected = sorted_dj_nodes[idx:idx + k]
         elif level == LOW:
             selected = sorted_dj_nodes[-k:]
         else:

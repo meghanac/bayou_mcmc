@@ -227,7 +227,7 @@ class DatasetCreator:
                 if self.verbose:
                     print("api:", api, "data_point:", data_point2)
                     print("num progs added:", len(prog_ids))
-                self.add_to_test_set((api), data_point2, prog_ids, test_set)
+                self.add_to_test_set([api], data_point2, prog_ids, test_set)
                 return True
 
             if novelty_label == SEEN:
@@ -240,14 +240,13 @@ class DatasetCreator:
                 if self.verbose:
                     print("api:", api, "data_point:", data_point2)
                     print("num progs added:", len(prog_ids))
-                self.add_to_test_set(api, data_point2, prog_ids, test_set)
+                self.add_to_test_set([api], data_point2, prog_ids, test_set)
                 return True
 
         return False
 
-    def add_exclude_test_progs(self,category, novelty_label):
-        assert category in DP2_API or category in DP2_CS, "Error: category must be " + IN_CS + ", " + IN_API + ", " \
-                                                          + EX_API + ", " + ", or " + EX_CS
+    def add_exclude_test_progs(self, category, novelty_label):
+        assert category == EX_CS or category == EX_API
         api_idx_range = list(range(self.full_range[0], self.full_range[1]))
         random.shuffle(api_idx_range)
 
@@ -355,7 +354,7 @@ class DatasetCreator:
 
                 success = False
 
-                if num_test_set_progs <= num_training_set_progs * self.control_limit:
+                if num_test_set_progs <= num_training_set_progs * 1:
                     if novelty_label == NEW and 0 < num_test_set_progs <= max_progs:
                         prog_ids = progs_with_api_dp2
                         if self.verbose:
@@ -394,52 +393,52 @@ class DatasetCreator:
         print("Num API + " + category + " pairs added: " + str(num_pairs_added))
         print("Total programs added: " + str(len(test_set)))
 
-    def added_to_exclude_test_set(self, api, data_point2, novelty_label, test_set, progs_with_api, progs_with_dp2,
-                                  progs_with_both):
-        num_progs_with_both = len(progs_with_both)
-        num_progs_with_api = len(progs_with_api)
-        num_progs_with_dp2 = len(progs_with_dp2)
-
-        if data_point2 in {DBRANCH, DLOOP, DEXCEPT}:
-            max_progs = 50
-        else:
-            max_progs = 200
-
-        if self.verbose and self.test_mode:
-            print("num progs api", num_progs_with_api)
-            print("num progs dp2", num_progs_with_dp2)
-            print("num progs both", num_progs_with_both)
-            print("control limit:", num_progs_with_api * self.control_limit)
-            print("difference:", num_progs_with_api - num_progs_with_both)
-        if num_progs_with_api - num_progs_with_both <= num_progs_with_api * self.control_limit:
-            if novelty_label == NEW and 0 < num_progs_with_api - num_progs_with_both <= max_progs:
-                prog_ids = progs_with_api - progs_with_both
-                if self.verbose:
-                    print("api:", api, "data_point:", data_point2)
-                    print("num progs added:", len(prog_ids))
-
-                if len(prog_ids) == 0:
-                    return False
-
-                self.add_to_test_set(api, data_point2, prog_ids, test_set)
-                return True
-
-            if novelty_label == SEEN:
-                limit = min(math.ceil((num_progs_with_api - num_progs_with_both) / 4),
-                            self.control_limit * num_progs_with_api, 10)
-                prog_ids = progs_with_api - progs_with_both
-
-                if len(prog_ids) == 0:
-                    return False
-
-                prog_ids = itertools.islice(prog_ids, limit)
-
-                if self.verbose:
-                    print("api:", api, "data_point:", data_point2)
-                self.add_to_test_set(api, data_point2, prog_ids, test_set)
-                return True
-
-        return False
+    # def added_to_exclude_test_set(self, api, data_point2, novelty_label, test_set, progs_with_api, progs_with_dp2,
+    #                               progs_with_both):
+    #     num_progs_with_both = len(progs_with_both)
+    #     num_progs_with_api = len(progs_with_api)
+    #     num_progs_with_dp2 = len(progs_with_dp2)
+    #
+    #     if data_point2 in {DBRANCH, DLOOP, DEXCEPT}:
+    #         max_progs = 50
+    #     else:
+    #         max_progs = 200
+    #
+    #     if self.verbose and self.test_mode:
+    #         print("num progs api", num_progs_with_api)
+    #         print("num progs dp2", num_progs_with_dp2)
+    #         print("num progs both", num_progs_with_both)
+    #         print("control limit:", num_progs_with_api * self.control_limit)
+    #         print("difference:", num_progs_with_api - num_progs_with_both)
+    #     if num_progs_with_api - num_progs_with_both <= num_progs_with_api * self.control_limit:
+    #         if novelty_label == NEW and 0 < num_progs_with_api - num_progs_with_both <= max_progs:
+    #             prog_ids = progs_with_api - progs_with_both
+    #             if self.verbose:
+    #                 print("api:", api, "data_point:", data_point2)
+    #                 print("num progs added:", len(prog_ids))
+    #
+    #             if len(prog_ids) == 0:
+    #                 return False
+    #
+    #             self.add_to_test_set(api, data_point2, prog_ids, test_set)
+    #             return True
+    #
+    #         if novelty_label == SEEN:
+    #             limit = min(math.ceil((num_progs_with_api - num_progs_with_both) / 4),
+    #                         self.control_limit * num_progs_with_api, 10)
+    #             prog_ids = progs_with_api - progs_with_both
+    #
+    #             if len(prog_ids) == 0:
+    #                 return False
+    #
+    #             prog_ids = itertools.islice(prog_ids, limit)
+    #
+    #             if self.verbose:
+    #                 print("api:", api, "data_point:", data_point2)
+    #             self.add_to_test_set(api, data_point2, prog_ids, test_set)
+    #             return True
+    #
+    #     return False
 
     def add_to_test_set(self, include_api_list, data_point2, prog_ids_set, test_set, dp2type_is_int=False):
         api_num = []
@@ -582,7 +581,7 @@ class DatasetCreator:
 
             for i in range(len(selected_vocab_idx)):
                 prog_id = self.ga.get_program_ids_for_api(selected_vocab_idx[i], limit=1)
-                self.add_to_test_set(selected_vocab_idx[i], -1, prog_id, self.random_progs_set[freq],
+                self.add_to_test_set([selected_vocab_idx[i]], -1, prog_id, self.random_progs_set[freq],
                                      dp2type_is_int=True)
 
         print("Number of random programs added:", len(self.random_progs_set))
