@@ -136,30 +136,30 @@ class DatasetCreator:
         random.shuffle(api_idx_range)
 
         self.analysis_f.write("category: " + category + " label: " + novelty_label + "\n")
-
-        if category in DP2_API:
-            dp2_idx_range = list(range(self.full_range[0], self.full_range[1]))
-            random.shuffle(dp2_idx_range)
-            data_points = self.ranks
-        else:
-            dp2_idx_range = range(len(self.control_structs))
-            data_points = self.control_structs
+        #
+        # if category in DP2_API:
+        #     dp2_idx_range = list(range(self.full_range[0], self.full_range[1]))
+        #     random.shuffle(dp2_idx_range)
+        #     data_points = self.ranks
+        # else:
+        #     dp2_idx_range = range(len(self.control_structs))
+        #     data_points = self.control_structs
 
         test_set = self.categories[category][0][novelty_label]
 
         num_pairs_added = 0
 
-        all_possible_data_points = itertools.product(api_idx_range, dp2_idx_range)
+        # all_possible_data_points = itertools.product(api_idx_range, dp2_idx_range)
 
-        def suitable_candidate(idxs):
-            progs_with_both = len(
-                self.ga.get_program_ids_with_multiple_apis([self.ranks[idxs[0]], data_points[idxs[1]]]))
-            progs_with_api = len(self.ga.get_program_ids_for_api(self.ranks[idxs[0]]))
-            progs_with_dp2 = len(self.ga.get_program_ids_for_api(data_points[idxs[1]]))
-            return 1 < progs_with_both < progs_with_api and progs_with_dp2 > progs_with_both
-
+        # def suitable_candidate(idxs):
+        #     progs_with_both = len(
+        #         self.ga.get_program_ids_with_multiple_apis([self.ranks[idxs[0]], data_points[idxs[1]]]))
+        #     progs_with_api = len(self.ga.get_program_ids_for_api(self.ranks[idxs[0]]))
+        #     progs_with_dp2 = len(self.ga.get_program_ids_for_api(data_points[idxs[1]]))
+        #     return 1 < progs_with_both < progs_with_api and progs_with_dp2 > progs_with_both
+        #
         start_time = time.time()
-        valid_data_points = filter(lambda idxs: suitable_candidate(idxs), all_possible_data_points)
+        # valid_data_points = filter(lambda idxs: suitable_candidate(idxs), all_possible_data_points)
 
         if self.test_mode:
             print("Time taken for valid_data_points:", start_time - time.time())
@@ -168,41 +168,78 @@ class DatasetCreator:
 
         counter = 0
         start_time = time.time()
-        for api_idx, dp_idx in valid_data_points:
-            counter += 1
-            if counter % 5000 == 0:
-                print("counter:", counter)
-                print("num pairs added:", num_pairs_added)
-                print("num progs added:", len(test_set))
-                self.analysis_f.write("counter: " + str(counter) + " num pairs added: " + str(
-                    num_pairs_added) + " num progs added: " + str(len(test_set)) + "\n")
-                self.analysis_f.flush()
-                os.fsync(self.analysis_f.fileno())
-                if self.test_mode:
-                    print("time taken:", start_time - time.time())
-                    start_time = time.time()
 
+        for api_idx in api_idx_range:
             api = self.ranks[api_idx]
-            data_point2 = data_points[dp_idx]
-            # print(api)
-            # print(data_point2)
-            if api != data_point2 and api not in added_apis and not (category in DP2_API and data_point2 in added_apis):
-                progs_with_api = self.ga.get_program_ids_for_api(api)
-                progs_with_dp2 = self.ga.get_program_ids_for_api(data_point2)
 
-                if not self.ga.g.has_edge(api, data_point2):
-                    raise ValueError("shouldn't be here!!!")
+            if api in added_apis or api in {'DSubTree', 'DStop', DBRANCH, DEXCEPT, DLOOP}:
+                continue
 
-                progs_with_both = self.ga.get_program_ids_with_multiple_apis([api, data_point2])
+            progs_with_api = self.ga.get_program_ids_for_api(api)
 
-                if added_to_test_set_func(api, data_point2, novelty_label, test_set, progs_with_api, progs_with_dp2,
-                                          progs_with_both):
-                    num_pairs_added += 1
-                    added_apis.add(api)
-                    if category in DP2_API:
-                        added_apis.add(data_point2)
-                    if num_pairs_added >= self.min_prog_per_category:
+            apis_with_api = [self.ga.get_apis_in_prog_set(i) for i in progs_with_api]
+            apis_with_api = set([y for x in apis_with_api for y in x])
+
+            if category == IN_API:
+                apis_with_api = list(apis_with_api - added_apis - {api, 'DSubTree', 'DStop', DBRANCH, DLOOP,
+                                                                           DEXCEPT})
+            else:
+                apis_with_api = list(
+                    apis_with_api.intersection(set([self.ga.vocab2node[i] for i in [DBRANCH, DLOOP, DEXCEPT]])))
+
+            random.shuffle(apis_with_api)
+            for dp2_idx in apis_with_api:
+                dp2 = data_point2 = self.ga.node2vocab[dp2_idx]
+
+                if api == dp2 or dp2 in {'DSubTree', 'DStop'}:
+                    continue
+
+                if category in DP2_API and dp2 in added_apis:
+                    continue
+                # if len(self.ga.get_program_ids_with_multiple_apis([api, dp2])) == 0:
+                #     continue
+
+                progs_with_dp2 = self.ga.get_program_ids_for_api(dp2)
+                progs_with_both = progs_with_api.intersection(progs_with_dp2)
+
+                if len(progs_with_both) == len(progs_with_api.union(progs_with_dp2)):
+                    continue
+
+                if not (progs_with_both < progs_with_api and progs_with_dp2 > progs_with_both):
+                    continue
+
+                apis_with_dp2 = [self.ga.get_apis_in_prog_set(i) for i in progs_with_dp2]
+                apis_with_dp2 = set([y for x in apis_with_dp2 for y in x])
+
+                counter += 1
+                if counter % 5000 == 0:
+                    print("counter:", counter)
+                    print("num pairs added:", num_pairs_added)
+                    print("num progs added:", len(test_set))
+                    self.analysis_f.write("counter: " + str(counter) + " num pairs added: " + str(
+                        num_pairs_added) + " num progs added: " + str(len(test_set)) + "\n")
+                    self.analysis_f.flush()
+                    os.fsync(self.analysis_f.fileno())
+                    if self.test_mode:
+                        print("time taken:", start_time - time.time())
+                        start_time = time.time()
+
+                if api != data_point2 and api not in added_apis and not (category in DP2_API and data_point2 in added_apis):
+
+                    # if not self.ga.g.has_edge(api, data_point2):
+                    #     raise ValueError("shouldn't be here!!!")
+
+                    if added_to_test_set_func(api, data_point2, novelty_label, test_set, progs_with_api, progs_with_dp2,
+                                              progs_with_both):
+                        print(api, dp2)
+                        num_pairs_added += 1
+                        added_apis.add(api)
+                        if category in DP2_API:
+                            added_apis.add(data_point2)
                         break
+
+            if num_pairs_added >= self.min_prog_per_category:
+                break
 
         print("Category:", category)
         print("Novelty label: " + novelty_label)
@@ -325,12 +362,22 @@ class DatasetCreator:
 
         for api_idx in api_idx_range:
             api = self.ranks[api_idx]
-            if api in added_apis or api in {'DSubTree', 'DStop'}:
+            if api in added_apis or api in {'DSubTree', 'DStop', DBRANCH, DEXCEPT, DLOOP}:
                 continue
 
             api_prog_ids = self.ga.get_program_ids_for_api(api)
+
+
             apis_with_api = [self.ga.get_apis_in_prog_set(i) for i in api_prog_ids]
-            apis_with_api = list(set([y for x in apis_with_api for y in x]) - added_apis)
+            apis_with_api = set([y for x in apis_with_api for y in x])
+
+            if category == EX_API:
+                apis_with_api = list(apis_with_api - added_apis - {api, 'DSubTree', 'DStop', DLOOP, DBRANCH,
+                                                                           DEXCEPT})
+            else:
+                apis_with_api = list(
+                    apis_with_api.intersection(set([self.ga.vocab2node[i] for i in [DBRANCH, DLOOP, DEXCEPT]])))
+
             random.shuffle(apis_with_api)
             # print(apis_with_api)
 
@@ -353,9 +400,8 @@ class DatasetCreator:
                 apis_with_dp2 = [self.ga.get_apis_in_prog_set(i) for i in dp2_prog_ids]
                 apis_with_dp2 = set([y for x in apis_with_dp2 for y in x])
 
-                apis_with_both = list(set(apis_with_api).union(apis_with_dp2) - added_apis)
+                apis_with_both = list(set(apis_with_api).union(apis_with_dp2) - added_apis - {dp2, 'DSubTree', 'DStop'})
                 random.shuffle(apis_with_both)
-                print(apis_with_both)
 
                 i3_counter = 0
                 for i3_idx in apis_with_both:
@@ -379,10 +425,6 @@ class DatasetCreator:
                     if len(progs_with_api_dp2) == 0:
                         continue
 
-                    # if not suitable_candidate((api, i3, dp2)):
-                    #     continue
-
-                    print("num pairs added:", num_pairs_added)
                     counter += 1
                     if counter % 5000 == 0:
                         print("counter:", counter)
@@ -396,9 +438,6 @@ class DatasetCreator:
                             print("time taken:", start_time - time.time())
                             start_time = time.time()
 
-                    # i3_counter += 1
-                    # if i3_counter > 15:
-                    #     break
 
                     if api not in added_apis and not (category in DP2_API and dp2 in added_apis) and not (category in DP2_API and i3 in added_apis):
                         if not self.ga.g.has_edge(api, dp2):
@@ -408,8 +447,6 @@ class DatasetCreator:
                             max_progs = 50
                         else:
                             max_progs = 200
-
-                        print("Here")
 
                         num_progs_with_api = len(api_prog_ids)
                         num_progs_with_dp2 = len(dp2_prog_ids)
@@ -459,6 +496,7 @@ class DatasetCreator:
                                     success = True
 
                         if success:
+                            print(api, dp2, i3)
                             num_pairs_added += 1
                             added_apis.add(api)
                             if category in DP2_API:
@@ -608,7 +646,7 @@ class DatasetCreator:
             api = self.ranks[api_idx]
             length = dp_idx
 
-            if api not in added_apis:
+            if api not in added_apis and api not in {DBRANCH, DLOOP, DEXCEPT, 'DSubTree', 'DStop'}:
 
                 valid_prog_ids = self.ga.get_program_ids_for_api_length_k(api, category, length)
                 num_valid_progs = len(valid_prog_ids)
@@ -628,6 +666,7 @@ class DatasetCreator:
                         self.add_to_test_set([api], length, valid_prog_ids, test_set, dp2type_is_int=True)
                         num_pairs_added += 1
                         added_apis.add(api)
+                        print(api, length)
 
                     if novelty_label == SEEN:
                         limit = min(math.ceil(num_valid_progs / 4), self.control_limit * num_progs_with_api, 10)

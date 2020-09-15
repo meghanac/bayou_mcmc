@@ -1,12 +1,2 @@
 category: exclude_cs label: novelty
-category: include_api label: novelty
-category: include_cs label: novelty
-category: exclude_api label: novelty
-category: min_eq label: novelty
-category: max_eq label: novelty
-category: exclude_cs label: accuracy
-category: include_api label: accuracy
-category: include_cs label: accuracy
-category: exclude_api label: accuracy
-category: min_eq label: accuracy
-category: max_eq label: accuracy
+counter: 5000 num pairs added: 7 num progs added: 72
