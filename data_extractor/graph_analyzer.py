@@ -55,9 +55,9 @@ EQ = 'eq'
 
 class GraphAnalyzer:
 
-    def __init__(self, folder_name, test=False, save_reader=False, load_reader=False, shuffle_data=True,
+    def __init__(self, folder_name, test=False, save_reader=False, load_reader=False, shuffle_data=False,
                  remove_duplicates=False, load_g_without_control_structs=True, pickle_friendly=False,
-                 train_test_split=None, filename=None):
+                 train_test_split=None, filename=None, train_test_set_dir_name='/train_test_sets/'):
 
         if filename is None:
             orig_folder_name = folder_name
@@ -65,11 +65,11 @@ class GraphAnalyzer:
             orig_folder_name = filename
 
         if train_test_split == 'train':
-            folder_name += '/train_test_sets/train/'
+            folder_name += train_test_set_dir_name + 'train/'
         elif train_test_split == 'test':
-            folder_name += '/train_test_sets/test/'
+            folder_name += train_test_set_dir_name + 'test/'
         elif train_test_split == 'small_test':
-            folder_name += '/train_test_sets/test/small/'
+            folder_name += train_test_set_dir_name + 'test/small/'
         elif train_test_split is None:
             pass
         else:
@@ -149,7 +149,7 @@ class GraphAnalyzer:
             with open(os.path.join(self.clargs.data, 'vocab.json')) as f:
                 self.vocab = read_vocab(json.load(f))
 
-            self.reader = Reader(self.clargs, infer=True, create_database=True, vocab=self.vocab)
+            self.reader = Reader(self.clargs, infer=True, create_database=True, vocab=self.vocab, shuffle=shuffle_data)
             self.reader.save_database(self.clargs.data)
         else:
             with open(os.path.join(self.clargs.data, 'vocab.json')) as f:
@@ -163,7 +163,7 @@ class GraphAnalyzer:
                 with open(self.clargs.data + '/reader.pickle', 'rb') as f:
                     self.reader = pickle.load(f)
             else:
-                self.reader = Reader(self.clargs, infer=True, vocab=self.vocab)
+                self.reader = Reader(self.clargs, infer=True, vocab=self.vocab, shuffle=shuffle_data)
 
         self.vocab2node = self.vocab.api_dict
         self.node2vocab = dict(zip(self.vocab2node.values(), self.vocab2node.keys()))

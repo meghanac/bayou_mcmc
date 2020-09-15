@@ -237,12 +237,15 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
         # data_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_10k_vocab_no_duplicates/'
         data_path = 'new_all_data_1k_vocab_no_duplicates'
-        dataset_creator = DatasetCreator(data_path, verbose=False)
-        dataset_creator.create_curated_dataset()
+        train_test_set_name = "/train_test_sets_new_ex/"
+        dataset_creator = DatasetCreator(data_path, train_test_set_name, verbose=False, min_prog_per_category=10)
+        # dataset_creator.create_curated_dataset()
 
-        # dataset_creator.build_and_save_train_test_sets()
+        dataset_creator.build_and_save_train_test_sets()
+        data_dir_name = data_path
+        data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'
         # data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/dataset_creator.pickle'
-        # create_smaller_test_set(data_path)
+        create_smaller_test_set(data_path, data_dir_name, train_test_set_name)
 
     def test_analyze_file(self):
         analyze_file('/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/test/small_min_length_3/', "small_test_set.json", vocab_freq_saved=False)
@@ -255,8 +258,9 @@ class TestGraphAnalyzer(unittest.TestCase):
         create_identical_bayou_dataset(all_data_bayou_dataset_name, mcmc_dataset_path, new_bayou_dataset_name, bayou_path)
 
     def test_build_sets_from_creator(self):
-        data_path = '../data_extractor/data/all_data_no_duplicates/train_test_sets/dataset_creator.pickle'
-        build_sets_from_saved_creator(data_path)
+        data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'
+        creator_dir_name = 'fixed_train_test_sets'
+        build_sets_from_saved_creator(data_path, creator_dir_name)
 
     def test_create_small_test_set(self):
         data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'

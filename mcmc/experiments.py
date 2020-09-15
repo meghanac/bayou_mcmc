@@ -51,14 +51,16 @@ MAX_LENGTH = 'max_length'
 
 
 class Metrics:
-    def __init__(self, num_iterations, top_k=10):
+    def __init__(self, num_iterations, top_k=5):
         self.num_iter = num_iterations
-        self.top_k = top_k
+        self.top_k = int(min(top_k, num_iterations))
+        print(self.top_k, num_iterations)
 
     def get_top_k_gen_progs(self, posterior_dist):
         posterior = posterior_dist.items()
         posterior = sorted([(i[0], i[1][1]) for i in posterior], reverse=True, key=lambda x: x[1])  # TODO: CHECK IF THIS METRIC MAKES SENSE
         top_k = min(self.top_k, len(posterior))
+        print(top_k)
         posterior = posterior[:top_k]
         posterior = [i[0] for i in posterior]
         return posterior
@@ -108,21 +110,6 @@ class Metrics:
         apis.update(set(data_point[TARGETS_IDX]))
         return apis
 
-    def appears_in_set(self, posterior_dist, ret_type, fp, ga):
-        posterior_progs = self.get_top_k_gen_progs(posterior_dist)
-
-        in_set = False
-        for gen_data_point in posterior_progs:
-            apis = self.get_apis_set(gen_data_point)
-
-            prog_ids = ga.get_program_ids_with_multiple_apis(list(apis))
-            for prog_id in prog_ids:
-                prog = ga.fetch_all_list_data_without_delim(prog_id)
-                in_set = in_set or (prog[:5] == (
-                    gen_data_point[NODES_IDX], gen_data_point[EDGES_IDX], gen_data_point[TARGETS_IDX], ret_type, fp))
-
-        return 1.0 * int(in_set)
-
     def get_jaccard_distance(self, set_a, set_b):
         try:
             return 1.0 * len(set_a.intersection(set_b)) / len(set_a.union(set_b))
@@ -149,7 +136,7 @@ class Metrics:
 
         return metrics
 
-    def get_all_averaged_metrics(self, posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga):
+    def get_all_averaged_metrics(self, posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga, num_test_progs):
         # jaccard_api, jaccard_seq, ast_eq, min_diff_cs, min_diff_statements, in_dataset = self.get_all_metrics(
         #     test_data_point, posterior_dist, ret_type, fp, constraint_dict, ga)
         #
@@ -160,31 +147,60 @@ class Metrics:
         all_metrics = self.get_all_metrics(posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga)
         print(all_metrics)
         for metric in all_metrics:
-            all_metrics[metric] /= self.num_iter
+            all_metrics[metric] /= num_test_progs
 
         return all_metrics
 
+    def appears_in_set(self, posterior_dist, ret_type, fp, ga):
+        print("\n\n\n--------APPEARS IN SET----------")
+        posterior_progs = self.get_top_k_gen_progs(posterior_dist)
+
+        print("")
+
+        in_set = False
+        for gen_data_point in posterior_progs:
+            apis = self.get_apis_set(gen_data_point)
+
+            prog_ids = ga.get_program_ids_with_multiple_apis(list(apis))
+            for prog_id in prog_ids:
+                prog = ga.fetch_all_list_data_without_delim(prog_id)
+                in_set = in_set or (prog[:5] == (
+                    gen_data_point[NODES_IDX], gen_data_point[EDGES_IDX], gen_data_point[TARGETS_IDX], ret_type, fp))
+
+        return 1.0 * int(in_set)
+
     def meets_constraints(self, posterior_dist, constraint_dict):
+        print("\n\n\n--------MEETS CONSTRAINTS----------")
         posterior = self.get_top_k_gen_progs(posterior_dist)
+        print(posterior)
 
         def get_score(prog):
             score = True
             apis = self.get_apis_set(prog)
+            print("apis", apis)
+            print("apis", constraint_dict[INCLUDE])
+            print(set(constraint_dict[INCLUDE]).issubset(apis))
             score = score and set(constraint_dict[INCLUDE]).issubset(apis)
             score = score and not set(constraint_dict[EXCLUDE]).issubset(apis)
             score = score and constraint_dict[MIN_LENGTH] <= len(prog[0])
             score = score and len(prog[0]) <= constraint_dict[MAX_LENGTH]
             return int(score)
 
-        return sum([get_score(i) for i in posterior]) * 1.0 / self.top_k
+        print("HERE:", [get_score(i) for i in posterior])
+        scores = [get_score(i) for i in posterior]
+        print(scores)
+        return sum([get_score(i) for i in posterior]) * 1.0 / len(posterior)
 
     def has_more_apis(self, posterior_dist, constraint_dict):
+        print("\n\n\n--------HAS_MORE_APIS----------")
         posterior = self.get_top_k_gen_progs(posterior_dist)
 
         def get_score(prog):
             return int(len(prog[0]) > len(constraint_dict[INCLUDE]))
+        scores = [get_score(i) for i in posterior]
+        print(scores)
         # TODO: FIGURE OUT HOW TO ACCOUNT FOR CFS
-        return sum([get_score(i) for i in posterior]) * 1.0 / self.top_k
+        return sum([get_score(i) for i in posterior]) * 1.0 / len(posterior)
 
     def get_post_dict_from_str(self, posterior_dist):
         post_dist = {}
@@ -195,6 +211,7 @@ class Metrics:
         return post_dist
 
     def jaccard_distance_test_set(self, posterior_dist, constraint_dict, ga):
+        print("\n\n\n--------JACCARD DISTANCE TEST SET----------")
         test_progs_meet_constraints = ga.get_programs_with_multiple_apis(constraint_dict[INCLUDE],
                                                                          exclude=constraint_dict[EXCLUDE],
                                                                          min_length=constraint_dict[MIN_LENGTH],
@@ -204,9 +221,12 @@ class Metrics:
         # posterior_dist = self.get_post_dict_from_str(posterior_dist)
         posterior = self.get_top_k_gen_progs(posterior_dist)
         api_sets = set([tuple(self.get_apis_set(i)) for i in posterior])
+        print(api_sets)
+        print(test_progs_meet_constraints)
         return self.get_jaccard_distance(api_sets, test_progs_meet_constraints)
 
     def relevant_additions(self, posterior_dist, constraint_dict, ga):
+        print("\n\n\n--------RELEVANT ADDITIONS----------")
         # posterior_dist = self.get_post_dict_from_str(posterior_dist)
         posterior = self.get_top_k_gen_progs(posterior_dist)
         api_sets = set([tuple(self.get_apis_set(i)) for i in posterior])
@@ -228,7 +248,7 @@ class Metrics:
 
 
 class Experiments:
-    def __init__(self, data_dir_name, model_dir_path, experiment_dir_name, num_iterations, save_mcmc_progs=True):
+    def __init__(self, data_dir_name, model_dir_path, experiment_dir_name, num_iterations, save_mcmc_progs=True, train_test_set_dir_name='/train_test_sets/'):
         self.metrics = Metrics(num_iterations * 1.0)
         self.num_iter = num_iterations * 1.0
         self.model_dir_path = model_dir_path
@@ -249,12 +269,16 @@ class Experiments:
         self.analysis_f.write("model dir path: " + model_dir_path + "\n")
         self.analysis_f.write("num iterations: " + str(num_iterations) + "\n")
 
-        self.train_ga = GraphAnalyzer(data_dir_name, train_test_split='train', filename='all_training_data', load_reader=True)
-        self.all_test_ga = GraphAnalyzer(data_dir_name, train_test_split='test', filename='test_set', load_reader=True)  # TODO: fix
-        self.test_ga = GraphAnalyzer(data_dir_name, train_test_split='small_test', filename='small_test_set', load_reader=True)
+        self.all_ga = GraphAnalyzer(data_dir_name, load_reader=True, shuffle_data=False, train_test_set_dir_name=train_test_set_dir_name)
+
+        self.train_ga = GraphAnalyzer(data_dir_name, train_test_split='train', filename='all_training_data', load_reader=True, shuffle_data=False, train_test_set_dir_name=train_test_set_dir_name)
+        self.all_test_ga = GraphAnalyzer(data_dir_name, train_test_split='test', filename='test_set', load_reader=True, shuffle_data=False, train_test_set_dir_name=train_test_set_dir_name)  # TODO: fix
+        self.test_ga = GraphAnalyzer(data_dir_name, train_test_split='small_test', filename='small_test_set', load_reader=True, shuffle_data=False, train_test_set_dir_name=train_test_set_dir_name)
 
         data_dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../data_extractor/data/" + data_dir_name)
-        testing_path = os.path.join(data_dir_path, "train_test_sets/test")
+        # testing_path = os.path.join(data_dir_path, train_test_set_dir_name + 'test')
+        testing_path = data_dir_path + "/" + train_test_set_dir_name + "test"
+        print(testing_path)
 
         with open(testing_path + "/test_set_new_prog_ids.pickle", "rb") as f:
             self.all_test_prog_ids_to_idx = pickle.load(f)
@@ -269,11 +293,11 @@ class Experiments:
             self.curated_test_sets = pickle.load(f)
             print(self.curated_test_sets.keys())
 
-        with open(data_dir_path + "/train_test_sets/curated_test_sets.pickle", "rb") as f:
+        with open(data_dir_path + train_test_set_dir_name + "curated_test_sets.pickle", "rb") as f:
             self.all_curated_test_sets = pickle.load(f)
             print(self.all_curated_test_sets.keys())
 
-        with open(data_dir_path + "/train_test_sets/dataset_creator.pickle", "rb") as f:
+        with open(data_dir_path + train_test_set_dir_name + "dataset_creator.pickle", "rb") as f:
             self.dataset_creator = pickle.load(f)
 
         self.save_mcmc_progs = save_mcmc_progs
@@ -304,6 +328,8 @@ class Experiments:
         self.metric_labels = [JACC_TEST_SET, HAS_MORE_APIS, REL_ADD, MEET_CONST, IN_SET]
 
     def get_mcmc_prog_and_ast(self, data_point, category, in_random_order, num_apis_to_add_to_constraint, verbose=False):
+        # prog_id = self.get_test_prog_id(data_point[0])
+
         prog_id = data_point[0]
         constraints = [data_point[1]]
         dp2 = data_point[2]
@@ -324,20 +350,29 @@ class Experiments:
 
         # print(data_point)
 
-        nodes, edges, targets, return_type, fp, fp_targets = self.test_ga.fetch_all_list_data_without_delim(prog_id)
+        nodes, edges, targets, return_type, fp, fp_targets = self.train_ga.fetch_all_list_data_without_delim(prog_id)
         ast = (nodes, edges, targets)
+
+        print(constraints)
+        print(ast)
 
         ordered_apis = self.get_nonconstraint_apis_in_prog(constraints, ast, in_random_order)
         constraints += ordered_apis[:num_apis_to_add_to_constraint]
         print(constraints)
+
         # init MCMCProgram
-        mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose)
-        mcmc_prog.init_program(constraints, return_type, fp, exclude=exclude, min_length=min_length,
-                               max_length=max_length, ordered=False)
+        # mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose)
+        # mcmc_prog.init_program(constraints, return_type, fp, exclude=exclude, min_length=min_length,
+        #                        max_length=max_length, ordered=False)
+        mcmc_prog = None
 
         constraint_dict = {INCLUDE: constraints, EXCLUDE: exclude, MIN_LENGTH: min_length, MAX_LENGTH: max_length}
 
         return mcmc_prog, ast, return_type, fp, constraint_dict
+
+    def get_test_prog_id(self, train_prog_id):
+        print(sorted(self.dataset_creator.test_set_new_prog_ids.keys()))
+        return self.dataset_creator.test_set_new_prog_ids[train_prog_id]
 
     def dump_metrics(self, category, label):
         with open(self.exp_dir_path + "/metrics_" + category + "_" + label + ".json", "w+") as f:
@@ -345,53 +380,59 @@ class Experiments:
             f.close()
 
     def dump_posterior_dist(self, category, label):
-        # print(self.posterior_dists[category][label])
-        # str_post_dist = {}
-        # for key in self.posterior_dists[category][label]:
-        #     str_key = []
-        #     for i in key:
-        #         str_key.append(str(key))
-        #     str_key = str(tuple(str_key))
-        #     str_post_dist[str_key] = self.posterior_dists[category][label][key]
         with open(self.exp_dir_path + "/post_dist_" + category + "_" + label + ".pickle", "wb") as f:
-            # f.write(json.dumps(str_post_dist))
-            # f.close()
             pickle.dump(self.posterior_dists[category][label], f)
             f.close()
 
-    def run_mcmc(self, category, label, in_random_order=True, num_apis_to_add_to_constraint=PLUS_0, verbose=False):
+    def run_mcmc(self, category, label, save_run=True, num_test_progs=None, in_random_order=True, num_apis_to_add_to_constraint=PLUS_0, verbose=False):
         post_dist_dict = self.posterior_dists[category][label]
-        test_progs = self.curated_test_sets_idxs[category][label]
+        test_progs = list(self.curated_test_sets_idxs[category][label])
         print(len(test_progs))
 
+        if num_test_progs is None:
+            num_test_progs = len(test_progs)
 
         counter = 0
-        for data_point in test_progs:
+        for i in range(num_test_progs):
+            data_point = test_progs[i]
+            print("data_point:", data_point)
+
             mcmc_prog, ast, ret_type, fp, constraint_dict = self.get_mcmc_prog_and_ast(data_point, category, in_random_order,
                                                                       num_apis_to_add_to_constraint, verbose=verbose)
 
-            for _ in range(int(self.num_iter)):
-                mcmc_prog.mcmc()
-            print(get_str_posterior_distribution(mcmc_prog))
-            post_dist_dict = self.add_to_post_dist(post_dist_dict, get_str_posterior_distribution(mcmc_prog),
-                                                   data_point, ast, ret_type, fp, constraint_dict)
+            print("\n")
+            print(constraint_dict)
+            print(ast)
+            print(ret_type)
+            print(fp)
+            print("\n")
+            #
+            # for _ in range(int(self.num_iter)):
+            #     mcmc_prog.mcmc()
+            # print(get_str_posterior_distribution(mcmc_prog))
+            # post_dist_dict = self.add_to_post_dist(post_dist_dict, get_str_posterior_distribution(mcmc_prog),
+            #                                        data_point, ast, ret_type, fp, constraint_dict)
 
             counter += 1
-            if counter == 2:
-                break
+            if counter % (num_test_progs/100) == 0:
+                print("Num progs tested: ", counter)
 
         self.posterior_dists[category][label] = post_dist_dict
         print("here")
-        self.calculate_metrics(category, label)
-        self.dump_metrics(category, label)
-        self.dump_posterior_dist(category, label)
+        self.calculate_metrics(category, label, num_test_progs)
+        print(self.avg_metrics[category][label])
+        if save_run:
+            self.dump_metrics(category, label)
+            self.dump_posterior_dist(category, label)
 
     def add_to_post_dist(self, post_dist_dict, posterior_dist, data_point, ast, ret_type, fp, constraint_dict):
         post_dist_dict[data_point] = (posterior_dist, ast, ret_type, fp, constraint_dict)
         return post_dist_dict
 
-    def calculate_metrics(self, category, label):
+    def calculate_metrics(self, category, label, num_test_progs):
         post_dist_dict = self.posterior_dists[category][label]
+
+        print("post dist dict:", post_dist_dict)
 
         metrics = {}
         for metric in self.metric_labels:
@@ -414,7 +455,7 @@ class Experiments:
             print(fp)
             print(constraint_dict)
             prog_metrics = \
-                self.metrics.get_all_averaged_metrics(posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga)
+                self.metrics.get_all_averaged_metrics(posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga, num_test_progs)
 
             print(prog_metrics)
 

@@ -8,6 +8,12 @@ from networkx.readwrite import json_graph
 TRAINING_DATA_DIR_PATH = "data/"
 TEST_DATA_DIR_PATH = "data/test_data"
 
+ADD_TO_TYPES = 'add_to_types'
+REPLACE_TYPES = 'replace_types'
+
+FP = 'formalParam'
+RT = 'returnType'
+
 
 def copy_data_remove_duplicate(old_data_filename_path, new_data_filename):
     new_dir_name = new_data_filename[:-5]
@@ -232,7 +238,7 @@ def copy_bayou_json_data_change_apicalls(old_data_filename_path, new_data_filena
     new_f.write("}\n")
 
 
-def create_identical_bayou_dataset(all_data_bayou_dataset_path, mcmc_dataset_path, new_bayou_dataset_name, new_bayou_data_dir_path):
+def create_identical_bayou_dataset(all_data_bayou_dataset_path, mcmc_dataset_path, new_bayou_dataset_name, new_bayou_data_dir_path, types=None):
     mcmc_f = open(mcmc_dataset_path, 'rb')
     prog_set = set([])
     for program in ijson.items(mcmc_f, 'programs.item'):
@@ -252,7 +258,7 @@ def create_identical_bayou_dataset(all_data_bayou_dataset_path, mcmc_dataset_pat
     new_bayou_f.write("{\n")
     new_bayou_f.write("\"programs\": [\n")
 
-    data_types = ['ast', 'formalParam', 'returnType', 'keywords', 'types']
+    data_types = ['ast', 'keywords', 'types']
     counter = 0
     bayou_prog_set = set([])
     programs = []
@@ -267,6 +273,19 @@ def create_identical_bayou_dataset(all_data_bayou_dataset_path, mcmc_dataset_pat
                 prog[t] = program[t]
             apis = get_apis(program['ast']['_nodes'], set([]))
             prog['apicalls'] = list(apis)
+
+            if types is not None:
+                if types == ADD_TO_TYPES:
+                    curr_types = set(prog['types'])
+                    curr_types.update(set(prog[FP]))
+                    curr_types.update(set(prog[RT]))
+                    curr_types.difference_update(set(prog['types']))
+                    prog['types'] += list(curr_types)
+                elif types == REPLACE_TYPES:
+                    rt_fp = set(prog[FP])
+                    rt_fp.update(set(prog[RT]))
+                    prog['types'] = list(rt_fp)
+
             bayou_prog_set.add(key)
             programs.append(json.dumps(prog))
 
