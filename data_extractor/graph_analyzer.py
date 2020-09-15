@@ -137,7 +137,7 @@ class GraphAnalyzer:
         # Build database
         if not os.path.exists(self.dir_path + "/vocab.json"):
             self.reader = Reader(self.clargs, create_database=True, shuffle=shuffle_data,
-                                 remove_duplicates=remove_duplicates)
+                                 remove_duplicates=False)
             self.reader.save_data(self.clargs.data)
             # Save vocab dictionaries
             with open(os.path.join(self.clargs.data, 'vocab.json')) as f:
@@ -195,8 +195,9 @@ class GraphAnalyzer:
         if pickle_friendly:
             self.json_asts = None
         else:
-            data_f = open(os.path.join(self.dir_path, data_filename))
-            self.json_asts = ijson.items(data_f, 'programs.item')
+            print(self.dir_path, data_filename)
+            print(self.clargs.data + self.clargs.data_filename + ".json")
+            self.json_asts = None
 
         # data_f.close()
         # self.json_asts = json.load(data_f)
@@ -338,7 +339,17 @@ class GraphAnalyzer:
         return programs
 
     def get_json_ast(self, prog_id):
-        return None
+        data_filename = self.clargs.data + self.clargs.data_filename + ".json"
+        data_f = open(os.path.join(self.dir_path, data_filename))
+        self.json_asts = ijson.items(data_f, 'programs.item')
+        if self.json_asts is not None:
+            counter = 0
+            for program in self.json_asts:
+                if prog_id == counter:
+                    return program
+                counter += 1
+        data_f.close()
+        self.json_asts = None
 
     def get_formatted_program(self, prog_id, get_targets=True, get_jsons=False):
         i = self.fetch_data_with_targets(prog_id)

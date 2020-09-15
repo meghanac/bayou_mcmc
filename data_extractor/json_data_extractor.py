@@ -900,6 +900,8 @@ def get_vocab_frequencies(f, vocab_num):
 
 def build_graph_from_json_file(dir_path, filename, vocab_freq_saved=False, vocab_num=1000000000000,
                                return_g_without_control_structs=True):
+    # if not os.path.exists(dir_path):
+    #     os.mkdir(dir_path)
     f = open(os.path.join(dir_path, filename), 'r')
     if vocab_freq_saved:
         vocab_f = open(os.path.join(dir_path, filename[:-5] + "_vocab_freq.json"), "r")

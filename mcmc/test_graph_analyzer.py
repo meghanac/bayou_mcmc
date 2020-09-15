@@ -237,15 +237,15 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
         # data_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_10k_vocab_no_duplicates/'
         data_path = 'new_all_data_1k_vocab_no_duplicates'
-        train_test_set_name = "/train_test_sets_new_ex/"
-        dataset_creator = DatasetCreator(data_path, train_test_set_name, verbose=False, min_prog_per_category=10)
+        train_test_set_name = "/final_train_test_sets/"
+        dataset_creator = DatasetCreator(data_path, train_test_set_name, verbose=False, min_prog_per_category=1000)
         # dataset_creator.create_curated_dataset()
 
         dataset_creator.build_and_save_train_test_sets()
         data_dir_name = data_path
         data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'
         # data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/dataset_creator.pickle'
-        create_smaller_test_set(data_path, data_dir_name, train_test_set_name)
+        create_smaller_test_set(data_path, data_dir_name, train_test_set_name, num_progs_per_category=1000)
 
     def test_analyze_file(self):
         analyze_file('/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/test/small_min_length_3/', "small_test_set.json", vocab_freq_saved=False)
@@ -313,7 +313,8 @@ class TestGraphAnalyzer(unittest.TestCase):
 
     def test_add_length_to_creator(self):
         data_dir_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'
-        add_prog_length_to_dataset_creator(data_dir_path, save=True)
+        train_test_name = 'train_test_sets_new_ex'
+        add_prog_length_to_dataset_creator(data_dir_path, train_test_name, save=True)
 
     def test_build_bayou_test_set(self):
         bayou_data_dir_path = '../data_extractor/data/all_data_no_duplicates_bayou/'

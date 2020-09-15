@@ -171,6 +171,8 @@ class Reader:
 
         parsed_api_array, return_type_ids, formal_param_ids = zip(*data_points)  # unzip
 
+        f.close()
+
         return parsed_api_array, return_type_ids, formal_param_ids
 
     def save_prog_database(self, sz):
@@ -207,6 +209,11 @@ class Reader:
                     fp_to_prog_ids[fp].add(i)
                 else:
                     fp_to_prog_ids[fp] = {i}
+            for fp in self.fp_type_targets[i]:
+                if fp in fp_to_prog_ids:
+                    fp_to_prog_ids[fp].add(i)
+                else:
+                    fp_to_prog_ids[fp] = {i}
 
         # # freeze sets
         # api_to_prog_ids = dict([(api, frozenset(progs)) for api, progs in api_to_prog_ids.items()])
@@ -224,15 +231,19 @@ class Reader:
 
         with open(path + '/ast_apis.pickle', 'wb') as f:
             pickle.dump([self.nodes, self.edges, self.targets], f)
+            f.close()
 
         with open(path + '/return_types.pickle', 'wb') as f:
             pickle.dump(self.return_types, f)
+            f.close()
 
         with open(path + '/formal_params.pickle', 'wb') as f:
             pickle.dump([self.fp_types, self.fp_type_targets], f)
+            f.close()
 
         with open(os.path.join(path + '/vocab.json'), 'w') as f:
             json.dump(dump_vocab(self.vocab), fp=f, indent=2)
+            f.close()
 
         if self.create_database:
             self.save_database(path)
@@ -243,6 +254,7 @@ class Reader:
     def save_database(self, path):
         with open(path + '/program_database.pickle', 'wb') as f:
             pickle.dump(self.database, f)
+            f.close()
 
 
     def read_ast(self, program_ast_js):

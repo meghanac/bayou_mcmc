@@ -60,6 +60,12 @@ class DatasetCreator:
             self.ga = GraphAnalyzer(data_dir_path, load_reader=True, load_g_without_control_structs=False,
                                     pickle_friendly=True, shuffle_data=False)
 
+        for i in range(10):
+            print(self.ga.fetch_data_with_targets(i))
+            print([self.ga.node2vocab[j] for j in self.ga.fetch_nodes_as_list(i)])
+            print(self.ga.get_json_ast(i))
+            print("\n")
+
         # self.training_data = set(range(self.ga.num_programs))
         # self.test_data = set([])
         # self.novelty_test_set = set([])
@@ -403,6 +409,9 @@ class DatasetCreator:
                 apis_with_both = list(set(apis_with_api).union(apis_with_dp2) - added_apis - {dp2, 'DSubTree', 'DStop'})
                 random.shuffle(apis_with_both)
 
+                if api == dp2:
+                    continue
+
                 i3_counter = 0
                 for i3_idx in apis_with_both:
                     i3 = self.ga.node2vocab[i3_idx]
@@ -416,6 +425,9 @@ class DatasetCreator:
                     if category in DP2_API and i3 in added_apis or i3 in {'DSubTree', 'DStop'}:
                         continue
 
+                    if i3 == api or i3 == dp2:
+                        continue
+
                     # if len(self.ga.get_program_ids_with_multiple_apis([api, dp2], exclude=[i3])) == 0:
                     #     continue
 
@@ -423,6 +435,9 @@ class DatasetCreator:
 
                     progs_with_api_dp2 = api_prog_ids.intersection(dp2_prog_ids).difference(i3_prog_ids)
                     if len(progs_with_api_dp2) == 0:
+                        continue
+
+                    if dp2 in {DBRANCH, DEXCEPT, DLOOP} and len(i3_prog_ids.difference(dp2_prog_ids)) == 0:
                         continue
 
                     counter += 1
@@ -471,7 +486,7 @@ class DatasetCreator:
 
                         success = False
 
-                        if num_test_set_progs <= num_training_set_progs * 1:
+                        if num_test_set_progs <= num_training_set_progs * self.control_limit:
                             if novelty_label == NEW and 0 < num_test_set_progs <= max_progs:
                                 prog_ids = progs_with_api_dp2
                                 if self.verbose:
@@ -717,14 +732,7 @@ class DatasetCreator:
     def create_curated_dataset(self):
         print("Creating Curated Tests Dataset\n")
 
-        for novelty_label in [NEW, SEEN]:  # Create novelty test set first
-            print("\n\n\n-----------------------------------")
-            print("EXCLUDE CS: ")
-            start_time = time.time()
-            self.add_exclude_test_progs(EX_CS, novelty_label)
-            print("test set len:", len(self.categories[EX_CS][0][novelty_label]), "\n")
-            if self.test_mode:
-                print("Time taken for exclude cs:", start_time - time.time())
+        for novelty_label in [NEW]:  # Create novelty test set first
 
             print("\n\n\n-----------------------------------")
             print("INCLUDE API: ")
@@ -741,6 +749,14 @@ class DatasetCreator:
             print("test set len:", len(self.categories[IN_CS][0][novelty_label]), "\n")
             if self.test_mode:
                 print("Time taken for include cs:", start_time - time.time())
+
+            print("\n\n\n-----------------------------------")
+            print("EXCLUDE CS: ")
+            start_time = time.time()
+            self.add_exclude_test_progs(EX_CS, novelty_label)
+            print("test set len:", len(self.categories[EX_CS][0][novelty_label]), "\n")
+            if self.test_mode:
+                print("Time taken for exclude cs:", start_time - time.time())
 
             print("\n\n\n-----------------------------------")
             print("EXCLUDE API: ")
@@ -1105,8 +1121,11 @@ def create_small_test_set_multiple_per_api(category, t, num_per_api, num_progs_p
 def create_smaller_test_set(data_dir_path, data_dir_name, train_test_set_name, num_progs_per_category=1200, save=True, min_length=3):
     print("\n\n\nBuilding Smaller Test Sets\n")
     creator_dir_path = data_dir_path + "/" + train_test_set_name + "/"
+    print(creator_dir_path)
     f = open(creator_dir_path + "/dataset_creator.pickle", "rb")
     dataset_creator = pickle.load(f)
+
+    print(dataset_creator.categories[EX_CS][0])
 
     smaller_test_set = {}
     small_test_set_progs = set([])
@@ -1114,7 +1133,8 @@ def create_smaller_test_set(data_dir_path, data_dir_name, train_test_set_name, n
         cat_test_set = dataset_creator.categories[category][0]
         smaller_test_set[category] = {}
         for t in cat_test_set.keys():
-            print("t:", t)
+            if len(cat_test_set[t]) == 0:
+                continue
             smaller_test_set[category][t] = set([])
             prog_ids = set([])
             test_set = list(cat_test_set[t].copy())
@@ -1136,7 +1156,7 @@ def create_smaller_test_set(data_dir_path, data_dir_name, train_test_set_name, n
                                                                                          smaller_test_set, prog_ids, min_length)
 
             print("\n\nCategory:", category, t)
-            print("Prog ids added:", len(prog_ids))
+            print("Prog ids added:", len(set(prog_ids)))
             print("Pairs added:", len(smaller_test_set[category][t]))
             small_test_set_progs.update(prog_ids)
 
@@ -1292,8 +1312,8 @@ def build_bayou_datasets(mcmc_data_dir_path, bayou_data_dir_path, bayou_data_fol
         f.close()
 
 
-def add_prog_length_to_dataset_creator(data_dir_path, save=False):
-    creator_dir_path = data_dir_path + "/train_test_sets/"
+def add_prog_length_to_dataset_creator(data_dir_path, train_test_set_name, save=False):
+    creator_dir_path = data_dir_path + "/" + train_test_set_name + "/"
     f = open(creator_dir_path + "/dataset_creator.pickle", "rb")
     dataset_creator = pickle.load(f)
 

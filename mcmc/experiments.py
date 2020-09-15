@@ -155,7 +155,7 @@ class Metrics:
         print("\n\n\n--------APPEARS IN SET----------")
         posterior_progs = self.get_top_k_gen_progs(posterior_dist)
 
-        print("")
+        print(posterior_progs)
 
         in_set = False
         for gen_data_point in posterior_progs:
@@ -164,6 +164,9 @@ class Metrics:
             prog_ids = ga.get_program_ids_with_multiple_apis(list(apis))
             for prog_id in prog_ids:
                 prog = ga.fetch_all_list_data_without_delim(prog_id)
+                print(prog)
+                print((
+                    gen_data_point[NODES_IDX], gen_data_point[EDGES_IDX], gen_data_point[TARGETS_IDX], ret_type, fp))
                 in_set = in_set or (prog[:5] == (
                     gen_data_point[NODES_IDX], gen_data_point[EDGES_IDX], gen_data_point[TARGETS_IDX], ret_type, fp))
 
@@ -275,6 +278,14 @@ class Experiments:
         self.all_test_ga = GraphAnalyzer(data_dir_name, train_test_split='test', filename='test_set', load_reader=True, shuffle_data=False, train_test_set_dir_name=train_test_set_dir_name)  # TODO: fix
         self.test_ga = GraphAnalyzer(data_dir_name, train_test_split='small_test', filename='small_test_set', load_reader=True, shuffle_data=False, train_test_set_dir_name=train_test_set_dir_name)
 
+        # for ga in [self.all_ga, self.train_ga, self.all_test_ga, self.test_ga]:
+        #     print("\n\n\n")
+        #     for i in range(10):
+        #         print(ga.fetch_data_with_targets(i))
+        #         print([ga.node2vocab[j] for j in ga.fetch_nodes_as_list(i)])
+        #         print(ga.get_json_ast(i))
+        #         print("\n")
+
         data_dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../data_extractor/data/" + data_dir_name)
         # testing_path = os.path.join(data_dir_path, train_test_set_dir_name + 'test')
         testing_path = data_dir_path + "/" + train_test_set_dir_name + "test"
@@ -317,7 +328,7 @@ class Experiments:
                 self.avg_metrics[category][label] = {}
                 for data_point in self.curated_test_sets[category][label]:
                     dp0 = self.test_prog_ids_to_idx[data_point[0]]
-                    dp1 = self.dataset_creator.ga.node2vocab[data_point[1]]
+                    dp1 = tuple([self.dataset_creator.ga.node2vocab[i] for i in data_point[1]])
                     dp2 = data_point[2]
                     if category != MIN_EQ and category != MAX_EQ and category != RAND:
                         dp2 = self.dataset_creator.ga.node2vocab[data_point[2]]
@@ -331,7 +342,7 @@ class Experiments:
         # prog_id = self.get_test_prog_id(data_point[0])
 
         prog_id = data_point[0]
-        constraints = [data_point[1]]
+        constraints = data_point[1]
         dp2 = data_point[2]
         exclude = []
         min_length = 1
@@ -350,21 +361,24 @@ class Experiments:
 
         # print(data_point)
 
-        nodes, edges, targets, return_type, fp, fp_targets = self.train_ga.fetch_all_list_data_without_delim(prog_id)
+        nodes, edges, targets, return_type, fp, fp_targets = self.test_ga.fetch_all_list_data_without_delim(prog_id)
         ast = (nodes, edges, targets)
 
         print(constraints)
-        print(ast)
 
-        ordered_apis = self.get_nonconstraint_apis_in_prog(constraints, ast, in_random_order)
-        constraints += ordered_apis[:num_apis_to_add_to_constraint]
-        print(constraints)
+        # for ga in [self.all_ga, self.train_ga, self.all_test_ga, self.test_ga]:
+        #     nodes, edges, targets, _, _, _ = ga.fetch_all_list_data_without_delim(prog_id)
+        #     print(nodes, edges, targets)
+
+        # ordered_apis = self.get_nonconstraint_apis_in_prog(constraints, ast, in_random_order)
+        # constraints += ordered_apis[:num_apis_to_add_to_constraint]
+        # print(constraints)
 
         # init MCMCProgram
-        # mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose)
-        # mcmc_prog.init_program(constraints, return_type, fp, exclude=exclude, min_length=min_length,
-        #                        max_length=max_length, ordered=False)
-        mcmc_prog = None
+        mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose)
+        mcmc_prog.init_program(constraints, return_type, fp, exclude=exclude, min_length=min_length,
+                               max_length=max_length, ordered=False)
+        # mcmc_prog = None
 
         constraint_dict = {INCLUDE: constraints, EXCLUDE: exclude, MIN_LENGTH: min_length, MAX_LENGTH: max_length}
 
@@ -407,11 +421,18 @@ class Experiments:
             print(fp)
             print("\n")
             #
-            # for _ in range(int(self.num_iter)):
-            #     mcmc_prog.mcmc()
-            # print(get_str_posterior_distribution(mcmc_prog))
-            # post_dist_dict = self.add_to_post_dist(post_dist_dict, get_str_posterior_distribution(mcmc_prog),
-            #                                        data_point, ast, ret_type, fp, constraint_dict)
+            for _ in range(int(self.num_iter)):
+                mcmc_prog.mcmc()
+            print(get_str_posterior_distribution(mcmc_prog))
+
+            post_dist_dict = self.add_to_post_dist(post_dist_dict, get_str_posterior_distribution(mcmc_prog),
+                                                   data_point, ast, ret_type, fp, constraint_dict)
+
+            prog_metrics = \
+                self.metrics.get_all_averaged_metrics(post_dist_dict, ret_type, fp, constraint_dict, self.all_test_ga, self.train_ga,
+                                                      num_test_progs)
+
+            print(prog_metrics)
 
             counter += 1
             if counter % (num_test_progs/100) == 0:

@@ -1,3 +1,0 @@
-data dir name: new_all_data_1k_vocab_no_duplicates
-model dir path: ../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta
-num iterations: 3

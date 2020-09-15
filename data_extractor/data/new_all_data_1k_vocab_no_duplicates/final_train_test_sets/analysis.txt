@@ -1,0 +1,11 @@
+category: include_api label: novelty
+category: include_cs label: novelty
+category: exclude_cs label: novelty
+counter: 5000 num pairs added: 16 num progs added: 250
+counter: 10000 num pairs added: 41 num progs added: 644
+counter: 15000 num pairs added: 51 num progs added: 830
+counter: 20000 num pairs added: 64 num progs added: 1067
+counter: 25000 num pairs added: 79 num progs added: 1306
+counter: 30000 num pairs added: 97 num progs added: 1647
+counter: 35000 num pairs added: 119 num progs added: 2020
+counter: 40000 num pairs added: 143 num progs added: 2405
