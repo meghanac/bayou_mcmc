@@ -6,6 +6,8 @@ import numpy as np
 import unittest
 import scipy.stats
 import networkx as nx
+
+from data_extractor import dataset_creator_experimental
 from data_extractor.json_data_extractor import copy_json_data_change_return_types, copy_bayou_json_data_change_apicalls, \
     copy_json_data_limit_vocab, copy_data_remove_duplicate, create_identical_bayou_dataset, analyze_file
 from data_extractor.graph_analyzer import GraphAnalyzer, STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, \
@@ -237,15 +239,15 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
         # data_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_10k_vocab_no_duplicates/'
         data_path = 'new_all_data_1k_vocab_no_duplicates'
-        train_test_set_name = "/final_train_test_sets/"
-        dataset_creator = DatasetCreator(data_path, train_test_set_name, verbose=False, min_prog_per_category=1000)
-        # dataset_creator.create_curated_dataset()
+        train_test_set_name = "/train_test_sets_experiment/"
+        dc = dataset_creator_experimental.DatasetCreator(data_path, train_test_set_name, verbose=False, min_prog_per_category=1000)
+        # dc.create_curated_dataset()
 
-        dataset_creator.build_and_save_train_test_sets()
+        dc.build_and_save_train_test_sets()
         data_dir_name = data_path
         data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'
-        # data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/dataset_creator.pickle'
-        create_smaller_test_set(data_path, data_dir_name, train_test_set_name, num_progs_per_category=1000)
+        # # data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/dataset_creator.pickle'
+        dataset_creator_experimental.create_smaller_test_set(data_path, data_dir_name, train_test_set_name, num_progs_per_category=1000)
 
     def test_analyze_file(self):
         analyze_file('/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/test/small_min_length_3/', "small_test_set.json", vocab_freq_saved=False)

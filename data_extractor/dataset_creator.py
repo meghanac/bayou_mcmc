@@ -237,7 +237,7 @@ class DatasetCreator:
 
                     if added_to_test_set_func(api, data_point2, novelty_label, test_set, progs_with_api, progs_with_dp2,
                                               progs_with_both):
-                        print(api, dp2)
+                        print(api, dp2, len(progs_with_both))
                         num_pairs_added += 1
                         added_apis.add(api)
                         if category in DP2_API:
@@ -511,7 +511,7 @@ class DatasetCreator:
                                     success = True
 
                         if success:
-                            print(api, dp2, i3)
+                            print(api, dp2, i3, num_test_set_progs)
                             num_pairs_added += 1
                             added_apis.add(api)
                             if category in DP2_API:

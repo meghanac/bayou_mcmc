@@ -137,7 +137,7 @@ class DatasetCreator:
         start_time = time.time()
 
         def add_to_include(added_apis, added_pairs, counter, test_set, num_pairs_added, start_time,
-                           num_allow_of_each_api=1, min_num_of_test_progs_per_pair=1):
+                           num_allow_of_each_api=1, min_num_of_test_progs_per_pair=5):
             # For every api in the dataset
             for api_idx in api_idx_range:
 
@@ -248,7 +248,7 @@ class DatasetCreator:
             added_apis, added_pairs, counter, test_set, num_pairs_added = add_to_include(added_apis, added_pairs,
                                                                                          counter, test_set,
                                                                                          num_pairs_added, start_time,
-                                                                                         num_allow_of_each_api=3)
+                                                                                         num_allow_of_each_api=3, min_num_of_test_progs_per_pair=3)
 
         print("Category:", category)
         print("Novelty label: " + novelty_label)
@@ -492,8 +492,9 @@ class DatasetCreator:
 
                                 if len(added_pairs[i3]) >= num_allow_of_each_api:
                                     break
-                    if len(added_pairs[dp2]) >= num_allow_of_each_api:
-                        break
+                    if category == EX_API:
+                        if len(added_pairs[dp2]) >= num_allow_of_each_api:
+                            break
 
                 if len(added_pairs[api]) >= num_allow_of_each_api:
                     continue
@@ -511,7 +512,7 @@ class DatasetCreator:
             added_apis, added_pairs, counter, test_set, num_pairs_added = add_to_exclude(added_apis, added_pairs,
                                                                                          counter, test_set,
                                                                                          num_pairs_added, start_time,
-                                                                                         num_allow_of_each_api=3)
+                                                                                         num_allow_of_each_api=3, min_num_of_test_progs_per_pair=3)
 
 
         print("Category:", category)
@@ -724,6 +725,13 @@ class DatasetCreator:
         print("Creating Curated Tests Dataset\n")
 
         for novelty_label in [NEW]:  # Create novelty test set first
+            print("\n\n\n-----------------------------------")
+            print("EXCLUDE CS: ")
+            start_time = time.time()
+            self.add_exclude_test_progs(EX_CS, novelty_label)
+            print("test set len:", len(self.categories[EX_CS][0][novelty_label]), "\n")
+            if self.test_mode:
+                print("Time taken for exclude cs:", start_time - time.time())
 
             print("\n\n\n-----------------------------------")
             print("INCLUDE API: ")
@@ -741,13 +749,7 @@ class DatasetCreator:
             if self.test_mode:
                 print("Time taken for include cs:", start_time - time.time())
 
-            print("\n\n\n-----------------------------------")
-            print("EXCLUDE CS: ")
-            start_time = time.time()
-            self.add_exclude_test_progs(EX_CS, novelty_label)
-            print("test set len:", len(self.categories[EX_CS][0][novelty_label]), "\n")
-            if self.test_mode:
-                print("Time taken for exclude cs:", start_time - time.time())
+
 
             print("\n\n\n-----------------------------------")
             print("EXCLUDE API: ")
