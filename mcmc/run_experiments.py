@@ -10,7 +10,7 @@ model_dir_path = '../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta'
 exp_dir_name = "testing-100"
 
 exp = Experiments(data_dir_name, model_dir_path, exp_dir_name, num_iterations, save_mcmc_progs=False,
-                  train_test_set_dir_name='/train_test_sets_new_ex/')
+                  train_test_set_dir_name='/train_test_sets/')
 
 exp.run_mcmc(EX_CS, NEW, save_run=True, num_test_progs=5, verbose=False)
 exp.run_mcmc(IN_API, NEW, save_run=True, num_test_progs=5, verbose=False)
@@ -34,6 +34,7 @@ exp_dir_name = "testing-330"
 exp = Experiments(data_dir_name, model_dir_path, exp_dir_name, num_iterations, save_mcmc_progs=False,
                   train_test_set_dir_name='/train_test_sets_new_ex/')
 
-exp.run_mcmc(EX_CS, NEW, save_run=True, num_test_progs=5, verbose=False)
+# exp.run_mcmc(EX_CS, NEW, save_run=True, num_test_progs=5, verbose=False)
+exp.run_mcmc(IN_CS, NEW, save_run=True, num_test_progs=5, verbose=False)
 exp.run_mcmc(IN_API, NEW, save_run=True, num_test_progs=5, verbose=False)
 

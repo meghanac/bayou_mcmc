@@ -49,7 +49,7 @@ class MCMCProgram:
 
     """
 
-    def __init__(self, save_dir, use_gpu=False, use_xla=True, verbose=False, debug=False, save_states=False):
+    def __init__(self, save_dir, use_gpu=False, use_xla=False, verbose=True, debug=False, save_states=False):
         """
         Initialize program
         :param save_dir: (string) path to directory in which saved model checkpoints are in
@@ -425,36 +425,27 @@ class MCMCProgram:
             # Check that DStop does not have any nodes after it
             if curr_node.api_name == STOP:
                 if not (curr_node.sibling is None and curr_node.child is None):
-                    # if curr_node.parent.api_name != DBRANCH:
+                    if curr_node.parent.api_name != DBRANCH:
                         return False
 
             # check child edges
             if curr_node.parent_edge == CHILD_EDGE:
-                # if curr_node.parent.api_name not in {DBRANCH, DLOOP,
-                #                                      DEXCEPT} and curr_node.parent.parent.api_name not in {DBRANCH,
-                #                                                                                            DLOOP,
-                #                                                                                            DEXCEPT}:
-                #     return False
-                parent_node = curr_node.parent
-                while parent_node is not None:
-                    if parent_node.api_name in {DBRANCH, DLOOP, DEXCEPT}:
-                        parent_node = True
-                        break
-                    parent_node = parent_node.parent
-                if parent_node is None:
+                if curr_node.parent.api_name not in {DBRANCH, DLOOP,
+                                                     DEXCEPT} and curr_node.parent.parent.api_name not in {DBRANCH,
+                                                                                                           DLOOP,
+                                                                                                           DEXCEPT}:
                     return False
 
             # Check that DBranch has the proper form
             if curr_node.api_name == DBRANCH:
                 if curr_node.child is None:
                     return False
-                if curr_node.child.child is None or curr_node.child.sibling is None:
+                if curr_node.child.child is None or curr_node.child.sibling is None \
+                        or curr_node.child.child.sibling is None:
                     return False
-                if curr_node.child.child.api_name == DSTOP and curr_node.child.sibling.api_name == DSTOP:
+                if curr_node.child.api_name in (DNODES - {STOP}) or curr_node.child.child.api_name in (DNODES - {STOP}) \
+                        or curr_node.child.sibling.api_name in (DNODES - {STOP}):
                     return False
-                # if curr_node.child.api_name in (DNODES - {STOP}) or (curr_node.child.child is not None and curr_node.child.child.api_name in (DNODES - {STOP})) \
-                #         or (curr_node.child.sibling is not None and curr_node.child.sibling.api_name in (DNODES - {STOP})):
-                #     return False
                 if curr_node.sibling is None:
                     return False
                 # if curr_node.child.child.sibling.api_name != STOP:
@@ -474,8 +465,8 @@ class MCMCProgram:
                     return False
                 if curr_node.child.child is None or curr_node.child.sibling is not None:
                     return False
-                # if curr_node.child.api_name in (DNODES - {STOP}) or curr_node.child.child.api_name in (DNODES - {STOP}):
-                #     return False
+                if curr_node.child.api_name in (DNODES - {STOP}) or curr_node.child.child.api_name in (DNODES - {STOP}):
+                    return False
                 if curr_node.sibling is None:
                     return False
                 # if curr_node.child.child.sibling is None:

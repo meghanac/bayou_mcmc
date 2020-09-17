@@ -18,6 +18,8 @@ from data_extractor.dataset_creator import DatasetCreator, build_sets_from_saved
 from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
     MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
 
+from experiments import Experiments
+
 
 class TestGraphAnalyzer(unittest.TestCase):
 
@@ -239,15 +241,36 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
         # data_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_10k_vocab_no_duplicates/'
         data_path = 'new_all_data_1k_vocab_no_duplicates'
-        train_test_set_name = "/train_test_sets_experiment/"
-        dc = dataset_creator_experimental.DatasetCreator(data_path, train_test_set_name, verbose=False, min_prog_per_category=1000)
+        train_test_set_name = "/train_test_sets_min_2/"
+        dc = DatasetCreator(data_path, train_test_set_name, verbose=False, min_prog_per_category=1000)
         # dc.create_curated_dataset()
 
         dc.build_and_save_train_test_sets()
         data_dir_name = data_path
         data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'
+        add_prog_length_to_dataset_creator(data_path, train_test_set_name, save=True)
         # # data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/dataset_creator.pickle'
-        dataset_creator_experimental.create_smaller_test_set(data_path, data_dir_name, train_test_set_name, num_progs_per_category=1000)
+        create_smaller_test_set(data_path, data_dir_name, train_test_set_name, num_progs_per_category=1000)
+
+    def test_ga(self):
+        data_path = 'new_all_data_1k_vocab_no_duplicates'
+        train_test_set_name = "/train_test_sets/"
+        # dc = DatasetCreator(data_path, train_test_set_name, verbose=False, min_prog_per_category=1000)
+        # constraints = ['java.sql.Connection.close()', 'java.util.ArrayList<java.lang.String>.ArrayList<String>()']
+
+        constraints = ['java.io.FileInputStream.FileInputStream(java.lang.String)', 'java.io.FileInputStream.read(byte[])']
+                                                                        # ['__UDT__'],
+                                                                        # ['DSubTree', 'Element', '__UDT__', 'boolean']
+
+        all_test_ga = GraphAnalyzer(data_path, train_test_split='test', filename='test_set', load_reader=True,
+                                         shuffle_data=False, train_test_set_dir_name=train_test_set_name)
+        progs = all_test_ga.get_programs_with_multiple_apis(constraints)
+        print(len(progs))
+        for prog in progs:
+            for data in prog:
+                print(data)
+                print("")
+            print("\n")
 
     def test_analyze_file(self):
         analyze_file('/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/test/small_min_length_3/', "small_test_set.json", vocab_freq_saved=False)
@@ -338,6 +361,18 @@ class TestGraphAnalyzer(unittest.TestCase):
         old_data_filename_path = '/data/all_data_no_duplicates_bayou/train/training_data.json'
         new_data_filename = '/data/all_data_no_duplicates_bayou/test/apicalls_training_data.json'
         copy_bayou_json_data_change_apicalls(old_data_filename_path, new_data_filename)
+
+    def test_experiment(self):
+        num_iterations = 100
+        data_dir_name = 'new_all_data_1k_vocab_no_duplicates'
+        model_dir_path = '../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta'
+
+        exp_dir_name = "testing-none"
+
+        create_smaller_test_set(data_path, data_dir_name, train_test_set_name, num_progs_per_category=1000)
+
+        exp = Experiments(data_dir_name, model_dir_path, exp_dir_name, num_iterations, save_mcmc_progs=False,
+                          train_test_set_dir_name='/final_train_test_sets/')
 
     def test_ga_info(self):
         data_path = 'all_data_1k_vocab_no_duplicates'

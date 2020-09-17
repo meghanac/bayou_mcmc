@@ -368,7 +368,10 @@ class Experiments:
                 self.avg_metrics[category][label] = {}
                 for data_point in self.curated_test_sets[category][label]:
                     dp0 = self.test_prog_ids_to_idx[data_point[0]]
-                    dp1 = tuple([self.dataset_creator.ga.node2vocab[i] for i in data_point[1]])
+                    if type(data_point[1]) == int:
+                        dp1 = tuple([self.dataset_creator.ga.node2vocab[data_point[1]]])
+                    else:
+                        dp1 = tuple([self.dataset_creator.ga.node2vocab[i] for i in data_point[1]])
                     dp2 = data_point[2]
                     if category != MIN_EQ and category != MAX_EQ and category != RAND:
                         dp2 = self.dataset_creator.ga.node2vocab[data_point[2]]
@@ -382,7 +385,7 @@ class Experiments:
         # prog_id = self.get_test_prog_id(data_point[0])
 
         prog_id = data_point[0]
-        constraints = data_point[1]
+        constraints = list(data_point[1])
         dp2 = data_point[2]
         exclude = []
         min_length = 1
@@ -415,10 +418,10 @@ class Experiments:
         # print(constraints)
 
         # init MCMCProgram
-        mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose)
-        mcmc_prog.init_program(constraints, return_type, fp, exclude=exclude, min_length=min_length,
-                               max_length=max_length, ordered=False)
-        # mcmc_prog = None
+        # mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose)
+        # mcmc_prog.init_program(constraints, return_type, fp, exclude=exclude, min_length=min_length,
+        #                        max_length=max_length, ordered=False)
+        mcmc_prog = None
 
         constraint_dict = {INCLUDE: constraints, EXCLUDE: exclude, MIN_LENGTH: min_length, MAX_LENGTH: max_length}
 
@@ -454,19 +457,19 @@ class Experiments:
             mcmc_prog, ast, ret_type, fp, constraint_dict = self.get_mcmc_prog_and_ast(data_point, category, in_random_order,
                                                                       num_apis_to_add_to_constraint, verbose=verbose)
 
-            # print("\n")
-            # print(constraint_dict)
-            # print(ast)
-            # print(ret_type)
-            # print(fp)
-            # print("\n")
+            print("\n")
+            print(constraint_dict)
+            print(ast)
+            print(ret_type)
+            print(fp)
+            print("\n")
             #
-            for _ in range(int(self.num_iter)):
-                mcmc_prog.mcmc()
-            # print(get_str_posterior_distribution(mcmc_prog))
-
-            post_dist_dict = self.add_to_post_dist(post_dist_dict, get_str_posterior_distribution(mcmc_prog),
-                                                   data_point, ast, ret_type, fp, constraint_dict)
+            # for _ in range(int(self.num_iter)):
+            #     mcmc_prog.mcmc()
+            # # print(get_str_posterior_distribution(mcmc_prog))
+            #
+            # post_dist_dict = self.add_to_post_dist(post_dist_dict, get_str_posterior_distribution(mcmc_prog),
+            #                                        data_point, ast, ret_type, fp, constraint_dict)
 
             # prog_metrics = \
             #     self.metrics.get_all_averaged_metrics(post_dist_dict[data_point][0], ret_type, fp, constraint_dict, self.all_test_ga, self.train_ga,

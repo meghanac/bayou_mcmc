@@ -36,6 +36,8 @@ NEW = 'novelty'
 DBRANCH = 'DBranch'
 DLOOP = 'DLoop'
 DEXCEPT = 'DExcept'
+DSTOP = 'DStop'
+DSUBTREE = 'DSubTree'
 
 PID = 0
 API = 1
@@ -139,6 +141,9 @@ class DatasetCreator:
         assert category in DP2_API or category in DP2_CS, "Error: category must be " + IN_CS + ", " + IN_API + ", " \
                                                           + EX_API + ", " + ", or " + EX_CS
         api_idx_range = list(range(self.full_range[0], self.full_range[1]))
+        non_apis = [self.ga.vocab2node[i] for i in [DBRANCH, DLOOP, DEXCEPT, DSTOP, DSUBTREE]]
+        for non_api in non_apis:
+            api_idx_range.remove(non_api)
         random.shuffle(api_idx_range)
 
         self.analysis_f.write("category: " + category + " label: " + novelty_label + "\n")
@@ -187,8 +192,10 @@ class DatasetCreator:
             apis_with_api = set([y for x in apis_with_api for y in x])
 
             if category == IN_API:
-                apis_with_api = list(apis_with_api - added_apis - {api, 'DSubTree', 'DStop', DBRANCH, DLOOP,
-                                                                           DEXCEPT})
+                added_api_nums = list(added_apis.copy())
+                added_api_nums = set([self.ga.vocab2node[i] for i in added_api_nums])
+                non_apis = set([self.ga.vocab2node[i] for i in [api, 'DSubTree', 'DStop', DBRANCH, DLOOP, DEXCEPT]])
+                apis_with_api = list(apis_with_api.difference(added_api_nums).difference(non_apis))
             else:
                 apis_with_api = list(
                     apis_with_api.intersection(set([self.ga.vocab2node[i] for i in [DBRANCH, DLOOP, DEXCEPT]])))
@@ -211,7 +218,7 @@ class DatasetCreator:
                 if len(progs_with_both) == len(progs_with_api.union(progs_with_dp2)):
                     continue
 
-                if not (progs_with_both < progs_with_api and progs_with_dp2 > progs_with_both):
+                if not (2 < len(progs_with_both) < len(progs_with_api) and len(progs_with_dp2) > len(progs_with_both) > 2):
                     continue
 
                 apis_with_dp2 = [self.ga.get_apis_in_prog_set(i) for i in progs_with_dp2]
@@ -238,6 +245,10 @@ class DatasetCreator:
                     if added_to_test_set_func(api, data_point2, novelty_label, test_set, progs_with_api, progs_with_dp2,
                                               progs_with_both):
                         print(api, dp2, len(progs_with_both))
+                        # if api in {DBRANCH, DLOOP, DEXCEPT} or dp2 in {DBRANCH, DLOOP, DEXCEPT}:
+                        #     print("----------HERE")
+                        #     print("api:", api)
+                        #     print("")
                         num_pairs_added += 1
                         added_apis.add(api)
                         if category in DP2_API:
@@ -303,6 +314,9 @@ class DatasetCreator:
     def add_exclude_test_progs(self, category, novelty_label):
         assert category == EX_CS or category == EX_API
         api_idx_range = list(range(self.full_range[0], self.full_range[1]))
+        non_apis = [self.ga.vocab2node[i] for i in [DBRANCH, DLOOP, DEXCEPT, DSTOP, DSUBTREE]]
+        for non_api in non_apis:
+            api_idx_range.remove(non_api)
         random.shuffle(api_idx_range)
 
         self.analysis_f.write("category: " + category + " label: " + novelty_label + "\n")
@@ -378,8 +392,10 @@ class DatasetCreator:
             apis_with_api = set([y for x in apis_with_api for y in x])
 
             if category == EX_API:
-                apis_with_api = list(apis_with_api - added_apis - {api, 'DSubTree', 'DStop', DLOOP, DBRANCH,
-                                                                           DEXCEPT})
+                added_api_nums = list(added_apis.copy())
+                added_api_nums = set([self.ga.vocab2node[i] for i in added_api_nums])
+                non_apis = set([self.ga.vocab2node[i] for i in [api, 'DSubTree', 'DStop', DBRANCH, DLOOP, DEXCEPT]])
+                apis_with_api = list(apis_with_api.difference(added_api_nums).difference(non_apis))
             else:
                 apis_with_api = list(
                     apis_with_api.intersection(set([self.ga.vocab2node[i] for i in [DBRANCH, DLOOP, DEXCEPT]])))
@@ -406,7 +422,7 @@ class DatasetCreator:
                 apis_with_dp2 = [self.ga.get_apis_in_prog_set(i) for i in dp2_prog_ids]
                 apis_with_dp2 = set([y for x in apis_with_dp2 for y in x])
 
-                apis_with_both = list(set(apis_with_api).union(apis_with_dp2) - added_apis - {dp2, 'DSubTree', 'DStop'})
+                apis_with_both = list(set(apis_with_api).union(apis_with_dp2).difference(added_apis).difference({dp2, 'DSubTree', 'DStop'}))
                 random.shuffle(apis_with_both)
 
                 if api == dp2:
@@ -434,7 +450,7 @@ class DatasetCreator:
                     i3_prog_ids = self.ga.get_program_ids_for_api(i3)
 
                     progs_with_api_dp2 = api_prog_ids.intersection(dp2_prog_ids).difference(i3_prog_ids)
-                    if len(progs_with_api_dp2) == 0:
+                    if len(progs_with_api_dp2) < 2:
                         continue
 
                     if dp2 in {DBRANCH, DEXCEPT, DLOOP} and len(i3_prog_ids.difference(dp2_prog_ids)) == 0:
@@ -609,6 +625,9 @@ class DatasetCreator:
         self.analysis_f.write("category: " + category + " label: " + novelty_label + "\n")
 
         api_idx_range = list(range(self.full_range[0], self.full_range[1]))
+        non_apis = [self.ga.vocab2node[i] for i in [DBRANCH, DLOOP, DEXCEPT, DSTOP, DSUBTREE]]
+        for non_api in non_apis:
+            api_idx_range.remove(non_api)
         random.shuffle(api_idx_range)
 
         len_range = list(range(3, 8))
@@ -674,7 +693,7 @@ class DatasetCreator:
                     print("control api:", self.control_limit * num_progs_with_api)
 
                 if num_valid_progs <= self.control_limit * num_progs_with_api:
-                    if novelty_label == NEW and 0 < num_valid_progs <= max_progs:
+                    if novelty_label == NEW and 2 < num_valid_progs <= max_progs:
                         if self.verbose:
                             print("api:", api, "length:", length)
                             print("num progs added:", len(valid_prog_ids))
