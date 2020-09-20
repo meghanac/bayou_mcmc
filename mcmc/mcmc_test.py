@@ -638,9 +638,9 @@ class MCMCProgramTest(unittest.TestCase):
         #                                                                 ['DSubTree', 'String'], ordered=True)
 
         test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_05_MODEL_PATH,
-                                                                        ['java.util.HashMap.HashMap()', 'java.util.Map.putAll(java.util.Map)'],
+                                                                        ['java.util.Vector<Tau_E>.Vector(int)', 'DLoop'],
                                                                         ['__UDT__'],
-                                                                        ['DSubTree', 'Element', '__UDT__', 'boolean'], ordered=True)
+                                                                        ['DSubTree', 'Element', '__UDT__', 'boolean'], ordered=True, exclude=['DBranch'])
 
 
 
@@ -665,7 +665,7 @@ class MCMCProgramTest(unittest.TestCase):
         for i in range(num_iter):
             print("\n\n---------------")
             print(i)
-            test_prog.prog.mcmc()
+            test_prog.prog.mcmc(i)
             print_verbose_tree_info(test_prog.prog.curr_prog)
             # if i % 1 == 0:
             #     test_prog.update_nodes_and_edges(verbose=True)

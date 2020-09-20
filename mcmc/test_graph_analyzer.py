@@ -9,7 +9,7 @@ import networkx as nx
 
 from data_extractor import dataset_creator_experimental
 from data_extractor.json_data_extractor import copy_json_data_change_return_types, copy_bayou_json_data_change_apicalls, \
-    copy_json_data_limit_vocab, copy_data_remove_duplicate, create_identical_bayou_dataset, analyze_file
+    copy_json_data_limit_vocab, copy_data_remove_duplicate, create_identical_bayou_dataset, analyze_file, REPLACE_TYPES
 from data_extractor.graph_analyzer import GraphAnalyzer, STR_BUF, STR_APP, READ_LINE, CLOSE, STR_LEN, STR_BUILD, \
     STR_BUILD_APP, LOWERCASE_LOCALE, DATA_DIR_PATH, ALL_DATA_1K_VOCAB, TESTING, NEW_VOCAB, APIS, RT, FP, TOP, MID, \
     LOW, ALL_DATA_1K_VOCAB_NO_DUP, ALL_DATA, ALL_DATA_NO_DUP, MIN_EQ, MAX_EQ
@@ -241,7 +241,7 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
         # data_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_10k_vocab_no_duplicates/'
         data_path = 'new_all_data_1k_vocab_no_duplicates'
-        train_test_set_name = "/train_test_sets_min_2/"
+        train_test_set_name = "/novel_min_2/"
         dc = DatasetCreator(data_path, train_test_set_name, verbose=False, min_prog_per_category=1000)
         # dc.create_curated_dataset()
 
@@ -272,15 +272,35 @@ class TestGraphAnalyzer(unittest.TestCase):
                 print("")
             print("\n")
 
+    def test_add_seen(self):
+        data_path = 'new_all_data_1k_vocab_no_duplicates'
+        train_test_set_name = "/train_test_sets_min_2/"
+        data_dir_name = data_path
+        data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'
+        creator_dir_path = data_path + "/" + train_test_set_name + "/"
+        print(creator_dir_path)
+        f = open(creator_dir_path + "/dataset_creator.pickle", "rb")
+        dataset_creator = pickle.load(f)
+        dataset_creator.analysis_f = open(dataset_creator.dir_path + "/analysis.txt", "w+")
+        dataset_creator.build_and_save_train_test_sets()
+
+    def test_prog_dump(self):
+        path = 'experiments/testing-100/post_dist_exclude_cs_novelty.pickle'
+        f = open(path, "rb")
+        prog_dist = pickle.load(f)
+        for prog in prog_dist:
+            print(prog)
+            print(prog_dist[prog])
+
     def test_analyze_file(self):
         analyze_file('/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/test/small_min_length_3/', "small_test_set.json", vocab_freq_saved=False)
 
     def test_build_identical_bayou_dataset(self):
         all_data_bayou_dataset_name = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/data_surrounding_methods.json'
-        mcmc_dataset_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/train/all_training_data.json'
-        new_bayou_dataset_name = 'training_1k_vocab_apicalls.json'
+        mcmc_dataset_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/train/all_training_data.json'
+        new_bayou_dataset_name = 'final_training_1k_vocab_all_replaced_no_key.json'
         bayou_path = '/Users/meghanachilukuri/bayou/src/main/python/bayou/models/low_level_evidences/data/'
-        create_identical_bayou_dataset(all_data_bayou_dataset_name, mcmc_dataset_path, new_bayou_dataset_name, bayou_path)
+        create_identical_bayou_dataset(all_data_bayou_dataset_name, mcmc_dataset_path, new_bayou_dataset_name, bayou_path, types=REPLACE_TYPES)
 
     def test_build_sets_from_creator(self):
         data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'
@@ -361,6 +381,29 @@ class TestGraphAnalyzer(unittest.TestCase):
         old_data_filename_path = '/data/all_data_no_duplicates_bayou/train/training_data.json'
         new_data_filename = '/data/all_data_no_duplicates_bayou/test/apicalls_training_data.json'
         copy_bayou_json_data_change_apicalls(old_data_filename_path, new_data_filename)
+
+    def test_get_small_test_data(self):
+
+
+        constraints = ['java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.InputStreamReader.close()']
+        exclude = ['DLoop']
+
+        num_iterations = 3
+        data_dir_name = 'new_all_data_1k_vocab_no_duplicates'
+        model_dir_path = '../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta'
+
+
+        exp_dir_name = "testing-100"
+
+        exp = Experiments(data_dir_name, model_dir_path, exp_dir_name, num_iterations, save_mcmc_progs=False,
+                          train_test_set_dir_name='/novel_min_2/')
+
+        for i in constraints:
+            test_progs = exp.all_test_ga.get_programs_with_multiple_apis(constraints, exclude=exclude)
+            for prog in test_progs:
+                print('---------------------')
+                print("constraints:", constraints)
+                exp.all_test_ga.print_lists(prog)
 
     def test_experiment(self):
         num_iterations = 100

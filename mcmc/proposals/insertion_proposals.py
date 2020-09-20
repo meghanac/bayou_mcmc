@@ -17,7 +17,7 @@ from configuration import TEMP
 
 
 class ProposalWithInsertion:
-    def __init__(self, tree_modifier, decoder, tf_session, top_k_prob=0.95, verbose=False, debug=False):
+    def __init__(self, tree_modifier, decoder, tf_session, top_k_prob=0.995, verbose=False, debug=False):
         self.decoder = decoder
         self.config = tree_modifier.config
         self.tree_mod = tree_modifier
@@ -39,7 +39,7 @@ class ProposalWithInsertion:
 
         self.sess = tf_session
 
-    def _grow_dbranch(self, dbranch):
+    def _grow_dbranch(self, dbranch, max_consecutive_inserts=3):
         """
         Create full DBranch (DBranch, condition, then, else) from parent node.
         :param parent: (Node) parent of DBranch
@@ -69,7 +69,7 @@ class ProposalWithInsertion:
         for edge in [CHILD_EDGE, SIBLING_EDGE]:
             parent_node = condition
             counter = 0
-            while parent_node.api_name != STOP and counter < 3:
+            while parent_node.api_name != STOP and counter < max_consecutive_inserts:
                 # Add then api as child to condition node
                 parent_node, _, prob = self._get_new_node(parent_node, edge, verbose=self.debug)
                 ln_prob += prob
@@ -85,7 +85,7 @@ class ProposalWithInsertion:
 
         return ln_prob, added_stop_node
 
-    def _grow_dloop_or_dexcept(self, dnode):
+    def _grow_dloop_or_dexcept(self, dnode, max_consecutive_inserts=2):
         """
         Create full DLoop (DLoop, condition, body) from parent node
         :param parent: (Node) parent of DLoop
@@ -99,7 +99,7 @@ class ProposalWithInsertion:
 
         parent_node = dnode
         counter = 0
-        while parent_node.api_name != STOP and counter < 2:
+        while parent_node.api_name != STOP and counter < max_consecutive_inserts:
             parent_node, cond_pos, prob = self._get_new_node(parent_node, CHILD_EDGE, verbose=self.debug)
             ln_prob += prob
             counter += 1
@@ -244,6 +244,10 @@ class ProposalWithInsertion:
                 if verbose:
                     print("topk", [self.config.node2vocab[sorted_logits[i]] for i in range(0, self.decoder.top_k)])
                     print("topk", self.config.node2vocab[sorted_logits[rand_idx]])
+                for i in range(len(sorted_logits)):
+                    if self.config.node2vocab[sorted_logits[i]] not in {STOP, START, DBRANCH, DLOOP, DEXCEPT}:
+                        rand_idx = i
+                        break
                 prob = self.top_k_prob * 1.0 / self.decoder.top_k
                 return sorted_logits[rand_idx], math.log(prob)
             else:

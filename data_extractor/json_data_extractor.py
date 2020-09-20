@@ -258,15 +258,19 @@ def create_identical_bayou_dataset(all_data_bayou_dataset_path, mcmc_dataset_pat
     new_bayou_f.write("{\n")
     new_bayou_f.write("\"programs\": [\n")
 
-    data_types = ['ast', 'keywords', 'types']
+    data_types = ['ast', 'types']
     counter = 0
     bayou_prog_set = set([])
     programs = []
+    skipped_progs = 0
     for program in ijson.items(all_bayou_f, 'programs.item'):
         key = (json.dumps(program['ast']), json.dumps(program['returnType']), json.dumps(program['formalParam']))
         counter += 1
         if counter % 100000 == 0:
             print(counter)
+            print("added progs:", len(bayou_prog_set))
+            print("num skipped:", skipped_progs)
+            print("")
         if key in prog_set and key not in bayou_prog_set:
             prog = {}
             for t in data_types:
@@ -277,13 +281,17 @@ def create_identical_bayou_dataset(all_data_bayou_dataset_path, mcmc_dataset_pat
             if types is not None:
                 if types == ADD_TO_TYPES:
                     curr_types = set(prog['types'])
-                    curr_types.update(set(prog[FP]))
-                    curr_types.update(set(prog[RT]))
+                    curr_types.update(set(program[FP]))
+                    curr_types.update(set(program[RT]))
                     curr_types.difference_update(set(prog['types']))
                     prog['types'] += list(curr_types)
                 elif types == REPLACE_TYPES:
-                    rt_fp = set(prog[FP])
-                    rt_fp.update(set(prog[RT]))
+                    try:
+                        rt_fp = set(program[FP])
+                    except KeyError:
+                        skipped_progs += 1
+                        continue
+                    rt_fp.update(set(program[RT]))
                     prog['types'] = list(rt_fp)
 
             bayou_prog_set.add(key)

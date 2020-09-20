@@ -235,12 +235,12 @@ class MCMCProgram:
 
             # Add constraint nodes to tree
             last_node = head
-            for i in self.constraints:
+            for i in constraints:
                 node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
                 last_node = node
-            for i in self.constraint_control_structs:
-                node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
-                last_node = node
+            # for i in self.constraint_control_structs:
+            #     node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
+            #     last_node = node
         else:
             self.get_best_starting_program()
 
@@ -253,6 +253,28 @@ class MCMCProgram:
 
         # Initialize proposals
         self.init_proposals()
+
+        # for _ in range(3):
+        #     curr_prog_copy = self.curr_prog.copy()
+        #     node = curr_prog_copy.sibling
+        #     while node != None:
+        #         if node.api_name in self.constraints:
+        #             print("grow_constraint")
+        #             self.GrowConstraint.grow_constraint(curr_prog_copy, self.initial_state, node,
+        #                                                 len(self.constraints) + len(self.constraint_control_structs))
+        #         node = node.sibling
+        #
+        #     print_verbose_tree_info(curr_prog_copy)
+        #     print("is valid:", self.check_validity(curr_prog_copy))
+        #
+        #     if self.check_validity(curr_prog_copy):
+        #         self.curr_prog = curr_prog_copy
+        #         self.get_initial_decoder_state()
+        #
+        #         # Update probabilities of tree
+        #         self.calculate_probability()
+        #         self.prev_log_prob = self.curr_log_prob
+        #         print(self.curr_log_prob)
 
         # Grow out structures if present
         if len(self.constraint_control_structs) > 0:
@@ -322,19 +344,23 @@ class MCMCProgram:
 
         GrowStruct = ProposalWithInsertion(self.tree_mod, self.decoder, self.sess, verbose=self.verbose,
                                            debug=self.debug)
+        GrowStruct.use_multinomial = False
         GrowStruct.curr_prog = curr_node
         GrowStruct.initial_state = self.initial_state
+
+        old_topk = self.decoder.top_k
+        self.decoder.top_k = 3
 
         while curr_node is not None:
             print("curr_node:", curr_node.api_name)
             print("num structures grown:", num_structures_grown)
             if curr_node.api_name == DBRANCH and curr_node.child is None:
-                GrowStruct._grow_dbranch(curr_node)
+                GrowStruct._grow_dbranch(curr_node, max_consecutive_inserts=1)
                 num_structures_grown += 1
                 print_verbose_tree_info(head)
                 print("\n")
             elif (curr_node.api_name == DLOOP or curr_node.api_name == DEXCEPT) and curr_node.child is None:
-                GrowStruct._grow_dloop_or_dexcept(curr_node)
+                GrowStruct._grow_dloop_or_dexcept(curr_node, max_consecutive_inserts=2)
                 num_structures_grown += 1
                 print_verbose_tree_info(head)
 
@@ -450,7 +476,7 @@ class MCMCProgram:
                     return False
                 if curr_node.child.child is None or curr_node.child.sibling is None:
                     return False
-                if curr_node.child.child.api_name == DSTOP and curr_node.child.sibling.api_name == DSTOP:
+                if curr_node.child.child.api_name == STOP and curr_node.child.sibling.api_name == STOP:
                     return False
                 # if curr_node.child.api_name in (DNODES - {STOP}) or (curr_node.child.child is not None and curr_node.child.child.api_name in (DNODES - {STOP})) \
                 #         or (curr_node.child.sibling is not None and curr_node.child.sibling.api_name in (DNODES - {STOP})):
@@ -470,10 +496,12 @@ class MCMCProgram:
 
             # Check that DLoop and DExcept have the proper form
             if curr_node.api_name == DLOOP or curr_node.api_name == DEXCEPT:
-                if curr_node.child is None:
+                if curr_node.child is None or curr_node.child.api_name == STOP:
                     return False
-                if curr_node.child.child is None or curr_node.child.sibling is not None:
+                if curr_node.child.child is None or curr_node.child.child.api_name == STOP:
                     return False
+                # if curr_node.child.child is None or curr_node.child.sibling is not None:
+                #     return False
                 # if curr_node.child.api_name in (DNODES - {STOP}) or curr_node.child.child.api_name in (DNODES - {STOP}):
                 #     return False
                 if curr_node.sibling is None:
@@ -1070,7 +1098,7 @@ class MCMCProgram:
 
         return curr_prob
 
-    def mcmc(self):
+    def mcmc(self, i):
         """
         Perform one MCMC step.
         1) Try to transform program tree.
@@ -1100,6 +1128,7 @@ class MCMCProgram:
             # assert self.posterior_dist[new_prog][1] == self.curr_log_prob, "new_prog prob: " + str(
             #     self.posterior_dist[new_prog][1]) + " curr prob: " + str(self.curr_log_prob)
             self.posterior_dist[new_prog][0] += 1
+            self.posterior_dist[new_prog][1] = min(self.posterior_dist[new_prog][1], self.curr_log_prob)
         else:
             self.posterior_dist[new_prog] = [1, self.curr_log_prob]
 

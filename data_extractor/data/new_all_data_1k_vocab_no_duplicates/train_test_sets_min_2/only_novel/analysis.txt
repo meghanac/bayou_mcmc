@@ -1,0 +1,28 @@
+category: include_api label: novelty
+category: include_cs label: novelty
+category: exclude_cs label: novelty
+counter: 5000 num pairs added: 5 num progs added: 85
+counter: 10000 num pairs added: 17 num progs added: 356
+counter: 15000 num pairs added: 29 num progs added: 620
+counter: 20000 num pairs added: 47 num progs added: 950
+counter: 25000 num pairs added: 62 num progs added: 1237
+counter: 30000 num pairs added: 74 num progs added: 1500
+counter: 35000 num pairs added: 88 num progs added: 1724
+counter: 40000 num pairs added: 101 num progs added: 2036
+counter: 45000 num pairs added: 118 num progs added: 2316
+counter: 50000 num pairs added: 131 num progs added: 2512
+counter: 55000 num pairs added: 141 num progs added: 2619
+counter: 60000 num pairs added: 166 num progs added: 3071
+counter: 65000 num pairs added: 182 num progs added: 3510
+counter: 70000 num pairs added: 196 num progs added: 3813
+counter: 75000 num pairs added: 219 num progs added: 4125
+counter: 80000 num pairs added: 238 num progs added: 4482
+counter: 85000 num pairs added: 256 num progs added: 4897
+counter: 90000 num pairs added: 280 num progs added: 5298
+counter: 95000 num pairs added: 306 num progs added: 5732
+counter: 100000 num pairs added: 326 num progs added: 6096
+counter: 105000 num pairs added: 337 num progs added: 6255
+counter: 110000 num pairs added: 355 num progs added: 6597
+category: exclude_api label: novelty
+category: min_eq label: novelty
+category: max_eq label: novelty
