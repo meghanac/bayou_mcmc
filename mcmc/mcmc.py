@@ -49,7 +49,7 @@ class MCMCProgram:
 
     """
 
-    def __init__(self, save_dir, use_gpu=False, use_xla=True, verbose=False, debug=False, save_states=False):
+    def __init__(self, save_dir, verbose=False, debug=False, save_states=False, session=None):
         """
         Initialize program
         :param save_dir: (string) path to directory in which saved model checkpoints are in
@@ -60,15 +60,11 @@ class MCMCProgram:
         # Restore ML model
         self.model = Model(self.config.config_obj)
 
-        # Launch the graph
-        config = tf.ConfigProto(
-            device_count={'GPU': 0 if not use_gpu else 1}
-        )
+        if session is None:
+            self.sess = tf.Session()
+        else:
+            self.sess = session
 
-        if use_xla:
-            config.graph_options.optimizer_options.global_jit_level = tf.OptimizerOptions.ON_1
-
-        self.sess = tf.Session(config=config)
         self.restore(save_dir)
         with tf.name_scope("ast_inference"):
             ast_logits = self.model.decoder.ast_logits[:, 0, :]
@@ -499,6 +495,8 @@ class MCMCProgram:
                 if curr_node.child is None or curr_node.child.api_name == STOP:
                     return False
                 if curr_node.child.child is None or curr_node.child.child.api_name == STOP:
+                    return False
+                if curr_node.child.sibling is not None:
                     return False
                 # if curr_node.child.child is None or curr_node.child.sibling is not None:
                 #     return False

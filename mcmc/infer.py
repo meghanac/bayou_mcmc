@@ -21,7 +21,7 @@ import numpy as np
 from trainer_vae.model import Model
 from trainer_vae.utils import get_var_list, read_config
 
-tf.config.optimizer.set_jit(True)
+# tf.config.optimizer.set_jit(True)
 
 
 class BayesianPredictor(object):

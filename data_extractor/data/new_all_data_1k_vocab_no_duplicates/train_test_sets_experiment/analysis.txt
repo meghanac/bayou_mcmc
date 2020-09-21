@@ -1,5 +1,0 @@
-category: exclude_cs label: novelty
-counter: 5000 num pairs added: 6 num progs added: 169
-counter: 10000 num pairs added: 10 num progs added: 241
-counter: 15000 num pairs added: 11 num progs added: 255
-counter: 20000 num pairs added: 14 num progs added: 341

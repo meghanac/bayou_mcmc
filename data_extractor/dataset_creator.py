@@ -73,14 +73,17 @@ class DatasetCreator:
         # self.novelty_test_set = set([])
         # self.accuracy_test_set = set([])
 
-        self.ranks = sorted(nx.get_node_attributes(self.ga.g, 'frequency').items(), key=lambda x: x[1], reverse=True)
-        self.ranks = list(filter(lambda x: x[0] in self.ga.vocab2node, self.ranks))
-        self.ranks = [(self.ranks[i][0], (i, self.ranks[i][1])) for i in range(len(self.ranks))]
-        self.ranks_dict = dict(self.ranks)
-        self.ranks = [i[0] for i in self.ranks]
+        self.ranks = list(json.load(open(self.ga.dir_path + "/vocab.json", "r"))['api_dict'].keys())
+        # self.ranks = sorted(nx.get_node_attributes(self.ga.g, 'frequency').items(), key=lambda x: x[1], reverse=True)
+        # self.ranks = list(filter(lambda x: x[0] in self.ga.vocab2node, self.ranks))
+        # self.ranks = [(self.ranks[i][0], (i, self.ranks[i][1])) for i in range(len(self.ranks))]
+        # self.ranks_dict = dict(self.ranks)
+        # self.ranks = [i[0] for i in self.ranks]
         self.ranks.remove(DBRANCH)
         self.ranks.remove(DLOOP)
         self.ranks.remove(DEXCEPT)
+
+        print(self.ranks)
 
         self.num_apis = len(self.ranks)
 
@@ -219,6 +222,9 @@ class DatasetCreator:
                     continue
 
                 if not (2 < len(progs_with_both) < len(progs_with_api) and len(progs_with_dp2) > len(progs_with_both) > 2):
+                    continue
+
+                if self.check_if_removing_from_training_data(progs_with_both, api) or self.check_if_removing_from_training_data(progs_with_both, dp2):
                     continue
 
                 apis_with_dp2 = [self.ga.get_apis_in_prog_set(i) for i in progs_with_dp2]
@@ -467,6 +473,9 @@ class DatasetCreator:
                             api_prog_ids.difference(i3_prog_ids)) == 0):
                         continue
 
+                    if self.check_if_removing_from_training_data(progs_with_api_i2, api) or self.check_if_removing_from_training_data(progs_with_api_i2, i2):
+                        continue
+
                     counter += 1
                     if counter % 5000 == 0:
                         print("counter:", counter)
@@ -603,6 +612,13 @@ class DatasetCreator:
     #
     #     return False
 
+    def check_if_removing_from_training_data(self, prog_ids_set, api):
+        curr_prog_ids = self.ga.api_to_prog_ids[api].copy()
+        for prog_id in prog_ids_set:
+            assert prog_id in curr_prog_ids
+            curr_prog_ids.discard(prog_id)
+        return len(curr_prog_ids) == 0
+
     def add_to_test_set(self, include_api_list, data_point2, prog_ids_set, test_set, dp2type_is_int=False):
         api_num = []
         for i in include_api_list:
@@ -698,6 +714,9 @@ class DatasetCreator:
                 num_valid_progs = len(valid_prog_ids)
                 progs_with_api = self.ga.get_program_ids_for_api(api)
                 num_progs_with_api = len(progs_with_api)
+
+                if self.check_if_removing_from_training_data(progs_with_api, api):
+                    continue
 
                 if self.verbose and self.test_mode:
                     print("num progs that meet length criteria:", num_valid_progs)
@@ -1072,9 +1091,16 @@ def pickle_dump_test_sets(data_dir_path, data_dir_name, train_test_set_name):
         f.close()
 
 
-def create_small_test_set_one_per_api(category, t, test_set, smaller_test_set, prog_ids, min_length):
+def create_small_test_set_one_per_api(category, t, test_set, smaller_test_set, prog_ids, min_length, avoid_prog_ids, avoid_apis):
     curr_api_id = -1
     for i in range(len(test_set)):
+        if test_set[i][PID] in avoid_prog_ids:
+            continue
+        for api in test_set[i][API]:
+            if api in avoid_apis:
+                continue
+        if test_set[i][DP2] in avoid_apis:
+            continue
         # if on a new API
         if test_set[i][API] != curr_api_id:
             # if prog ID already saved but this is the only program with API, add it
@@ -1096,10 +1122,17 @@ def create_small_test_set_one_per_api(category, t, test_set, smaller_test_set, p
 
 
 def create_small_test_set_multiple_per_api(category, t, num_per_api, num_progs_per_category, test_set, smaller_test_set,
-                                           prog_ids, min_length):
+                                           prog_ids, min_length, avoid_prog_ids, avoid_apis):
     curr_api_id = -1
     num_of_api_added = 0
     for i in range(len(test_set)):
+        if test_set[i][PID] in avoid_prog_ids:
+            continue
+        for api in test_set[i][API]:
+            if api in avoid_apis:
+                continue
+        if test_set[i][DP2] in avoid_apis:
+            continue
         if test_set[i][API] != curr_api_id:
             if test_set[i][PID] in prog_ids:
                 if num_of_api_added < num_per_api:
@@ -1121,6 +1154,13 @@ def create_small_test_set_multiple_per_api(category, t, num_per_api, num_progs_p
     if len(smaller_test_set[category][t]) < num_progs_per_category:
         random.shuffle(test_set)
         for i in range(len(test_set)):
+            if test_set[i][PID] in avoid_prog_ids:
+                continue
+            for api in test_set[i][API]:
+                if api in avoid_apis:
+                    continue
+            if test_set[i][DP2] in avoid_apis:
+                continue
             if test_set[i][PID] not in prog_ids and test_set[i] not in smaller_test_set[category][t]:
                 if test_set[i][LEN] >= min_length:
                     smaller_test_set[category][t].add(test_set[i])
@@ -1130,6 +1170,13 @@ def create_small_test_set_multiple_per_api(category, t, num_per_api, num_progs_p
                 return test_set, smaller_test_set, prog_ids
 
         for i in range(len(test_set)):
+            if test_set[i][PID] in avoid_prog_ids:
+                continue
+            for api in test_set[i][API]:
+                if api in avoid_apis:
+                    continue
+            if test_set[i][DP2] in avoid_apis:
+                continue
             if test_set[i] not in smaller_test_set[category][t]:
                 if test_set[i][LEN] >= min_length:
                     smaller_test_set[category][t].add(test_set[i])
@@ -1158,6 +1205,31 @@ def create_smaller_test_set(data_dir_path, data_dir_name, train_test_set_name, n
 
     print(dataset_creator.categories[EX_CS][0])
 
+    train_vocab_f = open(data_dir_path + "/" + train_test_set_name + "/train/vocab.json", "r")
+    test_vocab_f = open(data_dir_path + "/" + train_test_set_name + "/test/vocab.json", "r")
+    train_vocab = json.load(train_vocab_f)['api_dict']
+    test_vocab = set(json.load(test_vocab_f)['api_dict'].keys())
+    avoid_apis = list(test_vocab.difference(set(train_vocab.keys())))
+    print(avoid_apis)
+    print(len(avoid_apis))
+    # train_avoid_apis = [train_vocab[i] for i in avoid_apis]
+    # print(train_avoid_apis)
+
+    all_vocab_f = open(data_dir_path + "/vocab.json", "r")
+    all_vocab_vocab2node = json.load(all_vocab_f)['api_dict']
+    avoid_apis = [all_vocab_vocab2node[i] for i in avoid_apis]
+    program_database_f = open(data_dir_path + "/program_database.pickle", "rb")
+    all_vocab_to_prog_id = pickle.load(program_database_f)['api_to_prog_ids']
+    avoid_prog_ids = set([])
+    for api in avoid_apis:
+        # prog_ids = dataset_creator.ga.get_program_ids_for_api(api)
+        prog_ids = all_vocab_to_prog_id[api]
+        avoid_prog_ids.update(prog_ids)
+    avoid_apis = set(avoid_apis)
+
+
+    # print(avoid_apis)
+    # print(set(train_avoid_apis).symmetric_difference(set(avoid_apis)))
     smaller_test_set = {}
     small_test_set_progs = set([])
     for category in dataset_creator.categories:
@@ -1181,10 +1253,10 @@ def create_smaller_test_set(data_dir_path, data_dir_name, train_test_set_name, n
                                                                                               num_progs_per_category,
                                                                                               test_set,
                                                                                               smaller_test_set,
-                                                                                              prog_ids, min_length)
+                                                                                              prog_ids, min_length, avoid_prog_ids, avoid_apis)
             else:
                 test_set, smaller_test_set, prog_ids = create_small_test_set_one_per_api(category, t, test_set,
-                                                                                         smaller_test_set, prog_ids, min_length)
+                                                                                         smaller_test_set, prog_ids, min_length, avoid_prog_ids, avoid_apis)
 
             print("\n\nCategory:", category, t)
             print("Prog ids added:", len(set(prog_ids)))

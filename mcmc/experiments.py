@@ -3,6 +3,7 @@ import math
 import os
 import pickle
 import random
+import tensorflow as tf
 
 import numpy as np
 
@@ -68,6 +69,7 @@ class Metrics:
     def get_top_k_gen_progs(self, posterior_dist, constraint_dict):
         print(constraint_dict)
         def get_non_starting_programs(x):
+            x1 = x
             print(x)
             is_non_starting = len(x[0][NODES_IDX]) > len(constraint_dict[INCLUDE]) + 1
             if len(x[0][TARGETS_IDX]) == len(constraint_dict[INCLUDE]) + 2:
@@ -75,7 +77,7 @@ class Metrics:
             return is_non_starting
         posterior = posterior_dist.items()
         print(posterior)
-        filtered_posterior = list(filter(lambda x: get_non_starting_programs(x[0]), posterior))
+        filtered_posterior = list(filter(lambda x: get_non_starting_programs(x), posterior))
         print(filtered_posterior)
         if len(filtered_posterior) != 0:
             posterior = filtered_posterior
@@ -402,7 +404,7 @@ class Experiments:
         self.metrics = Metrics(num_iterations * 1.0, self.all_ga.vocab2node[DSTOP])
         self.metric_labels = [JACC_TEST_SET, HAS_MORE_APIS, REL_ADD, MEET_CONST, IN_SET, TEST_REL_ADD]
 
-    def get_mcmc_prog_and_ast(self, data_point, category, in_random_order, num_apis_to_add_to_constraint, verbose=False):
+    def get_mcmc_prog_and_ast(self, data_point, category, in_random_order, num_apis_to_add_to_constraint, verbose=False, session=None):
         # prog_id = self.get_test_prog_id(data_point[0])
 
         prog_id = data_point[0]
@@ -485,7 +487,7 @@ class Experiments:
         # print(constraints)
 
         # init MCMCProgram
-        mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose)
+        mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose, session=session)
         mcmc_prog.init_program(constraints, return_type, fp, exclude=exclude, min_length=min_length,
                                max_length=max_length, ordered=True)
         # mcmc_prog = None
@@ -506,7 +508,9 @@ class Experiments:
             pickle.dump(self.posterior_dists[category][label], f)
             f.close()
 
-    def run_mcmc(self, category, label, save_run=True, num_test_progs=None, in_random_order=True, num_apis_to_add_to_constraint=PLUS_0, verbose=False, test_prog_range=None):
+    def run_mcmc(self, category, label, save_run=True, num_test_progs=None, in_random_order=True,
+                 num_apis_to_add_to_constraint=PLUS_0, verbose=False, test_prog_range=None, use_gpu=False,
+                 use_xla=False):
         post_dist_dict = self.posterior_dists[category][label]
         test_progs = list(self.curated_test_sets_idxs[category][label])
         test_progs = list(sorted(test_progs, key=lambda x: x[0]))
@@ -529,45 +533,68 @@ class Experiments:
         analysis_f.flush()
         os.fsync(analysis_f.fileno())
 
+        def write_to_skipped_file(skipped_dp):
+            skipped_dp_f = open(self.exp_dir_path + "/" + category + "_" + label + "_skipped_dp.pickle", "wb")
+            pickle.dump(skipped_dp, skipped_dp_f)
+            skipped_dp_f.close()
+
+        skipped_dp = {}
+        num_skipped_dp = 0
+
+        # Launch the graph
+        config = tf.ConfigProto(
+            device_count={'GPU': 0 if not use_gpu else 1},
+        )
+
+        if use_gpu:
+            config.gpu_options.allow_growth = True
+            config.gpu_options.force_gpu_compatible = use_gpu
+
+        if use_xla:
+            config.graph_options.optimizer_options.global_jit_level = tf.OptimizerOptions.ON_1
+
+        session = tf.Session(config=config)
+
         counter = 0
         for i in range(num_test_progs):
             data_point = test_progs[i]
-            print("\n\n--------------i:", i, "data_point:", data_point)
+            try:
+                print("\n\n--------------i:", i, "data_point:", data_point)
 
-            mcmc_prog, ast, ret_type, fp, constraint_dict = self.get_mcmc_prog_and_ast(data_point, category, in_random_order,
-                                                                      num_apis_to_add_to_constraint, verbose=verbose)
+                mcmc_prog, ast, ret_type, fp, constraint_dict = self.get_mcmc_prog_and_ast(data_point, category, in_random_order,
+                                                                          num_apis_to_add_to_constraint, verbose=verbose, session=session)
 
-            for j in range(int(self.num_iter)):
-                mcmc_prog.mcmc(j)
+                for j in range(int(self.num_iter)):
+                    mcmc_prog.mcmc(j)
 
-            self.add_to_post_dist(category, label, get_str_posterior_distribution(mcmc_prog),
-                                                   data_point, ast, ret_type, fp, constraint_dict)
+                self.add_to_post_dist(category, label, get_str_posterior_distribution(mcmc_prog),
+                                                       data_point, ast, ret_type, fp, constraint_dict)
 
-            if i % 20 == 0 and save_run:
-                analysis_f.write(str(constraint_dict))
-                analysis_f.write("\n")
-                analysis_f.write(str(post_dist_dict[data_point][0]))
-                analysis_f.write("\n\n")
-                self.posterior_dists[category][label] = post_dist_dict
-                self.dump_posterior_dist(category, label)
-                self.calculate_metrics(category, label, num_test_progs)
-                self.dump_metrics(category, label)
+                if i % 20 == 0 and save_run:
+                    analysis_f.write("\n")
+                    analysis_f.write("counter: " + str(counter) + "\n")
+                    analysis_f.write("num skipped: " + str(num_skipped_dp) + "\n")
+                    analysis_f.write(str(constraint_dict))
+                    analysis_f.write("\n")
+                    analysis_f.write(str(post_dist_dict[data_point][0]))
+                    analysis_f.write("\n")
+                    self.posterior_dists[category][label] = post_dist_dict
+                    self.dump_posterior_dist(category, label)
+                    self.calculate_metrics(category, label, num_test_progs)
+                    self.dump_metrics(category, label)
 
-        #
-        #     # prog_metrics = \
-        #     #     self.metrics.get_all_averaged_metrics(post_dist_dict[data_point][0], ret_type, fp, constraint_dict, self.all_test_ga, self.train_ga,
-        #     #                                           num_test_progs)
-        #     #
-        #     # print("prog metrics:", prog_metrics)
-        #     # print("hi")
-        #
-        #     counter += 1
-        #     if counter % (num_test_progs/100) == 0:
-        #         print("Num progs tested: ", counter)
-        #
-        # print("POST DIST DICT")
-        # print(post_dist_dict)
-        # print("num in post dist dict", len(post_dist_dict))
+            except KeyError as e:
+                num_skipped_dp += 1
+                skipped_dp[data_point] = str(e)
+                write_to_skipped_file(skipped_dp)
+            except ZeroDivisionError as e:
+                num_skipped_dp += 1
+                skipped_dp[data_point] = str(e)
+                write_to_skipped_file(skipped_dp)
+            except AssertionError as e:
+                num_skipped_dp += 1
+                skipped_dp[data_point] = str(e)
+                write_to_skipped_file(skipped_dp)
 
         self.posterior_dists[category][label] = post_dist_dict
         self.calculate_metrics(category, label, num_test_progs)
@@ -575,6 +602,7 @@ class Experiments:
         if save_run:
             self.dump_metrics(category, label)
             self.dump_posterior_dist(category, label)
+        analysis_f.write("\n\nfinal metrics: " + str(self.avg_metrics[category][label]) + "\n")
         analysis_f.close()
 
     def add_to_post_dist(self, category, label, posterior_dist, data_point, ast, ret_type, fp, constraint_dict):

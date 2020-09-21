@@ -637,7 +637,7 @@ class MCMCProgramTest(unittest.TestCase):
         #                                                                 ['void'],
         #                                                                 ['DSubTree', 'String'], ordered=True)
 
-        test_prog, expected_nodes, expected_edges = create_base_program(ALL_DATA_1K_05_MODEL_PATH,
+        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH,
                                                                         ['java.util.Vector<Tau_E>.Vector(int)', 'DLoop'],
                                                                         ['__UDT__'],
                                                                         ['DSubTree', 'Element', '__UDT__', 'boolean'], ordered=True, exclude=['DBranch'])

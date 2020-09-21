@@ -1,3 +1,4 @@
+import json
 import pickle
 import random
 
@@ -241,16 +242,32 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_dataset_creator(self, data_path=ALL_DATA_NO_DUP):
         # data_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/all_data_10k_vocab_no_duplicates/'
         data_path = 'new_all_data_1k_vocab_no_duplicates'
-        train_test_set_name = "/novel_min_2/"
-        dc = DatasetCreator(data_path, train_test_set_name, verbose=False, min_prog_per_category=1000)
-        # dc.create_curated_dataset()
-
-        dc.build_and_save_train_test_sets()
+        # train_test_set_name = "/fixed_novel_min_2/"
+        # dc = DatasetCreator(data_path, train_test_set_name, verbose=False, min_prog_per_category=1000)
+        # # dc.create_curated_dataset()
+        #
+        # dc.build_and_save_train_test_sets()
         data_dir_name = data_path
         data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/'
-        add_prog_length_to_dataset_creator(data_path, train_test_set_name, save=True)
+        # add_prog_length_to_dataset_creator(data_path, train_test_set_name, save=True)
         # # data_path = '../data_extractor/data/new_all_data_1k_vocab_no_duplicates/train_test_sets/dataset_creator.pickle'
-        create_smaller_test_set(data_path, data_dir_name, train_test_set_name, num_progs_per_category=1000)
+        train_test_set_name = '/novel_min_2/'
+        create_smaller_test_set(data_path, data_dir_name, train_test_set_name, num_progs_per_category=1000, save=True)
+
+    def test_valid_test_set(self):
+        train_vocab_f = open('/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/train/vocab.json', 'r')
+        test_vocab_f = open('/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/test/small/vocab.json', 'r')
+        train_vocab = set(json.load(train_vocab_f)['api_dict'].keys())
+        test_vocab = set(json.load(test_vocab_f)['api_dict'].keys())
+        # for i in train:
+        #     print(i)
+        # train_vocab = set(dict(ijson.items(train_vocab_f, 'api_dict.item')).keys())
+        # test_vocab = set(dict(ijson.items(test_vocab_f)).keys())
+        # print(test_vocab)
+        # print(len(test_vocab))
+        print(len(test_vocab.difference(train_vocab)))
+        print(test_vocab.difference(train_vocab))
+        print(test_vocab.issubset(train_vocab))
 
     def test_ga(self):
         data_path = 'new_all_data_1k_vocab_no_duplicates'
@@ -383,8 +400,6 @@ class TestGraphAnalyzer(unittest.TestCase):
         copy_bayou_json_data_change_apicalls(old_data_filename_path, new_data_filename)
 
     def test_get_small_test_data(self):
-
-
         constraints = ['java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.InputStreamReader.close()']
         exclude = ['DLoop']
 

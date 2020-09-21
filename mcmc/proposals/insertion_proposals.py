@@ -9,7 +9,7 @@ import random
 import json
 import tensorflow as tf
 
-tf.config.optimizer.set_jit(True)
+# tf.config.optimizer.set_jit(True)
 
 from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
 from utils import print_verbose_tree_info
@@ -501,7 +501,7 @@ class ProposalWithInsertion:
 
                 # get probability of adding condition node
                 cond_node.remove_node(CHILD_EDGE)
-                assert (cond_node.sibling is None)
+                assert (cond_node.sibling is None), cond_node.api_name + " sibling: " + cond_node.sibling.api_name
                 added_node.add_node(cond_node, CHILD_EDGE)
                 cond_pos = self.tree_mod.get_nodes_position(curr_prog, cond_node)
                 ln_prob += self._get_prob_from_logits(curr_prog, initial_state, cond_pos, cond_node, CHILD_EDGE)
