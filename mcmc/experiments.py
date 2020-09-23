@@ -1,8 +1,11 @@
+import argparse
 import json
 import math
 import os
 import pickle
 import random
+import textwrap
+
 import tensorflow as tf
 
 import numpy as np
@@ -12,6 +15,7 @@ from test_utils import get_str_posterior_distribution
 from data_extractor.dataset_creator import IN_CS, IN_API, EX_API, EX_CS, SEEN, NEW
 
 from mcmc import MCMCProgram
+from infer import BayesianPredictor
 
 DBRANCH = 'DBranch'
 DLOOP = 'DLoop'
@@ -404,6 +408,16 @@ class Experiments:
         self.metrics = Metrics(num_iterations * 1.0, self.all_ga.vocab2node[DSTOP])
         self.metric_labels = [JACC_TEST_SET, HAS_MORE_APIS, REL_ADD, MEET_CONST, IN_SET, TEST_REL_ADD]
 
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                         description=textwrap.dedent(""))
+        parser.add_argument('--continue_from', type=str, default=model_dir_path,
+                            help='ignore config options and continue training model checkpointed here')
+        clargs = parser.parse_args()
+
+        self.encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
+        beam_width = 1
+        self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
+
     def get_mcmc_prog_and_ast(self, data_point, category, in_random_order, num_apis_to_add_to_constraint, verbose=False, session=None):
         # prog_id = self.get_test_prog_id(data_point[0])
 
@@ -487,7 +501,7 @@ class Experiments:
         # print(constraints)
 
         # init MCMCProgram
-        mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose, session=session)
+        mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose, session=session, encoder=self.encoder, decoder=self.decoder)
         mcmc_prog.init_program(constraints, return_type, fp, exclude=exclude, min_length=min_length,
                                max_length=max_length, ordered=True)
         # mcmc_prog = None
@@ -510,7 +524,7 @@ class Experiments:
 
     def run_mcmc(self, category, label, save_run=True, num_test_progs=None, in_random_order=True,
                  num_apis_to_add_to_constraint=PLUS_0, verbose=False, test_prog_range=None, use_gpu=False,
-                 use_xla=False):
+                 use_xla=False, save_step=5):
         post_dist_dict = self.posterior_dists[category][label]
         test_progs = list(self.curated_test_sets_idxs[category][label])
         test_progs = list(sorted(test_progs, key=lambda x: x[0]))
@@ -570,7 +584,7 @@ class Experiments:
                 self.add_to_post_dist(category, label, get_str_posterior_distribution(mcmc_prog),
                                                        data_point, ast, ret_type, fp, constraint_dict)
 
-                if i % 20 == 0 and save_run:
+                if i % 5 == 0 and save_run:
                     analysis_f.write("\n")
                     analysis_f.write("counter: " + str(counter) + "\n")
                     analysis_f.write("num skipped: " + str(num_skipped_dp) + "\n")
@@ -580,10 +594,13 @@ class Experiments:
                     analysis_f.write("\n")
                     self.posterior_dists[category][label] = post_dist_dict
                     self.dump_posterior_dist(category, label)
-                    self.calculate_metrics(category, label, num_test_progs)
-                    self.dump_metrics(category, label)
+                    try:
+                        self.calculate_metrics(category, label, num_test_progs)
+                        self.dump_metrics(category, label)
+                    except Exception as e:
+                        print("Error calculating metrics:", str(e))
 
-            except KeyError as e:
+            except Exception as e:
                 num_skipped_dp += 1
                 skipped_dp[data_point] = str(e)
                 write_to_skipped_file(skipped_dp)
@@ -591,17 +608,22 @@ class Experiments:
                 num_skipped_dp += 1
                 skipped_dp[data_point] = str(e)
                 write_to_skipped_file(skipped_dp)
-            except AssertionError as e:
-                num_skipped_dp += 1
-                skipped_dp[data_point] = str(e)
-                write_to_skipped_file(skipped_dp)
+            # except AssertionError as e:
+            #     num_skipped_dp += 1
+            #     skipped_dp[data_point] = str(e)
+            #     write_to_skipped_file(skipped_dp)
 
         self.posterior_dists[category][label] = post_dist_dict
-        self.calculate_metrics(category, label, num_test_progs)
-        print("\n\nFINAL METRICS:", self.avg_metrics[category][label])
+
         if save_run:
-            self.dump_metrics(category, label)
             self.dump_posterior_dist(category, label)
+            try:
+                self.calculate_metrics(category, label, num_test_progs)
+                print("\n\nFINAL METRICS:", self.avg_metrics[category][label])
+                self.dump_metrics(category, label)
+            except Exception as e:
+                print("Error calculating metrics:", str(e))
+
         analysis_f.write("\n\nfinal metrics: " + str(self.avg_metrics[category][label]) + "\n")
         analysis_f.close()
 

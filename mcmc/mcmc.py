@@ -49,7 +49,7 @@ class MCMCProgram:
 
     """
 
-    def __init__(self, save_dir, verbose=False, debug=False, save_states=False, session=None):
+    def __init__(self, save_dir, verbose=False, debug=False, save_states=False, session=None, encoder=None, decoder=None):
         """
         Initialize program
         :param save_dir: (string) path to directory in which saved model checkpoints are in
@@ -74,6 +74,7 @@ class MCMCProgram:
         self.constraints = []
         self.constraint_nodes = []  # has node numbers of constraints
         self.constraint_control_structs = []
+        self.all_constraints = []
         self.exclusions = []
         self.min_length = 0
         self.max_length = np.inf
@@ -87,15 +88,15 @@ class MCMCProgram:
         self.latent_state = None
         self.ret_type = []
         self.fp = [[]]
-        self.decoder = None
-        self.encoder = None
+        self.decoder = decoder
+        self.encoder = encoder
         self.num_accepted_latent_state = 0
 
         # self.proposal_probs = {INSERT: 0.5, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.0}
 
         # self.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.00, REPLACE: 0.0, ADD_DNODE: 0.0}
 
-        self.proposal_probs = {INSERT: 0.2, DELETE: 0.3, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.2,
+        self.proposal_probs = {INSERT: 0.15, DELETE: 0.3, SWAP: 0.2, REPLACE: 0.25, ADD_DNODE: 0.0, GROW_CONST: 0.1,
                                GROW_CONST_UP: 0.0}
 
         # self.proposal_probs = {INSERT: 0.3, DELETE: 0.1, SWAP: 0.6, REPLACE: 0.0, ADD_DNODE: 0.0, GROW_CONST: 0.0,
@@ -153,18 +154,18 @@ class MCMCProgram:
         :param constraint: (string) name of api that must appear in the program in order for it to be valid.
         :return:
         """
-        try:
-            node_num = self.config.vocab2node[constraint]
-            if len(self.constraints) + len(self.constraint_control_structs) < self.config.max_num_api:
-                if constraint in {DBRANCH, DLOOP, DEXCEPT}:
-                    self.constraint_control_structs.append(constraint)
-                else:
-                    self.constraint_nodes.append(node_num)
-                    self.constraints.append(constraint)
+        # try:
+        node_num = self.config.vocab2node[constraint]
+        if len(self.constraints) + len(self.constraint_control_structs) < self.config.max_num_api:
+            if constraint in {DBRANCH, DLOOP, DEXCEPT}:
+                self.constraint_control_structs.append(constraint)
             else:
-                print("Cannot add constraint", constraint, ". Limit reached.")
-        except KeyError:
-            print("Constraint ", constraint, " is not in vocabulary. Will be skipped.")
+                self.constraint_nodes.append(node_num)
+                self.constraints.append(constraint)
+        else:
+            print("Cannot add constraint", constraint, ". Limit reached.")
+        # except KeyError:
+        #     print("Constraint ", constraint, " is not in vocabulary. Will be skipped.")
 
     def add_return_type(self, ret_type):
         try:
@@ -220,6 +221,9 @@ class MCMCProgram:
             for i in range(self.config.max_num_api - len(self.fp[0])):
                 self.fp[0].append(0)
 
+        self.all_constraints = list(
+            filter(lambda x: x in self.constraints or x in self.constraint_control_structs, constraints))
+
         # Add exclusions
         if exclude is not None:
             self.init_exclusions(exclude)
@@ -231,7 +235,7 @@ class MCMCProgram:
 
             # Add constraint nodes to tree
             last_node = head
-            for i in constraints:
+            for i in self.all_constraints:
                 node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
                 last_node = node
             # for i in self.constraint_control_structs:
@@ -373,6 +377,7 @@ class MCMCProgram:
                 else:
                     if num_structures_grown == 0:
                         print("Error: no structures have been built!")
+                        self.decoder.top_k = old_topk
                         return False
                     curr_node = None
 
@@ -385,6 +390,7 @@ class MCMCProgram:
             self.calculate_probability()
             self.update_latent_state_and_decoder_state()
 
+        self.decoder.top_k = old_topk
         return valid
 
     def grow_to_min_length(self):
@@ -393,6 +399,7 @@ class MCMCProgram:
                                          debug=self.debug)
         GrowTree.curr_prog = self.curr_prog
         GrowTree.initial_state = self.initial_state
+        GrowTree.use_multinomial = False
         counter = 0
         difference = self.min_length - self.curr_prog.length
         while self.curr_prog.length < self.min_length:
@@ -968,7 +975,8 @@ class MCMCProgram:
                             help='ignore config options and continue training model checkpointed here')
         clargs = parser.parse_args()
 
-        self.encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
+        if self.encoder is None:
+            self.encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
 
         nodes, edges = self.tree_mod.get_vector_representation(self.curr_prog)
         nodes = nodes[:self.config.max_num_api]
@@ -987,7 +995,8 @@ class MCMCProgram:
         self.curr_state_pdf = math.log(pdf)
 
         beam_width = 1
-        self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
+        if self.decoder is None:
+            self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
 
     def update_latent_state_and_decoder_state(self):
         nodes, edges = self.tree_mod.get_vector_representation(self.curr_prog)

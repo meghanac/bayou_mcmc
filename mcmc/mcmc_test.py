@@ -2,6 +2,7 @@ import argparse
 import math
 import datetime
 import os
+import pickle
 import random
 import sys
 import unittest
@@ -823,6 +824,17 @@ class MCMCProgramTest(unittest.TestCase):
         predictor.close()
 
         return psi_, test_prog, rt, fp
+
+    def test_pickle_dump(self):
+        post_dist = pickle.load(open('experiments/testing-100/post_dist_include_cs_novelty.pickle', 'rb'))
+        print(type(post_dist))
+        print(len(post_dist))
+        for prog in post_dist:
+            print("\n")
+            print(prog)
+            for i in post_dist[prog]:
+                print(i)
+
 
 
 if __name__ == '__main__':

@@ -613,11 +613,12 @@ class DatasetCreator:
     #     return False
 
     def check_if_removing_from_training_data(self, prog_ids_set, api):
-        curr_prog_ids = self.ga.api_to_prog_ids[api].copy()
-        for prog_id in prog_ids_set:
-            assert prog_id in curr_prog_ids
-            curr_prog_ids.discard(prog_id)
-        return len(curr_prog_ids) == 0
+        # curr_prog_ids = self.ga.api_to_prog_ids[api].copy()
+        # for prog_id in prog_ids_set:
+        #     assert prog_id in curr_prog_ids
+        #     curr_prog_ids.discard(prog_id)
+        # return len(curr_prog_ids) == 0
+        return False
 
     def add_to_test_set(self, include_api_list, data_point2, prog_ids_set, test_set, dp2type_is_int=False):
         api_num = []
@@ -782,7 +783,7 @@ class DatasetCreator:
     def create_curated_dataset(self):
         print("Creating Curated Tests Dataset\n")
 
-        for novelty_label in [NEW]:  # Create novelty test set first
+        for novelty_label in [SEEN]:  # Create novelty test set first
 
             print("\n\n\n-----------------------------------")
             print("INCLUDE API: ")
