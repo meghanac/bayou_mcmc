@@ -1,0 +1,35 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/novel_1k_data_med_config
+num iterations: 50.0
+category: exclude_cs
+label: novelty
+num test programs: 5
+
+
+counter: 0
+num skipped: 0
+{'include': ['java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)'], 'exclude': ['DExcept'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)'), (False, False, False), ('java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)', 'DStop')): [50, -1.394441751181148]}
+
+counter: 1
+num skipped: 0
+{'include': ['java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()'], 'exclude': ['DBranch'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()'), (False, False, False), ('java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()', 'DStop')): [26, -3.7255813479423523], (('DSubTree', 'java.lang.System.getProperty(java.lang.String,java.lang.String)'), (False, False), ('java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()')): [11, -0.4523083749227226], (('DSubTree', 'java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()'), (False, False, False), ('java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()', 'java.lang.Class<Tau_T>.getClassLoader()')): [1, -2.289073809981346], (('DSubTree', 'java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()', 'java.lang.String.indexOf(java.lang.String)'), (False, False, False, False), ('java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()', 'java.lang.String.indexOf(java.lang.String)', 'DStop')): [3, -8.752304069697857], (('DSubTree', 'java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()', 'java.lang.Class<Tau_T>.getName()', 'java.lang.Class<Tau_T>.getClassLoader()', 'java.lang.String.indexOf(java.lang.String)'), (False, False, False, False, False, False), ('java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()', 'java.lang.Class<Tau_T>.getName()', 'java.lang.Class<Tau_T>.getClassLoader()', 'java.lang.String.indexOf(java.lang.String)', 'DStop')): [4, -13.76231025904417], (('DSubTree', 'java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()', 'java.lang.Class<Tau_T>.getName()', 'java.lang.Class<Tau_T>.getClassLoader()'), (False, False, False, False, False), ('java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()', 'java.lang.Class<Tau_T>.getName()', 'java.lang.Class<Tau_T>.getClassLoader()', 'DStop')): [5, -2.928395450115204]}
+
+counter: 2
+num skipped: 0
+{'include': ['DBranch', 'java.util.Map.isEmpty()'], 'exclude': ['DExcept'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DBranch', 'java.util.Map.isEmpty()', 'java.lang.String.valueOf(char)', 'java.util.Map.isEmpty()', 'java.util.List.get(int)', 'DBranch'), (False, True, True, False, False, False, False), ('DBranch', 'java.util.Map.isEmpty()', 'java.lang.String.valueOf(char)', 'DStop', 'java.util.List.get(int)', 'DStop', 'DStop')): [50, -19.0013747215271]}
+
+counter: 3
+num skipped: 0
+{'include': ['java.util.Arrays.asList(java.lang.Object[])', 'java.util.List<java.lang.String>.addAll(java.util.Collection)'], 'exclude': ['DLoop'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.util.Arrays.asList(java.lang.Object[])'), (False, False), ('java.util.Arrays.asList(java.lang.Object[])', 'java.util.List<java.lang.String>.addAll(java.util.Collection)')): [7, -7.069692850112915], (('DSubTree', 'java.util.Arrays.asList(java.lang.Object[])', 'java.util.Arrays.asList(T[])'), (False, False, False), ('java.util.Arrays.asList(java.lang.Object[])', 'java.util.Arrays.asList(T[])', 'java.util.List<java.lang.String>.addAll(java.util.Collection)')): [40, -3.2173883989453316], (('DSubTree', 'java.util.Arrays.asList(java.lang.Object[])', 'java.util.Arrays.asList(T[])', 'java.util.List<java.lang.String>.addAll(java.util.Collection)'), (False, False, False, False), ('java.util.Arrays.asList(java.lang.Object[])', 'java.util.Arrays.asList(T[])', 'java.util.List<java.lang.String>.addAll(java.util.Collection)', 'DStop')): [3, -2.916712548583746]}
+
+counter: 4
+num skipped: 0
+{'include': ['java.io.ObjectInputStream.defaultReadObject()', 'java.security.Permission.getName()'], 'exclude': ['DBranch'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.io.ObjectInputStream.defaultReadObject()'), (False, False), ('java.io.ObjectInputStream.defaultReadObject()', 'java.security.Permission.getName()')): [39, -5.18742972612381], (('DSubTree', 'java.io.ObjectInputStream.defaultReadObject()', 'java.security.Permission.getName()'), (False, False, False), ('java.io.ObjectInputStream.defaultReadObject()', 'java.security.Permission.getName()', 'DStop')): [11, -0.4903676211833954]}
+
+
+final metrics: {'jaccard_test_set': 0.0, 'has_more_apis': 0.6000000000000001, 'relevant_additions': 0.6000000000000001, 'meets_constraints': 1.0, 'in_set': 0.2, 'test_set_relevant_additions': 0.6000000000000001}

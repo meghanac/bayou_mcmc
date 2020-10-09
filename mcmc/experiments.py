@@ -191,7 +191,7 @@ class Metrics:
                 # print("gen prog:", (
                 #     gen_data_point[NODES_IDX], gen_data_point[EDGES_IDX], gen_data_point[TARGETS_IDX], ret_type, fp))
                 in_set = in_set or (prog[:5] == (
-                    gen_data_point[NODES_IDX], gen_data_point[EDGES_IDX], gen_data_point[TARGETS_IDX], ret_type, fp))
+                   list(gen_data_point[NODES_IDX]), list(gen_data_point[EDGES_IDX]), list(gen_data_point[TARGETS_IDX]), ret_type, list(fp)))
         print("return:", 1.0 * int(in_set))
         return 1.0 * int(in_set)
 
@@ -418,7 +418,7 @@ class Experiments:
         beam_width = 1
         self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
 
-    def get_mcmc_prog_and_ast(self, data_point, category, in_random_order, num_apis_to_add_to_constraint, verbose=False, session=None):
+    def get_mcmc_prog_and_ast(self, data_point, category, in_random_order, num_apis_to_add_to_constraint, verbose=False, session=None, proposal_probs=None):
         # prog_id = self.get_test_prog_id(data_point[0])
 
         prog_id = data_point[0]
@@ -443,25 +443,49 @@ class Experiments:
 
         nodes, edges, targets, return_type, fp, fp_targets = self.test_ga.fetch_all_list_data_without_delim(prog_id)
         ast = (nodes, edges, targets)
-        print(ast)
+        # print(ast)
 
         constraint_dict = {INCLUDE: constraints, EXCLUDE: exclude, MIN_LENGTH: min_length, MAX_LENGTH: max_length}
+
+        # train_prog_ids = self.train_ga.get_programs_with_multiple_apis(constraint_dict[INCLUDE], exclude=constraint_dict[EXCLUDE])
+        # print("should be zero:")
+        # for prog_id in train_prog_ids:
+        #     print(prog_id)
+        #     # print(self.train_ga.fetch_all_list_data_without_delim(prog_id))
+        # print("\n\ntraining data:")
+        # train_prog_ids = self.train_ga.get_programs_with_multiple_apis(constraint_dict[INCLUDE])
+        # for prog_id in train_prog_ids:
+        #     # print(self.train_ga.fetch_all_list_data_without_delim(prog_id))
+        #     print(prog_id)
+        #
+        # print("test progs with all constraints:")
+        # test_prog_ids = self.all_test_ga.get_programs_with_multiple_apis(constraint_dict[INCLUDE], exclude=constraint_dict[EXCLUDE])
+        # for prog_id in test_prog_ids:
+        #     print(prog_id)
+        # print("\n\nnot accurate test data:")
+        # test_prog_ids = self.all_test_ga.get_programs_with_multiple_apis(constraint_dict[INCLUDE])
+        # for prog_id in test_prog_ids:
+        #     print(prog_id)
 
         def check_ast_meets_constraints(prog):
             score = True
             apis = get_apis_set(prog)
-            print("")
-            print("apis in prog", apis)
-            print("constraint apis", constraint_dict[INCLUDE])
-            print(set(constraint_dict[INCLUDE]).issubset(apis))
-            print("")
+            if verbose:
+                print("")
+                print("apis in prog", apis)
+                print("constraint apis", constraint_dict[INCLUDE])
+                print(set(constraint_dict[INCLUDE]).issubset(apis))
+                print("")
             score = score and set(constraint_dict[INCLUDE]).issubset(apis)
             if len(constraint_dict[EXCLUDE]) != 0:
-                print("exclude:", not set(constraint_dict[EXCLUDE]).issubset(apis))
+                if verbose:
+                    print("exclude:", not set(constraint_dict[EXCLUDE]).issubset(apis))
                 score = score and not set(constraint_dict[EXCLUDE]).issubset(apis)
-            print("min length:", constraint_dict[MIN_LENGTH] <= len(prog[0]))
+            if verbose:
+                print("min length:", constraint_dict[MIN_LENGTH] <= len(prog[0]))
             score = score and constraint_dict[MIN_LENGTH] <= len(prog[0])
-            print("max length:", len(prog[0]) <= constraint_dict[MAX_LENGTH])
+            if verbose:
+                print("max length:", len(prog[0]) <= constraint_dict[MAX_LENGTH])
             score = score and len(prog[0]) <= constraint_dict[MAX_LENGTH]
             return score
 
@@ -502,6 +526,10 @@ class Experiments:
 
         # init MCMCProgram
         mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose, session=session, encoder=self.encoder, decoder=self.decoder)
+
+        if proposal_probs is not None:
+            mcmc_prog.proposal_probs = proposal_probs
+
         mcmc_prog.init_program(constraints, return_type, fp, exclude=exclude, min_length=min_length,
                                max_length=max_length, ordered=True)
         # mcmc_prog = None
@@ -524,7 +552,7 @@ class Experiments:
 
     def run_mcmc(self, category, label, save_run=True, num_test_progs=None, in_random_order=True,
                  num_apis_to_add_to_constraint=PLUS_0, verbose=False, test_prog_range=None, use_gpu=False,
-                 use_xla=False, save_step=5):
+                 use_xla=False, save_step=5, proposal_probs=None):
         post_dist_dict = self.posterior_dists[category][label]
         test_progs = list(self.curated_test_sets_idxs[category][label])
         test_progs = list(sorted(test_progs, key=lambda x: x[0]))
@@ -569,29 +597,32 @@ class Experiments:
 
         session = tf.Session(config=config)
 
-        counter = 0
         for i in range(num_test_progs):
             data_point = test_progs[i]
             try:
                 print("\n\n--------------i:", i, "data_point:", data_point)
 
                 mcmc_prog, ast, ret_type, fp, constraint_dict = self.get_mcmc_prog_and_ast(data_point, category, in_random_order,
-                                                                          num_apis_to_add_to_constraint, verbose=verbose, session=session)
+                                                                          num_apis_to_add_to_constraint, verbose=verbose, session=session, proposal_probs=proposal_probs)
 
                 for j in range(int(self.num_iter)):
+                    if verbose:
+                        print("iteration:", j)
                     mcmc_prog.mcmc(j)
 
                 self.add_to_post_dist(category, label, get_str_posterior_distribution(mcmc_prog),
                                                        data_point, ast, ret_type, fp, constraint_dict)
 
-                if i % 5 == 0 and save_run:
+                if i % save_step == 0 and save_run:
                     analysis_f.write("\n")
-                    analysis_f.write("counter: " + str(counter) + "\n")
+                    analysis_f.write("counter: " + str(i) + "\n")
                     analysis_f.write("num skipped: " + str(num_skipped_dp) + "\n")
                     analysis_f.write(str(constraint_dict))
                     analysis_f.write("\n")
                     analysis_f.write(str(post_dist_dict[data_point][0]))
                     analysis_f.write("\n")
+                    analysis_f.flush()
+                    os.fsync(analysis_f.fileno())
                     self.posterior_dists[category][label] = post_dist_dict
                     self.dump_posterior_dist(category, label)
                     try:
@@ -625,6 +656,8 @@ class Experiments:
                 print("Error calculating metrics:", str(e))
 
         analysis_f.write("\n\nfinal metrics: " + str(self.avg_metrics[category][label]) + "\n")
+        analysis_f.flush()
+        os.fsync(analysis_f.fileno())
         analysis_f.close()
 
     def add_to_post_dist(self, category, label, posterior_dist, data_point, ast, ret_type, fp, constraint_dict):

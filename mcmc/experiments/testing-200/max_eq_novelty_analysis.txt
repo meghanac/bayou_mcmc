@@ -1,0 +1,35 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta
+num iterations: 50.0
+category: max_eq
+label: novelty
+num test programs: 5
+
+
+counter: 0
+num skipped: 0
+{'include': ['java.lang.String.indexOf(int,int)'], 'exclude': [], 'min_length': 1, 'max_length': 3}
+{(('DSubTree',), (False,), ('java.lang.String.indexOf(int,int)',)): [37, -3.34761643409729], (('DSubTree', 'java.lang.String.indexOf(int,int)'), (False, False), ('java.lang.String.indexOf(int,int)', 'DStop')): [13, -0.43374796211719513]}
+
+counter: 1
+num skipped: 0
+{'include': ['java.util.regex.Pattern.quote(java.lang.String)'], 'exclude': [], 'min_length': 1, 'max_length': 3}
+{(('DSubTree',), (False,), ('java.util.regex.Pattern.quote(java.lang.String)',)): [40, -0.10060487687587738], (('DSubTree', 'java.util.regex.Pattern.quote(java.lang.String)'), (False, False), ('java.util.regex.Pattern.quote(java.lang.String)', 'DStop')): [6, -1.276581659913063], (('DSubTree', 'java.util.regex.Pattern.quote(java.lang.String)'), (False, False), ('java.util.regex.Pattern.quote(java.lang.String)', 'java.lang.String.split(java.lang.String)')): [4, -7.139559507369995]}
+
+counter: 2
+num skipped: 0
+{'include': ['java.io.File.listFiles(java.io.FilenameFilter)'], 'exclude': [], 'min_length': 1, 'max_length': 3}
+{(('DSubTree', 'java.io.File.listFiles(java.io.FilenameFilter)'), (False, False), ('java.io.File.listFiles(java.io.FilenameFilter)', 'DStop')): [48, -3.8057734966278076], (('DSubTree',), (False,), ('java.io.File.listFiles(java.io.FilenameFilter)',)): [2, -2.916285991668701]}
+
+counter: 3
+num skipped: 0
+{'include': ['javax.xml.bind.JAXBContext.createMarshaller()'], 'exclude': [], 'min_length': 1, 'max_length': 3}
+{(('DSubTree',), (False,), ('javax.xml.bind.JAXBContext.createMarshaller()',)): [27, -1.564002513885498], (('DSubTree', 'javax.xml.bind.JAXBContext.createMarshaller()'), (False, False), ('javax.xml.bind.JAXBContext.createMarshaller()', 'DStop')): [23, -1.525308258831501]}
+
+counter: 4
+num skipped: 0
+{'include': ['java.io.FileInputStream.read(byte[])'], 'exclude': [], 'min_length': 1, 'max_length': 4}
+{(('DSubTree',), (False,), ('java.io.FileInputStream.read(byte[])',)): [21, -1.132808804512024], (('DSubTree', 'java.io.FileInputStream.read(byte[])'), (False, False), ('java.io.FileInputStream.read(byte[])', 'DStop')): [8, -7.060089826583862], (('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.io.FileInputStream.close()'), (False, False, False), ('java.io.FileInputStream.read(byte[])', 'java.io.FileInputStream.close()', 'DStop')): [21, -4.8357594683766365]}
+
+
+final metrics: {'jaccard_test_set': 0.0, 'has_more_apis': 0.26666666666666666, 'relevant_additions': 0.26666666666666666, 'meets_constraints': 1.0, 'in_set': 0.8, 'test_set_relevant_additions': 0.26666666666666666}

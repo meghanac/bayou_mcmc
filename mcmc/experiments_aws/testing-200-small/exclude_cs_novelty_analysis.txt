@@ -1,0 +1,35 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/novel_1k_data_small_config
+num iterations: 50.0
+category: exclude_cs
+label: novelty
+num test programs: 5
+
+
+counter: 0
+num skipped: 0
+{'include': ['java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)'], 'exclude': ['DExcept'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.util.Arrays.sort(java.lang.Object[])'), (False, False), ('java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)')): [11, -0.1630096770823002], (('DSubTree', 'java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)'), (False, False, False), ('java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)', 'DStop')): [7, -0.4060097597539425], (('DSubTree', 'java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)', 'java.util.Observable.setChanged()'), (False, False, False, False), ('java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)', 'java.util.Observable.setChanged()', 'DStop')): [32, -4.673800878226757]}
+
+counter: 1
+num skipped: 0
+{'include': ['java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()'], 'exclude': ['DBranch'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.lang.System.getProperty(java.lang.String,java.lang.String)'), (False, False), ('java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()')): [16, -0.7472705841064453], (('DSubTree', 'java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()', 'java.lang.System.getProperty(java.lang.String,java.lang.String)'), (False, False, False, False), ('java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.Class<Tau_T>.getClassLoader()', 'java.lang.System.getProperty(java.lang.String,java.lang.String)', 'DStop')): [34, -2.812572628259659]}
+
+counter: 2
+num skipped: 0
+{'include': ['DBranch', 'java.util.Map.isEmpty()'], 'exclude': ['DExcept'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DBranch', 'java.util.Map.isEmpty()', 'java.lang.reflect.Method.invoke(java.lang.Object,java.lang.Object[])', 'java.util.Map.isEmpty()', 'java.util.Properties.Properties()', 'DBranch'), (False, True, True, False, False, False, False), ('DBranch', 'java.util.Map.isEmpty()', 'java.lang.reflect.Method.invoke(java.lang.Object,java.lang.Object[])', 'DStop', 'java.util.Properties.Properties()', 'DStop', 'DStop')): [50, -12.406302690505981]}
+
+counter: 3
+num skipped: 0
+{'include': ['java.util.Arrays.asList(java.lang.Object[])', 'java.util.List<java.lang.String>.addAll(java.util.Collection)'], 'exclude': ['DLoop'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.util.Arrays.asList(java.lang.Object[])'), (False, False), ('java.util.Arrays.asList(java.lang.Object[])', 'java.util.List<java.lang.String>.addAll(java.util.Collection)')): [15, -3.053101882338524], (('DSubTree', 'java.util.Arrays.asList(java.lang.Object[])', 'java.util.List<java.lang.String>.addAll(java.util.Collection)'), (False, False, False), ('java.util.Arrays.asList(java.lang.Object[])', 'java.util.List<java.lang.String>.addAll(java.util.Collection)', 'DStop')): [29, -0.8972918540239334], (('DSubTree', 'java.util.Arrays.asList(java.lang.Object[])', 'java.util.List<java.lang.String>.addAll(java.util.Collection)', 'java.util.Collections.sort(java.util.List)'), (False, False, False, False), ('java.util.Arrays.asList(java.lang.Object[])', 'java.util.List<java.lang.String>.addAll(java.util.Collection)', 'java.util.Collections.sort(java.util.List)', 'DStop')): [3, -4.6228835163638], (('DSubTree', 'java.util.Arrays.asList(java.lang.Object[])', 'java.util.List<java.lang.String>.addAll(java.util.Collection)'), (False, False, False), ('java.util.Arrays.asList(java.lang.Object[])', 'java.util.List<java.lang.String>.addAll(java.util.Collection)', 'java.util.Collections.sort(java.util.List)')): [3, -2.456595689058304]}
+
+counter: 4
+num skipped: 0
+{'include': ['java.io.ObjectInputStream.defaultReadObject()', 'java.security.Permission.getName()'], 'exclude': ['DBranch'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.io.ObjectInputStream.defaultReadObject()'), (False, False), ('java.io.ObjectInputStream.defaultReadObject()', 'java.security.Permission.getName()')): [16, -4.3280274423304945], (('DSubTree', 'java.io.ObjectInputStream.defaultReadObject()', 'java.security.Permission.getName()'), (False, False, False), ('java.io.ObjectInputStream.defaultReadObject()', 'java.security.Permission.getName()', 'DStop')): [34, -3.715178143233061]}
+
+
+final metrics: {'jaccard_test_set': 0.0, 'has_more_apis': 0.6000000000000001, 'relevant_additions': 0.4, 'meets_constraints': 1.0, 'in_set': 0.2, 'test_set_relevant_additions': 0.6000000000000001}

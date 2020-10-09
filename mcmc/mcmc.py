@@ -236,13 +236,19 @@ class MCMCProgram:
             # Add constraint nodes to tree
             last_node = head
             for i in self.all_constraints:
-                node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
+                if last_node.api_name in {DBRANCH, DLOOP, DEXCEPT} and i not in {DBRANCH, DLOOP, DEXCEPT}:
+                    node = self.tree_mod.create_and_add_node(i, last_node, CHILD_EDGE)
+                else:
+                    node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
                 last_node = node
             # for i in self.constraint_control_structs:
             #     node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
             #     last_node = node
         else:
             self.get_best_starting_program()
+
+        if self.verbose:
+            print_verbose_tree_info(self.curr_prog)
 
         # Initialize model states
         self.get_initial_decoder_state()
@@ -348,19 +354,22 @@ class MCMCProgram:
         GrowStruct.curr_prog = curr_node
         GrowStruct.initial_state = self.initial_state
 
-        old_topk = self.decoder.top_k
-        self.decoder.top_k = 3
+        # old_topk = self.decoder.top_k
+        # self.decoder.top_k = 3
 
         while curr_node is not None:
             print("curr_node:", curr_node.api_name)
             print("num structures grown:", num_structures_grown)
-            if curr_node.api_name == DBRANCH and curr_node.child is None:
-                GrowStruct._grow_dbranch(curr_node, max_consecutive_inserts=1)
+            if curr_node.api_name == DBRANCH:
+                GrowStruct._grow_dbranch(curr_node, max_consecutive_inserts=1, cond_node=curr_node.child)
                 num_structures_grown += 1
                 print_verbose_tree_info(head)
                 print("\n")
-            elif (curr_node.api_name == DLOOP or curr_node.api_name == DEXCEPT) and curr_node.child is None:
-                GrowStruct._grow_dloop_or_dexcept(curr_node, max_consecutive_inserts=2)
+            elif (curr_node.api_name == DLOOP or curr_node.api_name == DEXCEPT):
+                max_consecutive_inserts = 1
+                if curr_node is None:
+                    max_consecutive_inserts = 2
+                GrowStruct._grow_dloop_or_dexcept(curr_node, max_consecutive_inserts=max_consecutive_inserts, cond_node=curr_node.child)
                 num_structures_grown += 1
                 print_verbose_tree_info(head)
 
@@ -377,7 +386,7 @@ class MCMCProgram:
                 else:
                     if num_structures_grown == 0:
                         print("Error: no structures have been built!")
-                        self.decoder.top_k = old_topk
+                        # self.decoder.top_k = old_topk
                         return False
                     curr_node = None
 
@@ -390,7 +399,7 @@ class MCMCProgram:
             self.calculate_probability()
             self.update_latent_state_and_decoder_state()
 
-        self.decoder.top_k = old_topk
+        # self.decoder.top_k = old_topk
         return valid
 
     def grow_to_min_length(self):

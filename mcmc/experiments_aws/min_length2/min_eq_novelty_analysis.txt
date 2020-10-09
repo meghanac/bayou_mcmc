@@ -1,0 +1,32 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/novel_1k_data_small_config
+num iterations: 50.0
+category: min_eq
+label: novelty
+num test programs: 100
+
+
+counter: 0
+num skipped: 0
+{'include': ['java.text.MessageFormat.format(java.lang.Object[],java.lang.StringBuffer,java.text.FieldPosition)'], 'exclude': [], 'min_length': 3, 'max_length': inf}
+{(('DSubTree', 'java.text.MessageFormat.format(java.lang.Object[],java.lang.StringBuffer,java.text.FieldPosition)'), (False, False), ('java.text.MessageFormat.format(java.lang.Object[],java.lang.StringBuffer,java.text.FieldPosition)', 'java.util.List<java.lang.String>.add(java.lang.String)')): [26, -0.8353855013847351], (('DSubTree', 'java.text.MessageFormat.format(java.lang.Object[],java.lang.StringBuffer,java.text.FieldPosition)', 'java.util.List<java.lang.String>.add(java.lang.String)'), (False, False, False), ('java.text.MessageFormat.format(java.lang.Object[],java.lang.StringBuffer,java.text.FieldPosition)', 'java.util.List<java.lang.String>.add(java.lang.String)', 'DStop')): [1, -7.331309467554092], (('DSubTree', 'java.text.MessageFormat.format(java.lang.Object[],java.lang.StringBuffer,java.text.FieldPosition)'), (False, False), ('java.text.MessageFormat.format(java.lang.Object[],java.lang.StringBuffer,java.text.FieldPosition)', 'DStop')): [23, -0.29829086968675256]}
+
+counter: 5
+num skipped: 0
+{'include': ['java.util.List<java.lang.Integer>.addAll(java.util.Collection)'], 'exclude': [], 'min_length': 5, 'max_length': inf}
+{(('DSubTree', 'java.util.List<java.lang.Integer>.addAll(java.util.Collection)', 'java.util.List<java.lang.Integer>.add(int,java.lang.Integer)', 'java.util.Collections.unmodifiableList(java.util.List)'), (False, False, False, False), ('java.util.List<java.lang.Integer>.addAll(java.util.Collection)', 'java.util.List<java.lang.Integer>.add(int,java.lang.Integer)', 'java.util.Collections.unmodifiableList(java.util.List)', 'java.util.List<java.lang.Integer>.add(int,java.lang.Integer)')): [50, -0.09971211105585098]}
+
+counter: 10
+num skipped: 0
+{'include': ['java.util.Collections.synchronizedMap(java.util.Map)'], 'exclude': [], 'min_length': 5, 'max_length': inf}
+{(('DSubTree', 'java.util.Collections.synchronizedMap(java.util.Map)', 'java.lang.String.toLowerCase()', 'java.util.ArrayList<java.lang.String>.ArrayList<String>()'), (False, False, False, False), ('java.util.Collections.synchronizedMap(java.util.Map)', 'java.lang.String.toLowerCase()', 'java.util.ArrayList<java.lang.String>.ArrayList<String>()', 'java.lang.String.toLowerCase()')): [50, -0.3042892515659332]}
+
+counter: 15
+num skipped: 0
+{'include': ['java.util.HashMap<java.lang.String,java.lang.Integer>.HashMap<String,Integer>()'], 'exclude': [], 'min_length': 5, 'max_length': inf}
+{(('DSubTree', 'java.util.HashMap<java.lang.String,java.lang.Integer>.HashMap<String,Integer>()', 'java.lang.String.lastIndexOf(java.lang.String)', 'java.lang.String.length()'), (False, False, False, False), ('java.util.HashMap<java.lang.String,java.lang.Integer>.HashMap<String,Integer>()', 'java.lang.String.lastIndexOf(java.lang.String)', 'java.lang.String.length()', 'java.util.ArrayList<Tau_E>.ArrayList()')): [50, -7.5182366371154785]}
+
+counter: 20
+num skipped: 0
+{'include': ['javax.swing.JFileChooser.JFileChooser()'], 'exclude': [], 'min_length': 5, 'max_length': inf}
+{(('DSubTree', 'javax.swing.JFileChooser.JFileChooser()', 'java.io.BufferedWriter.close()', 'java.lang.System.getProperty(java.lang.String)'), (False, False, False, False), ('javax.swing.JFileChooser.JFileChooser()', 'java.io.BufferedWriter.close()', 'java.lang.System.getProperty(java.lang.String)', 'java.io.File.File(java.lang.String)')): [50, -3.199944496154785]}

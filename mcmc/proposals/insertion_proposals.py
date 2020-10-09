@@ -39,7 +39,7 @@ class ProposalWithInsertion:
 
         self.sess = tf_session
 
-    def _grow_dbranch(self, dbranch, max_consecutive_inserts=3):
+    def _grow_dbranch(self, dbranch, max_consecutive_inserts=3, cond_node=None):
         """
         Create full DBranch (DBranch, condition, then, else) from parent node.
         :param parent: (Node) parent of DBranch
@@ -48,13 +48,19 @@ class ProposalWithInsertion:
         ln_prob = 0
 
         # Ensure adding a DBranch won't exceed max depth
-        if self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 5 > self.max_length:
-            return None, None
+        if cond_node is None:
+            if self.curr_prog.non_dnode_length + 3 > self.max_num_api or self.curr_prog.length + 5 > self.max_length:
+                return None, None
 
         # Create condition as DBranch child
-        condition, cond_pos, prob = self._get_new_node(dbranch, CHILD_EDGE, verbose=self.debug)
-        assert cond_pos > 0, "Error: Condition node position couldn't be found"
-        ln_prob += prob
+        if cond_node is None:
+            condition, cond_pos, prob = self._get_new_node(dbranch, CHILD_EDGE, verbose=self.debug)
+            assert cond_pos > 0, "Error: Condition node position couldn't be found"
+            ln_prob += prob
+        else:
+            condition = cond_node
+            cond_pos = self.tree_mod.get_nodes_position(self.curr_prog, cond_node)
+            assert cond_pos > 0, "Error: Condition node position couldn't be found"
 
         # # Add then api as child to condition node
         # then_node, _, prob = self._get_new_node(condition, CHILD_EDGE, verbose=verbose)
@@ -85,7 +91,7 @@ class ProposalWithInsertion:
 
         return ln_prob, added_stop_node
 
-    def _grow_dloop_or_dexcept(self, dnode, max_consecutive_inserts=2):
+    def _grow_dloop_or_dexcept(self, dnode, max_consecutive_inserts=2, cond_node=None):
         """
         Create full DLoop (DLoop, condition, body) from parent node
         :param parent: (Node) parent of DLoop
@@ -94,10 +100,14 @@ class ProposalWithInsertion:
         ln_prob = 0
 
         # Ensure adding a DBranch won't exceed max depth
-        if self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 3 > self.max_length:
-            return None, None
+        if cond_node is None:
+            if self.curr_prog.non_dnode_length + 2 > self.max_num_api or self.curr_prog.length + 3 > self.max_length:
+                return None, None
 
-        parent_node = dnode
+        if cond_node is None:
+            parent_node = dnode
+        else:
+            parent_node = cond_node
         counter = 0
         while parent_node.api_name != STOP and counter < max_consecutive_inserts:
             parent_node, cond_pos, prob = self._get_new_node(parent_node, CHILD_EDGE, verbose=self.debug)

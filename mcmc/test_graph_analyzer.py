@@ -315,8 +315,8 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_build_identical_bayou_dataset(self):
         all_data_bayou_dataset_name = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/data_surrounding_methods.json'
         mcmc_dataset_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/train/all_training_data.json'
-        new_bayou_dataset_name = 'final_training_1k_vocab_all_replaced_no_key.json'
-        bayou_path = '/Users/meghanachilukuri/bayou/src/main/python/bayou/models/low_level_evidences/data/'
+        new_bayou_dataset_name = 'fixed_training_1k_vocab_all_replaced_no_key.json'
+        bayou_path = '/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/models/low_level_evidences/data/'
         create_identical_bayou_dataset(all_data_bayou_dataset_name, mcmc_dataset_path, new_bayou_dataset_name, bayou_path, types=REPLACE_TYPES)
 
     def test_build_sets_from_creator(self):

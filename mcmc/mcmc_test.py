@@ -826,7 +826,7 @@ class MCMCProgramTest(unittest.TestCase):
         return psi_, test_prog, rt, fp
 
     def test_pickle_dump(self):
-        post_dist = pickle.load(open('experiments/testing-100/post_dist_include_cs_novelty.pickle', 'rb'))
+        post_dist = pickle.load(open('experiments/testing-200/post_dist_include_cs_novelty.pickle', 'rb'))
         print(type(post_dist))
         print(len(post_dist))
         for prog in post_dist:

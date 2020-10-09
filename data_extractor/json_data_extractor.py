@@ -282,7 +282,7 @@ def create_identical_bayou_dataset(all_data_bayou_dataset_path, mcmc_dataset_pat
                 if types == ADD_TO_TYPES:
                     curr_types = set(prog['types'])
                     curr_types.update(set(program[FP]))
-                    curr_types.update(set(program[RT]))
+                    curr_types.add(program[RT])
                     curr_types.difference_update(set(prog['types']))
                     prog['types'] += list(curr_types)
                 elif types == REPLACE_TYPES:
@@ -291,7 +291,7 @@ def create_identical_bayou_dataset(all_data_bayou_dataset_path, mcmc_dataset_pat
                     except KeyError:
                         skipped_progs += 1
                         continue
-                    rt_fp.update(set(program[RT]))
+                    rt_fp.add(program[RT])
                     prog['types'] = list(rt_fp)
 
             bayou_prog_set.add(key)

@@ -1,0 +1,35 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/novel_1k_data_small_config
+num iterations: 50.0
+category: include_api
+label: novelty
+num test programs: 5
+
+
+counter: 0
+num skipped: 0
+{'include': ['java.awt.event.MouseEvent.getClickCount()', 'java.awt.event.MouseEvent.getY()'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.awt.event.MouseEvent.getClickCount()'), (False, False), ('java.awt.event.MouseEvent.getClickCount()', 'java.awt.event.MouseEvent.getY()')): [6, -24.714639768004417], (('DSubTree', 'java.awt.event.MouseEvent.getY()'), (False, False), ('java.awt.event.MouseEvent.getY()', 'java.awt.event.MouseEvent.getClickCount()')): [9, -16.637266635894775], (('DSubTree', 'java.awt.event.MouseEvent.getY()', 'java.awt.event.MouseEvent.getClickCount()'), (False, False, False), ('java.awt.event.MouseEvent.getY()', 'java.awt.event.MouseEvent.getClickCount()', 'DStop')): [33, -14.788145390572026], (('DSubTree', 'java.awt.event.MouseEvent.getY()', 'java.lang.Class<Tau_T>.getName()', 'java.awt.event.MouseEvent.getClickCount()'), (False, False, False, False), ('java.awt.event.MouseEvent.getY()', 'java.lang.Class<Tau_T>.getName()', 'java.awt.event.MouseEvent.getClickCount()', 'DStop')): [2, -16.82940029429301]}
+
+counter: 1
+num skipped: 0
+{'include': ['java.net.ServerSocket.ServerSocket(int)', 'java.io.PrintWriter.PrintWriter(java.io.OutputStream,boolean)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.net.ServerSocket.ServerSocket(int)', 'java.io.PrintWriter.PrintWriter(java.io.OutputStream,boolean)'), (False, False, False), ('java.net.ServerSocket.ServerSocket(int)', 'java.io.PrintWriter.PrintWriter(java.io.OutputStream,boolean)', 'java.io.PrintWriter.flush()')): [50, -10.35814118385315]}
+
+counter: 2
+num skipped: 0
+{'include': ['java.nio.ByteBuffer.asFloatBuffer()', 'java.nio.FloatBuffer.put(float[])'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.nio.ByteBuffer.asFloatBuffer()'), (False, False), ('java.nio.ByteBuffer.asFloatBuffer()', 'java.nio.FloatBuffer.put(float[])')): [5, -21.975074291229248], (('DSubTree', 'java.nio.ByteBuffer.asFloatBuffer()', 'java.nio.FloatBuffer.put(float[])'), (False, False, False), ('java.nio.ByteBuffer.asFloatBuffer()', 'java.nio.FloatBuffer.put(float[])', 'DStop')): [45, -19.998935606330633]}
+
+counter: 3
+num skipped: 0
+{'include': ['java.io.File.File(java.io.File,java.lang.String)', '$NOT$java.io.File.getAbsoluteFile()'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.io.File.File(java.io.File,java.lang.String)'), (False, False), ('java.io.File.File(java.io.File,java.lang.String)', '$NOT$java.io.File.getAbsoluteFile()')): [18, -7.076533794403076], (('DSubTree', 'java.io.File.File(java.io.File,java.lang.String)', '$NOT$java.io.File.getAbsoluteFile()'), (False, False, False), ('java.io.File.File(java.io.File,java.lang.String)', '$NOT$java.io.File.getAbsoluteFile()', 'DStop')): [32, -5.331384896830059]}
+
+counter: 4
+num skipped: 0
+{'include': ['java.io.ObjectOutputStream.close()', 'java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)'), (False, False), ('java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)', 'java.io.ObjectOutputStream.close()')): [15, -16.604198455810547], (('DSubTree', 'java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)', 'java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream)'), (False, False, False), ('java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)', 'java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream)', 'java.io.ObjectOutputStream.close()')): [3, -19.284400463104248], (('DSubTree', 'java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)', 'java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream)', 'java.io.ObjectOutputStream.close()'), (False, False, False, False), ('java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)', 'java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream)', 'java.io.ObjectOutputStream.close()', 'java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)')): [1, -15.056150794029236], (('DSubTree', 'java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)', 'java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream)', 'java.io.ObjectOutputStream.writeObject(java.lang.Object)', 'java.io.ObjectOutputStream.close()'), (False, False, False, False, False), ('java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)', 'java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream)', 'java.io.ObjectOutputStream.writeObject(java.lang.Object)', 'java.io.ObjectOutputStream.close()', 'java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)')): [2, -15.58058476448059], (('DSubTree', 'java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream)', 'java.io.ObjectOutputStream.writeObject(java.lang.Object)', 'java.io.ObjectOutputStream.close()'), (False, False, False, False), ('java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream)', 'java.io.ObjectOutputStream.writeObject(java.lang.Object)', 'java.io.ObjectOutputStream.close()', 'java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)')): [2, -8.904929757118225], (('DSubTree', 'java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream)', 'java.io.ObjectOutputStream.writeObject(java.lang.Object)', 'java.io.ObjectOutputStream.close()', 'java.io.FileInputStream.FileInputStream(java.io.File)'), (False, False, False, False, False), ('java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream)', 'java.io.ObjectOutputStream.writeObject(java.lang.Object)', 'java.io.ObjectOutputStream.close()', 'java.io.FileInputStream.FileInputStream(java.io.File)', 'java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)')): [22, -6.6534192860126495], (('DSubTree', 'java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream)', 'java.io.ObjectOutputStream.writeObject(java.lang.Object)', 'java.io.ObjectOutputStream.close()', 'java.io.FileInputStream.FileInputStream(java.io.File)', 'java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)', 'java.io.ObjectInputStream.readObject()'), (False, False, False, False, False, False, False), ('java.io.ObjectOutputStream.ObjectOutputStream(java.io.OutputStream)', 'java.io.ObjectOutputStream.writeObject(java.lang.Object)', 'java.io.ObjectOutputStream.close()', 'java.io.FileInputStream.FileInputStream(java.io.File)', 'java.io.ObjectInputStream.ObjectInputStream(java.io.InputStream)', 'java.io.ObjectInputStream.readObject()', 'DStop')): [5, -5.5770169934257865]}
+
+
+final metrics: {'jaccard_test_set': 0.0, 'has_more_apis': 0.6000000000000001, 'relevant_additions': 0.4, 'meets_constraints': 1.0, 'in_set': 0.2, 'test_set_relevant_additions': 0.6000000000000001}

@@ -1,0 +1,12 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/novel_1k_data_small_config
+num iterations: 50.0
+category: include_api
+label: novelty
+num test programs: 100
+
+
+counter: 0
+num skipped: 0
+{'include': ['java.util.Map<java.lang.String,byte[]>.entrySet()', 'java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.util.Map<java.lang.String,byte[]>.entrySet()'), (False, False), ('java.util.Map<java.lang.String,byte[]>.entrySet()', 'java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String)')): [5, -4.076038360595703], (('DSubTree', 'java.util.Map<java.lang.String,byte[]>.entrySet()', 'java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String)'), (False, False, False), ('java.util.Map<java.lang.String,byte[]>.entrySet()', 'java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String)', 'DStop')): [45, -0.8680900782346725]}

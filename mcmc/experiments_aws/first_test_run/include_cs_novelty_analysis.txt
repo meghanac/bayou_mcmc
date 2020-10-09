@@ -1,0 +1,13 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/final_novel_1k_min_2_small_config
+num iterations: 60.0
+category: include_cs
+label: novelty
+num test programs: 1000
+
+{'include': ['java.lang.System.getProperty(java.lang.String,java.lang.String)', 'DLoop'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.lang.System.getProperty(java.lang.String,java.lang.String)', 'DLoop', 'java.util.Iterator.hasNext()', 'java.util.Iterator.next()', 'DLoop'), (False, False, True, True, False, False), ('java.lang.System.getProperty(java.lang.String,java.lang.String)', 'DLoop', 'java.util.Iterator.hasNext()', 'java.util.Iterator.next()', 'DStop', 'DStop')): [24, -6.756718993186951], (('DSubTree', 'java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.System.getProperty(java.lang.String)', 'DLoop', 'java.util.Iterator.hasNext()', 'java.util.Iterator.next()', 'DLoop'), (False, False, False, True, True, False, False), ('java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.System.getProperty(java.lang.String)', 'DLoop', 'java.util.Iterator.hasNext()', 'java.util.Iterator.next()', 'DStop', 'DStop')): [8, -8.18265101313591], (('DSubTree', 'java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.System.getProperty(java.lang.String)', 'DLoop', 'java.util.Iterator.hasNext()', 'DLoop'), (False, False, False, True, True, False), ('java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.System.getProperty(java.lang.String)', 'DLoop', 'java.util.Iterator.hasNext()', 'java.util.Iterator.next()', 'DStop')): [2, -7.382137030363083], (('DSubTree', 'java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.System.getProperty(java.lang.String)', 'DLoop', 'java.util.Iterator.hasNext()', 'DLoop'), (False, False, False, True, True, False), ('java.lang.System.getProperty(java.lang.String,java.lang.String)', 'java.lang.System.getProperty(java.lang.String)', 'DLoop', 'java.util.Iterator.hasNext()', 'java.io.File.createTempFile(java.lang.String,java.lang.String)', 'DStop')): [26, -11.322601899504662]}
+
+{'include': ['java.util.Map.isEmpty()', 'DLoop'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.util.Map.isEmpty()', 'DLoop', 'java.util.Iterator.hasNext()', 'java.util.Iterator.next()', 'DLoop'), (False, False, True, True, False, False), ('java.util.Map.isEmpty()', 'DLoop', 'java.util.Iterator.hasNext()', 'java.util.Iterator.next()', 'DStop', 'DStop')): [60, -25.93431355059147]}
+
