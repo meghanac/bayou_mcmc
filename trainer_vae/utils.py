@@ -24,8 +24,6 @@ CONFIG_GENERAL = ['batch_size', 'num_epochs', 'latent_size',
 CONFIG_ENCODER = ['units', 'num_layers']
 CONFIG_DECODER = ['units', 'num_layers']
 
-
-
 def get_var_list(input):
 
     all_vars = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES)

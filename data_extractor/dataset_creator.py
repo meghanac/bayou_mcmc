@@ -1315,6 +1315,81 @@ def create_smaller_test_set(data_dir_path, data_dir_name, train_test_set_name, n
             f.close()
 
 
+def build_bayou_test_set(mcmc_data_dir_path, mcmc_all_data_path, new_bayou_data_filename):
+    small_test_data = pickle.load(open(mcmc_data_dir_path + "/test/small/small_curated_test_sets.pickle", "rb"))
+
+    items = {}
+    for category in small_test_data:
+        for novelty in small_test_data[category]:
+            for item in (small_test_data[category][novelty]):
+                items[item[0]] = (category, item)
+
+    prog_ids = set(items.keys())
+
+    all_data = ijson.items(open(mcmc_all_data_path, "rb"), 'programs.item')
+
+    dataset_creator = pickle.load(open(mcmc_data_dir_path + "/dataset_creator.pickle", "rb"))
+    node2vocab = dataset_creator.ga.node2vocab
+
+    bayou_test_dir_path = "/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/models/low_level_evidences/data/test/"
+    if not os.path.exists(bayou_test_dir_path):
+        os.mkdir(bayou_test_dir_path)
+
+    small_test_f = open(bayou_test_dir_path + new_bayou_data_filename, "w+")
+    small_test_f.write("{\n")
+    small_test_f.write("\"programs\": [\n")
+
+    # category_idx = 0
+    prog_id_idx = 0
+    apis_idx = 1
+    dp2_idx = 2
+    len_idx = 3
+
+    def get_json_safe_item(item):
+        new_item = []
+        for i in range(len(item)):
+            if type(item[i]) == tuple:
+                new_item.append([])
+                for j in item[i]:
+                    new_item[i].append(int(j))
+            else:
+                new_item.append(int(item[i]))
+        return new_item
+
+    bayou_test_progs = []
+    counter = 0
+    for program in all_data:
+        if counter in prog_ids:
+            item = items[counter][1]
+            assert counter == item[prog_id_idx], str(counter) + " " + str(item[prog_id_idx])
+            category = items[counter][0]
+            test_prog = {}
+            test_prog['apicalls'] = [node2vocab[i] for i in item[apis_idx]]
+            if category == IN_API or category == IN_CS:
+                test_prog['apicalls'].append(node2vocab[item[dp2_idx]])
+            test_prog['types'] = program['formalParam']
+            test_prog['types'] += [program['returnType']]
+            test_prog['category'] = category
+            if category == MIN_EQ or category == MAX_EQ:
+                test_prog['datapoint'] = [item[dp2_idx]]
+            else:
+                test_prog['datapoint'] = [node2vocab[item[dp2_idx]]]
+            test_prog['key'] = get_json_safe_item(item)
+            bayou_test_progs.append(test_prog)
+        counter += 1
+
+    assert len(bayou_test_progs) == len(items), str(len(bayou_test_progs)) + " " + str(len(items))
+
+    for i in range(len(bayou_test_progs)):
+        if i != 0:
+            small_test_f.write(",\n")
+        small_test_f.write(json.dumps(bayou_test_progs[i]))
+
+    small_test_f.write("]}")
+    small_test_f.close()
+    print(str(len(bayou_test_progs)) + " json objects copied into " + new_bayou_data_filename)
+
+
 def build_bayou_datasets(mcmc_data_dir_path, bayou_data_dir_path, bayou_data_folder_name):
     # f = open(creator_path, "rb")
     # dataset_creator = pickle.load(f)

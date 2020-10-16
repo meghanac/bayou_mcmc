@@ -6,6 +6,7 @@ import pickle
 import random
 import textwrap
 
+import ijson
 import tensorflow as tf
 
 import numpy as np
@@ -64,28 +65,41 @@ def get_apis_set(data_point):
 
 
 class Metrics:
-    def __init__(self, num_iterations, stop_num, top_k=5):
+    def __init__(self, num_iterations, stop_num, top_k=5, verbose=False):
         self.num_iter = num_iterations
         self.top_k = int(min(top_k, num_iterations))
         self.stop_num = stop_num
-        print(self.top_k, num_iterations)
+        self.verbose = verbose
+        if verbose:
+            print("METRICS: Top k:", self.top_k, "Num iterations:", num_iterations)
 
     def get_top_k_gen_progs(self, posterior_dist, constraint_dict):
-        print(constraint_dict)
+        if self.verbose:
+            print("\n------ GET TOP K GEN PROGS --------\n")
+            print("constraint dict:", constraint_dict)
         def get_non_starting_programs(x):
-            x1 = x
-            print(x)
             is_non_starting = len(x[0][NODES_IDX]) > len(constraint_dict[INCLUDE]) + 1
             if len(x[0][TARGETS_IDX]) == len(constraint_dict[INCLUDE]) + 2:
                 is_non_starting = is_non_starting and x[0][TARGETS_IDX][-1] != self.stop_num
             return is_non_starting
-        posterior = posterior_dist.items()
-        print(posterior)
+
+        posterior = list(posterior_dist.items())
         filtered_posterior = list(filter(lambda x: get_non_starting_programs(x), posterior))
-        print(filtered_posterior)
+        if self.verbose:
+            print("posterior:", posterior)
+            print("filtered posterior:", filtered_posterior)
         if len(filtered_posterior) != 0:
             posterior = filtered_posterior
-        posterior = sorted([(i[0], i[1][1]) for i in posterior], reverse=True, key=lambda x: x[1])  # TODO: CHECK IF THIS METRIC MAKES SENSE
+
+        # print(posterior)
+        if type(posterior[0][1]) == list or type(posterior[0][1]) == tuple:
+            posterior = sorted([(i[0], i[1][1]) for i in posterior], reverse=True,
+                               key=lambda x: x[1])  # TODO: CHECK IF THIS METRIC MAKES SENSE
+        else:
+            posterior = sorted(posterior, reverse=True, key=lambda x: x[1])
+        # else:
+        #     raise ValueError("posterior item value should have only 1 or 2 elements in it")
+
         top_k = min(self.top_k, len(posterior))
         posterior = posterior[:top_k]
         posterior = [i[0] for i in posterior]
@@ -140,12 +154,6 @@ class Metrics:
             return 0.0
 
     def get_all_metrics(self, posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga):
-        # jaccard_api = self.jaccard_api(test_data_point, posterior_dist)
-        # jaccard_seq = self.jaccard_sequence(test_data_point, posterior_dist)
-        # ast_eq = self.ast_equivalence_top_k(test_data_point, posterior_dist)
-        # min_diff_cs = self.abs_min_diff_control_structs_top_k(test_data_point, posterior_dist)
-        # min_diff_statements = self.abs_min_diff_statements_top_k(test_data_point, posterior_dist)
-
         metrics = {}
 
         metrics[IN_SET] = self.appears_in_set(posterior_dist, constraint_dict, ret_type, fp, test_ga)
@@ -157,27 +165,26 @@ class Metrics:
 
         return metrics
 
-    def get_all_averaged_metrics(self, posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga, num_test_progs):
-        # jaccard_api, jaccard_seq, ast_eq, min_diff_cs, min_diff_statements, in_dataset = self.get_all_metrics(
-        #     test_data_point, posterior_dist, ret_type, fp, constraint_dict, ga)
-        #
-        # # TODO: CHANGE!!!!
-        # return jaccard_api / self.num_iter, jaccard_seq / self.num_iter, ast_eq / self.num_iter, \
-        #     min_diff_cs / self.num_iter, min_diff_statements / self.num_iter, in_dataset / self.num_iter
+    def get_all_averaged_metrics(self, posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga,
+                                 num_test_progs):
 
         all_metrics = self.get_all_metrics(posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga)
-        print("all metrics before avg:", all_metrics)
+        if self.verbose:
+            print("all metrics before avg:", all_metrics)
         for metric in all_metrics:
             all_metrics[metric] /= num_test_progs
 
         return all_metrics
 
     def appears_in_set(self, posterior_dist, constraint_dict, ret_type, fp, ga):
-        print("\n\n\n--------APPEARS IN SET----------")
         posterior_progs = self.get_top_k_gen_progs(posterior_dist, constraint_dict)
 
-        print("posterior top k:", posterior_progs)
-        print("num in posterior top k:", len(posterior_progs))
+        if self.verbose:
+            print("\n\n\n--------APPEARS IN SET----------")
+            print("posterior top k:", posterior_progs)
+            print("num in posterior top k:", len(posterior_progs))
+            print("ret type:", ret_type)
+            print("fp:", fp)
 
         in_set = False
         for gen_data_point in posterior_progs:
@@ -186,42 +193,50 @@ class Metrics:
             prog_ids = ga.get_program_ids_with_multiple_apis(list(apis))
             for prog_id in prog_ids:
                 prog = ga.fetch_all_list_data_without_delim(prog_id)
-                # print("")
-                # print("prog in test_set:", prog)
-                # print("gen prog:", (
-                #     gen_data_point[NODES_IDX], gen_data_point[EDGES_IDX], gen_data_point[TARGETS_IDX], ret_type, fp))
                 in_set = in_set or (prog[:5] == (
-                   list(gen_data_point[NODES_IDX]), list(gen_data_point[EDGES_IDX]), list(gen_data_point[TARGETS_IDX]), ret_type, list(fp)))
-        print("return:", 1.0 * int(in_set))
+                    list(gen_data_point[NODES_IDX]), list(gen_data_point[EDGES_IDX]), list(gen_data_point[TARGETS_IDX]),
+                    ret_type, list(fp)))
+
+        if self.verbose:
+            print("return:", 1.0 * int(in_set))
+
         return 1.0 * int(in_set)
 
     def meets_constraints(self, posterior_dist, constraint_dict):
-        print("\n\n\n--------MEETS CONSTRAINTS----------")
         posterior = self.get_top_k_gen_progs(posterior_dist, constraint_dict)
-        print("posterior top k:", posterior)
-        print("num in posterior top k:", len(posterior))
+
+        if self.verbose:
+            print("\n\n\n--------MEETS CONSTRAINTS----------")
+            print("posterior top k:", posterior)
+            print("num in posterior top k:", len(posterior))
 
         def get_score(prog):
             score = True
             apis = get_apis_set(prog)
-            print("")
-            print("apis in prog", apis)
-            print("constraint apis", constraint_dict[INCLUDE])
-            print(set(constraint_dict[INCLUDE]).issubset(apis))
-            print("")
+
+            if self.verbose:
+                print("")
+                print("apis in prog", apis)
+                print("constraint apis", constraint_dict[INCLUDE])
+                print("include:", set(constraint_dict[INCLUDE]).issubset(apis))
+                print("")
             score = score and set(constraint_dict[INCLUDE]).issubset(apis)
             if len(constraint_dict[EXCLUDE]) != 0:
-                print("exclude:", not set(constraint_dict[EXCLUDE]).issubset(apis))
+                if self.verbose:
+                    print("exclude:", not set(constraint_dict[EXCLUDE]).issubset(apis))
                 score = score and not set(constraint_dict[EXCLUDE]).issubset(apis)
-            print("min length:", constraint_dict[MIN_LENGTH] <= len(prog[0]))
+            if self.verbose:
+                print("min length:", constraint_dict[MIN_LENGTH] <= len(prog[0]))
             score = score and constraint_dict[MIN_LENGTH] <= len(prog[0])
-            print("max length:", len(prog[0]) <= constraint_dict[MAX_LENGTH])
+            if self.verbose:
+                print("max length:", len(prog[0]) <= constraint_dict[MAX_LENGTH])
             score = score and len(prog[0]) <= constraint_dict[MAX_LENGTH]
             return int(score)
 
         scores = [get_score(i) for i in posterior]
-        print("scores:", scores)
-        print("return:", sum(scores) * 1.0 / len(posterior))
+        if self.verbose:
+            print("scores:", scores)
+            print("return:", sum(scores) * 1.0 / len(posterior))
         try:
             final_score = sum(scores) * 1.0 / len(posterior)
         except ZeroDivisionError:
@@ -229,78 +244,83 @@ class Metrics:
         return final_score
 
     def has_more_apis(self, posterior_dist, constraint_dict):
-        print("\n\n\n--------HAS_MORE_APIS----------")
         posterior = self.get_top_k_gen_progs(posterior_dist, constraint_dict)
         posterior = [get_apis_set(i) for i in posterior]
-        print("posterior len:", len(posterior))
+
+        if self.verbose:
+            print("\n\n\n--------HAS_MORE_APIS----------")
+            print("posterior len:", len(posterior))
 
         def get_score(prog):
             prog.discard(DSUBTREE)
             prog.discard(DSTOP)
-            print("")
-            print("prog:", prog)
-            print("constraints:", constraint_dict[INCLUDE])
-            print("")
+            if self.verbose:
+                print("")
+                print("prog:", prog)
+                print("constraints:", constraint_dict[INCLUDE])
+                print("")
             return int(len(prog) > len(set(constraint_dict[INCLUDE])))
 
         scores = [get_score(i) for i in posterior]
-        print("scores:", scores)
 
-        # TODO: FIGURE OUT HOW TO ACCOUNT FOR CFS
-        print("return:", sum(scores) * 1.0 / len(posterior))
+        if self.verbose:
+            print("scores:", scores)
+            # TODO: FIGURE OUT HOW TO ACCOUNT FOR CFS
+            print("return:", sum(scores) * 1.0 / len(posterior))
         try:
             final_score = sum(scores) * 1.0 / len(posterior)
         except ZeroDivisionError:
             final_score = 0.0
         return final_score
 
-    # def get_post_dict_from_str(self, posterior_dist):
-    #     #     post_dist = {}
-    #     #     print(type(posterior_dist))
-    #     #     for str_prog in posterior_dist:
-    #     #         prog = json.loads(str_prog)
-    #     #         post_dist[prog] = posterior_dist[str_prog]
-    #     #     return post_dist
-
     def jaccard_distance_test_set(self, posterior_dist, constraint_dict, ga):
-        print("\n\n\n--------JACCARD DISTANCE TEST SET----------")
         test_progs_meet_constraints = ga.get_programs_with_multiple_apis(constraint_dict[INCLUDE],
                                                                          exclude=constraint_dict[EXCLUDE],
                                                                          min_length=constraint_dict[MIN_LENGTH],
                                                                          max_length=constraint_dict[MAX_LENGTH])
-        print("num test progs that meet constraint:", len(test_progs_meet_constraints))
-        test_progs_meet_constraints = set([tuple(get_apis_set((i[0][1], i[1][1], i[2][1]))) for i in test_progs_meet_constraints])
-        print("apis of test progs:", test_progs_meet_constraints)
-        # posterior_dist = self.get_post_dict_from_str(posterior_dist)
+
+        if self.verbose:
+            print("\n\n\n--------JACCARD DISTANCE TEST SET----------")
+            print("num test progs that meet constraint:", len(test_progs_meet_constraints))
+        test_progs_meet_constraints = set(
+            [tuple(get_apis_set((i[0][1], i[1][1], i[2][1]))) for i in test_progs_meet_constraints])
+
+        if self.verbose:
+            print("apis of test progs:", test_progs_meet_constraints)
         posterior = self.get_top_k_gen_progs(posterior_dist, constraint_dict)
         api_sets = set([tuple(get_apis_set(i)) for i in posterior])
-        print("apis in posterior", api_sets)
-        # print(test_progs_meet_constraints)
 
+        if self.verbose:
+            print("apis in posterior", api_sets)
         jacc_distances = []
         for api_set in api_sets:
             jacc_dist = self.get_jaccard_distance(set(api_set), test_progs_meet_constraints)
-            print("api set:", api_set)
-            print("jacc distance:", jacc_dist)
+            if self.verbose:
+                print("api set:", api_set)
+                print("jacc distance:", jacc_dist)
             jacc_distances.append(jacc_dist)
 
-        print("return:", min(jacc_distances))
-        print("")
+        if self.verbose:
+            print("return:", min(jacc_distances))
+            print("")
         return min(jacc_distances)
 
     def relevant_additions(self, posterior_dist, constraint_dict, ga, is_test_ga=False):
-        print("\n\n\n--------RELEVANT ADDITIONS: " + "is test ga: " + str(is_test_ga) + "----------")
-        # posterior_dist = self.get_post_dict_from_str(posterior_dist)
         posterior = self.get_top_k_gen_progs(posterior_dist, constraint_dict)
         api_sets = set([tuple(get_apis_set(i)) for i in posterior])
-        print("top k api sets:", api_sets)
         num_progs = len(api_sets)
-        print("num api sets:", num_progs)
+
+        if self.verbose:
+            print("\n\n\n--------RELEVANT ADDITIONS: " + "is test ga: " + str(is_test_ga) + "----------")
+            print("top k api sets:", api_sets)
+            print("num api sets:", num_progs)
 
         avg_score = 0.0
         for prog in api_sets:
             added_apis = list(set(prog).difference(set(constraint_dict[INCLUDE])) - {DSUBTREE, DSTOP})
-            print("added apis:", added_apis)
+
+            if self.verbose:
+                print("added apis:", added_apis)
             num_added_apis = len(added_apis)
             if num_added_apis == 0:
                 continue
@@ -310,19 +330,26 @@ class Metrics:
                 for constraint in constraint_dict[INCLUDE]:
                     api_appears_with_constraint = api_appears_with_constraint or len(
                         ga.get_program_ids_with_multiple_apis([added_api, constraint])) > 0
-                    print("added_api:", added_api)
-                    print("constraint:", constraint, "appears:", len(
-                        ga.get_program_ids_with_multiple_apis([added_api, constraint])) > 0)
-                    print("")
+
+                    if self.verbose:
+                        print("added_api:", added_api)
+                        print("constraint:", constraint, "appears:", len(
+                            ga.get_program_ids_with_multiple_apis([added_api, constraint])) > 0)
+                        print("")
+
                 score += int(api_appears_with_constraint)
-                print("score for ", added_api, " :", score)
+                if self.verbose:
+                    print("score for ", added_api, " :", score)
             avg_score += 1.0 * score / num_added_apis
-        print("return:", 1.0 * avg_score / num_progs)
+
+        if self.verbose:
+            print("return:", 1.0 * avg_score / num_progs)
         return 1.0 * avg_score / num_progs
 
 
 class Experiments:
-    def __init__(self, data_dir_name, model_dir_path, experiment_dir_name, num_iterations, save_mcmc_progs=True, train_test_set_dir_name='/train_test_sets/'):
+    def __init__(self, data_dir_name, model_dir_path, experiment_dir_name, num_iterations, save_mcmc_progs=True,
+                 train_test_set_dir_name='/train_test_sets/', verbose=False):
 
         self.num_iter = num_iterations * 1.0
         self.model_dir_path = model_dir_path
@@ -338,24 +365,22 @@ class Experiments:
 
         self.exp_dir_path = experiments_path + "/" + experiment_dir_name
 
-        self.all_ga = GraphAnalyzer(data_dir_name, load_reader=True, shuffle_data=False, train_test_set_dir_name=train_test_set_dir_name)
+        self.all_ga = GraphAnalyzer(data_dir_name, load_reader=True, shuffle_data=False,
+                                    train_test_set_dir_name=train_test_set_dir_name)
 
-        self.train_ga = GraphAnalyzer(data_dir_name, train_test_split='train', filename='all_training_data', load_reader=True, shuffle_data=False, train_test_set_dir_name=train_test_set_dir_name)
-        self.all_test_ga = GraphAnalyzer(data_dir_name, train_test_split='test', filename='test_set', load_reader=True, shuffle_data=False, train_test_set_dir_name=train_test_set_dir_name)  # TODO: fix
-        self.test_ga = GraphAnalyzer(data_dir_name, train_test_split='small_test', filename='small_test_set', load_reader=True, shuffle_data=False, train_test_set_dir_name=train_test_set_dir_name)
+        self.train_ga = GraphAnalyzer(data_dir_name, train_test_split='train', filename='all_training_data',
+                                      load_reader=True, shuffle_data=False,
+                                      train_test_set_dir_name=train_test_set_dir_name)
+        self.all_test_ga = GraphAnalyzer(data_dir_name, train_test_split='test', filename='test_set', load_reader=True,
+                                         shuffle_data=False,
+                                         train_test_set_dir_name=train_test_set_dir_name)  # TODO: fix
+        self.test_ga = GraphAnalyzer(data_dir_name, train_test_split='small_test', filename='small_test_set',
+                                     load_reader=True, shuffle_data=False,
+                                     train_test_set_dir_name=train_test_set_dir_name)
 
-        # for ga in [self.all_ga, self.train_ga, self.all_test_ga, self.test_ga]:
-        #     print("\n\n\n")
-        #     for i in range(10):
-        #         print(ga.fetch_data_with_targets(i))
-        #         print([ga.node2vocab[j] for j in ga.fetch_nodes_as_list(i)])
-        #         print(ga.get_json_ast(i))
-        #         print("\n")
-
-        data_dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../data_extractor/data/" + data_dir_name)
-        # testing_path = os.path.join(data_dir_path, train_test_set_dir_name + 'test')
+        data_dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                     "../data_extractor/data/" + data_dir_name)
         testing_path = data_dir_path + "/" + train_test_set_dir_name + "test"
-        print(testing_path)
 
         with open(testing_path + "/test_set_new_prog_ids.pickle", "rb") as f:
             self.all_test_prog_ids_to_idx = pickle.load(f)
@@ -380,6 +405,7 @@ class Experiments:
         self.save_mcmc_progs = save_mcmc_progs
         self.posterior_dists = {}
         self.avg_metrics = {}
+        self.avg_bayou_metrics = {}
 
         self.category_names = self.curated_test_sets.keys()
 
@@ -403,9 +429,7 @@ class Experiments:
                         dp2 = self.dataset_creator.ga.node2vocab[data_point[2]]
                     self.curated_test_sets_idxs[category][label].add((dp0, dp1, dp2))
 
-        # self.metric_labels = [JACC_API, JACC_SEQ, AST_EQ, IN_SET, MIN_DIFF_CS, MIN_DIFF_ST]
-
-        self.metrics = Metrics(num_iterations * 1.0, self.all_ga.vocab2node[DSTOP])
+        self.metrics = Metrics(num_iterations * 1.0, self.all_ga.vocab2node[DSTOP], verbose=verbose)
         self.metric_labels = [JACC_TEST_SET, HAS_MORE_APIS, REL_ADD, MEET_CONST, IN_SET, TEST_REL_ADD]
 
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -418,10 +442,24 @@ class Experiments:
         beam_width = 1
         self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
 
-    def get_mcmc_prog_and_ast(self, data_point, category, in_random_order, num_apis_to_add_to_constraint, verbose=False, session=None, proposal_probs=None):
-        # prog_id = self.get_test_prog_id(data_point[0])
+        self.verbose = verbose
 
-        prog_id = data_point[0]
+    def get_constraint_dict(self, data_point, category, convert_from_node=False):
+        if convert_from_node:
+            dp0 = self.test_prog_ids_to_idx[data_point[0]]
+            if type(data_point[1]) == int:
+                dp1 = tuple([self.dataset_creator.ga.node2vocab[data_point[1]]])
+            else:
+                dp1 = tuple([self.dataset_creator.ga.node2vocab[i] for i in data_point[1]])
+            dp2 = data_point[2]
+            if category != MIN_EQ and category != MAX_EQ and category != RAND:
+                dp2 = self.dataset_creator.ga.node2vocab[data_point[2]]
+            dp_copy = list(data_point)
+            dp_copy[0] = dp0
+            dp_copy[1] = dp1
+            dp_copy[2] = dp2
+            data_point = dp_copy
+
         constraints = list(data_point[1])
         dp2 = data_point[2]
         exclude = []
@@ -437,15 +475,22 @@ class Experiments:
         elif category == MAX_EQ:
             max_length = dp2
         else:
-            print("ERROR: CATEGORY NOT ALLOWED")
-
-        # print(data_point)
-
-        nodes, edges, targets, return_type, fp, fp_targets = self.test_ga.fetch_all_list_data_without_delim(prog_id)
-        ast = (nodes, edges, targets)
-        # print(ast)
+            raise ValueError("ERROR: CATEGORY NOT ALLOWED")
 
         constraint_dict = {INCLUDE: constraints, EXCLUDE: exclude, MIN_LENGTH: min_length, MAX_LENGTH: max_length}
+
+        return constraint_dict
+
+    def get_mcmc_prog_and_ast(self, data_point, category, in_random_order, num_apis_to_add_to_constraint, verbose=False,
+                              session=None, proposal_probs=None):
+        verbose = verbose or self.verbose
+
+        prog_id = data_point[0]
+        nodes, edges, targets, return_type, fp, fp_targets = self.test_ga.fetch_all_list_data_without_delim(prog_id)
+        ast = (nodes, edges, targets)
+
+        constraint_dict = self.get_constraint_dict(data_point, category)
+        constraints = constraint_dict[INCLUDE]
 
         # train_prog_ids = self.train_ga.get_programs_with_multiple_apis(constraint_dict[INCLUDE], exclude=constraint_dict[EXCLUDE])
         # print("should be zero:")
@@ -506,38 +551,20 @@ class Experiments:
         constraints = order_include_constraints(ast, constraints)
         constraint_dict[INCLUDE] = constraints
 
-        # print(constraints)
-
-        # for ga in [self.all_ga, self.train_ga, self.all_test_ga, self.test_ga]:
-        #     nodes, edges, targets, _, _, _ = ga.fetch_all_list_data_without_delim(prog_id)
-        #     print(nodes, edges, targets)
-
-
-
-        # test_progs = self.all_test_ga.get_programs_with_multiple_apis(constraints, exclude=exclude, min_length=min_length, max_length=max_length)
-        # for prog in test_progs:
-        #     print('---------------------')
-        #     print("constraints:", constraint_dict)
-        #     self.all_test_ga.print_lists(prog)
-
-        # ordered_apis = self.get_nonconstraint_apis_in_prog(constraints, ast, in_random_order)
-        # constraints += ordered_apis[:num_apis_to_add_to_constraint]
-        # print(constraints)
-
         # init MCMCProgram
-        mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose, session=session, encoder=self.encoder, decoder=self.decoder)
+        mcmc_prog = MCMCProgram(self.model_dir_path, verbose=verbose, session=session, encoder=self.encoder,
+                                decoder=self.decoder)
 
         if proposal_probs is not None:
             mcmc_prog.proposal_probs = proposal_probs
 
-        mcmc_prog.init_program(constraints, return_type, fp, exclude=exclude, min_length=min_length,
-                               max_length=max_length, ordered=True)
+        mcmc_prog.init_program(constraints, return_type, fp, exclude=constraint_dict[EXCLUDE], min_length=constraint_dict[MIN_LENGTH],
+                               max_length=constraint_dict[MAX_LENGTH], ordered=True)
         # mcmc_prog = None
 
         return mcmc_prog, ast, return_type, fp, constraint_dict
 
     def get_test_prog_id(self, train_prog_id):
-        print(sorted(self.dataset_creator.test_set_new_prog_ids.keys()))
         return self.dataset_creator.test_set_new_prog_ids[train_prog_id]
 
     def dump_metrics(self, category, label):
@@ -553,10 +580,11 @@ class Experiments:
     def run_mcmc(self, category, label, save_run=True, num_test_progs=None, in_random_order=True,
                  num_apis_to_add_to_constraint=PLUS_0, verbose=False, test_prog_range=None, use_gpu=False,
                  use_xla=False, save_step=5, proposal_probs=None):
+        verbose = verbose or self.verbose
+
         post_dist_dict = self.posterior_dists[category][label]
         test_progs = list(self.curated_test_sets_idxs[category][label])
         test_progs = list(sorted(test_progs, key=lambda x: x[0]))
-        # print(len(test_progs))
 
         analysis_f = open(self.exp_dir_path + "/" + category + "_" + label + "_analysis.txt", "w+")
         analysis_f.write("data dir name: " + self.data_dir_name + "\n")
@@ -566,7 +594,7 @@ class Experiments:
         analysis_f.write("label: " + label + "\n")
 
         if test_prog_range is not None:
-            test_progs = test_progs[test_prog_range[0] : test_prog_range[1]]
+            test_progs = test_progs[test_prog_range[0]: test_prog_range[1]]
 
         if num_test_progs is None:
             num_test_progs = len(test_progs)
@@ -602,8 +630,12 @@ class Experiments:
             try:
                 print("\n\n--------------i:", i, "data_point:", data_point)
 
-                mcmc_prog, ast, ret_type, fp, constraint_dict = self.get_mcmc_prog_and_ast(data_point, category, in_random_order,
-                                                                          num_apis_to_add_to_constraint, verbose=verbose, session=session, proposal_probs=proposal_probs)
+                mcmc_prog, ast, ret_type, fp, constraint_dict = self.get_mcmc_prog_and_ast(data_point, category,
+                                                                                           in_random_order,
+                                                                                           num_apis_to_add_to_constraint,
+                                                                                           verbose=verbose,
+                                                                                           session=session,
+                                                                                           proposal_probs=proposal_probs)
 
                 for j in range(int(self.num_iter)):
                     if verbose:
@@ -611,7 +643,7 @@ class Experiments:
                     mcmc_prog.mcmc(j)
 
                 self.add_to_post_dist(category, label, get_str_posterior_distribution(mcmc_prog),
-                                                       data_point, ast, ret_type, fp, constraint_dict)
+                                      data_point, ast, ret_type, fp, constraint_dict)
 
                 if i % save_step == 0 and save_run:
                     analysis_f.write("\n")
@@ -635,14 +667,6 @@ class Experiments:
                 num_skipped_dp += 1
                 skipped_dp[data_point] = str(e)
                 write_to_skipped_file(skipped_dp)
-            except ZeroDivisionError as e:
-                num_skipped_dp += 1
-                skipped_dp[data_point] = str(e)
-                write_to_skipped_file(skipped_dp)
-            # except AssertionError as e:
-            #     num_skipped_dp += 1
-            #     skipped_dp[data_point] = str(e)
-            #     write_to_skipped_file(skipped_dp)
 
         self.posterior_dists[category][label] = post_dist_dict
 
@@ -663,55 +687,36 @@ class Experiments:
     def add_to_post_dist(self, category, label, posterior_dist, data_point, ast, ret_type, fp, constraint_dict):
         self.posterior_dists[category][label][data_point] = (posterior_dist, ast, ret_type, fp, constraint_dict)
 
-    def calculate_metrics(self, category, label, num_test_progs):
+    def calculate_metrics(self, category, label, num_test_progs=None):
         post_dist_dict = self.posterior_dists[category][label]
 
-        print("post dist dict:", post_dist_dict)
+        if num_test_progs is None:
+            num_test_progs = len(post_dist_dict)
+
+        print("num test progs:", num_test_progs)
 
         metrics = {}
         for metric in self.metric_labels:
             metrics[metric] = 0.0
 
-        # jaccard_api_metric = 0.0
-        # jaccard_seq_metric = 0.0
-        # ast_eq_metric = 0.0
-        # in_dataset_metric = 0.0
-        # min_diff_statements_metric = 0.0
-        # min_diff_cs_metric = 0.0
-
         train_ga = self.train_ga
         test_ga = self.all_test_ga
 
         for posterior_dist, ast, ret_type, fp, constraint_dict in post_dist_dict.values():
-            # print(posterior_dist)
-            # print(ast)
-            # print(ret_type)
-            # print(fp)
-            # print(constraint_dict)
             prog_metrics = \
-                self.metrics.get_all_averaged_metrics(posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga, num_test_progs)
-
-            # print("\n\n\n-------------prog_metrics:", prog_metrics)
-
-            # metrics[JACC_API] += jaccard_api
-            # metrics[JACC_SEQ] += jaccard_seq
-            # metrics[AST_EQ] += ast_eq
-            # metrics[IN_SET] += in_dataset
-            # metrics[MIN_DIFF_ST] += min_diff_statements
-            # metrics[MIN_DIFF_CS] += min_diff_cs
+                self.metrics.get_all_averaged_metrics(posterior_dist, ret_type, fp, constraint_dict, test_ga, train_ga,
+                                                      num_test_progs)
 
             metrics[IN_SET] += prog_metrics[IN_SET]
             metrics[JACC_TEST_SET] += prog_metrics[JACC_TEST_SET]
             metrics[HAS_MORE_APIS] += prog_metrics[HAS_MORE_APIS]
             metrics[REL_ADD] += prog_metrics[REL_ADD]
             metrics[TEST_REL_ADD] += prog_metrics[TEST_REL_ADD]
-            # print("meet constraints metrics:", metrics[MEET_CONST])
             metrics[MEET_CONST] += prog_metrics[MEET_CONST]
-            # print("after:", metrics[MEET_CONST])
 
         self.avg_metrics[category][label] = metrics
 
-        print("\n\nFINAL METRICS in calc:", self.avg_metrics[category][label])
+        print("\n\nFINAL METRICS for", category, " ", label, ":", self.avg_metrics[category][label])
 
     def get_nonconstraint_apis_in_prog(self, constraints, ast, in_random_order):
         apis = set(ast[NODES_IDX])
@@ -725,9 +730,119 @@ class Experiments:
             apis = sorted(apis, key=lambda x: self.train_ga.g.nodes[x]['frequency'])
         return list(apis)
 
-    
+    def load_posterior_distribution_from_file(self, dir_path, category, label):
+        try:
+            dir_path += "/"
+            post_dist_file_path = os.path.join(dir_path, "post_dist_" + category + "_" + label + ".pickle")
+            post_dist_f = open(post_dist_file_path, "rb")
+            post_dist = dict(pickle.load(post_dist_f))
+            try:
+                self.posterior_dists[category][label].update(post_dist)
+                print("Successfully loaded posterior distribution into class:", post_dist_file_path)
+                post_dist_f.close()
+            except KeyError as e:
+                print("Could not load posterior distribution:", e)
+                post_dist_f.close()
+        except FileNotFoundError as e:
+            print("Could not load posterior distribution:", e)
 
+    def load_bayou_data_calculate_metrics(self, bayou_categories_dir_path, bayou_categories_filename,
+                                          small_test_set_path, all_json_data_path, save=False, load_rt_fp=True):
+        small_test_set = pickle.load(open(small_test_set_path, "rb"))
 
+        rt = 'returnType'
+        fp = 'formalParam'
 
+        if load_rt_fp:
+            rt_fp_f = open(bayou_categories_dir_path + "/" + bayou_categories_filename + "_rt_fp.pickle", "rb")
+            ret_type_fp = pickle.load(rt_fp_f)
+        else:
+            ret_type_fp = {}
+            for category in small_test_set:
+                for novelty in small_test_set[category]:
+                    for dp in small_test_set[category][novelty]:
+                        prog_id = dp[0]
+                        ret_type_fp[prog_id] = {rt: [], fp: []}
+
+            all_data_f = open(all_json_data_path, "r")
+            counter = 0
+            for program in ijson.items(all_data_f, 'programs.item'):
+                if counter in ret_type_fp:
+                    ret_type_fp[counter][rt] = program[rt]
+                    ret_type_fp[counter][fp] = program[fp]
+                counter += 1
+                if counter % 100000 == 0:
+                    print("Loaded", counter, "items")
+
+            all_data_f.close()
+
+            if save:
+                rt_fp_f = open(bayou_categories_dir_path + "/" + bayou_categories_filename + "_rt_fp.pickle", "wb")
+                pickle.dump(ret_type_fp, rt_fp_f)
+
+        print("Loaded return types and formal parameters")
+
+        categories_f = open(bayou_categories_dir_path + "/" + bayou_categories_filename + ".pickle", "rb")
+        categories = pickle.load(categories_f)
+        all_metrics = {}
+        train_ga = self.train_ga
+        test_ga = self.all_test_ga
+
+        for category in categories:
+            metrics = all_metrics[category] = {}
+            for metric in self.metric_labels:
+                metrics[metric] = 0.0
+
+            num_test_progs = len(categories[category])
+            num_progs_skipped = 0
+
+            counter = 0
+            for dp_key in categories[category]:
+                datapoint = categories[category][dp_key]
+                posterior_dist = datapoint['posterior_dist']
+                if len(posterior_dist) == 0:
+                    counter += 1  # TODO: think about this
+                    num_progs_skipped += 1
+                    print("num progs skipped:", num_progs_skipped)
+                    continue
+                prog_id = dp_key[0]
+                ret_type = ret_type_fp[prog_id][rt]
+                formal_param = ret_type_fp[prog_id][fp]
+                assert set(datapoint['types']) == set([ret_type] + formal_param)
+                constraint_dict = self.get_constraint_dict(dp_key, category, convert_from_node=True)
+                assert set(datapoint['apicalls']) == set(constraint_dict[INCLUDE])
+                prog_metrics = \
+                    self.metrics.get_all_metrics(posterior_dist, ret_type, formal_param, constraint_dict, test_ga,
+                                                          train_ga)
+
+                metrics[IN_SET] += prog_metrics[IN_SET]
+                metrics[JACC_TEST_SET] += prog_metrics[JACC_TEST_SET]
+                metrics[HAS_MORE_APIS] += prog_metrics[HAS_MORE_APIS]
+                metrics[REL_ADD] += prog_metrics[REL_ADD]
+                metrics[TEST_REL_ADD] += prog_metrics[TEST_REL_ADD]
+                metrics[MEET_CONST] += prog_metrics[MEET_CONST]
+
+                counter += 1
+                if counter % 50 == 0:
+                    print("num calculated:", counter)
+                    total_progs = counter
+                    print("in set:", metrics[IN_SET] / total_progs)
+                    print("has more apis:", metrics[HAS_MORE_APIS] / total_progs)
+                    print("rel add:", metrics[REL_ADD] / total_progs)
+                    print("test rel add:", metrics[TEST_REL_ADD] / total_progs)
+                    print("meet const:", metrics[MEET_CONST] / total_progs)
+
+            total_progs = counter
+            metrics[IN_SET] /= total_progs
+            metrics[JACC_TEST_SET] /= total_progs
+            metrics[HAS_MORE_APIS] /= total_progs
+            metrics[REL_ADD] /= total_progs
+            metrics[TEST_REL_ADD] /= total_progs
+            metrics[MEET_CONST] /= total_progs
+            self.avg_metrics[category] = metrics
+
+            print("\n\nFINAL METRICS for", category,  ":", self.avg_metrics[category])
+
+        categories_f.close()
 
 

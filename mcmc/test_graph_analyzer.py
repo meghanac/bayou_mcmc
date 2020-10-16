@@ -15,10 +15,10 @@ from data_extractor.graph_analyzer import GraphAnalyzer, STR_BUF, STR_APP, READ_
     STR_BUILD_APP, LOWERCASE_LOCALE, DATA_DIR_PATH, ALL_DATA_1K_VOCAB, TESTING, NEW_VOCAB, APIS, RT, FP, TOP, MID, \
     LOW, ALL_DATA_1K_VOCAB_NO_DUP, ALL_DATA, ALL_DATA_NO_DUP, MIN_EQ, MAX_EQ
 from data_extractor.dataset_creator import DatasetCreator, build_sets_from_saved_creator, create_smaller_test_set, \
-    build_bayou_datasets, pickle_dump_test_sets, add_prog_length_to_dataset_creator
+    build_bayou_datasets, pickle_dump_test_sets, add_prog_length_to_dataset_creator, build_bayou_test_set
 from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
     MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
-
+from bayou_test_data_reader import BayouTestResultsReader
 from experiments import Experiments
 
 
@@ -400,14 +400,13 @@ class TestGraphAnalyzer(unittest.TestCase):
         copy_bayou_json_data_change_apicalls(old_data_filename_path, new_data_filename)
 
     def test_get_small_test_data(self):
-        constraints = ['java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)', 'java.io.InputStreamReader.close()']
+        constraints = ['java.io.InputStreamReader.InputStreamReader(java.io.InputStream,java.nio.charset.Charset)',
+                       'java.io.InputStreamReader.close()']
         exclude = ['DLoop']
 
         num_iterations = 3
         data_dir_name = 'new_all_data_1k_vocab_no_duplicates'
         model_dir_path = '../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta'
-
-
         exp_dir_name = "testing-100"
 
         exp = Experiments(data_dir_name, model_dir_path, exp_dir_name, num_iterations, save_mcmc_progs=False,
@@ -440,6 +439,35 @@ class TestGraphAnalyzer(unittest.TestCase):
         data_path = 'new_all_data_1k_vocab_no_duplicates'
         graph_analyzer = GraphAnalyzer(data_path, load_reader=True)
         print("Num progs:", graph_analyzer.num_programs)
+
+    def test_build_bayou_test_set2(self):
+        mcmc_data_dir_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/"
+        mcmc_all_data_path = mcmc_data_dir_path + "/../new_all_data_1k_vocab_no_duplicates.json"
+        new_bayou_data_filename = "novel_min_2_small_test.json"
+        build_bayou_test_set(mcmc_data_dir_path, mcmc_all_data_path, new_bayou_data_filename)
+
+    def test_bayou_test_data_reader(self):
+        data_dir_path = "/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/test/"
+        data_filename = "test_output"
+        config_path = "/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/models/low_level_evidences/save/fixed_novel_min_2/config.json"
+        bayou_reader = BayouTestResultsReader(data_dir_path, data_filename, config_path, save=True)
+
+    def test_bayou_calculate_metrics(self):
+        small_test_set_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/test/small/small_curated_test_sets.pickle"
+        small_test_set = pickle.load(open(small_test_set_path, "rb"))
+        print(small_test_set)
+        bayou_categories_dir_path = "/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/test/"
+        bayou_categories_filename = "test_output_posterior_dist"
+        all_data_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/new_all_data_1k_vocab_no_duplicates.json"
+
+        num_iterations = 3
+        data_dir_name = 'new_all_data_1k_vocab_no_duplicates'
+        model_dir_path = '../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta'
+        exp_dir_name = "testing-bayou"
+        exp = Experiments(data_dir_name, model_dir_path, exp_dir_name, num_iterations, save_mcmc_progs=False,
+                          train_test_set_dir_name='/novel_min_2/', verbose=False)
+
+        exp.load_bayou_data_calculate_metrics(bayou_categories_dir_path, bayou_categories_filename, small_test_set_path, all_data_path)
 
     def test_nothing(self):
         # numbers1 = [random.uniform(0, 1) for _ in range(10000)]

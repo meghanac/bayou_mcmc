@@ -409,7 +409,7 @@ class GraphAnalyzer:
         programs = []
         for id in prog_ids:
             programs.append(self.get_formatted_program(id, get_targets=get_targets, get_jsons=get_jsons))
-        print("Total number of outputted results:", len(programs), "\n")
+        # print("Total number of outputted results:", len(programs), "\n")
         return programs
 
     def print_programs_from_ids(self, prog_ids, limit=None):

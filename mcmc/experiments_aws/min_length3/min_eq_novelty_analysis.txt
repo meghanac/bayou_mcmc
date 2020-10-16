@@ -1,0 +1,27 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/novel_1k_data_small_config
+num iterations: 50.0
+category: min_eq
+label: novelty
+num test programs: 100
+
+
+counter: 0
+num skipped: 0
+{'include': ['java.util.Vector<Tau_E>.Vector(int)'], 'exclude': [], 'min_length': 3, 'max_length': inf}
+{(('DSubTree', 'java.util.Vector<Tau_E>.Vector(int)'), (False, False), ('java.util.Vector<Tau_E>.Vector(int)', 'java.lang.String.length()')): [5, -3.8588764667510986], (('DSubTree', 'java.util.Vector<Tau_E>.Vector(int)', 'java.lang.String.length()'), (False, False, False), ('java.util.Vector<Tau_E>.Vector(int)', 'java.lang.String.length()', 'DStop')): [35, -2.7841186970472336], (('DSubTree', 'java.util.Vector<Tau_E>.Vector(int)'), (False, False), ('java.util.Vector<Tau_E>.Vector(int)', 'java.util.TreeMap<Tau_K,Tau_V>.TreeMap()')): [10, -2.62697571516037]}
+
+counter: 5
+num skipped: 0
+{'include': ['java.util.concurrent.Executors.newSingleThreadScheduledExecutor()'], 'exclude': [], 'min_length': 3, 'max_length': inf}
+{(('DSubTree', 'java.util.concurrent.Executors.newSingleThreadScheduledExecutor()'), (False, False), ('java.util.concurrent.Executors.newSingleThreadScheduledExecutor()', 'java.lang.Class<Tau_T>.getName()')): [34, -0.06162402033805847], (('DSubTree', 'java.util.concurrent.Executors.newSingleThreadScheduledExecutor()'), (False, False), ('java.util.concurrent.Executors.newSingleThreadScheduledExecutor()', 'DStop')): [16, -1.9832766959443688]}
+
+counter: 10
+num skipped: 0
+{'include': ['java.util.Set<T>.add(Tau_T)'], 'exclude': [], 'min_length': 5, 'max_length': inf}
+{(('DSubTree', 'java.util.Set<T>.add(Tau_T)', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'java.util.HashSet<Tau_E>.HashSet(java.util.Collection)'), (False, False, False, False), ('java.util.Set<T>.add(Tau_T)', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'java.util.HashSet<Tau_E>.HashSet(java.util.Collection)', 'java.util.Collections.unmodifiableSet(java.util.Set)')): [50, -1.3317816257476807]}
+
+counter: 15
+num skipped: 0
+{'include': ['java.util.TreeMap<java.lang.String,java.lang.String>.TreeMap<String,String>()'], 'exclude': [], 'min_length': 5, 'max_length': inf}
+{(('DSubTree', 'java.util.TreeMap<java.lang.String,java.lang.String>.TreeMap<String,String>()', 'java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String)', 'java.lang.String.valueOf(char[])'), (False, False, False, False), ('java.util.TreeMap<java.lang.String,java.lang.String>.TreeMap<String,String>()', 'java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String)', 'java.lang.String.valueOf(char[])', 'java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String)')): [50, -0.009908301755785942]}

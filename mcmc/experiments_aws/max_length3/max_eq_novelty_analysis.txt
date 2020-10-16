@@ -1,0 +1,32 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/novel_1k_data_small_config
+num iterations: 50.0
+category: max_eq
+label: novelty
+num test programs: 100
+
+
+counter: 0
+num skipped: 0
+{'include': ['java.util.List<java.lang.String>.clear()'], 'exclude': [], 'min_length': 1, 'max_length': 4}
+{(('DSubTree',), (False,), ('java.util.List<java.lang.String>.clear()',)): [8, -5.399806499481201], (('DSubTree', 'java.util.List<java.lang.String>.clear()', 'java.util.List<java.lang.String>.addAll(java.util.Collection)'), (False, False, False), ('java.util.List<java.lang.String>.clear()', 'java.util.List<java.lang.String>.addAll(java.util.Collection)', 'DStop')): [27, -6.630901098251343], (('DSubTree', 'java.util.List<java.lang.String>.clear()'), (False, False), ('java.util.List<java.lang.String>.clear()', 'java.util.List<java.lang.String>.addAll(java.util.Collection)')): [4, -4.3432265520095825], (('DSubTree', 'java.util.List<java.lang.String>.clear()'), (False, False), ('java.util.List<java.lang.String>.clear()', 'java.lang.String.replaceAll(java.lang.String,java.lang.String)')): [4, -3.5065468549728394], (('DSubTree', 'java.util.List<java.lang.String>.clear()', 'java.lang.String.format(java.util.Locale,java.lang.String,java.lang.Object[])'), (False, False, False), ('java.util.List<java.lang.String>.clear()', 'java.lang.String.format(java.util.Locale,java.lang.String,java.lang.Object[])', 'java.lang.String.replaceAll(java.lang.String,java.lang.String)')): [7, -7.24743390083313]}
+
+counter: 5
+num skipped: 0
+{'include': ['javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File)'], 'exclude': [], 'min_length': 1, 'max_length': 4}
+{(('DSubTree', 'javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File)'), (False, False), ('javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File)', 'DStop')): [11, -10.701112585142255], (('DSubTree', 'javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File)', 'javax.imageio.ImageIO.createImageOutputStream(java.lang.Object)'), (False, False, False), ('javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File)', 'javax.imageio.ImageIO.createImageOutputStream(java.lang.Object)', 'DStop')): [3, -11.439612687856425], (('DSubTree', 'javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File)'), (False, False), ('javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File)', 'java.io.File.File(java.io.File,java.lang.String)')): [3, -12.815879821777344], (('DSubTree', 'java.io.File.File(java.io.File,java.lang.String)'), (False, False), ('java.io.File.File(java.io.File,java.lang.String)', 'javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File)')): [13, -2.5957080125808716], (('DSubTree', 'java.io.File.File(java.io.File,java.lang.String)', 'javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File)'), (False, False, False), ('java.io.File.File(java.io.File,java.lang.String)', 'javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File)', 'java.io.File.File(java.io.File,java.lang.String)')): [15, -7.041045278310776], (('DSubTree', 'java.io.File.File(java.io.File,java.lang.String)', 'javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File)'), (False, False, False), ('java.io.File.File(java.io.File,java.lang.String)', 'javax.imageio.ImageIO.write(java.awt.image.RenderedImage,java.lang.String,java.io.File)', 'DStop')): [5, -4.542324431240559]}
+
+counter: 10
+num skipped: 0
+{'include': ['java.io.File.listFiles(java.io.FilenameFilter)'], 'exclude': [], 'min_length': 1, 'max_length': 3}
+{(('DSubTree', 'java.io.File.listFiles(java.io.FilenameFilter)'), (False, False), ('java.io.File.listFiles(java.io.FilenameFilter)', 'DStop')): [8, -5.701619505882263], (('DSubTree',), (False,), ('java.io.File.listFiles(java.io.FilenameFilter)',)): [9, -6.055185317993164], (('DSubTree', 'java.io.File.listFiles(java.io.FilenameFilter)'), (False, False), ('java.io.File.listFiles(java.io.FilenameFilter)', 'java.io.File.listFiles()')): [10, -5.550318479537964], (('DSubTree', 'java.io.File.listFiles(java.io.FilenameFilter)'), (False, False), ('java.io.File.listFiles(java.io.FilenameFilter)', 'java.io.File.getPath()')): [15, -4.2131582498550415], (('DSubTree', 'java.io.File.listFiles(java.io.FilenameFilter)'), (False, False), ('java.io.File.listFiles(java.io.FilenameFilter)', 'java.util.Arrays.sort(T[],java.util.Comparator)')): [8, -4.816282337531447]}
+
+counter: 15
+num skipped: 0
+{'include': ['java.io.FileInputStream.read(byte[])'], 'exclude': [], 'min_length': 1, 'max_length': 4}
+{(('DSubTree', 'java.io.FileInputStream.read(byte[])'), (False, False), ('java.io.FileInputStream.read(byte[])', 'java.security.MessageDigest.getInstance(java.lang.String)')): [2, -11.434370279312134], (('DSubTree', 'java.io.FileInputStream.read(byte[])', 'java.security.MessageDigest.getInstance(java.lang.String)'), (False, False, False), ('java.io.FileInputStream.read(byte[])', 'java.security.MessageDigest.getInstance(java.lang.String)', 'java.io.FileInputStream.read(byte[])')): [2, -9.581416606903076], (('DSubTree', 'java.security.MessageDigest.getInstance(java.lang.String)'), (False, False), ('java.security.MessageDigest.getInstance(java.lang.String)', 'java.io.FileInputStream.read(byte[])')): [10, -7.746300458908081], (('DSubTree',), (False,), ('java.io.FileInputStream.read(byte[])',)): [18, -5.560214519500732], (('DSubTree', 'java.io.FileInputStream.read(byte[])'), (False, False), ('java.io.FileInputStream.read(byte[])', 'java.io.BufferedOutputStream.write(byte[],int,int)')): [18, -8.979676246643066]}
+
+counter: 20
+num skipped: 0
+{'include': ['java.awt.Color.getRed()'], 'exclude': [], 'min_length': 1, 'max_length': 3}
+{(('DSubTree',), (False,), ('java.awt.Color.getRed()',)): [42, -5.75063943862915], (('DSubTree', 'java.awt.Color.getRed()'), (False, False), ('java.awt.Color.getRed()', 'java.awt.Color.getGreen()')): [8, -2.058086216915399]}

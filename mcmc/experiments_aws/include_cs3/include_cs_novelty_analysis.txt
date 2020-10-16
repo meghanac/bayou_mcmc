@@ -1,0 +1,32 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/novel_1k_data_small_config
+num iterations: 50.0
+category: include_cs
+label: novelty
+num test programs: 100
+
+
+counter: 5
+num skipped: 1
+{'include': ['DBranch', 'java.util.Vector.iterator()'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DBranch', 'java.util.Vector.iterator()', '$NOT$java.lang.String.isEmpty()', 'java.util.Vector.iterator()', 'java.lang.Boolean.booleanValue()', 'DBranch'), (False, True, True, False, False, False, False), ('DBranch', 'java.util.Vector.iterator()', '$NOT$java.lang.String.isEmpty()', 'DStop', 'java.lang.Boolean.booleanValue()', 'DStop', 'DStop')): [50, -14.041122674942017]}
+
+counter: 10
+num skipped: 3
+{'include': ['DExcept', 'java.lang.Math.max(double,double)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DExcept', 'java.lang.Math.max(double,double)', 'java.util.HashMap<Tau_K,Tau_V>.HashMap()', 'DExcept'), (False, True, True, False, False), ('DExcept', 'java.lang.Math.max(double,double)', 'java.util.HashMap<Tau_K,Tau_V>.HashMap()', 'DStop', 'DStop')): [50, -9.102497339248657]}
+
+counter: 15
+num skipped: 6
+{'include': ['DBranch', 'java.util.List<E>.add(Tau_E)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DBranch', 'java.util.List<E>.add(Tau_E)', 'java.util.List.add(java.lang.Object)', 'java.util.List<E>.add(Tau_E)', 'java.util.Collections.sort(java.util.List)', 'DBranch'), (False, True, True, False, False, False, False), ('DBranch', 'java.util.List<E>.add(Tau_E)', 'java.util.List.add(java.lang.Object)', 'DStop', 'java.util.Collections.sort(java.util.List)', 'DStop', 'DStop')): [10, -6.76111364364624], (('DSubTree', 'DBranch', 'java.util.List<E>.add(Tau_E)', 'java.util.List.add(java.lang.Object)', 'java.util.List<E>.add(Tau_E)', 'DBranch'), (False, True, True, False, False, False), ('DBranch', 'java.util.List<E>.add(Tau_E)', 'java.util.List.add(java.lang.Object)', 'DStop', 'DStop', 'DStop')): [7, -4.653797391336411], (('DSubTree', 'DBranch', 'java.util.List<E>.add(Tau_E)', 'java.util.List<E>.add(Tau_E)', 'DBranch'), (False, True, True, False, False), ('DBranch', 'java.util.List<E>.add(Tau_E)', 'java.util.List.add(java.lang.Object)', 'DStop', 'DStop')): [33, -3.5043830774957314]}
+
+counter: 20
+num skipped: 7
+{'include': ['DLoop', 'java.util.Vector<java.lang.String>.add(java.lang.String)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DLoop', 'java.util.Vector<java.lang.String>.add(java.lang.String)', 'java.lang.Integer.intValue()', 'DLoop'), (False, True, True, False, False), ('DLoop', 'java.util.Vector<java.lang.String>.add(java.lang.String)', 'java.lang.Integer.intValue()', 'DStop', 'DStop')): [50, -9.98244559764862]}
+
+counter: 25
+num skipped: 9
+{'include': ['DExcept', 'java.io.OutputStream.write(int)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DExcept', 'java.io.OutputStream.write(int)', 'java.lang.String.valueOf(int)', 'DExcept'), (False, True, True, False, False), ('DExcept', 'java.io.OutputStream.write(int)', 'java.lang.String.valueOf(int)', 'DStop', 'DStop')): [50, -14.524252653121948]}
