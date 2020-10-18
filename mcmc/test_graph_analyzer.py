@@ -448,16 +448,16 @@ class TestGraphAnalyzer(unittest.TestCase):
 
     def test_bayou_test_data_reader(self):
         data_dir_path = "/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/test/"
-        data_filename = "test_output"
+        data_filename = "test_output2"
         config_path = "/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/models/low_level_evidences/save/fixed_novel_min_2/config.json"
         bayou_reader = BayouTestResultsReader(data_dir_path, data_filename, config_path, save=True)
 
     def test_bayou_calculate_metrics(self):
         small_test_set_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/test/small/small_curated_test_sets.pickle"
-        small_test_set = pickle.load(open(small_test_set_path, "rb"))
-        print(small_test_set)
+        # small_test_set = pickle.load(open(small_test_set_path, "rb"))
+        # print(small_test_set)
         bayou_categories_dir_path = "/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/test/"
-        bayou_categories_filename = "test_output_posterior_dist"
+        bayou_categories_filename = "test_output2_posterior_dist"
         all_data_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/new_all_data_1k_vocab_no_duplicates.json"
 
         num_iterations = 3
@@ -467,7 +467,15 @@ class TestGraphAnalyzer(unittest.TestCase):
         exp = Experiments(data_dir_name, model_dir_path, exp_dir_name, num_iterations, save_mcmc_progs=False,
                           train_test_set_dir_name='/novel_min_2/', verbose=False)
 
-        exp.load_bayou_data_calculate_metrics(bayou_categories_dir_path, bayou_categories_filename, small_test_set_path, all_data_path)
+        exp.load_bayou_data_calculate_metrics(bayou_categories_dir_path, bayou_categories_filename, small_test_set_path, all_data_path, save=True, load_rt_fp=False)
+
+    def test_ast_fp(self):
+        ga = GraphAnalyzer('new_all_data_1k_vocab_no_duplicates', load_reader=True)
+        for i in range(len(ga.nodes)):
+            data = ga.fetch_all_list_data_without_delim(i)
+            data_str = [ga.num2fp[j] for j in ga.fp_types[i]]
+            print(len(data[0]), len(data[4]), len(data[5]))
+            print(data_str)
 
     def test_nothing(self):
         # numbers1 = [random.uniform(0, 1) for _ in range(10000)]

@@ -88,6 +88,8 @@ class BayouTestResultsReader:
 
         f = open(filename, 'rb')
 
+        empty_post_dist = 0
+        empty_out_asts = 0
         categories = {IN_API: {}, IN_CS: {}, EX_CS: {}, EX_API: {}, MIN_EQ: {}, MAX_EQ: {}}
         for data_point in ijson.items(f, 'programs.item'):
             if 'out_asts' not in data_point:
@@ -105,9 +107,18 @@ class BayouTestResultsReader:
                 except TooLongBranchingException as e2:
                     ignored_for_branch += 1
 
+            if len(data_point['out_asts']) == 0:
+                # print("\n\n\n")
+                # print(data_point.keys())
+                empty_out_asts += 1
+            if len(test_result['posterior_dist']) == 0:
+                empty_post_dist += 1
+
             done += 1
             if done % 100 == 0:
                 print('Extracted data for {} programs'.format(done), end='\n')
+                print('Number of empty posteriors:', empty_post_dist)
+                print('Number of empty out_asts:', empty_out_asts)
 
             key = data_point['key']
             key[1] = tuple(key[1])
@@ -117,6 +128,7 @@ class BayouTestResultsReader:
         print('{:8d} programs/asts in training data'.format(done))
         print('{:8d} programs/asts missed in training data for loop'.format(ignored_for_loop))
         print('{:8d} programs/asts missed in training data for branch'.format(ignored_for_branch))
+        print('{:8d} had empty out_asts.'.format(empty_post_dist))
 
         f.close()
 
@@ -226,6 +238,8 @@ class BayouTestResultsReader:
             if i > 0 and not (
                     curr_node_id is None or parent_call_id is None):  # I = 0 denotes DSubtree ----sibling---> DSubTree
                 parsed_api_array.append((parent_call_id, edge_type, curr_node_id))
+        if len(parsed_api_array) == 0:
+            print(path)
         return parsed_api_array
 
     def read_type(self, program_fp_js):

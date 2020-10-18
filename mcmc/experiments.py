@@ -789,6 +789,8 @@ class Experiments:
         test_ga = self.all_test_ga
 
         for category in categories:
+            category = EX_API
+            print("\n\nCATEGORY:", category)
             metrics = all_metrics[category] = {}
             for metric in self.metric_labels:
                 metrics[metric] = 0.0
@@ -841,7 +843,7 @@ class Experiments:
             metrics[MEET_CONST] /= total_progs
             self.avg_metrics[category] = metrics
 
-            print("\n\nFINAL METRICS for", category,  ":", self.avg_metrics[category])
+            print("\n\nFINAL METRICS for", category,  ":", self.avg_metrics[category], "\n\n")
 
         categories_f.close()
 
