@@ -34,20 +34,20 @@ def test(clargs):
     predictor = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
     searcher = ProgramBeamSearcher(predictor)
     ast_paths, fp_paths, ret_types = searcher.beam_search()
-    print(' ========== AST ==========')
-    for i, ast_path in enumerate(ast_paths):
-        print(ast_path)
-        path = os.path.join( clargs.saver , 'program-ast-' + str(i) + '.gv')
-        visualize_from_ast_path(ast_path, 1.0, save_path=path)
+    # print(' ========== AST ==========')
+    # for i, ast_path in enumerate(ast_paths):
+    #     print(ast_path)
+    #     path = os.path.join( clargs.saver , 'program-ast-' + str(i) + '.gv')
+    #     visualize_from_ast_path(ast_path, 1.0, save_path=path)
 
     print(' ========== Fp ==========')
     for i, fp_path in enumerate(fp_paths):
         print(fp_path)
-        path = os.path.join(clargs.saver, 'program-fp-' + str(i) + '.gv')
-        visualize_from_ast_path(fp_path, 1.0, save_path=path)
+        # path = os.path.join(clargs.saver, 'program-fp-' + str(i) + '.gv')
+        # visualize_from_ast_path(fp_path, 1.0, save_path=path)
 
-    print(' ========== Return Type ==========')
-    print(ret_types)
+    # print(' ========== Return Type ==========')
+    # print(ret_types)
 
 
 # %%
@@ -56,7 +56,7 @@ if __name__ == '__main__':
                                      description=textwrap.dedent(HELP))
     parser.add_argument('--python_recursion_limit', type=int, default=10000,
                         help='set recursion limit for the Python interpreter')
-    parser.add_argument('--continue_from', type=str, default='../../trainer_vae/save/all_data_1k_vocab_0.75_KL_beta/',
+    parser.add_argument('--continue_from', type=str, default='../../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta/',
                         help='ignore config options and continue training model checkpointed here')
     parser.add_argument('--saver', type=str, default='plots/beam_search/')
 

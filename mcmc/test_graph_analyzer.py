@@ -21,6 +21,8 @@ from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COM
 from bayou_test_data_reader import BayouTestResultsReader
 from experiments import Experiments
 
+from data_extractor.jsonify_programs import JSONSynthesis
+
 
 class TestGraphAnalyzer(unittest.TestCase):
 
@@ -443,7 +445,7 @@ class TestGraphAnalyzer(unittest.TestCase):
     def test_build_bayou_test_set2(self):
         mcmc_data_dir_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/"
         mcmc_all_data_path = mcmc_data_dir_path + "/../new_all_data_1k_vocab_no_duplicates.json"
-        new_bayou_data_filename = "novel_min_2_small_test.json"
+        new_bayou_data_filename = "novel_min_2_small_test3.json"
         build_bayou_test_set(mcmc_data_dir_path, mcmc_all_data_path, new_bayou_data_filename)
 
     def test_bayou_test_data_reader(self):
@@ -474,8 +476,33 @@ class TestGraphAnalyzer(unittest.TestCase):
         for i in range(len(ga.nodes)):
             data = ga.fetch_all_list_data_without_delim(i)
             data_str = [ga.num2fp[j] for j in ga.fp_types[i]]
+            data_str2 = [ga.num2fp[j] for j in ga.fp_type_targets[i]]
+            nodes = [ga.node2vocab[j] for j in ga.nodes[i]]
             print(len(data[0]), len(data[4]), len(data[5]))
             print(data_str)
+            print(data_str2)
+            print(nodes)
+            print("\n\n\n")
+
+    def test_jsonify_progs(self):
+        data = (('DSubTree', 'DBranch', 'java.io.File.renameTo(java.io.File)',
+                 'java.lang.String.equals(java.lang.Object)', 'java.io.File.renameTo(java.io.File)',
+                 'java.io.File.getAbsolutePath()', 'DBranch'), (False, True, True, False, False, False, False), (
+                'DBranch', 'java.io.File.renameTo(java.io.File)', 'java.lang.String.equals(java.lang.Object)', 'DStop',
+                'java.io.File.getAbsolutePath()', 'DStop', 'DStop'))
+
+        data2 = (('DSubTree', 'DLoop', 'java.lang.reflect.Method.invoke(java.lang.Object,java.lang.Object[])',
+                  'java.lang.Class<Tau_T>.getMethod(java.lang.String,java.lang.Class[])', 'DLoop'),
+                 (False, True, True, False, False), (
+                 'DLoop', 'java.lang.reflect.Method.invoke(java.lang.Object,java.lang.Object[])',
+                 'java.lang.Class<Tau_T>.getMethod(java.lang.String,java.lang.Class[])', 'DStop', 'DStop'))
+
+        jsonify = JSONSynthesis('../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta')
+
+        for input in [data, data2]:
+            ast = jsonify.convert_list_representation_to_tree(input)
+            json_ast = jsonify.paths_to_ast(ast)
+            print(json_ast)
 
     def test_nothing(self):
         # numbers1 = [random.uniform(0, 1) for _ in range(10000)]

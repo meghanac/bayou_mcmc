@@ -1370,6 +1370,8 @@ def build_bayou_test_set(mcmc_data_dir_path, mcmc_all_data_path, new_bayou_data_
             test_prog['types'] = program['formalParam']
             test_prog['types'] += [program['returnType']]
             test_prog['category'] = category
+            test_prog['returnType'] = program['returnType']
+            test_prog['formalParam'] = program['formalParam']
             if category == MIN_EQ or category == MAX_EQ:
                 test_prog['datapoint'] = [item[dp2_idx]]
             else:

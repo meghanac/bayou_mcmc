@@ -38,8 +38,15 @@ class SeqBeamSearcher:
 
         i = 0
         while True:
+            print("\n\n")
+            # print([j.last_item for j in candies])
+            # print([j.tree_currNode.val for j in candies])
+
             # states was batch_size * LSTM_Decoder_state_size
             candies = self.get_next_output_with_fan_out(candies)
+
+            # print([j.last_item for j in candies])
+            # print([j.head.val for j in candies])
 
             if self.check_for_all_STOP(candies):  # branch_stack and last_item
                 break
@@ -112,6 +119,7 @@ class SeqBeamSearcher:
 
                 value2add = next_nodes[row][col]
                 node2add = Node({"node": "DAPICall", "_call": value2add})
+                print("value2add:", value2add)
                 new_candy.tree_currNode = new_candy.tree_currNode.add_and_progress_sibling_node(node2add)
 
                 if value2add == 'DStop':
