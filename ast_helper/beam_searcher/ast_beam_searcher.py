@@ -32,7 +32,7 @@ class TreeBeamSearcher:
         self.beam_width = infer_model.config.batch_size
         return
 
-    def beam_search(self, initial_state=None):
+    def beam_search(self, initial_state=None, transpose_state=True):
         # print("init state:", initial_state.shape)
         if initial_state is None:
             initial_state = self.infer_model.get_random_initial_state()
@@ -44,7 +44,7 @@ class TreeBeamSearcher:
         i = 0
         while True:
             # states was batch_size * LSTM_Decoder_state_size
-            candies = self.get_next_output_with_fan_out(candies)
+            candies = self.get_next_output_with_fan_out(candies, transpose_state=transpose_state)
 
             if self.check_for_all_STOP(candies):  # branch_stack and last_item
                 break
@@ -64,7 +64,7 @@ class TreeBeamSearcher:
 
         return True
 
-    def get_next_output_with_fan_out(self, candies):
+    def get_next_output_with_fan_out(self, candies, transpose_state=True):
 
         topK = len(candies)
         # print("topk:", topK)
@@ -75,7 +75,8 @@ class TreeBeamSearcher:
         # print("last item:", [candy.last_item for candy in candies])
         last_edge = [[candy.last_edge] for candy in candies]
         states = [candy.state for candy in candies]
-        states = np.transpose(np.array(states), [1, 0, 2])
+        if transpose_state:
+            states = np.transpose(np.array(states), [1, 0, 2])
         # states = np.array(states)
 
         states, beam_ids, beam_ln_probs = self.infer_model.get_next_ast_state(last_item, last_edge,

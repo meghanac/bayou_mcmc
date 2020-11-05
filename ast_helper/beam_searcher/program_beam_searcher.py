@@ -30,10 +30,10 @@ class ProgramBeamSearcher:
         self.ast_traverser = AstTraverser()
         return
 
-    def beam_search(self, initial_state=None):
+    def beam_search(self, initial_state=None, transpose_state=True):
         if initial_state is None:
             initial_state = self.infer_model.get_random_initial_state()
-        ast_candies = self.tree_beam_searcher.beam_search(initial_state=initial_state)
+        ast_candies = self.tree_beam_searcher.beam_search(initial_state=initial_state, transpose_state=transpose_state)
         ast_paths = [self.ast_traverser.depth_first_search(candy.head) for candy in ast_candies]
 
         fp_candies = self.seq_beam_searcher.beam_search(initial_state=initial_state)

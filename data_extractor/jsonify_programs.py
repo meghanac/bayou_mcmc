@@ -16,8 +16,11 @@ EXCEPT = 'DExcept'
 
 
 class JSONSynthesis:
-    def __init__(self, config_path):
-        self.config = Configuration(config_path)
+    def __init__(self, config_path, config=None):
+        if config is None:
+            self.config = Configuration(config_path)
+        else:
+            self.config = config
         self.tree_mod = TreeModifier(self.config)
 
     def convert_list_representation_to_tree(self, data):

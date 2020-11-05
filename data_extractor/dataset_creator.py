@@ -1314,6 +1314,71 @@ def create_smaller_test_set(data_dir_path, data_dir_name, train_test_set_name, n
             pickle.dump(smaller_test_set, f)
             f.close()
 
+def build_readable_list_test_progs(mcmc_data_dir_path, mcmc_all_data_path):
+    small_test_data_f = open(mcmc_data_dir_path + "/test/small/small_curated_test_sets.pickle", "rb")
+    small_test_data = pickle.load(small_test_data_f)
+
+    readable_items = {}
+    items = {}
+    for category in small_test_data:
+        readable_items[category] = []
+        for novelty in small_test_data[category]:
+            for item in (small_test_data[category][novelty]):
+                items[item[0]] = (category, item)
+
+    prog_ids = set(items.keys())
+
+    all_data_f = open(mcmc_all_data_path, "rb")
+    all_data = ijson.items(all_data_f, 'programs.item')
+
+    dataset_creator = pickle.load(open(mcmc_data_dir_path + "/dataset_creator.pickle", "rb"))
+    node2vocab = dataset_creator.ga.node2vocab
+
+    small_f = open(mcmc_data_dir_path + "/test/small/small_readable.txt", "w+")
+
+    prog_id_idx = 0
+    apis_idx = 1
+    dp2_idx = 2
+
+    counter = 0
+    for program in all_data:
+        if counter in prog_ids:
+            item = items[counter][1]
+            assert counter == item[prog_id_idx], str(counter) + " " + str(item[prog_id_idx])
+            category = items[counter][0]
+            test_prog = {}
+            test_prog['include'] = [node2vocab[i] for i in item[apis_idx]]
+            if category == IN_API or category == IN_CS:
+                test_prog['include'].append(node2vocab[item[dp2_idx]])
+            test_prog['category'] = category
+            test_prog['returnType'] = program['returnType']
+            test_prog['formalParam'] = program['formalParam']
+            if category == MIN_EQ or category == MAX_EQ:
+                test_prog[category] = [item[dp2_idx]]
+            else:
+                test_prog[category] = [node2vocab[item[dp2_idx]]]
+            test_prog['key'] = item
+            readable_items[category].append(test_prog)
+        counter += 1
+
+    for category in readable_items:
+        small_f.write("\n\n\n" + category + "\n")
+        for test_prog in readable_items[category]:
+            if category == IN_API or category == IN_CS:
+                small_f.write('Include: ' + str(test_prog['include']) + ", formal param: " + str(
+                    test_prog['formalParam']) + ", return type: '" + str(test_prog['returnType']) + "', key: " + str(
+                    test_prog['key']) + "\n")
+            else:
+                small_f.write('Include: ' + str(test_prog['include']) + category + ": " + str(
+                    test_prog[category]) + ", formal param: " + str(
+                    test_prog['formalParam']) + ", return type: '" + str(test_prog['returnType']) + "', key: " + str(
+                    test_prog['key']) + "\n")
+
+    small_f.write("\n\\n")
+    small_test_data_f.close()
+    all_data_f.close()
+    small_f.close()
+
 
 def build_bayou_test_set(mcmc_data_dir_path, mcmc_all_data_path, new_bayou_data_filename):
     small_test_data = pickle.load(open(mcmc_data_dir_path + "/test/small/small_curated_test_sets.pickle", "rb"))

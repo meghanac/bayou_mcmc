@@ -15,7 +15,8 @@ from data_extractor.graph_analyzer import GraphAnalyzer, STR_BUF, STR_APP, READ_
     STR_BUILD_APP, LOWERCASE_LOCALE, DATA_DIR_PATH, ALL_DATA_1K_VOCAB, TESTING, NEW_VOCAB, APIS, RT, FP, TOP, MID, \
     LOW, ALL_DATA_1K_VOCAB_NO_DUP, ALL_DATA, ALL_DATA_NO_DUP, MIN_EQ, MAX_EQ
 from data_extractor.dataset_creator import DatasetCreator, build_sets_from_saved_creator, create_smaller_test_set, \
-    build_bayou_datasets, pickle_dump_test_sets, add_prog_length_to_dataset_creator, build_bayou_test_set
+    build_bayou_datasets, pickle_dump_test_sets, add_prog_length_to_dataset_creator, build_bayou_test_set, \
+    build_readable_list_test_progs
 from test_suite import MOST_COMMON_APIS, MID_COMMON_APIS, UNCOMMON_APIS, MID_COMMON_DISJOINT_PAIRS, \
     MOST_COMMON_DISJOINT_PAIRS, UNCOMMON_DISJOINT_PAIRS
 from bayou_test_data_reader import BayouTestResultsReader
@@ -454,6 +455,11 @@ class TestGraphAnalyzer(unittest.TestCase):
         config_path = "/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/models/low_level_evidences/save/fixed_novel_min_2/config.json"
         bayou_reader = BayouTestResultsReader(data_dir_path, data_filename, config_path, save=True)
 
+    def test_readable_small_set(self):
+        mcmc_data_dir_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/"
+        mcmc_all_data_path = mcmc_data_dir_path + "/../new_all_data_1k_vocab_no_duplicates.json"
+        build_readable_list_test_progs(mcmc_data_dir_path, mcmc_all_data_path)
+
     def test_bayou_calculate_metrics(self):
         small_test_set_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/test/small/small_curated_test_sets.pickle"
         # small_test_set = pickle.load(open(small_test_set_path, "rb"))
@@ -497,9 +503,18 @@ class TestGraphAnalyzer(unittest.TestCase):
                  'DLoop', 'java.lang.reflect.Method.invoke(java.lang.Object,java.lang.Object[])',
                  'java.lang.Class<Tau_T>.getMethod(java.lang.String,java.lang.Class[])', 'DStop', 'DStop'))
 
+        data3 = (('DSubTree', 'DBranch', 'java.io.BufferedOutputStream.BufferedOutputStream(java.io.OutputStream)',
+                  'java.io.File.getAbsolutePath()',
+                  'java.io.BufferedOutputStream.BufferedOutputStream(java.io.OutputStream)',
+                  'java.io.DataInputStream.DataInputStream(java.io.InputStream)', 'DBranch'),
+                 (False, True, True, False, False, False, False), (
+                 'DBranch', 'java.io.BufferedOutputStream.BufferedOutputStream(java.io.OutputStream)',
+                 'java.io.File.getAbsolutePath()', 'DStop',
+                 'java.io.DataInputStream.DataInputStream(java.io.InputStream)', 'DStop', 'DStop'))
+
         jsonify = JSONSynthesis('../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta')
 
-        for input in [data, data2]:
+        for input in [data, data2, data3]:
             ast = jsonify.convert_list_representation_to_tree(input)
             json_ast = jsonify.paths_to_ast(ast)
             print(json_ast)
