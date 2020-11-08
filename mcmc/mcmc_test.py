@@ -45,6 +45,10 @@ ALL_DATA_1K_05_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save
 
 ALL_DATA_1K_025_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/all_data_1k_vocab_0.25_KL_beta'
 
+FINAL_SMALL_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/final_novel_1k_min_2_small_config'
+
+FINAL_SMALL_KL_MODEL_PATH = '/Users/meghanachilukuri/bayou_mcmc/trainer_vae/save/final_novel_1k_min_2_0.25_KL_small_config'
+
 
 class MCMCProgramTest(unittest.TestCase):
 
@@ -637,13 +641,55 @@ class MCMCProgramTest(unittest.TestCase):
         #                                                                  'java.lang.String.format(java.lang.String,java.lang.Object[])'],
         #                                                                 ['void'],
         #                                                                 ['DSubTree', 'String'], ordered=True)
+        #
+        # test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH,
+        #                                                                 ['java.util.Vector<Tau_E>.Vector(int)', 'DLoop'],
+        #                                                                 ['__UDT__'],
+        #                                                                 ['DSubTree', 'Element', '__UDT__', 'boolean'], ordered=True, exclude=['DBranch'])
 
-        test_prog, expected_nodes, expected_edges = create_base_program(SAVED_MODEL_PATH,
-                                                                        ['java.util.Vector<Tau_E>.Vector(int)', 'DLoop'],
-                                                                        ['__UDT__'],
-                                                                        ['DSubTree', 'Element', '__UDT__', 'boolean'], ordered=True, exclude=['DBranch'])
+        # include_constraints = ['java.net.ServerSocket.ServerSocket(int)', 'java.io.PrintWriter.PrintWriter(java.io.OutputStream,boolean)']
+        #
+        # test_prog, expected_nodes, expected_edges = create_base_program(FINAL_SMALL_MODEL_PATH,
+        #                                                                 include_constraints,
+        #                                                                 ['__Constructor__'],
+        #                                                                 ['__UDT__', 'int'],
+        #                                                                 ordered=True)
 
+        # include = ['java.util.regex.Pattern.compile(java.lang.String,int)', 'java.util.regex.Matcher.group()']
+        # exclude = ['DBranch']
+        # formal_param = ['String']
+        # return_type = ['String']
 
+        # include = ['java.text.NumberFormat.format(double)', 'DLoop']
+        # formal_param = ['double']
+        # return_type = ['String']
+        # exclude = []
+
+        include = ['java.io.Writer.write(char[])', 'DLoop']
+        formal_param = ['String', 'String', 'int']
+        return_type = ['void']
+        exclude = []
+
+        # include = ['java.util.jar.Manifest.getEntries()', 'java.util.jar.Manifest.getMainAttributes()']
+        # exclude = ['java.util.ArrayList<java.lang.String>.add(java.lang.String)']
+        # formal_param = ['Manifest']
+        # return_type = ['__Constructor__']
+
+        # include = ['java.lang.Class<>.getName()', 'java.lang.Class<>.newInstance()']
+        # exclude = ['java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>(int)']
+        # formal_param = ['String', 'Bundle']
+        # return_type = ['__UDT__']
+
+        # include = ['DExcept', 'java.util.Vector<java.lang.String>.add(java.lang.String)']
+        # exclude = ['DBranch']
+        # formal_param = ['int']
+        # return_type = ['Vector<String>']
+
+        test_prog, expected_nodes, expected_edges = create_base_program(FINAL_SMALL_MODEL_PATH,
+                                                                        include,
+                                                                        return_type,
+                                                                        formal_param,
+                                                                        ordered=True, exclude=exclude, attach=False)
 
         test_prog.prog.verbose = True
 
@@ -660,7 +706,7 @@ class MCMCProgramTest(unittest.TestCase):
         # last_node = test_prog.prog.tree_mod.get_node_with_api(test_prog.prog.curr_prog, 'java.lang.StringBuilder.append(long)')
         # test_prog.prog.tree_mod.create_and_add_node(STOP, last_node, SIBLING_EDGE)
 
-        num_iter = 330
+        num_iter = 600
 
         # print(test_prog.prog.curr_prog.length)
         for i in range(num_iter):
@@ -761,7 +807,7 @@ class MCMCProgramTest(unittest.TestCase):
                     test_prog.save_summary_logs(logs_f)
                     logs_f.flush()
 
-    def test_vae_beam_search(self, constraints=None, beam_width=5):
+    def test_vae_beam_search(self, constraints=None, beam_width=1):
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter)
         parser.add_argument('--python_recursion_limit', type=int, default=10000,
                             help='set recursion limit for the Python interpreter')
@@ -778,7 +824,7 @@ class MCMCProgramTest(unittest.TestCase):
 
         if constraints is None:
             constraints = ['java.util.Map<java.lang.String,byte[]>.hashCode()', 'java.lang.String.String(byte[])']
-        NEW_VOCAB = 'new_1k_vocab_min_3-600000'
+        NEW_VOCAB = 'new_all_data_1k_vocab_no_duplicates'
         graph_analyzer = GraphAnalyzer(NEW_VOCAB, load_reader=True)
         rt, fp = graph_analyzer.get_top_k_rt_fp(constraints)
         rt = [graph_analyzer.num2rettype[rt[0][0]]]

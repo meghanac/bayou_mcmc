@@ -35,17 +35,18 @@ class ReplaceProposal(ProposalWithInsertion):
         replaced_node = self.tree_mod.get_node_in_position(curr_prog, rand_node_pos)
         replaced_node_api = replaced_node.api_name
 
+        old_child = None
+        added_stop_node = False
+        # if a dbranch, dloop or dexcept is getting replaced, remove child nodes
+        if replaced_node_api in {DBRANCH, DLOOP, DEXCEPT}:
+            print("replaced node api:", replaced_node_api)
+            old_child = replaced_node.remove_node(CHILD_EDGE)
+
         # Probabilistically choose the node that should appear after selected random parent
         new_node, new_node_pos, prob = self._replace_node_api(replaced_node, rand_node_pos, replaced_node.parent_edge)
 
         # Calculate prob of move
         prob -= math.log(self.curr_prog.length)
-
-        old_child = None
-        added_stop_node = False
-        # if a dbranch, dloop or dexcept is getting replaced, remove child nodes
-        if replaced_node_api in {DBRANCH, DLOOP, DEXCEPT}:
-            old_child = new_node.remove_node(CHILD_EDGE)
 
         # If a dnode is chosen, grow it out
         if new_node.api_name == DBRANCH:

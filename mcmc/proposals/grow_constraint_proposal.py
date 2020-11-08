@@ -37,15 +37,20 @@ class GrowConstraintProposal(ProposalWithInsertion):
         last_node = constraint_node
         num_sibling_nodes_added = 0
         for i in range(num_insertions):
-            # Probabilistically choose the node that should appear after selected random parent
-            new_node, _, ln_prob = self._get_new_node(last_node, SIBLING_EDGE, verbose=self.debug,
-                                                      grow_new_subtree=self.grow_new_subtree)
 
-            if new_node is None:
-                if last_node == constraint_node:
-                    return None
-                else:
-                    return curr_prog, first_node, last_node, prob, num_sibling_nodes_added
+            if constraint_node.api_name not in {DBRANCH, DEXCEPT, DLOOP}:
+                # Probabilistically choose the node that should appear after selected random parent
+                new_node, _, ln_prob = self._get_new_node(last_node, SIBLING_EDGE, verbose=self.debug,
+                                                          grow_new_subtree=self.grow_new_subtree)
+
+                if new_node is None:
+                    if last_node == constraint_node:
+                        return None
+                    else:
+                        return curr_prog, first_node, last_node, prob, num_sibling_nodes_added
+            else:
+                new_node = constraint_node
+                ln_prob = 0
 
             # if Stop node was added, end adding nodes
             if new_node.api_name == STOP:

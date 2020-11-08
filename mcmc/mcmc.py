@@ -12,6 +12,9 @@ import tensorflow as tf
 import sys
 from infer import BayesianPredictor
 
+import trainer_vae.infer
+from ast_helper.beam_searcher.program_beam_searcher import ProgramBeamSearcher
+from data_extractor.jsonify_programs import JSONSynthesis
 from trainer_vae.model import Model
 from trainer_vae.utils import get_var_list
 from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
@@ -49,7 +52,7 @@ class MCMCProgram:
 
     """
 
-    def __init__(self, save_dir, verbose=False, debug=False, save_states=False, session=None, encoder=None, decoder=None):
+    def __init__(self, save_dir, verbose=False, debug=False, save_states=False, session=None, encoder=None, decoder=None, beam_searcher=None):
         """
         Initialize program
         :param save_dir: (string) path to directory in which saved model checkpoints are in
@@ -90,13 +93,14 @@ class MCMCProgram:
         self.fp = [[]]
         self.decoder = decoder
         self.encoder = encoder
+        self.beam_searcher = beam_searcher
         self.num_accepted_latent_state = 0
 
         # self.proposal_probs = {INSERT: 0.5, DELETE: 0.2, SWAP: 0.1, REPLACE: 0.2, ADD_DNODE: 0.0, GROW_CONST: 0.0}
 
         # self.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.00, REPLACE: 0.0, ADD_DNODE: 0.0}
 
-        self.proposal_probs = {INSERT: 0.15, DELETE: 0.3, SWAP: 0.2, REPLACE: 0.25, ADD_DNODE: 0.0, GROW_CONST: 0.1,
+        self.proposal_probs = {INSERT: 0.15, DELETE: 0.35, SWAP: 0.2, REPLACE: 0.20, ADD_DNODE: 0.0, GROW_CONST: 0.1,
                                GROW_CONST_UP: 0.0}
 
         # self.proposal_probs = {INSERT: 0.3, DELETE: 0.1, SWAP: 0.6, REPLACE: 0.0, ADD_DNODE: 0.0, GROW_CONST: 0.0,
@@ -134,6 +138,8 @@ class MCMCProgram:
 
         self.save_states = save_states
         self.states = []
+
+        self.jsonify = JSONSynthesis(None, config=self.config)
 
     def restore(self, save):
         """
@@ -199,7 +205,7 @@ class MCMCProgram:
         self.GrowConstraintUp = GrowConstraintUpwardsProposal(self.tree_mod, self.decoder, self.sess, grow_new_subtree,
                                                               verbose=self.verbose, debug=self.debug)
 
-    def init_program(self, constraints, ret_types, fps, ordered=True, exclude=None, min_length=1, max_length=np.inf):
+    def init_program(self, constraints, ret_types, fps, ordered=True, exclude=None, min_length=1, max_length=np.inf, attach=True):
         """
         Creates initial program that satisfies all given constraints.
         :param constraints: (list of strings (api names)) list of apis that must appear in the program for
@@ -236,7 +242,7 @@ class MCMCProgram:
             # Add constraint nodes to tree
             last_node = head
             for i in self.all_constraints:
-                if last_node.api_name in {DBRANCH, DLOOP, DEXCEPT} and i not in {DBRANCH, DLOOP, DEXCEPT}:
+                if last_node.api_name in {DBRANCH, DLOOP, DEXCEPT} and i not in {DBRANCH, DLOOP, DEXCEPT} and attach:
                     node = self.tree_mod.create_and_add_node(i, last_node, CHILD_EDGE)
                 else:
                     node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
@@ -367,7 +373,7 @@ class MCMCProgram:
                 print("\n")
             elif (curr_node.api_name == DLOOP or curr_node.api_name == DEXCEPT):
                 max_consecutive_inserts = 1
-                if curr_node is None:
+                if curr_node.child is None:
                     max_consecutive_inserts = 2
                 GrowStruct._grow_dloop_or_dexcept(curr_node, max_consecutive_inserts=max_consecutive_inserts, cond_node=curr_node.child)
                 num_structures_grown += 1
@@ -865,8 +871,18 @@ class MCMCProgram:
             print("old program:")
             print_verbose_tree_info(self.curr_prog)
 
-        api = random.choice(self.constraints)
+        api = random.choice(self.constraints + self.constraint_control_structs)
+
         constraint_node = self.tree_mod.get_node_with_api(self.curr_prog, api)
+        constraint_node_pos = self.tree_mod.get_nodes_position(self.curr_prog, constraint_node)
+        curr_prog_copy = self.curr_prog.copy()
+
+        replace_struct_ln_prob = 0.0
+        if api in {DBRANCH, DLOOP, DEXCEPT}:
+            print("grow constraint:", constraint_node.api_name)
+            # probability of deleting struct node (deletes entire struct)
+            replace_struct_ln_prob = self.Delete.calculate_ln_prob_of_move(self.curr_prog.length)
+            constraint_node.remove_node(CHILD_EDGE)
 
         output = grow_proposal.grow_constraint(self.curr_prog, self.initial_state, constraint_node,
                                                len(self.constraints))
@@ -877,6 +893,10 @@ class MCMCProgram:
             return False
 
         curr_prog, first_added_node, last_added_node, ln_proposal_prob, num_sibling_nodes_added = output
+        ln_proposal_prob += replace_struct_ln_prob
+
+        if api in {DBRANCH, DLOOP, DEXCEPT}:
+            print_verbose_tree_info(self.curr_prog)
 
         if first_added_node is None or last_added_node is None or num_sibling_nodes_added == 0:
             if self.debug:
@@ -901,6 +921,12 @@ class MCMCProgram:
             # update curr_node to next added node
             curr_node = first_added_node.sibling
 
+        # add probability of adding original struct to reversal prob
+        if constraint_node.api_name in {DBRANCH, DLOOP, DEXCEPT}:
+            # Calculate probability of reverse move
+            ln_reversal_prob += self.Insert.calculate_ln_prob_of_move(curr_prog_copy, self.initial_state, constraint_node_pos,
+                                                                     SIBLING_EDGE, prev_length, is_copy=True)
+
         # Calculate probability of new program
         self.calculate_probability()
 
@@ -911,7 +937,8 @@ class MCMCProgram:
 
         # Undo move if not valid
         if not self.validate_and_update_program(grow_proposal_key, ln_proposal_prob, ln_reversal_prob):
-            grow_proposal.undo_grown_constraint(first_added_node, last_added_node)  # TODO: think about this
+            # grow_proposal.undo_grown_constraint(first_added_node, last_added_node)  # TODO: think about this
+            self.curr_prog = curr_prog_copy
             self.curr_log_prob = self.prev_log_prob
             assert self.curr_prog.length == prev_length, "Curr prog length: " + str(
                 self.curr_prog.length) + " != prev length: " + str(prev_length)
@@ -984,6 +1011,8 @@ class MCMCProgram:
                             help='ignore config options and continue training model checkpointed here')
         clargs = parser.parse_args()
 
+        print(self.config.save_dir)
+
         if self.encoder is None:
             self.encoder = BayesianPredictor(clargs.continue_from, batch_size=1)
 
@@ -1006,6 +1035,10 @@ class MCMCProgram:
         beam_width = 1
         if self.decoder is None:
             self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
+
+        if self.beam_searcher is None:
+            self.beam_searcher = ProgramBeamSearcher(
+                trainer_vae.infer.BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width))
 
     def update_latent_state_and_decoder_state(self):
         nodes, edges = self.tree_mod.get_vector_representation(self.curr_prog)
@@ -1137,16 +1170,21 @@ class MCMCProgram:
         if self.save_states:
             self.states.append(self.initial_state)
 
-        self.update_latent_state_and_decoder_state()
-        # self.independent_proposal()
-
         if new_prog in self.posterior_dist:
             # assert self.posterior_dist[new_prog][1] == self.curr_log_prob, "new_prog prob: " + str(
             #     self.posterior_dist[new_prog][1]) + " curr prob: " + str(self.curr_log_prob)
             self.posterior_dist[new_prog][0] += 1
-            self.posterior_dist[new_prog][1] = min(self.posterior_dist[new_prog][1], self.curr_log_prob)
+            self.posterior_dist[new_prog][1] = min(self.posterior_dist[new_prog][1], math.exp(self.curr_log_prob))
         else:
-            self.posterior_dist[new_prog] = [1, self.curr_log_prob]
+            ast_paths, _, _ = self.beam_searcher.beam_search(initial_state=self.initial_state)
+            print(ast_paths)
+            self.posterior_dist[new_prog] = [1, math.exp(self.curr_log_prob), self.jsonify.paths_to_ast(self.curr_prog), ast_paths]
+
+        print(self.posterior_dist[new_prog])
+
+        self.update_latent_state_and_decoder_state()
+        # self.independent_proposal()
+
 
         # self.update_random_intial_state()
 

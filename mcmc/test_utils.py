@@ -15,9 +15,9 @@ STR_BUILD_APP = 'java.lang.StringBuilder.append(java.lang.String)'
 
 
 def create_base_program(saved_model_path, constraints, ret_type, fp, ordered=True, exclude=None, debug=False,
-                        verbose=False):
+                        verbose=False, attach=False):
     test_prog = MCMCProgramWrapper(saved_model_path, constraints, ret_type, fp, debug=debug, verbose=verbose,
-                                   exclude=exclude, ordered=ordered)
+                                   exclude=exclude, ordered=ordered, attach=attach)
     test_prog.update_nodes_and_edges()
     expected_nodes = [START]
     expected_edges = []
@@ -167,10 +167,10 @@ def add_random_noise_to_initial_tree(prog):
 
 
 class MCMCProgramWrapper:
-    def __init__(self, save_dir, constraints, return_type, formal_params, ordered=True, exclude=None, debug=True, verbose=True):
+    def __init__(self, save_dir, constraints, return_type, formal_params, ordered=True, exclude=None, debug=True, verbose=True, attach=True):
         # init MCMCProgram
         self.prog = MCMCProgram(save_dir, debug=debug, verbose=verbose)
-        self.prog.init_program(constraints, return_type, formal_params, exclude=exclude, ordered=ordered)
+        self.prog.init_program(constraints, return_type, formal_params, exclude=exclude, ordered=ordered, attach=attach)
 
         self.constraints = self.prog.constraints
         self.vocab2node = self.prog.config.vocab2node
