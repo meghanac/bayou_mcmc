@@ -4,7 +4,7 @@ from trainer_vae.utils import read_config
 
 MAX_LOOP_NUM = 3
 MAX_BRANCHING_NUM = 3
-MAX_AST_DEPTH = 32
+MAX_AST_DEPTH = 12
 TEMP = 'temp'
 
 class Configuration:
@@ -16,7 +16,7 @@ class Configuration:
             self.config_obj = read_config(json.load(f), infer=True)
 
         # Initialize model configurations
-        self.max_num_api = self.config_obj.max_ast_depth
+        self.max_num_api = 8
         self.max_length = MAX_AST_DEPTH
         self.config_obj.max_ast_depth = 1
         self.config_obj.max_fp_depth = 1

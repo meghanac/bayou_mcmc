@@ -1,0 +1,12 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta
+num iterations: 30.0
+category: exclude_cs
+label: novelty
+num test programs: 5
+
+
+counter: 0
+num skipped: 0
+{'include': ['java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)'], 'exclude': ['DExcept'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)'), (False, False, False), ('java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)', 'java.lang.System.arraycopy(java.lang.Object,int,java.lang.Object,int,int)')): [5, -4.45112943649292], (('DSubTree', 'java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)', 'java.lang.System.arraycopy(java.lang.Object,int,java.lang.Object,int,int)'), (False, False, False, False), ('java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)', 'java.lang.System.arraycopy(java.lang.Object,int,java.lang.Object,int,int)', 'DStop')): [12, -4.985234081745148], (('DSubTree', 'java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)'), (False, False, False), ('java.util.Arrays.sort(java.lang.Object[])', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)', 'DStop')): [13, -2.182794004678726]}

@@ -1,0 +1,45 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/final_novel_1k_min_2_small_config
+num iterations: 50.0
+category: exclude_api
+label: novelty
+num test programs: 7
+
+
+counter: 0
+num skipped: 0
+{'include': ['java.io.File.getPath()', 'java.io.FileInputStream.FileInputStream(java.lang.String)'], 'exclude': ['java.util.Map<java.lang.String,java.lang.String>.put(java.lang.String,java.lang.String)'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.io.File.getPath()', 'java.io.FileInputStream.FileInputStream(java.lang.String)'), (False, False, False), ('java.io.File.getPath()', 'java.io.FileInputStream.FileInputStream(java.lang.String)', 'DStop')): [32, -0.6418173387646675], (('DSubTree', 'java.io.File.getPath()'), (False, False), ('java.io.File.getPath()', 'java.io.FileInputStream.FileInputStream(java.lang.String)')): [18, -2.309935539960861]}
+
+counter: 1
+num skipped: 0
+{'include': ['java.util.regex.Pattern.compile(java.lang.String,int)', 'DBranch'], 'exclude': ['java.util.List<java.lang.Integer>.iterator()'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.util.regex.Pattern.compile(java.lang.String,int)', 'DBranch', 'java.util.regex.Matcher.find()', 'java.util.regex.Matcher.group(int)', 'java.util.regex.Matcher.find()', 'java.lang.String.trim()', 'DBranch'), (False, False, True, True, False, False, False, False), ('java.util.regex.Pattern.compile(java.lang.String,int)', 'DBranch', 'java.util.regex.Matcher.find()', 'java.util.regex.Matcher.group(int)', 'DStop', 'java.lang.String.trim()', 'DStop', 'DStop')): [43, -11.514011859893799], (('DSubTree', 'java.util.regex.Pattern.compile(java.lang.String,int)', 'java.util.regex.Pattern.matcher(java.lang.CharSequence)', 'DBranch', 'java.util.regex.Matcher.find()', 'java.util.regex.Matcher.group(int)', 'java.util.regex.Matcher.find()', 'java.lang.String.trim()', 'DBranch'), (False, False, False, True, True, False, False, False, False), ('java.util.regex.Pattern.compile(java.lang.String,int)', 'java.util.regex.Pattern.matcher(java.lang.CharSequence)', 'DBranch', 'java.util.regex.Matcher.find()', 'java.util.regex.Matcher.group(int)', 'DStop', 'java.lang.String.trim()', 'DStop', 'DStop')): [7, -11.585732682142407]}
+
+counter: 2
+num skipped: 0
+{'include': ['java.util.List<java.lang.Long>.size()', 'java.util.List<java.lang.Long>.get(int)'], 'exclude': ['java.text.DateFormat.parse(java.lang.String)'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.util.List<java.lang.Long>.size()'), (False, False), ('java.util.List<java.lang.Long>.size()', 'java.util.List<java.lang.Long>.get(int)')): [48, -18.731318771839142], (('DSubTree', 'java.util.List<java.lang.Long>.size()', 'java.util.List<java.lang.Long>.get(int)'), (False, False, False), ('java.util.List<java.lang.Long>.size()', 'java.util.List<java.lang.Long>.get(int)', 'DStop')): [2, -21.324615030673158]}
+
+counter: 3
+num skipped: 0
+{'include': ['java.awt.geom.RectangularShape.getX()', 'java.awt.geom.RectangularShape.getWidth()'], 'exclude': ['java.lang.String.valueOf(char[])'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.awt.geom.RectangularShape.getX()'), (False, False), ('java.awt.geom.RectangularShape.getX()', 'java.awt.geom.RectangularShape.getWidth()')): [24, -11.000422835350037], (('DSubTree', 'java.awt.geom.RectangularShape.getX()', 'java.awt.geom.RectangularShape.getWidth()'), (False, False, False), ('java.awt.geom.RectangularShape.getX()', 'java.awt.geom.RectangularShape.getWidth()', 'DStop')): [26, -11.311393721494824]}
+
+counter: 4
+num skipped: 0
+{'include': ['java.beans.PropertyChangeEvent.getPropertyName()', 'DBranch'], 'exclude': ['java.awt.geom.Point2D.getY()'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.beans.PropertyChangeEvent.getPropertyName()', 'DBranch', 'java.lang.String.endsWith(java.lang.String)', 'java.lang.Class<Tau_T>.getName()', 'java.lang.String.endsWith(java.lang.String)', 'java.lang.Class<Tau_T>.getName()', 'DBranch'), (False, False, True, True, False, False, False, False), ('java.beans.PropertyChangeEvent.getPropertyName()', 'DBranch', 'java.lang.String.endsWith(java.lang.String)', 'java.lang.Class<Tau_T>.getName()', 'DStop', 'java.lang.Class<Tau_T>.getName()', 'DStop', 'DStop')): [42, -16.263065099716187], (('DSubTree', 'java.beans.PropertyChangeEvent.getPropertyName()', 'DBranch', 'java.lang.String.endsWith(java.lang.String)', 'java.lang.String.endsWith(java.lang.String)', 'java.lang.Class<Tau_T>.getName()', 'DBranch'), (False, False, True, True, False, False, False), ('java.beans.PropertyChangeEvent.getPropertyName()', 'DBranch', 'java.lang.String.endsWith(java.lang.String)', 'java.lang.Class<Tau_T>.getName()', 'java.lang.Class<Tau_T>.getName()', 'DStop', 'DStop')): [8, -13.646278752654325]}
+
+counter: 5
+num skipped: 0
+{'include': ['java.util.Map.values()', 'java.util.Collection.add(java.lang.Object)'], 'exclude': ['java.lang.Long.intValue()'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.util.Map.values()'), (False, False), ('java.util.Map.values()', 'java.util.Collection.add(java.lang.Object)')): [2, -4.4501496775774285], (('DSubTree', 'java.util.Map.values()', 'java.util.Collection.add(java.lang.Object)'), (False, False, False), ('java.util.Map.values()', 'java.util.Collection.add(java.lang.Object)', 'DStop')): [48, -6.435693900042679]}
+
+counter: 6
+num skipped: 0
+{'include': ['DExcept', 'java.nio.Buffer.flip()'], 'exclude': ['java.text.DateFormat.setTimeZone(java.util.TimeZone)'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DExcept', 'java.nio.Buffer.flip()', 'java.lang.String.length()', 'DExcept'), (False, True, True, False, False), ('DExcept', 'java.nio.Buffer.flip()', 'java.lang.String.length()', 'DStop', 'DStop')): [50, -14.738510217517614]}
+
+
+final metrics: {'jaccard_test_set': 0.0, 'has_more_apis': 0.42857142857142855, 'relevant_additions': 0.42857142857142855, 'meets_constraints': 0.9999999999999998, 'in_set': 0.14285714285714285, 'test_set_relevant_additions': 0.42857142857142855}

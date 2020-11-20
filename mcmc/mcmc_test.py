@@ -665,10 +665,10 @@ class MCMCProgramTest(unittest.TestCase):
         # return_type = ['String']
         # exclude = []
 
-        include = ['java.io.Writer.write(char[])', 'DLoop']
-        formal_param = ['String', 'String', 'int']
-        return_type = ['void']
-        exclude = []
+        # include = ['java.io.Writer.write(char[])']
+        # formal_param = ['String', 'String', 'int']
+        # return_type = ['void']
+        # exclude = []
 
         # include = ['java.util.jar.Manifest.getEntries()', 'java.util.jar.Manifest.getMainAttributes()']
         # exclude = ['java.util.ArrayList<java.lang.String>.add(java.lang.String)']
@@ -685,11 +685,23 @@ class MCMCProgramTest(unittest.TestCase):
         # formal_param = ['int']
         # return_type = ['Vector<String>']
 
+        # include = ['java.awt.Graphics2D.setComposite(java.awt.Composite)']
+        # formal_param = []
+        # return_type = ['BufferedImage']
+        # min_length = 5
+        # exclude = []
+
+        include = ['java.util.Date.compareTo(java.util.Date)', 'DBranch']
+        formal_param= ['Date', 'Date']
+        return_type =['String']
+        exclude = []
+        min_length = 1
+
         test_prog, expected_nodes, expected_edges = create_base_program(FINAL_SMALL_MODEL_PATH,
                                                                         include,
                                                                         return_type,
                                                                         formal_param,
-                                                                        ordered=True, exclude=exclude, attach=False)
+                                                                        ordered=True, exclude=exclude, attach=False, min_length=min_length)
 
         test_prog.prog.verbose = True
 

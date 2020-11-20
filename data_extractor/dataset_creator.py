@@ -1462,44 +1462,44 @@ def build_bayou_datasets(mcmc_data_dir_path, bayou_data_dir_path, bayou_data_fol
     # dataset_creator = pickle.load(f)
 
     train_path = bayou_data_dir_path + "/train"
-    test_path = bayou_data_dir_path + "/test"
+    # test_path = bayou_data_dir_path + "/test"
     if not os.path.exists(train_path):
         os.mkdir(train_path)
-    if not os.path.exists(test_path):
-        os.mkdir(test_path)
+    # if not os.path.exists(test_path):
+    #     os.mkdir(test_path)
 
-    # train_f = open(bayou_data_dir_path + "/train/training_data.json", "w+")
+    train_f = open(bayou_data_dir_path + "/train/training_data.json", "w+")
     # test_f = open(bayou_data_dir_path + "/test/small_test_set.json", "w+")
-    small_test_f = open(bayou_data_dir_path + "/test/small_test_set.json", "w+")
+    # small_test_f = open(bayou_data_dir_path + "/test/small_test_set.json", "w+")
 
     # start data files
-    # train_f.write("{\n")
-    # train_f.write("\"programs\": [\n")
+    train_f.write("{\n")
+    train_f.write("\"programs\": [\n")
     # test_f.write("{\n")
     # test_f.write("\"programs\": [\n")
-    small_test_f.write("{\n")
-    small_test_f.write("\"programs\": [\n")
+    # small_test_f.write("{\n")
+    # small_test_f.write("\"programs\": [\n")
 
     data_f = open(bayou_data_dir_path + bayou_data_folder_name + ".json", "rb")
 
-    # mcmc_test_f = open(mcmc_data_dir_path + "train_test_sets/test/test_set.json", "rb")
-    mcmc_small_test_f = open(mcmc_data_dir_path + "train_test_sets/test/small_test_set.json", "rb")
+    mcmc_test_f = open(mcmc_data_dir_path + "train_test_sets/test/test_set.json", "rb")
+    # mcmc_small_test_f = open(mcmc_data_dir_path + "train_test_sets/test/small_test_set.json", "rb")
 
-    # test_prog_set = set([])
-    # test_progs = ijson.items(mcmc_test_f, 'programs.item')
-    # for program in test_progs:
-    #     key = (json.dumps(program['ast']), json.dumps(program['returnType']), json.dumps(program['formalParam']))
-    #     test_prog_set.add(key)
-    #
-    # print("Number of programs in test set:", len(test_prog_set))
-
-    small_test_prog_set = set([])
-    test_progs = ijson.items(mcmc_small_test_f, 'programs.item')
+    test_prog_set = set([])
+    test_progs = ijson.items(mcmc_test_f, 'programs.item')
     for program in test_progs:
         key = (json.dumps(program['ast']), json.dumps(program['returnType']), json.dumps(program['formalParam']))
-        small_test_prog_set.add(key)
+        test_prog_set.add(key)
 
-    print("Number of programs in small test set:", len(small_test_prog_set))
+    print("Number of programs in test set:", len(test_prog_set))
+    #
+    # small_test_prog_set = set([])
+    # test_progs = ijson.items(mcmc_small_test_f, 'programs.item')
+    # for program in test_progs:
+    #     key = (json.dumps(program['ast']), json.dumps(program['returnType']), json.dumps(program['formalParam']))
+    #     small_test_prog_set.add(key)
+    #
+    # print("Number of programs in small test set:", len(small_test_prog_set))
 
     test_set_new_prog_ids = {}
     small_test_set_new_prog_ids = {}
@@ -1510,52 +1510,54 @@ def build_bayou_datasets(mcmc_data_dir_path, bayou_data_dir_path, bayou_data_fol
     for program in ijson.items(data_f, 'programs.item'):
         key = (json.dumps(program['ast']), json.dumps(program['returnType']), json.dumps(program['formalParam']))
 
-        if key in small_test_prog_set:
-            if small_test_prog_counter != 0:
-                small_test_f.write(",\n")
-            small_test_set_new_prog_ids[prog_id] = small_test_prog_counter
-            small_test_f.write(json.dumps(program))
-            small_test_prog_counter += 1
+        # if key in small_test_prog_set:
+        #     if small_test_prog_counter != 0:
+        #         small_test_f.write(",\n")
+        #     small_test_set_new_prog_ids[prog_id] = small_test_prog_counter
+        #     small_test_f.write(json.dumps(program))
+        #     small_test_prog_counter += 1
 
-        # if key in test_prog_set:
-        #     if test_prog_counter != 0:
-        #         test_f.write(",\n")
-        #     test_set_new_prog_ids[prog_id] = test_prog_counter
-        #     test_f.write(json.dumps(program))
-        #     test_prog_counter += 1
-        # else:
-        #     if train_prog_counter != 0:
-        #         train_f.write(",\n")
-        #     train_f.write(json.dumps(program))
-        #     train_prog_counter += 1
+        if key in test_prog_set:
+            # if test_prog_counter != 0:
+            #     test_f.write(",\n")
+            # test_set_new_prog_ids[prog_id] = test_prog_counter
+            # test_f.write(json.dumps(program))
+            # test_prog_counter += 1
+
+            pass
+        else:
+            if train_prog_counter != 0:
+                train_f.write(",\n")
+            train_f.write(json.dumps(program))
+            train_prog_counter += 1
         prog_id += 1
 
     # end new json data file
-    # train_f.write("\n")
-    # train_f.write("]\n")
-    # train_f.write("}\n")
+    train_f.write("\n")
+    train_f.write("]\n")
+    train_f.write("}\n")
     # test_f.write("\n")
     # test_f.write("]\n")
     # test_f.write("}\n")
-    small_test_f.write("\n")
-    small_test_f.write("]\n")
-    small_test_f.write("}\n")
+    # small_test_f.write("\n")
+    # small_test_f.write("]\n")
+    # small_test_f.write("}\n")
     # test_f.close()
-    # train_f.close()
-    small_test_f.close()
+    train_f.close()
+    # small_test_f.close()
 
     # print("Added", test_prog_counter, "programs to test set")
-    # print("Added", train_prog_counter, "programs to training set")
-    print("Added", small_test_prog_counter, "programs to small test set")
+    print("Added", train_prog_counter, "programs to training set")
+    # print("Added", small_test_prog_counter, "programs to small test set")
     print("Total programs in old dataset:", prog_id - 1)
 
     # with open(bayou_data_dir_path + "/test/test_set_new_prog_ids.pickle", 'wb') as f:
     #     pickle.dump(test_set_new_prog_ids, f)
     #     f.close()
-
-    with open(bayou_data_dir_path + "/test/small_test_set_new_prog_ids.pickle", 'wb') as f:
-        pickle.dump(small_test_set_new_prog_ids, f)
-        f.close()
+    #
+    # with open(bayou_data_dir_path + "/test/small_test_set_new_prog_ids.pickle", 'wb') as f:
+    #     pickle.dump(small_test_set_new_prog_ids, f)
+    #     f.close()
 
 
 def add_prog_length_to_dataset_creator(data_dir_path, train_test_set_name, save=False):

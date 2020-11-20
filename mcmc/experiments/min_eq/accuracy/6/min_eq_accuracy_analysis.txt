@@ -1,0 +1,280 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/seen_1k_min_2_small_config
+num iterations: 50.0
+category: min_eq
+label: accuracy
+num test programs: 55
+
+
+counter: 0
+num skipped: 0
+{'include': ['java.io.DataInputStream.read(byte[],int,int)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.io.DataInputStream.read(byte[],int,int)', 'java.io.InputStream.close()', 'java.io.ByteArrayInputStream.ByteArrayInputStream(byte[])', 'java.lang.String.toCharArray()'), (False, False, False, False, False), ('java.io.DataInputStream.read(byte[],int,int)', 'java.io.InputStream.close()', 'java.io.ByteArrayInputStream.ByteArrayInputStream(byte[])', 'java.lang.String.toCharArray()', 'java.lang.String.String(byte[],int,int)')): [50, -0.053458452224731445]}
+
+counter: 1
+num skipped: 0
+{'include': ['java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.File.File(java.lang.String)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()'), (False, False, False, False, False), ('java.io.BufferedInputStream.BufferedInputStream(java.io.InputStream,int)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.File.File(java.lang.String)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.InputStream.close()')): [50, -2.8749582767486572]}
+
+counter: 2
+num skipped: 0
+{'include': ['java.io.FileReader.FileReader(java.io.File)'], 'exclude': [], 'min_length': 7, 'max_length': inf}
+{(('DSubTree', 'java.io.FileReader.FileReader(java.io.File)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.lang.StringBuilder.StringBuilder()', 'java.io.FileReader.FileReader(java.io.File)'), (False, False, False, False, False, False), ('java.io.FileReader.FileReader(java.io.File)', 'java.io.InputStreamReader.InputStreamReader(java.io.InputStream)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)', 'java.lang.StringBuilder.StringBuilder()', 'java.io.FileReader.FileReader(java.io.File)', 'java.io.BufferedReader.BufferedReader(java.io.Reader)')): [50, -0.1289195865392685]}
+
+counter: 3
+num skipped: 0
+{'include': ['java.io.ObjectInputStream.defaultReadObject()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.io.ObjectInputStream.defaultReadObject()', 'java.io.File.File(java.lang.String)', 'java.io.File.File(java.lang.String,java.lang.String)', 'java.lang.Math.max(int,int)'), (False, False, False, False, False), ('java.io.ObjectInputStream.defaultReadObject()', 'java.io.File.File(java.lang.String)', 'java.io.File.File(java.lang.String,java.lang.String)', 'java.lang.Math.max(int,int)', 'java.io.File.File(java.lang.String,java.lang.String)')): [50, -0.17645102739334106]}
+
+counter: 4
+num skipped: 0
+{'include': ['javax.management.MBeanServer.queryNames(javax.management.ObjectName,javax.management.QueryExp)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'javax.management.MBeanServer.queryNames(javax.management.ObjectName,javax.management.QueryExp)', 'java.util.Map<java.lang.String,java.lang.Object>.put(java.lang.String,java.lang.Object)', 'java.lang.Double.Double(double)', 'java.lang.String.format(java.util.Locale,java.lang.String,java.lang.Object[])'), (False, False, False, False, False), ('javax.management.MBeanServer.queryNames(javax.management.ObjectName,javax.management.QueryExp)', 'java.util.Map<java.lang.String,java.lang.Object>.put(java.lang.String,java.lang.Object)', 'java.lang.Double.Double(double)', 'java.lang.String.format(java.util.Locale,java.lang.String,java.lang.Object[])', 'java.lang.Double.Double(double)')): [50, -14.279080390930176]}
+
+counter: 5
+num skipped: 0
+{'include': ['$NOT$java.lang.String.matches(java.lang.String)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', '$NOT$java.lang.String.matches(java.lang.String)', 'java.lang.String.indexOf(java.lang.String)', 'java.lang.String.length()', 'java.lang.String.toUpperCase()'), (False, False, False, False, False), ('$NOT$java.lang.String.matches(java.lang.String)', 'java.lang.String.indexOf(java.lang.String)', 'java.lang.String.length()', 'java.lang.String.toUpperCase()', 'java.lang.String.toCharArray()')): [50, -0.003218353958800435]}
+
+counter: 6
+num skipped: 0
+{'include': ['$NOT$java.util.Arrays.equals(long[],long[])'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', '$NOT$java.util.Arrays.equals(long[],long[])', 'java.io.ByteArrayInputStream.ByteArrayInputStream(byte[])', 'java.net.URL.URL(java.lang.String)', 'java.io.ByteArrayInputStream.ByteArrayInputStream(byte[])'), (False, False, False, False, False), ('$NOT$java.util.Arrays.equals(long[],long[])', 'java.io.ByteArrayInputStream.ByteArrayInputStream(byte[])', 'java.net.URL.URL(java.lang.String)', 'java.io.ByteArrayInputStream.ByteArrayInputStream(byte[])', 'java.net.URL.URL(java.lang.String)')): [50, -0.033106185495853424]}
+
+counter: 7
+num skipped: 0
+{'include': ['java.util.Set<java.io.File>.add(java.io.File)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.Set<java.io.File>.add(java.io.File)', 'java.io.File.File(java.lang.String)', 'java.io.File.getParentFile()', 'java.io.File.getName()'), (False, False, False, False, False), ('java.util.Set<java.io.File>.add(java.io.File)', 'java.io.File.File(java.lang.String)', 'java.io.File.getParentFile()', 'java.io.File.getName()', 'java.util.Set<java.io.File>.add(java.io.File)')): [50, -0.001487697591073811]}
+
+counter: 8
+num skipped: 0
+{'include': ['java.io.File.toURI()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.io.File.toURI()', 'java.io.File.getName()', 'java.io.File.File(java.lang.String)', '$NOT$java.io.File.exists()'), (False, False, False, False, False), ('java.io.File.toURI()', 'java.io.File.getName()', 'java.io.File.File(java.lang.String)', '$NOT$java.io.File.exists()', 'java.io.FileInputStream.FileInputStream(java.io.File)')): [50, -0.530608594417572]}
+
+counter: 9
+num skipped: 0
+{'include': ['java.lang.String.format(java.util.Locale,java.lang.String,java.lang.Object[])'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.lang.String.format(java.util.Locale,java.lang.String,java.lang.Object[])', 'java.io.File.File(java.lang.String)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.File.File(java.lang.String)'), (False, False, False, False, False), ('java.lang.String.format(java.util.Locale,java.lang.String,java.lang.Object[])', 'java.io.File.File(java.lang.String)', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.io.File.File(java.lang.String)', 'java.lang.Integer.valueOf(int)')): [50, -0.11140619218349457]}
+
+counter: 10
+num skipped: 0
+{'include': ['java.lang.Class<>.getCanonicalName()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.lang.Class<>.getCanonicalName()', 'java.util.Map<java.lang.String,java.lang.String>.get(java.lang.Object)', 'java.util.regex.Pattern.quote(java.lang.String)', 'java.util.Map<java.lang.String,java.lang.String>.entrySet()'), (False, False, False, False, False), ('java.lang.Class<>.getCanonicalName()', 'java.util.Map<java.lang.String,java.lang.String>.get(java.lang.Object)', 'java.util.regex.Pattern.quote(java.lang.String)', 'java.util.Map<java.lang.String,java.lang.String>.entrySet()', 'java.lang.System.getProperty(java.lang.String)')): [50, -0.0883956179022789]}
+
+counter: 11
+num skipped: 0
+{'include': ['java.util.List<java.lang.Long>.get(int)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.List<java.lang.Long>.get(int)', 'java.util.HashMap<java.lang.String,java.lang.Object>.HashMap<String,Object>()', 'java.lang.StringBuilder.StringBuilder(java.lang.String)', 'java.lang.String.valueOf(long)'), (False, False, False, False, False), ('java.util.List<java.lang.Long>.get(int)', 'java.util.HashMap<java.lang.String,java.lang.Object>.HashMap<String,Object>()', 'java.lang.StringBuilder.StringBuilder(java.lang.String)', 'java.lang.String.valueOf(long)', 'java.lang.String.valueOf(long)')): [50, -0.7364441752433777]}
+
+counter: 12
+num skipped: 0
+{'include': ['java.text.NumberFormat.getInstance()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.text.NumberFormat.getInstance()', 'java.util.Locale.getDefault()', 'java.lang.Integer.toHexString(int)', 'java.util.Locale.getDefault()'), (False, False, False, False, False), ('java.text.NumberFormat.getInstance()', 'java.util.Locale.getDefault()', 'java.lang.Integer.toHexString(int)', 'java.util.Locale.getDefault()', 'java.lang.Integer.toHexString(int)')): [50, -0.07257894426584244]}
+
+counter: 13
+num skipped: 0
+{'include': ['java.util.Map<java.lang.String,java.lang.Object>.entrySet()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.Map<java.lang.String,java.lang.Object>.entrySet()', 'java.lang.StringBuilder.StringBuilder(java.lang.String)', 'java.lang.StringBuilder.toString()', 'java.net.URL.URL(java.lang.String)'), (False, False, False, False, False), ('java.util.Map<java.lang.String,java.lang.Object>.entrySet()', 'java.lang.StringBuilder.StringBuilder(java.lang.String)', 'java.lang.StringBuilder.toString()', 'java.net.URL.URL(java.lang.String)', 'java.util.Map<java.lang.String,java.lang.Object>.entrySet()')): [50, -0.009159805253148079]}
+
+counter: 14
+num skipped: 0
+{'include': ['java.awt.Graphics.drawImage(java.awt.Image,int,int,int,int,java.awt.image.ImageObserver)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.awt.Graphics.drawImage(java.awt.Image,int,int,int,int,java.awt.image.ImageObserver)', 'java.lang.Math.min(double,double)', 'java.awt.Graphics.dispose()', 'java.awt.Color.Color(int)'), (False, False, False, False, False), ('java.awt.Graphics.drawImage(java.awt.Image,int,int,int,int,java.awt.image.ImageObserver)', 'java.lang.Math.min(double,double)', 'java.awt.Graphics.dispose()', 'java.awt.Color.Color(int)', 'java.util.Collections.shuffle(java.util.List)')): [50, -0.15580600500106812]}
+
+counter: 15
+num skipped: 0
+{'include': ['java.util.regex.Pattern.compile(java.lang.String,int)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.regex.Pattern.compile(java.lang.String,int)', 'java.lang.String.contains(java.lang.CharSequence)', 'java.util.regex.Pattern.matcher(java.lang.CharSequence)', 'java.util.regex.Pattern.compile(java.lang.String)'), (False, False, False, False, False), ('java.util.regex.Pattern.compile(java.lang.String,int)', 'java.lang.String.contains(java.lang.CharSequence)', 'java.util.regex.Pattern.matcher(java.lang.CharSequence)', 'java.util.regex.Pattern.compile(java.lang.String)', 'java.util.regex.Pattern.matcher(java.lang.CharSequence)')): [50, -0.006174180656671524]}
+
+counter: 16
+num skipped: 0
+{'include': ['java.lang.Throwable.getMessage()'], 'exclude': [], 'min_length': 7, 'max_length': inf}
+{(('DSubTree', 'java.lang.Throwable.getMessage()', 'java.lang.Throwable.printStackTrace()', 'java.lang.String.lastIndexOf(java.lang.String)', 'java.awt.Toolkit.getDefaultToolkit()', 'java.lang.Throwable.toString()'), (False, False, False, False, False, False), ('java.lang.Throwable.getMessage()', 'java.lang.Throwable.printStackTrace()', 'java.lang.String.lastIndexOf(java.lang.String)', 'java.awt.Toolkit.getDefaultToolkit()', 'java.lang.Throwable.toString()', 'java.lang.Throwable.printStackTrace()')): [50, -0.0017001472879201174]}
+
+counter: 17
+num skipped: 0
+{'include': ['java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)', 'java.lang.Double.parseDouble(java.lang.String)', 'java.lang.Math.abs(int)', 'java.lang.System.currentTimeMillis()'), (False, False, False, False, False), ('java.util.Arrays.binarySearch(java.lang.Object[],java.lang.Object)', 'java.lang.Double.parseDouble(java.lang.String)', 'java.lang.Math.abs(int)', 'java.lang.System.currentTimeMillis()', 'java.lang.Math.abs(int)')): [50, -3.2030606269836426]}
+
+counter: 18
+num skipped: 0
+{'include': ['java.util.TreeMap<java.lang.String,java.lang.String>.TreeMap<String,String>()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.TreeMap<java.lang.String,java.lang.String>.TreeMap<String,String>()', 'java.util.ArrayList<java.lang.String>.ArrayList<String>(int)', 'java.util.List<java.lang.String>.size()', 'java.util.ArrayList<java.lang.String>.ArrayList<String>()'), (False, False, False, False, False), ('java.util.TreeMap<java.lang.String,java.lang.String>.TreeMap<String,String>()', 'java.util.ArrayList<java.lang.String>.ArrayList<String>(int)', 'java.util.List<java.lang.String>.size()', 'java.util.ArrayList<java.lang.String>.ArrayList<String>()', 'java.util.HashMap<java.lang.String,java.util.List<java.lang.String>>.HashMap<String,List<String>>()')): [50, -0.0487850084900856]}
+
+counter: 19
+num skipped: 0
+{'include': ['java.io.FileWriter.FileWriter(java.io.File)'], 'exclude': [], 'min_length': 7, 'max_length': inf}
+{(('DSubTree', 'java.io.FileWriter.FileWriter(java.io.File)', 'java.io.File.getAbsolutePath()', 'java.io.File.File(java.lang.String,java.lang.String)', 'java.io.FileWriter.FileWriter(java.io.File)', 'java.io.BufferedWriter.BufferedWriter(java.io.Writer)'), (False, False, False, False, False, False), ('java.io.FileWriter.FileWriter(java.io.File)', 'java.io.File.getAbsolutePath()', 'java.io.File.File(java.lang.String,java.lang.String)', 'java.io.FileWriter.FileWriter(java.io.File)', 'java.io.BufferedWriter.BufferedWriter(java.io.Writer)', 'java.io.Writer.write(java.lang.String)')): [50, -1.1526414155960083]}
+
+counter: 20
+num skipped: 0
+{'include': ['java.util.Arrays.copyOf(int[],int)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.Arrays.copyOf(int[],int)', 'java.lang.Integer.parseInt(java.lang.String)', 'java.lang.Math.min(int,int)', 'java.lang.Math.max(int,int)'), (False, False, False, False, False), ('java.util.Arrays.copyOf(int[],int)', 'java.lang.Integer.parseInt(java.lang.String)', 'java.lang.Math.min(int,int)', 'java.lang.Math.max(int,int)', 'java.lang.Math.min(int,int)')): [50, -0.176988884806633]}
+
+counter: 21
+num skipped: 0
+{'include': ['java.security.AccessController.doPrivileged(java.security.PrivilegedAction)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.security.AccessController.doPrivileged(java.security.PrivilegedAction)', 'java.lang.String.substring(int,int)', 'java.lang.Class<Tau_T>.getDeclaredField(java.lang.String)', 'java.lang.reflect.AccessibleObject.setAccessible(boolean)'), (False, False, False, False, False), ('java.security.AccessController.doPrivileged(java.security.PrivilegedAction)', 'java.lang.String.substring(int,int)', 'java.lang.Class<Tau_T>.getDeclaredField(java.lang.String)', 'java.lang.reflect.AccessibleObject.setAccessible(boolean)', 'java.lang.reflect.Constructor<>.newInstance(java.lang.Object[])')): [50, -0.16636738181114197]}
+
+counter: 22
+num skipped: 0
+{'include': ['java.util.HashMap<java.lang.String,java.lang.Object>.put(java.lang.String,java.lang.Object)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.HashMap<java.lang.String,java.lang.Object>.put(java.lang.String,java.lang.Object)', 'java.lang.System.currentTimeMillis()', 'java.lang.StringBuilder.append(char)', 'java.lang.System.currentTimeMillis()'), (False, False, False, False, False), ('java.util.HashMap<java.lang.String,java.lang.Object>.put(java.lang.String,java.lang.Object)', 'java.lang.System.currentTimeMillis()', 'java.lang.StringBuilder.append(char)', 'java.lang.System.currentTimeMillis()', 'java.lang.StringBuilder.append(char)')): [50, -0.5394054651260376]}
+
+counter: 24
+num skipped: 1
+{'include': ['java.util.Collection<>.iterator()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.Collection<>.iterator()', 'java.lang.String.equals(java.lang.Object)', 'java.lang.String.lastIndexOf(int)', 'java.lang.String.length()'), (False, False, False, False, False), ('java.util.Collection<>.iterator()', 'java.lang.String.equals(java.lang.Object)', 'java.lang.String.lastIndexOf(int)', 'java.lang.String.length()', 'java.lang.String.equalsIgnoreCase(java.lang.String)')): [50, -0.028901055455207825]}
+
+counter: 25
+num skipped: 1
+{'include': ['javax.swing.text.AbstractDocument.putProperty(java.lang.Object,java.lang.Object)'], 'exclude': [], 'min_length': 3, 'max_length': inf}
+{(('DSubTree', 'javax.swing.text.AbstractDocument.putProperty(java.lang.Object,java.lang.Object)'), (False, False), ('javax.swing.text.AbstractDocument.putProperty(java.lang.Object,java.lang.Object)', 'java.util.HashMap.HashMap()')): [7, -1.0622889995574951], (('DSubTree', 'javax.swing.text.AbstractDocument.putProperty(java.lang.Object,java.lang.Object)', 'java.util.HashMap.HashMap()'), (False, False, False), ('javax.swing.text.AbstractDocument.putProperty(java.lang.Object,java.lang.Object)', 'java.util.HashMap.HashMap()', 'DStop')): [6, -4.760597965680063], (('DSubTree', 'javax.swing.text.AbstractDocument.putProperty(java.lang.Object,java.lang.Object)'), (False, False), ('javax.swing.text.AbstractDocument.putProperty(java.lang.Object,java.lang.Object)', 'DStop')): [37, -0.659108279942302]}
+
+counter: 26
+num skipped: 1
+{'include': ['java.util.Iterator<byte[]>.hasNext()'], 'exclude': [], 'min_length': 7, 'max_length': inf}
+{(('DSubTree', 'java.util.Iterator<byte[]>.hasNext()', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)'), (False, False, False, False, False, False), ('java.util.Iterator<byte[]>.hasNext()', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)')): [40, -16.843990325927734], (('DSubTree', 'java.util.Iterator<byte[]>.hasNext()', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)'), (False, False, False, False, False, False, False), ('java.util.Iterator<byte[]>.hasNext()', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)')): [2, -22.112401605816558], (('DSubTree', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)'), (False, False, False, False, False, False, False), ('java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.List<java.lang.Long>.get(int)', 'java.util.Iterator<byte[]>.hasNext()')): [8, -21.663368977606297]}
+
+counter: 27
+num skipped: 1
+{'include': ['java.lang.Exception.Exception()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.lang.Exception.Exception()', 'java.lang.Throwable.printStackTrace()', 'java.lang.StringBuilder.StringBuilder(java.lang.String)', 'java.lang.Throwable.printStackTrace()'), (False, False, False, False, False), ('java.lang.Exception.Exception()', 'java.lang.Throwable.printStackTrace()', 'java.lang.StringBuilder.StringBuilder(java.lang.String)', 'java.lang.Throwable.printStackTrace()', 'java.lang.Throwable.getStackTrace()')): [50, -0.03704870864748955]}
+
+counter: 28
+num skipped: 1
+{'include': ['java.util.Random.Random()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.Random.Random()', 'java.io.File.File(java.lang.String,java.lang.String)', 'java.io.File.File(java.lang.String)', 'java.lang.System.currentTimeMillis()'), (False, False, False, False, False), ('java.util.Random.Random()', 'java.io.File.File(java.lang.String,java.lang.String)', 'java.io.File.File(java.lang.String)', 'java.lang.System.currentTimeMillis()', 'java.util.Random.nextBytes(byte[])')): [50, -3.9283101558685303]}
+
+counter: 29
+num skipped: 1
+{'include': ['java.lang.String.replace(java.lang.CharSequence,java.lang.CharSequence)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.lang.String.replace(java.lang.CharSequence,java.lang.CharSequence)', 'java.lang.String.toUpperCase()', 'java.lang.String.lastIndexOf(java.lang.String)', 'java.lang.String.length()'), (False, False, False, False, False), ('java.lang.String.replace(java.lang.CharSequence,java.lang.CharSequence)', 'java.lang.String.toUpperCase()', 'java.lang.String.lastIndexOf(java.lang.String)', 'java.lang.String.length()', 'java.lang.String.format(java.util.Locale,java.lang.String,java.lang.Object[])')): [50, -35.62149453163147]}
+
+counter: 30
+num skipped: 1
+{'include': ['java.util.Calendar.setTime(java.util.Date)'], 'exclude': [], 'min_length': 7, 'max_length': inf}
+{(('DSubTree', 'java.util.Calendar.setTime(java.util.Date)', 'java.lang.String.lastIndexOf(java.lang.String)', 'java.lang.Character.toUpperCase(char)', 'java.lang.Integer.Integer(int)', 'java.util.Calendar.add(int,int)'), (False, False, False, False, False, False), ('java.util.Calendar.setTime(java.util.Date)', 'java.lang.String.lastIndexOf(java.lang.String)', 'java.lang.Character.toUpperCase(char)', 'java.lang.Integer.Integer(int)', 'java.util.Calendar.add(int,int)', 'java.lang.String.valueOf(char[])')): [50, -1.6878879070281982]}
+
+counter: 31
+num skipped: 1
+{'include': ['java.util.List.size()'], 'exclude': [], 'min_length': 7, 'max_length': inf}
+{(('DSubTree', 'java.util.List.size()', 'java.util.Random.Random()', 'java.lang.StringBuffer.StringBuffer(int)', 'java.lang.Integer.Integer(int)', 'java.util.HashMap.HashMap()'), (False, False, False, False, False, False), ('java.util.List.size()', 'java.util.Random.Random()', 'java.lang.StringBuffer.StringBuffer(int)', 'java.lang.Integer.Integer(int)', 'java.util.HashMap.HashMap()', 'java.lang.Boolean.Boolean(boolean)')): [50, -0.035581041127443314]}
+
+counter: 32
+num skipped: 1
+{'include': ['java.util.Date.compareTo(java.util.Date)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.Date.compareTo(java.util.Date)', 'java.util.Date.Date()', 'java.util.Date.getTime()', 'java.util.Date.Date()'), (False, False, False, False, False), ('java.util.Date.compareTo(java.util.Date)', 'java.util.Date.Date()', 'java.util.Date.getTime()', 'java.util.Date.Date()', 'java.util.Date.getTime()')): [46, -3.010159559547901], (('DSubTree', 'java.util.Date.compareTo(java.util.Date)', 'java.util.Date.Date()', 'java.util.Date.getTime()', 'java.util.Date.Date()', 'java.util.Date.getTime()'), (False, False, False, False, False, False), ('java.util.Date.compareTo(java.util.Date)', 'java.util.Date.Date()', 'java.util.Date.getTime()', 'java.util.Date.Date()', 'java.util.Date.getTime()', 'java.lang.Long.intValue()')): [4, -8.929325527511537]}
+
+counter: 33
+num skipped: 1
+{'include': ['java.util.Iterator<java.lang.String>.next()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.Iterator<java.lang.String>.next()', 'java.lang.String.substring(int)', 'java.lang.String.split(java.lang.String)', 'java.lang.String.length()'), (False, False, False, False, False), ('java.util.Iterator<java.lang.String>.next()', 'java.lang.String.substring(int)', 'java.lang.String.split(java.lang.String)', 'java.lang.String.length()', 'java.lang.String.split(java.lang.String)')): [50, -0.06284063309431076]}
+
+counter: 34
+num skipped: 1
+{'include': ['java.lang.StringBuilder.append(double)'], 'exclude': [], 'min_length': 7, 'max_length': inf}
+{(('DSubTree', 'java.lang.StringBuilder.append(double)', 'java.lang.StringBuilder.append(double)', 'java.lang.StringBuilder.append(java.lang.String)', 'java.lang.StringBuilder.length()', 'java.lang.StringBuilder.append(java.lang.String)'), (False, False, False, False, False, False), ('java.lang.StringBuilder.append(double)', 'java.lang.StringBuilder.append(double)', 'java.lang.StringBuilder.append(java.lang.String)', 'java.lang.StringBuilder.length()', 'java.lang.StringBuilder.append(java.lang.String)', 'java.lang.StringBuilder.length()')): [50, -2.1745176315307617]}
+
+counter: 35
+num skipped: 1
+{'include': ['java.lang.Double.valueOf(java.lang.String)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.lang.Double.valueOf(java.lang.String)', 'java.lang.Integer.toHexString(int)', 'java.lang.StringBuffer.StringBuffer()', 'java.lang.Math.round(double)'), (False, False, False, False, False), ('java.lang.Double.valueOf(java.lang.String)', 'java.lang.Integer.toHexString(int)', 'java.lang.StringBuffer.StringBuffer()', 'java.lang.Math.round(double)', 'java.util.List<java.lang.Double>.add(java.lang.Double)')): [50, -0.6108784675598145]}
+
+counter: 36
+num skipped: 1
+{'include': ['java.awt.image.BufferedImage.getGraphics()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.awt.image.BufferedImage.getGraphics()', 'java.awt.BasicStroke.BasicStroke(float)', 'java.awt.Graphics2D.setPaint(java.awt.Paint)', 'java.awt.BasicStroke.BasicStroke(float)'), (False, False, False, False, False), ('java.awt.image.BufferedImage.getGraphics()', 'java.awt.BasicStroke.BasicStroke(float)', 'java.awt.Graphics2D.setPaint(java.awt.Paint)', 'java.awt.BasicStroke.BasicStroke(float)', 'java.awt.BasicStroke.BasicStroke(float)')): [50, -8.701899787411094e-05]}
+
+counter: 37
+num skipped: 1
+{'include': ['java.util.Collections.sort(java.util.List,java.util.Comparator)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.Collections.sort(java.util.List,java.util.Comparator)', 'java.util.ArrayList<Tau_E>.ArrayList(java.util.Collection)', 'java.lang.System.currentTimeMillis()', 'java.util.ArrayList<Tau_E>.ArrayList()'), (False, False, False, False, False), ('java.util.Collections.sort(java.util.List,java.util.Comparator)', 'java.util.ArrayList<Tau_E>.ArrayList(java.util.Collection)', 'java.lang.System.currentTimeMillis()', 'java.util.ArrayList<Tau_E>.ArrayList()', 'java.util.Collections.sort(java.util.List,java.util.Comparator)')): [50, -0.0004589696181938052]}
+
+counter: 38
+num skipped: 1
+{'include': ['java.util.Hashtable.Hashtable()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.Hashtable.Hashtable()', 'java.util.Properties.Properties()', 'java.io.File.File(java.lang.String)', 'java.lang.System.getenv(java.lang.String)'), (False, False, False, False, False), ('java.util.Hashtable.Hashtable()', 'java.util.Properties.Properties()', 'java.io.File.File(java.lang.String)', 'java.lang.System.getenv(java.lang.String)', 'java.io.File.File(java.lang.String)')): [50, -0.19709903001785278]}
+
+counter: 39
+num skipped: 1
+{'include': ['java.util.concurrent.atomic.AtomicInteger.get()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.concurrent.atomic.AtomicInteger.get()', 'java.lang.String.lastIndexOf(int)', 'java.nio.ByteBuffer.array()', 'java.nio.ByteBuffer.allocate(int)'), (False, False, False, False, False), ('java.util.concurrent.atomic.AtomicInteger.get()', 'java.lang.String.lastIndexOf(int)', 'java.nio.ByteBuffer.array()', 'java.nio.ByteBuffer.allocate(int)', 'java.nio.ByteBuffer.array()')): [50, -0.01880577951669693]}
+
+counter: 40
+num skipped: 1
+{'include': ['java.util.concurrent.locks.ReentrantLock.unlock()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.concurrent.locks.ReentrantLock.unlock()', 'java.io.File.File(java.lang.String)', 'java.util.Arrays.asList(T[])', 'java.io.File.File(java.lang.String)'), (False, False, False, False, False), ('java.util.concurrent.locks.ReentrantLock.unlock()', 'java.io.File.File(java.lang.String)', 'java.util.Arrays.asList(T[])', 'java.io.File.File(java.lang.String)', 'java.util.Arrays.asList(T[])')): [50, -0.289011687040329]}
+
+counter: 41
+num skipped: 1
+{'include': ['javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String)', 'java.lang.Thread.join()', 'java.text.MessageFormat.format(java.lang.String,java.lang.Object[])', 'java.lang.StringBuffer.StringBuffer(java.lang.String)'), (False, False, False, False, False), ('javax.xml.stream.XMLStreamWriter.writeNamespace(java.lang.String,java.lang.String)', 'java.lang.Thread.join()', 'java.text.MessageFormat.format(java.lang.String,java.lang.Object[])', 'java.lang.StringBuffer.StringBuffer(java.lang.String)', 'java.lang.Math.addExact(long,long)')): [50, -0.32205283641815186]}
+
+counter: 42
+num skipped: 1
+{'include': ['java.security.AccessController.doPrivileged(java.security.PrivilegedExceptionAction)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.security.AccessController.doPrivileged(java.security.PrivilegedExceptionAction)', 'java.net.ServerSocket.close()', 'java.io.File.File(java.io.File,java.lang.String)', '$NOT$java.io.File.isDirectory()'), (False, False, False, False, False), ('java.security.AccessController.doPrivileged(java.security.PrivilegedExceptionAction)', 'java.net.ServerSocket.close()', 'java.io.File.File(java.io.File,java.lang.String)', '$NOT$java.io.File.isDirectory()', 'java.io.File.getPath()')): [50, -0.004164120182394981]}
+
+counter: 43
+num skipped: 1
+{'include': ['javax.security.auth.x500.X500Principal.X500Principal(java.lang.String)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'javax.security.auth.x500.X500Principal.X500Principal(java.lang.String)', 'java.lang.String.substring(int,int)', 'java.math.BigInteger.BigInteger(java.lang.String)', 'java.lang.Throwable.getMessage()'), (False, False, False, False, False), ('javax.security.auth.x500.X500Principal.X500Principal(java.lang.String)', 'java.lang.String.substring(int,int)', 'java.math.BigInteger.BigInteger(java.lang.String)', 'java.lang.Throwable.getMessage()', 'java.math.BigInteger.BigInteger(java.lang.String)')): [50, -0.012459536083042622]}
+
+counter: 44
+num skipped: 1
+{'include': ['java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>()', 'java.util.regex.Pattern.compile(java.lang.String)', 'java.lang.String.split(java.lang.String)', 'java.lang.String.split(java.lang.String)'), (False, False, False, False, False), ('java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>()', 'java.util.regex.Pattern.compile(java.lang.String)', 'java.lang.String.split(java.lang.String)', 'java.lang.String.split(java.lang.String)', 'java.lang.String.split(java.lang.String)')): [50, -0.7506313920021057]}
+
+counter: 45
+num skipped: 1
+{'include': ['java.awt.geom.RectangularShape.getY()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.awt.geom.RectangularShape.getY()', 'java.awt.geom.RectangularShape.getX()', 'javax.swing.JComponent.getWidth()', 'java.awt.geom.RectangularShape.getX()'), (False, False, False, False, False), ('java.awt.geom.RectangularShape.getY()', 'java.awt.geom.RectangularShape.getX()', 'javax.swing.JComponent.getWidth()', 'java.awt.geom.RectangularShape.getX()', 'java.awt.geom.RectangularShape.getWidth()')): [50, -0.6234883666038513]}
+
+counter: 46
+num skipped: 1
+{'include': ['java.lang.Math.random()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.lang.Math.random()', 'javax.swing.JComponent.setPreferredSize(java.awt.Dimension)', 'java.lang.Math.round(double)', 'java.lang.Math.abs(double)'), (False, False, False, False, False), ('java.lang.Math.random()', 'javax.swing.JComponent.setPreferredSize(java.awt.Dimension)', 'java.lang.Math.round(double)', 'java.lang.Math.abs(double)', 'java.lang.Math.round(double)')): [50, -0.00890072900801897]}
+
+counter: 47
+num skipped: 1
+{'include': ['java.lang.Class.isPrimitive()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.lang.Class.isPrimitive()', 'java.lang.String.valueOf(char[])', 'java.util.List.get(int)', 'java.lang.String.valueOf(char[])'), (False, False, False, False, False), ('java.lang.Class.isPrimitive()', 'java.lang.String.valueOf(char[])', 'java.util.List.get(int)', 'java.lang.String.valueOf(char[])', 'java.lang.Class<Tau_T>.isAssignableFrom(java.lang.Class)')): [50, -0.6586143374443054]}
+
+counter: 48
+num skipped: 1
+{'include': ['java.beans.PropertyDescriptor.getReadMethod()'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.beans.PropertyDescriptor.getReadMethod()', 'java.lang.Class<Tau_T>.getDeclaredField(java.lang.String)', 'java.lang.Class.getDeclaredField(java.lang.String)', 'java.lang.reflect.AccessibleObject.setAccessible(boolean)'), (False, False, False, False, False), ('java.beans.PropertyDescriptor.getReadMethod()', 'java.lang.Class<Tau_T>.getDeclaredField(java.lang.String)', 'java.lang.Class.getDeclaredField(java.lang.String)', 'java.lang.reflect.AccessibleObject.setAccessible(boolean)', 'java.lang.Class<>.newInstance()')): [50, -1.627274751663208]}
+
+counter: 49
+num skipped: 1
+{'include': ['java.util.List<java.lang.String>.set(int,java.lang.String)'], 'exclude': [], 'min_length': 7, 'max_length': inf}
+{(('DSubTree', 'java.util.List<java.lang.String>.set(int,java.lang.String)', 'java.util.Collections.sort(java.util.List,java.util.Comparator)', 'java.lang.String.indexOf(int)', 'java.util.Collections.sort(java.util.List,java.util.Comparator)', 'java.util.List<java.lang.String>.toArray(T[])'), (False, False, False, False, False, False), ('java.util.List<java.lang.String>.set(int,java.lang.String)', 'java.util.Collections.sort(java.util.List,java.util.Comparator)', 'java.lang.String.indexOf(int)', 'java.util.Collections.sort(java.util.List,java.util.Comparator)', 'java.util.List<java.lang.String>.toArray(T[])', 'java.util.Collections.sort(java.util.List,java.util.Comparator)')): [50, -3.51168155670166]}
+
+counter: 50
+num skipped: 1
+{'include': ['java.security.KeyStore.getInstance(java.lang.String,java.security.Provider)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.security.KeyStore.getInstance(java.lang.String,java.security.Provider)', 'java.util.Random.Random(long)', 'java.lang.StringBuilder.StringBuilder()', 'java.util.Random.nextInt()'), (False, False, False, False, False), ('java.security.KeyStore.getInstance(java.lang.String,java.security.Provider)', 'java.util.Random.Random(long)', 'java.lang.StringBuilder.StringBuilder()', 'java.util.Random.nextInt()', 'java.text.NumberFormat.format(double)')): [50, -9.676909446716309]}
+
+counter: 51
+num skipped: 1
+{'include': ['java.lang.Thread.setName(java.lang.String)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.lang.Thread.setName(java.lang.String)', 'java.lang.String.getBytes()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.lang.String.getBytes()'), (False, False, False, False, False), ('java.lang.Thread.setName(java.lang.String)', 'java.lang.String.getBytes()', 'java.io.ByteArrayOutputStream.ByteArrayOutputStream()', 'java.lang.String.getBytes()', 'java.lang.Thread.Thread(java.lang.Runnable)')): [50, -0.8978924751281738]}
+
+counter: 52
+num skipped: 1
+{'include': ['java.lang.Throwable.initCause(java.lang.Throwable)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.lang.Throwable.initCause(java.lang.Throwable)', 'java.lang.String.split(java.lang.String)', 'java.lang.Integer.parseInt(java.lang.String)', 'java.lang.String.trim()'), (False, False, False, False, False), ('java.lang.Throwable.initCause(java.lang.Throwable)', 'java.lang.String.split(java.lang.String)', 'java.lang.Integer.parseInt(java.lang.String)', 'java.lang.String.trim()', 'java.lang.String.equals(java.lang.Object)')): [50, -0.03787672147154808]}
+
+counter: 53
+num skipped: 1
+{'include': ['javax.management.ObjectName.ObjectName(java.lang.String)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'javax.management.ObjectName.ObjectName(java.lang.String)', 'java.lang.Integer.parseInt(java.lang.String)', 'java.lang.String.trim()', 'java.lang.String.split(java.lang.String)'), (False, False, False, False, False), ('javax.management.ObjectName.ObjectName(java.lang.String)', 'java.lang.Integer.parseInt(java.lang.String)', 'java.lang.String.trim()', 'java.lang.String.split(java.lang.String)', 'java.util.Arrays.asList(T[])')): [50, -0.010743279941380024]}
+
+counter: 54
+num skipped: 1
+{'include': ['java.awt.Component.setSize(int,int)'], 'exclude': [], 'min_length': 6, 'max_length': inf}
+{(('DSubTree', 'java.awt.Component.setSize(int,int)', 'java.io.File.File(java.lang.String,java.lang.String)', 'java.io.File.listFiles()', 'java.util.ArrayList.ArrayList()'), (False, False, False, False, False), ('java.awt.Component.setSize(int,int)', 'java.io.File.File(java.lang.String,java.lang.String)', 'java.io.File.listFiles()', 'java.util.ArrayList.ArrayList()', 'java.util.ArrayList.add(java.lang.Object)')): [50, -3.9841697216033936]}
+
+
+final metrics: {'jaccard_test_set': 0.0, 'has_more_apis': 0.981818181818182, 'relevant_additions': 0.6457575757575758, 'meets_constraints': 0.0393939393939394, 'in_set': 0.0, 'test_set_relevant_additions': 0.46272727272727265}

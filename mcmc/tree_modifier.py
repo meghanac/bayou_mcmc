@@ -137,9 +137,9 @@ class TreeModifier:
                     curr_node = None
 
         # Fill in blank nodes and take only self.max_length number of nodes in the tree
-        nodes = np.zeros([1, self.max_length], dtype=np.int32)
-        edges = np.zeros([1, self.max_length], dtype=np.bool)
-        targets = np.zeros([1, self.max_length], dtype=np.int32)
+        nodes = np.zeros([1, len(tree)], dtype=np.int32)
+        edges = np.zeros([1, len(tree)], dtype=np.bool)
+        targets = np.zeros([1, len(tree)], dtype=np.int32)
         nodes_dfs, edges_dfs, targets_dfs = zip(*tree)
         nodes[0, :len(tree)] = nodes_dfs
         edges[0, :len(edges_dfs)] = edges_dfs

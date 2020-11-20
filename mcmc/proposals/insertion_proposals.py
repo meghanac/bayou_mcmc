@@ -447,8 +447,8 @@ class ProposalWithInsertion:
     def calculate_ln_prob_of_move(self, curr_prog_original, initial_state, added_node_pos, added_edge, prev_length,
                                   is_copy=False):
 
-        print("calculate ln prob: ")
-        print_verbose_tree_info(curr_prog_original)
+        # print("calculate ln prob: ")
+        # print_verbose_tree_info(curr_prog_original)
 
         if not is_copy:
             curr_prog = curr_prog_original.copy()

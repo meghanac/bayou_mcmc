@@ -146,7 +146,7 @@ class Metrics:
 
     def get_jaccard_distance(self, set_a, set_b):
         try:
-            return 1.0 * len(set_a.intersection(set_b)) / len(set_a.union(set_b))
+            return 1 - (1.0 * len(set_a.intersection(set_b)) / len(set_a.union(set_b)))
         except ZeroDivisionError:
             print("get_jaccard_distance: ZeroDivisionError but shouldn't be here!")
             print("len set_a:", len(set_a), "len set_b:", len(set_b), "len(set_a & set_b):", len(set_a & set_b),
@@ -211,6 +211,7 @@ class Metrics:
             print("num in posterior top k:", len(posterior))
 
         def get_score(prog):
+            # print(prog)
             score = True
             apis = get_apis_set(prog)
 
@@ -225,12 +226,13 @@ class Metrics:
                 if self.verbose:
                     print("exclude:", not set(constraint_dict[EXCLUDE]).issubset(apis))
                 score = score and not set(constraint_dict[EXCLUDE]).issubset(apis)
+            # if self.verbose:
+            # print(constraint_dict[MIN_LENGTH], len(prog[0]))
+            # print("min length:", constraint_dict[MIN_LENGTH] <= len(prog[0]))
+            score = score and constraint_dict[MIN_LENGTH] <= len(prog[0]) + 1
             if self.verbose:
-                print("min length:", constraint_dict[MIN_LENGTH] <= len(prog[0]))
-            score = score and constraint_dict[MIN_LENGTH] <= len(prog[0])
-            if self.verbose:
-                print("max length:", len(prog[0]) <= constraint_dict[MAX_LENGTH])
-            score = score and len(prog[0]) <= constraint_dict[MAX_LENGTH]
+                print("max length:", len(prog[0]) <= constraint_dict[MAX_LENGTH] - 1)
+            score = score and len(prog[0]) <= constraint_dict[MAX_LENGTH] - 1
             return int(score)
 
         scores = [get_score(i) for i in posterior]
@@ -259,7 +261,7 @@ class Metrics:
                 print("prog:", prog)
                 print("constraints:", constraint_dict[INCLUDE])
                 print("")
-            return int(len(prog) > len(set(constraint_dict[INCLUDE])))
+            return int(len(prog) > len(set(constraint_dict[INCLUDE])) and len(prog) > constraint_dict[MIN_LENGTH])
 
         scores = [get_score(i) for i in posterior]
 
@@ -282,23 +284,28 @@ class Metrics:
         if self.verbose:
             print("\n\n\n--------JACCARD DISTANCE TEST SET----------")
             print("num test progs that meet constraint:", len(test_progs_meet_constraints))
-        test_progs_meet_constraints = set(
-            [tuple(get_apis_set((i[0][1], i[1][1], i[2][1]))) for i in test_progs_meet_constraints])
+        test_progs_meet_constraints = \
+            [get_apis_set((i[0][1], i[1][1], i[2][1])) for i in test_progs_meet_constraints]
 
         if self.verbose:
             print("apis of test progs:", test_progs_meet_constraints)
         posterior = self.get_top_k_gen_progs(posterior_dist, constraint_dict)
-        api_sets = set([tuple(get_apis_set(i)) for i in posterior])
+        api_sets = [get_apis_set(i) for i in posterior]
 
         if self.verbose:
             print("apis in posterior", api_sets)
         jacc_distances = []
         for api_set in api_sets:
-            jacc_dist = self.get_jaccard_distance(set(api_set), test_progs_meet_constraints)
-            if self.verbose:
-                print("api set:", api_set)
-                print("jacc distance:", jacc_dist)
-            jacc_distances.append(jacc_dist)
+            for test_set in test_progs_meet_constraints:
+                api_set.discard('DSubTree')
+                api_set.discard('DStop')
+                test_set.discard('DSubTree')
+                test_set.discard('DStop')
+                jacc_dist = self.get_jaccard_distance(api_set, test_set)
+                if self.verbose:
+                    print("api set:", api_set)
+                    print("jacc distance:", jacc_dist)
+                jacc_distances.append(jacc_dist)
 
         if self.verbose:
             print("return:", min(jacc_distances))
@@ -443,6 +450,8 @@ class Experiments:
         self.decoder = BayesianPredictor(clargs.continue_from, depth='change', batch_size=beam_width)
 
         self.verbose = verbose
+
+        print(self.posterior_dists)
 
     def get_constraint_dict(self, data_point, category, convert_from_node=False):
         if convert_from_node:
@@ -788,8 +797,7 @@ class Experiments:
         train_ga = self.train_ga
         test_ga = self.all_test_ga
 
-        for category in categories:
-            category = EX_API
+        for category in [MIN_EQ]:
             print("\n\nCATEGORY:", category)
             metrics = all_metrics[category] = {}
             for metric in self.metric_labels:
@@ -813,6 +821,7 @@ class Experiments:
                 assert set(datapoint['types']) == set([ret_type] + formal_param)
                 constraint_dict = self.get_constraint_dict(dp_key, category, convert_from_node=True)
                 assert set(datapoint['apicalls']) == set(constraint_dict[INCLUDE])
+
                 prog_metrics = \
                     self.metrics.get_all_metrics(posterior_dist, ret_type, formal_param, constraint_dict, test_ga,
                                                           train_ga)

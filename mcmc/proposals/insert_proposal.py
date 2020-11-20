@@ -33,7 +33,10 @@ class InsertProposal(ProposalWithInsertion):
             return None
 
         # Get a random position in the tree to be the parent of the new node to be added
-        rand_node_pos = random.randint(1, curr_prog.length - 1)  # exclude DSubTree node, randint is [a,b] inclusive
+        if random.choice([0,0,0,0,1]) == 1:
+            rand_node_pos = 0
+        else:
+            rand_node_pos = random.randint(0, curr_prog.length - 2)  # exclude DSubTree node, randint is [a,b] inclusive
         new_node_parent = self.tree_mod.get_node_in_position(curr_prog, rand_node_pos)
 
         # Probabilistically choose the node that should appear after selected random parent

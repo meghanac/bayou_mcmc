@@ -1,0 +1,32 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/final_novel_1k_min_2_small_config
+num iterations: 50.0
+category: exclude_api
+label: novelty
+num test programs: 1000
+
+
+counter: 0
+num skipped: 0
+{'include': ['java.util.jar.Manifest.getMainAttributes()', 'java.util.jar.Manifest.getEntries()'], 'exclude': ['java.util.ArrayList<java.lang.String>.add(java.lang.String)'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.util.jar.Manifest.getEntries()'), (False, False), ('java.util.jar.Manifest.getEntries()', 'java.util.jar.Manifest.getMainAttributes()')): [13, -32.95996952056885], (('DSubTree', 'java.util.jar.Manifest.getMainAttributes()'), (False, False), ('java.util.jar.Manifest.getMainAttributes()', 'java.util.jar.Manifest.getEntries()')): [3, -31.294570207595825], (('DSubTree', 'java.util.jar.Manifest.getEntries()', 'java.util.jar.Manifest.getMainAttributes()'), (False, False, False), ('java.util.jar.Manifest.getEntries()', 'java.util.jar.Manifest.getMainAttributes()', 'DStop')): [34, -28.75395678705536]}
+
+counter: 5
+num skipped: 1
+{'include': ['java.lang.Class<>.getName()', 'java.lang.Class<>.newInstance()'], 'exclude': ['java.util.HashMap<java.lang.String,java.lang.String>.HashMap<String,String>(int)'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.lang.Class<>.getName()'), (False, False), ('java.lang.Class<>.getName()', 'java.lang.Class<>.newInstance()')): [1, -7.982992649078369], (('DSubTree', 'java.lang.Class<>.getName()', 'java.lang.Class.forName(java.lang.String)'), (False, False, False), ('java.lang.Class<>.getName()', 'java.lang.Class.forName(java.lang.String)', 'java.lang.Class<>.newInstance()')): [20, -5.522161528468132], (('DSubTree', 'java.lang.Class<>.getName()', 'java.lang.Class.forName(java.lang.String)', 'java.lang.Class<>.newInstance()'), (False, False, False, False), ('java.lang.Class<>.getName()', 'java.lang.Class.forName(java.lang.String)', 'java.lang.Class<>.newInstance()', 'DStop')): [28, -6.566927552223206], (('DSubTree', 'java.lang.Class<>.getName()', 'java.lang.Class.forName(java.lang.String)', 'java.lang.Class<>.newInstance()', 'java.lang.Thread.sleep(long)', 'java.util.Collections.sort(java.util.List,java.util.Comparator)'), (False, False, False, False, False, False), ('java.lang.Class<>.getName()', 'java.lang.Class.forName(java.lang.String)', 'java.lang.Class<>.newInstance()', 'java.lang.Thread.sleep(long)', 'java.util.Collections.sort(java.util.List,java.util.Comparator)', 'DStop')): [1, -14.619607906788588]}
+
+counter: 10
+num skipped: 1
+{'include': ['java.io.ObjectInputStream.readInt()', 'java.io.ObjectInputStream.defaultReadObject()'], 'exclude': ['java.lang.reflect.Method.getReturnType()'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.io.ObjectInputStream.readInt()'), (False, False), ('java.io.ObjectInputStream.readInt()', 'java.io.ObjectInputStream.defaultReadObject()')): [28, -9.203011274337769], (('DSubTree', 'java.io.ObjectInputStream.readInt()', 'java.util.ArrayList.ArrayList()'), (False, False, False), ('java.io.ObjectInputStream.readInt()', 'java.util.ArrayList.ArrayList()', 'java.io.ObjectInputStream.defaultReadObject()')): [10, -9.296950221061707], (('DSubTree', 'java.io.ObjectInputStream.readInt()', 'java.io.ObjectInputStream.defaultReadObject()'), (False, False, False), ('java.io.ObjectInputStream.readInt()', 'java.io.ObjectInputStream.defaultReadObject()', 'DStop')): [12, -11.60626454371959]}
+
+counter: 15
+num skipped: 2
+{'include': ['DLoop', 'java.lang.StringBuffer.length()'], 'exclude': ['java.util.HashMap<java.lang.String,java.lang.Long>.put(java.lang.String,java.lang.Long)'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DLoop', 'java.lang.StringBuffer.length()', 'java.lang.String.charAt(int)', 'DLoop'), (False, True, True, False, False), ('DLoop', 'java.lang.StringBuffer.length()', 'java.lang.String.charAt(int)', 'DStop', 'DStop')): [50, -16.354717291891575]}
+
+counter: 20
+num skipped: 2
+{'include': ['java.util.concurrent.locks.ReentrantLock.lock()', 'java.util.concurrent.locks.ReentrantLock.unlock()'], 'exclude': ['java.lang.StringBuilder.append(int)'], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.util.concurrent.locks.ReentrantLock.lock()'), (False, False), ('java.util.concurrent.locks.ReentrantLock.lock()', 'java.util.concurrent.locks.ReentrantLock.unlock()')): [25, -30.86045527458191], (('DSubTree', 'java.util.concurrent.locks.ReentrantLock.lock()', 'java.util.concurrent.locks.ReentrantLock.unlock()'), (False, False, False), ('java.util.concurrent.locks.ReentrantLock.lock()', 'java.util.concurrent.locks.ReentrantLock.unlock()', 'DStop')): [25, -27.11890581122134]}

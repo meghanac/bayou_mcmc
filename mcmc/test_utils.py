@@ -1,5 +1,6 @@
 import os
 import random
+import numpy as np
 
 from node import Node, SIBLING_EDGE, CHILD_EDGE, DNODES, DBRANCH, DLOOP, DEXCEPT, START, STOP, EMPTY
 from mcmc import MCMCProgram
@@ -15,9 +16,9 @@ STR_BUILD_APP = 'java.lang.StringBuilder.append(java.lang.String)'
 
 
 def create_base_program(saved_model_path, constraints, ret_type, fp, ordered=True, exclude=None, debug=False,
-                        verbose=False, attach=False):
+                        verbose=False, attach=False, min_length=1, max_length=np.inf):
     test_prog = MCMCProgramWrapper(saved_model_path, constraints, ret_type, fp, debug=debug, verbose=verbose,
-                                   exclude=exclude, ordered=ordered, attach=attach)
+                                   exclude=exclude, ordered=ordered, attach=attach, min_length=min_length, max_length=max_length)
     test_prog.update_nodes_and_edges()
     expected_nodes = [START]
     expected_edges = []
@@ -167,10 +168,10 @@ def add_random_noise_to_initial_tree(prog):
 
 
 class MCMCProgramWrapper:
-    def __init__(self, save_dir, constraints, return_type, formal_params, ordered=True, exclude=None, debug=True, verbose=True, attach=True):
+    def __init__(self, save_dir, constraints, return_type, formal_params, ordered=True, exclude=None, debug=True, verbose=True, attach=True, min_length=1, max_length=np.inf):
         # init MCMCProgram
         self.prog = MCMCProgram(save_dir, debug=debug, verbose=verbose)
-        self.prog.init_program(constraints, return_type, formal_params, exclude=exclude, ordered=ordered, attach=attach)
+        self.prog.init_program(constraints, return_type, formal_params, exclude=exclude, ordered=ordered, attach=attach, min_length=min_length, max_length=max_length)
 
         self.constraints = self.prog.constraints
         self.vocab2node = self.prog.config.vocab2node

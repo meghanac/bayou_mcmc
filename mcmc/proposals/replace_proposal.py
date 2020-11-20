@@ -31,7 +31,7 @@ class ReplaceProposal(ProposalWithInsertion):
             return None
 
         # Get a random position in the tree to be the parent of the new node to be added
-        rand_node_pos = random.randint(1, curr_prog.length - 1)  # exclude DSubTree node, randint is [a,b] inclusive
+        rand_node_pos = random.randint(1, curr_prog.length - 2)  # exclude DSubTree node, randint is [a,b] inclusive
         replaced_node = self.tree_mod.get_node_in_position(curr_prog, rand_node_pos)
         replaced_node_api = replaced_node.api_name
 

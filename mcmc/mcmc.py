@@ -100,7 +100,7 @@ class MCMCProgram:
 
         # self.proposal_probs = {INSERT: 0.5, DELETE: 0.5, SWAP: 0.00, REPLACE: 0.0, ADD_DNODE: 0.0}
 
-        self.proposal_probs = {INSERT: 0.15, DELETE: 0.35, SWAP: 0.2, REPLACE: 0.20, ADD_DNODE: 0.0, GROW_CONST: 0.1,
+        self.proposal_probs = {INSERT: 0.15, DELETE: 0.4, SWAP: 0.2, REPLACE: 0.20, ADD_DNODE: 0.0, GROW_CONST: 0.05,
                                GROW_CONST_UP: 0.0}
 
         # self.proposal_probs = {INSERT: 0.3, DELETE: 0.1, SWAP: 0.6, REPLACE: 0.0, ADD_DNODE: 0.0, GROW_CONST: 0.0,
@@ -247,6 +247,8 @@ class MCMCProgram:
                 else:
                     node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
                 last_node = node
+
+            self.tree_mod.create_and_add_node(STOP, last_node, SIBLING_EDGE)
             # for i in self.constraint_control_structs:
             #     node = self.tree_mod.create_and_add_node(i, last_node, SIBLING_EDGE)
             #     last_node = node
@@ -549,6 +551,10 @@ class MCMCProgram:
         # # assert last_node.api_name != STOP
         # if last_node.api_name == STOP:
         #     return False
+
+        _, _, targets = self.tree_mod.get_nodes_edges_targets(self.curr_prog)
+        if targets[-1] != self.config.vocab2node[STOP]:
+            return False
 
         # Return whether all constraints have been met
         return len(constraints) == 0
@@ -871,7 +877,10 @@ class MCMCProgram:
             print("old program:")
             print_verbose_tree_info(self.curr_prog)
 
-        api = random.choice(self.constraints + self.constraint_control_structs)
+        if grow_proposal_key == GROW_CONST_UP:
+            api = random.choice(self.constraints)
+        else:
+            api = random.choice(self.constraints + self.constraint_control_structs)
 
         constraint_node = self.tree_mod.get_node_with_api(self.curr_prog, api)
         constraint_node_pos = self.tree_mod.get_nodes_position(self.curr_prog, constraint_node)

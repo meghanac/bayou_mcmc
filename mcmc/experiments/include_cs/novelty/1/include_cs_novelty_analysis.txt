@@ -1,0 +1,72 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/final_novel_1k_min_2_small_config
+num iterations: 50.0
+category: include_cs
+label: novelty
+num test programs: 500
+
+
+counter: 0
+num skipped: 0
+{'include': ['DBranch', 'java.security.AccessController.doPrivileged(java.security.PrivilegedAction)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DBranch', 'java.security.AccessController.doPrivileged(java.security.PrivilegedAction)', 'java.lang.Class<>.getConstructor(java.lang.Class[])', 'java.security.AccessController.doPrivileged(java.security.PrivilegedAction)', 'java.lang.reflect.Constructor<>.newInstance(java.lang.Object[])', 'DBranch'), (False, True, True, False, False, False, False), ('DBranch', 'java.security.AccessController.doPrivileged(java.security.PrivilegedAction)', 'java.lang.Class<>.getConstructor(java.lang.Class[])', 'DStop', 'java.lang.reflect.Constructor<>.newInstance(java.lang.Object[])', 'DStop', 'DStop')): [50, -10.665856018662453]}
+
+counter: 15
+num skipped: 5
+{'include': ['DExcept', 'java.util.Iterator.next()'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DExcept', 'java.util.Iterator.next()', 'java.sql.ResultSet.next()', 'DExcept'), (False, True, True, False, False), ('DExcept', 'java.util.Iterator.next()', 'java.sql.ResultSet.next()', 'DStop', 'DStop')): [50, -15.034221738576889]}
+
+counter: 20
+num skipped: 5
+{'include': ['DBranch', 'javax.swing.JComponent.setOpaque(boolean)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DBranch', 'javax.swing.JComponent.setOpaque(boolean)', 'javax.swing.SwingUtilities.invokeLater(java.lang.Runnable)', 'javax.swing.JComponent.setOpaque(boolean)', 'javax.swing.SwingUtilities.invokeLater(java.lang.Runnable)', 'DBranch'), (False, True, True, False, False, False, False), ('DBranch', 'javax.swing.JComponent.setOpaque(boolean)', 'javax.swing.SwingUtilities.invokeLater(java.lang.Runnable)', 'DStop', 'javax.swing.SwingUtilities.invokeLater(java.lang.Runnable)', 'DStop', 'DStop')): [50, -9.149311125278473]}
+
+counter: 25
+num skipped: 6
+{'include': ['DExcept', 'java.lang.Double.valueOf(double)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DExcept', 'java.lang.Double.valueOf(double)', 'java.lang.Thread.sleep(long)', 'DExcept'), (False, True, True, False, False), ('DExcept', 'java.lang.Double.valueOf(double)', 'java.lang.Thread.sleep(long)', 'DStop', 'DStop')): [50, -2.559513531625271]}
+
+counter: 30
+num skipped: 7
+{'include': ['DLoop', 'java.io.Writer.write(char[])'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DLoop', 'java.io.Writer.write(char[])', 'java.lang.String.substring(int,int)', 'DLoop'), (False, True, True, False, False), ('DLoop', 'java.io.Writer.write(char[])', 'java.lang.String.substring(int,int)', 'DStop', 'DStop')): [50, -10.241874724626541]}
+
+counter: 35
+num skipped: 9
+{'include': ['java.io.InputStreamReader.close()', 'DBranch'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'java.io.InputStreamReader.close()', 'DBranch', 'java.lang.String.equalsIgnoreCase(java.lang.String)', 'java.io.File.getName()', 'java.lang.String.equalsIgnoreCase(java.lang.String)', 'java.lang.String.equalsIgnoreCase(java.lang.String)', 'DBranch'), (False, False, True, True, False, False, False, False), ('java.io.InputStreamReader.close()', 'DBranch', 'java.lang.String.equalsIgnoreCase(java.lang.String)', 'java.io.File.getName()', 'DStop', 'java.lang.String.equalsIgnoreCase(java.lang.String)', 'DStop', 'DStop')): [8, -19.718557357788086], (('DSubTree', 'java.io.InputStreamReader.close()', '$NOT$java.io.File.canRead()', '$NOT$java.io.File.mkdir()', 'DBranch', 'java.lang.String.equalsIgnoreCase(java.lang.String)', 'java.io.File.getName()', 'java.lang.String.equalsIgnoreCase(java.lang.String)', 'java.lang.String.equalsIgnoreCase(java.lang.String)', 'DBranch'), (False, False, False, False, True, True, False, False, False, False), ('java.io.InputStreamReader.close()', '$NOT$java.io.File.canRead()', '$NOT$java.io.File.mkdir()', 'DBranch', 'java.lang.String.equalsIgnoreCase(java.lang.String)', 'java.io.File.getName()', 'DStop', 'java.lang.String.equalsIgnoreCase(java.lang.String)', 'DStop', 'DStop')): [3, -31.086264138575643], (('DSubTree', 'java.io.InputStreamReader.close()', '$NOT$java.io.File.canRead()', '$NOT$java.io.File.mkdir()', 'DBranch', 'java.lang.String.equalsIgnoreCase(java.lang.String)', 'java.io.File.getName()', 'java.lang.String.equalsIgnoreCase(java.lang.String)', 'java.sql.PreparedStatement.execute()', 'DBranch'), (False, False, False, False, True, True, False, False, False, False), ('java.io.InputStreamReader.close()', '$NOT$java.io.File.canRead()', '$NOT$java.io.File.mkdir()', 'DBranch', 'java.lang.String.equalsIgnoreCase(java.lang.String)', 'java.io.File.getName()', 'DStop', 'java.sql.PreparedStatement.execute()', 'DStop', 'DStop')): [39, -31.358001769520342]}
+
+counter: 40
+num skipped: 10
+{'include': ['DBranch', 'java.lang.Enum<>.name()'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DBranch', 'java.lang.Enum<>.name()', 'java.lang.Double.doubleValue()', 'java.lang.Enum<>.name()', 'java.lang.String.equals(java.lang.Object)', 'DBranch'), (False, True, True, False, False, False, False), ('DBranch', 'java.lang.Enum<>.name()', 'java.lang.Double.doubleValue()', 'DStop', 'java.lang.String.equals(java.lang.Object)', 'DStop', 'DStop')): [50, -10.845979779958725]}
+
+counter: 45
+num skipped: 11
+{'include': ['DLoop', 'java.lang.Double.valueOf(java.lang.String)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DLoop', 'java.lang.Double.valueOf(java.lang.String)', 'java.lang.String.split(java.lang.String)', 'DLoop'), (False, True, True, False, False), ('DLoop', 'java.lang.Double.valueOf(java.lang.String)', 'java.lang.String.split(java.lang.String)', 'DStop', 'DStop')): [4, -11.199955344200134], (('DSubTree', 'DLoop', 'java.lang.Double.valueOf(java.lang.String)', 'DLoop'), (False, True, True, False), ('DLoop', 'java.lang.Double.valueOf(java.lang.String)', 'java.lang.String.split(java.lang.String)', 'DStop')): [45, -11.144231639802456], (('DSubTree', 'DLoop', 'java.lang.Double.valueOf(java.lang.String)', 'DLoop'), (False, True, True, False), ('DLoop', 'java.lang.Double.valueOf(java.lang.String)', 'java.lang.String.split(java.lang.String)', 'java.lang.Thread.sleep(long)')): [1, -10.78265018761158]}
+
+counter: 50
+num skipped: 13
+{'include': ['DExcept', 'java.util.List<T>.add(Tau_T)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DExcept', 'java.util.List<T>.add(Tau_T)', 'java.lang.Integer.toString()', 'DExcept'), (False, True, True, False, False), ('DExcept', 'java.util.List<T>.add(Tau_T)', 'java.lang.Integer.toString()', 'DStop', 'DStop')): [50, -21.34077370853629]}
+
+counter: 60
+num skipped: 14
+{'include': ['DExcept', 'java.lang.Class.getDeclaredField(java.lang.String)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DExcept', 'java.lang.Class.getDeclaredField(java.lang.String)', 'java.lang.Throwable.printStackTrace()', 'DExcept'), (False, True, True, False, False), ('DExcept', 'java.lang.Class.getDeclaredField(java.lang.String)', 'java.lang.Throwable.printStackTrace()', 'DStop', 'DStop')): [50, -9.41789741627872]}
+
+counter: 65
+num skipped: 15
+{'include': ['DBranch', 'java.lang.StringBuilder.append(double)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DBranch', 'java.lang.StringBuilder.append(double)', 'java.lang.String.valueOf(int)', 'java.lang.StringBuilder.append(double)', 'java.lang.StringBuilder.append(java.lang.String)', 'DBranch'), (False, True, True, False, False, False, False), ('DBranch', 'java.lang.StringBuilder.append(double)', 'java.lang.String.valueOf(int)', 'DStop', 'java.lang.StringBuilder.append(java.lang.String)', 'DStop', 'DStop')): [50, -14.663477592170238]}
+
+counter: 70
+num skipped: 16
+{'include': ['DExcept', 'java.util.concurrent.Semaphore.Semaphore(int)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DExcept', 'java.util.concurrent.Semaphore.Semaphore(int)', 'java.lang.String.String(byte[],java.lang.String)', 'DExcept'), (False, True, True, False, False), ('DExcept', 'java.util.concurrent.Semaphore.Semaphore(int)', 'java.lang.String.String(byte[],java.lang.String)', 'DStop', 'DStop')): [50, -14.104066610336304]}
+
+counter: 75
+num skipped: 17
+{'include': ['DExcept', 'java.lang.Math.abs(double)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DExcept', 'java.lang.Math.abs(double)', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'DExcept'), (False, True, True, False, False), ('DExcept', 'java.lang.Math.abs(double)', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'DStop', 'DStop')): [50, -2.525041490793228]}

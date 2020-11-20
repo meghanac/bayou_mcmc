@@ -317,8 +317,8 @@ class TestGraphAnalyzer(unittest.TestCase):
 
     def test_build_identical_bayou_dataset(self):
         all_data_bayou_dataset_name = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/data_surrounding_methods.json'
-        mcmc_dataset_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/train/all_training_data.json'
-        new_bayou_dataset_name = 'fixed_training_1k_vocab_all_replaced_no_key.json'
+        mcmc_dataset_path = '/Users/meghanachilukuri/bayou_mcmc/data_extractor/data/new_all_data_1k_vocab_no_duplicates/seen_min_2/train/all_training_data.json'
+        new_bayou_dataset_name = 'seen_training_1k_vocab_all_replaced_no_key.json'
         bayou_path = '/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/models/low_level_evidences/data/'
         create_identical_bayou_dataset(all_data_bayou_dataset_name, mcmc_dataset_path, new_bayou_dataset_name, bayou_path, types=REPLACE_TYPES)
 
@@ -444,15 +444,20 @@ class TestGraphAnalyzer(unittest.TestCase):
         print("Num progs:", graph_analyzer.num_programs)
 
     def test_build_bayou_test_set2(self):
-        mcmc_data_dir_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/"
+        # mcmc_data_dir_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/"
+        # mcmc_all_data_path = mcmc_data_dir_path + "/../new_all_data_1k_vocab_no_duplicates.json"
+        # new_bayou_data_filename = "novel_min_2_small_test3.json"
+        # build_bayou_test_set(mcmc_data_dir_path, mcmc_all_data_path, new_bayou_data_filename)
+
+        mcmc_data_dir_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/seen_min_2/"
         mcmc_all_data_path = mcmc_data_dir_path + "/../new_all_data_1k_vocab_no_duplicates.json"
-        new_bayou_data_filename = "novel_min_2_small_test3.json"
+        new_bayou_data_filename = "seen_min_2_small_test.json"
         build_bayou_test_set(mcmc_data_dir_path, mcmc_all_data_path, new_bayou_data_filename)
 
     def test_bayou_test_data_reader(self):
         data_dir_path = "/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/test/"
-        data_filename = "test_output2"
-        config_path = "/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/models/low_level_evidences/save/fixed_novel_min_2/config.json"
+        data_filename = "seen_outputs"
+        config_path = "/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/models/low_level_evidences/save/seen_1k_no_keywords/config.json"
         bayou_reader = BayouTestResultsReader(data_dir_path, data_filename, config_path, save=True)
 
     def test_readable_small_set(self):
@@ -461,11 +466,27 @@ class TestGraphAnalyzer(unittest.TestCase):
         build_readable_list_test_progs(mcmc_data_dir_path, mcmc_all_data_path)
 
     def test_bayou_calculate_metrics(self):
-        small_test_set_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/test/small/small_curated_test_sets.pickle"
+        # small_test_set_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/novel_min_2/test/small/small_curated_test_sets.pickle"
+        # # small_test_set = pickle.load(open(small_test_set_path, "rb"))
+        # # print(small_test_set)
+        # bayou_categories_dir_path = "/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/test/"
+        # bayou_categories_filename = "test_output2_posterior_dist"
+        # all_data_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/new_all_data_1k_vocab_no_duplicates.json"
+        #
+        # num_iterations = 3
+        # data_dir_name = 'new_all_data_1k_vocab_no_duplicates'
+        # model_dir_path = '../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta'
+        # exp_dir_name = "testing-bayou"
+        # exp = Experiments(data_dir_name, model_dir_path, exp_dir_name, num_iterations, save_mcmc_progs=False,
+        #                   train_test_set_dir_name='/novel_min_2/', verbose=False)
+        #
+        # exp.load_bayou_data_calculate_metrics(bayou_categories_dir_path, bayou_categories_filename, small_test_set_path, all_data_path, save=True, load_rt_fp=False)
+
+        small_test_set_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/seen_min_2/test/small/small_curated_test_sets.pickle"
         # small_test_set = pickle.load(open(small_test_set_path, "rb"))
         # print(small_test_set)
         bayou_categories_dir_path = "/Users/meghanachilukuri/bayou_my_model/src/main/python/bayou/test/"
-        bayou_categories_filename = "test_output2_posterior_dist"
+        bayou_categories_filename = "seen_outputs_posterior_dist"
         all_data_path = "../data_extractor/data/new_all_data_1k_vocab_no_duplicates/new_all_data_1k_vocab_no_duplicates.json"
 
         num_iterations = 3
@@ -473,9 +494,10 @@ class TestGraphAnalyzer(unittest.TestCase):
         model_dir_path = '../trainer_vae/save/all_data_1k_vocab_0.5_KL_beta'
         exp_dir_name = "testing-bayou"
         exp = Experiments(data_dir_name, model_dir_path, exp_dir_name, num_iterations, save_mcmc_progs=False,
-                          train_test_set_dir_name='/novel_min_2/', verbose=False)
+                          train_test_set_dir_name='/seen_min_2/', verbose=False)
 
-        exp.load_bayou_data_calculate_metrics(bayou_categories_dir_path, bayou_categories_filename, small_test_set_path, all_data_path, save=True, load_rt_fp=False)
+        exp.load_bayou_data_calculate_metrics(bayou_categories_dir_path, bayou_categories_filename, small_test_set_path,
+                                              all_data_path, save=True, load_rt_fp=False)
 
     def test_ast_fp(self):
         ga = GraphAnalyzer('new_all_data_1k_vocab_no_duplicates', load_reader=True)

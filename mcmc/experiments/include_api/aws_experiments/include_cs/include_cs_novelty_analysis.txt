@@ -1,0 +1,22 @@
+data dir name: new_all_data_1k_vocab_no_duplicates
+model dir path: ../trainer_vae/save/final_novel_1k_min_2_small_config
+num iterations: 50.0
+category: include_cs
+label: novelty
+num test programs: 1000
+
+
+counter: 5
+num skipped: 2
+{'include': ['DLoop', 'java.lang.Math.min(long,long)'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DLoop', 'java.lang.Math.min(long,long)', 'java.lang.Thread.currentThread()', 'DLoop'), (False, True, True, False, False), ('DLoop', 'java.lang.Math.min(long,long)', 'java.lang.Thread.currentThread()', 'DStop', 'DStop')): [50, -6.418914794921875]}
+
+counter: 10
+num skipped: 4
+{'include': ['DExcept', 'java.lang.String.String()'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DExcept', 'java.lang.String.String()', 'java.lang.Double.intValue()', 'DExcept'), (False, True, True, False, False), ('DExcept', 'java.lang.String.String()', 'java.lang.Double.intValue()', 'DStop', 'DStop')): [50, -6.841254733502865]}
+
+counter: 15
+num skipped: 5
+{'include': ['DExcept', 'java.util.LinkedList<java.lang.String>.LinkedList<String>()'], 'exclude': [], 'min_length': 1, 'max_length': inf}
+{(('DSubTree', 'DExcept', 'java.util.LinkedList<java.lang.String>.LinkedList<String>()', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'DExcept'), (False, True, True, False, False), ('DExcept', 'java.util.LinkedList<java.lang.String>.LinkedList<String>()', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'DStop', 'DStop')): [1, -19.5989031791687], (('DSubTree', 'DExcept', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'java.util.LinkedList<java.lang.String>.LinkedList<String>()', 'DExcept'), (False, True, True, False, False), ('DExcept', 'java.lang.String.format(java.lang.String,java.lang.Object[])', 'java.util.LinkedList<java.lang.String>.LinkedList<String>()', 'DStop', 'DStop')): [49, -13.064265606109984]}
