@@ -664,11 +664,13 @@ class MCMCProgramTest(unittest.TestCase):
         # formal_param = ['double']
         # return_type = ['String']
         # exclude = []
+        # min_length = 1
 
-        # include = ['java.io.Writer.write(char[])']
-        # formal_param = ['String', 'String', 'int']
-        # return_type = ['void']
-        # exclude = []
+        include = [DLOOP, 'java.io.Writer.write(char[])']
+        formal_param = ['String', 'String', 'int']
+        return_type = ['void']
+        exclude = []
+        min_length = 1
 
         # include = ['java.util.jar.Manifest.getEntries()', 'java.util.jar.Manifest.getMainAttributes()']
         # exclude = ['java.util.ArrayList<java.lang.String>.add(java.lang.String)']
@@ -691,17 +693,93 @@ class MCMCProgramTest(unittest.TestCase):
         # min_length = 5
         # exclude = []
 
-        include = ['java.util.Date.compareTo(java.util.Date)', 'DBranch']
-        formal_param= ['Date', 'Date']
-        return_type =['String']
-        exclude = []
-        min_length = 1
+        # include = ['java.util.Date.compareTo(java.util.Date)', 'DBranch']
+        # formal_param= ['Date', 'Date']
+        # return_type =['String']
+        # exclude = []
+        # min_length = 1
+
+        # include = ['javax.swing.JFrame.JFrame(java.lang.String)', 'DBranch']
+        # formal_param = []
+        # return_type = ['boolean']
+        # exclude = []
+        # min_length = 1
+
+        # include = ['java.awt.image.BufferedImage.createGraphics()',
+        #           'java.awt.Graphics.drawImage(java.awt.Image,int,int,int,int,int,int,int,int,java.awt.image.ImageObserver)']
+        # exclude = ['DExcept']
+        # formal_param = ['Image', 'int', 'int', 'int', 'int']
+        # return_type = ['BufferedImage']
+        # min_length = 1
+        # key: (660298, (230, 799), 8, 4)
+        # ast: {'node': 'DSubTree', '_nodes': [
+        #     {'node': 'DAPICall', '_throws': [], '_returns': 'java.awt.Graphics2D',
+        #      '_call': 'java.awt.image.BufferedImage.createGraphics()'},
+        #     {'node': 'DAPICall', '_throws': [], '_returns': 'boolean',
+        #      '_call': 'java.awt.Graphics.drawImage(java.awt.Image,int,int,int,int,int,int,int,int,java.awt.image.ImageObserver)'},
+        #     {'node': 'DAPICall', '_throws': [], '_returns': 'void', '_call': 'java.awt.Graphics.dispose()'}]}
+
+        # include = ['DExcept', 'java.lang.Long.toString()']
+        # exclude = ['DLoop']
+        # formal_param =  ['int', 'int']
+        # return_type = ['void']
+        # min_length = 1
+        # # key = (677243, (651, 8), 39, 7)
+        # # ast = {'node': 'DSubTree', '_nodes': [{'node': 'DExcept','_catch': [{'node': 'DAPICall','_throws': [], '_returns': 'java.lang.String',
+        # #         '_call': 'java.lang.Throwable.toString()'}], '_try': [{'node': 'DAPICall', '_throws': [], '_returns': 'void',
+        # #         '_call': 'java.lang.Long.Long(long)'}, { 'node': 'DAPICall', '_throws': [], '_returns': 'java.lang.String',
+        # #         '_call': 'java.lang.Long.toString()'}]}]}
+
+        # include = ['DBranch', 'java.util.TimeZone.getDefault()']
+        # formal_param = ['Context', 'Intent']
+        # return_type = ['void']
+        # exclude = []
+        # min_length = 1
+        # # key: (615691, (511,), 15, 6), ast: {'node': 'DSubTree',
+        # #    '_nodes': [
+        # #        {'node': 'DBranch',
+        # #         '_cond': [{
+        # #                       'node': 'DAPICall',
+        # #                       '_throws': [],
+        # #                       '_returns': 'boolean',
+        # #                       '_call': 'java.lang.String.equals(java.lang.Object)'},
+        # #                   {
+        # #                       'node': 'DAPICall',
+        # #                       '_throws': [],
+        # #                       '_returns': 'boolean',
+        # #                       '_call': 'java.lang.String.equals(java.lang.Object)'}],
+        # #         '_else': [],
+        # #         '_then': [{
+        # #                       'node': 'DAPICall',
+        # #                       '_throws': [],
+        # #                       '_returns': 'java.util.TimeZone',
+        # #                       '_call': 'java.util.TimeZone.getDefault()'}]}]}
+
+        # include = ['java.io.OutputStreamWriter.flush()',
+        #           'java.io.OutputStreamWriter.OutputStreamWriter(java.io.OutputStream,java.lang.String)']
+        # exclude = ['java.io.FileOutputStream.FileOutputStream(java.io.File)']
+        # formal_param = ['OutputStream']
+        # return_type = ['void']
+        # min_length = 1
+        # # key: (10975, (633, 423), 121, 3), ast: {'node': 'DSubTree',
+        # #   '_nodes': [
+        # #       {'node': 'DAPICall',
+        # #        '_throws': [
+        # #            'java.io.UnsupportedEncodingException'],
+        # #        '_returns': 'void',
+        # #        '_call': 'java.io.OutputStreamWriter.OutputStreamWriter(java.io.OutputStream,java.lang.String)'},
+        # #       {'node': 'DAPICall',
+        # #        '_throws': [
+        # #            'java.io.IOException'],
+        # #        '_returns': 'void',
+        # #        '_call': 'java.io.OutputStreamWriter.flush()'}]}
 
         test_prog, expected_nodes, expected_edges = create_base_program(FINAL_SMALL_MODEL_PATH,
                                                                         include,
                                                                         return_type,
                                                                         formal_param,
-                                                                        ordered=True, exclude=exclude, attach=False, min_length=min_length)
+                                                                        ordered=True, exclude=exclude, attach=False,
+                                                                        min_length=min_length)
 
         test_prog.prog.verbose = True
 

@@ -1353,6 +1353,7 @@ def build_readable_list_test_progs(mcmc_data_dir_path, mcmc_all_data_path):
             test_prog['category'] = category
             test_prog['returnType'] = program['returnType']
             test_prog['formalParam'] = program['formalParam']
+            test_prog['ast'] = program['ast']
             if category == MIN_EQ or category == MAX_EQ:
                 test_prog[category] = [item[dp2_idx]]
             else:
@@ -1367,12 +1368,12 @@ def build_readable_list_test_progs(mcmc_data_dir_path, mcmc_all_data_path):
             if category == IN_API or category == IN_CS:
                 small_f.write('Include: ' + str(test_prog['include']) + ", formal param: " + str(
                     test_prog['formalParam']) + ", return type: '" + str(test_prog['returnType']) + "', key: " + str(
-                    test_prog['key']) + "\n")
+                    test_prog['key']) + ", ast:" + str(test_prog['ast']) + "\n")
             else:
                 small_f.write('Include: ' + str(test_prog['include']) + category + ": " + str(
                     test_prog[category]) + ", formal param: " + str(
                     test_prog['formalParam']) + ", return type: '" + str(test_prog['returnType']) + "', key: " + str(
-                    test_prog['key']) + "\n")
+                    test_prog['key']) + ", ast:" + str(test_prog['ast']) + "\n")
 
     small_f.write("\n\\n")
     small_test_data_f.close()
